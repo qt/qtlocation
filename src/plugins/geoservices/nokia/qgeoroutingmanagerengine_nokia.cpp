@@ -163,13 +163,13 @@ QGeoRouteReply *QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &rout
 bool QGeoRoutingManagerEngineNokia::checkEngineSupport(const QGeoRouteRequest &request,
         QGeoRouteRequest::TravelModes travelModes) const
 {
-    QList<QGeoRouteRequest::FeatureType> featureTypeList = request.featureTypes();
+    const QList<QGeoRouteRequest::FeatureType> featureTypeList = request.featureTypes();
     QGeoRouteRequest::FeatureTypes featureTypeFlag = QGeoRouteRequest::NoFeature;
     QGeoRouteRequest::FeatureWeights featureWeightFlag = QGeoRouteRequest::NeutralFeatureWeight;
 
-    for (int i = 0; i < featureTypeList.size(); ++i) {
-        featureTypeFlag |= featureTypeList.at(i);
-        featureWeightFlag |= request.featureWeight(featureTypeList.at(i));
+    for (const auto &featureType : featureTypeList) {
+        featureTypeFlag |= featureType;
+        featureWeightFlag |= request.featureWeight(featureType);
     }
 
     if ((featureTypeFlag & supportedFeatureTypes()) != featureTypeFlag)

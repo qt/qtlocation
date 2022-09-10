@@ -760,10 +760,10 @@ void QDeclarativeNavigationBasicDirections::onAlternativeRoutesChanged()
 {
     const QList<QGeoRoute> &routes = m_navigatorPrivate->m_navigator->alternativeRoutes();
     QList<QDeclarativeGeoRoute *> declarativeRoutes;
-    for (int i = 0; i < routes.size(); ++i) {
-        QDeclarativeGeoRoute *route = new QDeclarativeGeoRoute(routes.at(i), &m_routes);
-        QQmlEngine::setContextForObject(route, QQmlEngine::contextForObject(this));
-        declarativeRoutes.append(route);
+    for (const auto &route : routes) {
+        QDeclarativeGeoRoute *declroute = new QDeclarativeGeoRoute(route, &m_routes);
+        QQmlEngine::setContextForObject(declroute, QQmlEngine::contextForObject(this));
+        declarativeRoutes.append(declroute);
     }
     m_routes.updateData(declarativeRoutes);
 }

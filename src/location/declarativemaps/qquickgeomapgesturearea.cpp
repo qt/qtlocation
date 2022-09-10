@@ -943,14 +943,14 @@ void QQuickGeoMapGestureArea::handleTouchEvent(QPointerEvent *event)
         // They just dissapear. Child MouseArea will 'eat up' second touch point if first point
         // is grabbed by child ListView, for example. Maybe it's a bug in 6.2 RC?
         if (point.state() == QEventPoint::Released || !canBeGrabbed){
-            for (int i = 0; i < m_touchPoints.count(); ++i) {
+            for (qsizetype i = 0; i < m_touchPoints.count(); ++i) {
                 if (m_touchPoints.at(i).id() == point.id()){
                     m_touchPoints.removeAt(i);
                 }
             }
         }else{
             bool replaced = false;
-            for (int i = 0; i < m_touchPoints.count(); ++i) {
+            for (qsizetype i = 0; i < m_touchPoints.count(); ++i) {
                 if (m_touchPoints.at(i).id() == point.id()){
                     m_touchPoints.replace(i, point);
                     replaced = true;

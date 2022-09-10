@@ -433,12 +433,11 @@ void QDeclarativeGeoMap::populateMap()
 void QDeclarativeGeoMap::populateParameters()
 {
     QObjectList kids = children();
-    QList<QQuickItem *> quickKids = childItems();
-    for (int i = 0; i < quickKids.count(); ++i)
-        kids.append(quickKids.at(i));
-    for (int i = 0; i < kids.size(); ++i) {
-        QDeclarativeGeoMapParameter *mapParameter = qobject_cast<QDeclarativeGeoMapParameter *>(kids.at(i));
-        if (mapParameter)
+    const QList<QQuickItem *> quickKids = childItems();
+    for (const auto &quickKid : quickKids)
+        kids.append(quickKid);
+    for (auto *kid : qAsConst(kids)) {
+        if (auto *mapParameter = qobject_cast<QDeclarativeGeoMapParameter *>(kid))
             addMapParameter(mapParameter);
     }
 }
@@ -2030,8 +2029,8 @@ void QDeclarativeGeoMap::clearMapItems()
     if (m_mapItems.isEmpty())
         return;
 
-    int removed = 0;
-    for (int i = 0; i < m_mapItemGroups.count(); ++i) {
+    qsizetype removed = 0;
+    for (qsizetype i = 0; i < m_mapItemGroups.count(); ++i) {
         auto item = m_mapItemGroups.at(i);
         // Processing only top-level groups (!views)
         if (qobject_cast<QDeclarativeGeoMapItemView *>(item))
@@ -2363,8 +2362,8 @@ void QDeclarativeGeoMap::fitViewportToMapItemsRefine(const QList<QPointer<QDecla
     bool haveQuickItem = false;
 
     // find bounds of all map items
-    int itemCount = 0;
-    for (int i = 0; i < mapItems.count(); ++i) {
+    qsizetype itemCount = 0;
+    for (qsizetype i = 0; i < mapItems.count(); ++i) {
         if (!mapItems.at(i))
             continue;
         QDeclarativeGeoMapItemBase *item = mapItems.at(i).data();

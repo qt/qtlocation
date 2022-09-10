@@ -94,7 +94,8 @@ void QGeoRouteXmlParser::run()
 bool QGeoRouteXmlParser::parseRootElement()
 {
     if (!m_reader->readNextStartElement()) {
-        m_reader->raiseError("Expected a root element named \"CalculateRoute\" (no root element found).");
+        m_reader->raiseError(QStringLiteral("Expected a root element named \"CalculateRoute\" "
+                                            "(no root element found)."));
         return false;
     }
 
@@ -106,8 +107,11 @@ bool QGeoRouteXmlParser::parseRootElement()
     }
 
     bool updateroute = false;
-    if (m_reader->name() != QLatin1String("CalculateRoute") && m_reader->name() != QLatin1String("GetRoute"))  {
-        m_reader->raiseError(QString("The root element is expected to have the name \"CalculateRoute\" or \"GetRoute\" (root element was named \"%1\").").arg(m_reader->name().toString()));
+    if (m_reader->name() != QLatin1String("CalculateRoute")
+        && m_reader->name() != QLatin1String("GetRoute")) {
+        m_reader->raiseError(QStringLiteral("The root element is expected to have the name "
+                                            "\"CalculateRoute\" or \"GetRoute\" (root element "
+                                            "was named \"%1\").").arg(m_reader->name().toString()));
         return false;
     } else if (m_reader->name() == QLatin1String("GetRoute")) {
         updateroute = true;
@@ -115,7 +119,8 @@ bool QGeoRouteXmlParser::parseRootElement()
 
     if (m_reader->readNextStartElement()) {
         if (m_reader->name() != QLatin1String("Response")) {
-            m_reader->raiseError(QString("Expected a element named \"Response\" (element was named \"%1\").").arg(m_reader->name().toString()));
+            m_reader->raiseError(QStringLiteral("Expected a element named \"Response\" (element "
+                                                "was named \"%1\").").arg(m_reader->name().toString()));
             return false;
         }
     }
@@ -148,8 +153,8 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
     m_legs.clear();
     int legIndex = 0;
     m_reader->readNext();
-    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == QLatin1String("Route")) &&
-           !m_reader->hasError()) {
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement
+           && m_reader->name() == QLatin1String("Route")) && !m_reader->hasError()) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == QLatin1String("RouteId")) {
                 route->setRouteId(m_reader->readElementText());
@@ -244,11 +249,11 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 
 
     // Step 3: populate the linkMap, linkId -> linkContainer
-    for (int i = 0; i < m_maneuvers.size(); i++) {
+    for (qsizetype i = 0; i < m_maneuvers.size(); i++) {
         legSegments << QList<QGeoRouteSegment>();
         QList<QGeoRouteSegment> &segments = legSegments[i];
         QList<QGeoManeuverContainer> &maneuvers = m_maneuvers[i];
-        for (int j = 0; j < m_maneuvers.at(i).size(); j++) {
+        for (qsizetype j = 0; j < m_maneuvers.at(i).size(); j++) {
             QGeoManeuverContainer &maneuver = maneuvers[j];
             QGeoRouteSegment segment;
 
@@ -273,7 +278,7 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
     QGeoRouteSegment segment;
     QGeoRouteSegment firstSegment;
     for (auto &segments: legSegments) {
-        for (int j = 0; j < segments.size(); j++) {
+        for (qsizetype j = 0; j < segments.size(); j++) {
             if (segment.isValid()) {
                 segment.setNextRouteSegment(segments[j]);
             } else {
@@ -291,25 +296,26 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
         route->setFirstRouteSegment(firstSegment);
 
     // Step 8: fill route legs.
-    for (int i = 0; i < m_legs.size(); i++) {
-        m_legs[i].setTravelMode(route->travelMode());
-        m_legs[i].setRequest(route->request());
-        m_legs[i].setOverallRoute(*route);
-        m_legs[i].setLegIndex(i);
+    for (qsizetype i = 0; i < m_legs.size(); i++) {
+        auto &leg = m_legs[i];
+        leg.setTravelMode(route->travelMode());
+        leg.setRequest(route->request());
+        leg.setOverallRoute(*route);
+        leg.setLegIndex(i);
 
-        m_legs[i].setFirstRouteSegment(legSegments[i].first());
+        leg.setFirstRouteSegment(legSegments[i].first());
 
         // handle path
         QList<QGeoCoordinate> path;
-        QGeoRouteSegment s = m_legs[i].firstRouteSegment();
+        QGeoRouteSegment s = leg.firstRouteSegment();
         while (s.isValid()) {
             path.append(s.path());
             if (s.isLegLastSegment())
                 break;
             s = s.nextRouteSegment();
         }
-        m_legs[i].setPath(path);
-        m_legs[i].setBounds(QGeoPath(path).boundingGeoRectangle());
+        leg.setPath(path);
+        leg.setBounds(QGeoPath(path).boundingGeoRectangle());
     }
     route->setRouteLegs(m_legs);
     m_legs.clear();
@@ -349,8 +355,8 @@ bool QGeoRouteXmlParser::parseMode(QGeoRoute *route)
     Q_ASSERT(m_reader->isStartElement() && m_reader->name() == QLatin1String("Mode"));
     m_reader->readNext();
 
-    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == QLatin1String("Mode")) &&
-           !m_reader->hasError()) {
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement
+           && m_reader->name() == QLatin1String("Mode")) && !m_reader->hasError()) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == QLatin1String("TransportModes")) {
                 QString value = m_reader->readElementText();
@@ -386,8 +392,8 @@ bool QGeoRouteXmlParser::parseSummary(QGeoRoute *route)
 
     double baseTime = -1, trafficTime = -1;
 
-    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == QLatin1String("Summary")) &&
-           !m_reader->hasError()) {
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement
+           && m_reader->name() == QLatin1String("Summary")) && !m_reader->hasError()) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == QLatin1String("Distance")) {
                 route->setDistance(m_reader->readElementText().toDouble());
@@ -418,8 +424,8 @@ bool QGeoRouteXmlParser::parseCoordinates(QGeoCoordinate &coord)
     QString currentElement = m_reader->name().toString();
     m_reader->readNext();
 
-    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == currentElement)  &&
-           !m_reader->hasError()) {
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement
+           && m_reader->name() == currentElement) && !m_reader->hasError()) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             QString name = m_reader->name().toString();
             QString value = m_reader->readElementText();
@@ -446,8 +452,8 @@ bool QGeoRouteXmlParser::parseManeuver(QList<QGeoManeuverContainer> &maneuvers)
     maneuverContainter.id = m_reader->attributes().value("id").toString();
 
     m_reader->readNext();
-    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == QLatin1String("Maneuver")) &&
-           !m_reader->hasError()) {
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement
+           && m_reader->name() == QLatin1String("Maneuver")) && !m_reader->hasError()) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == QLatin1String("Position")) {
                 QGeoCoordinate coordinates;
@@ -514,8 +520,8 @@ bool QGeoRouteXmlParser::parseLink(QList<QGeoRouteSegmentContainer> &links)
 
     QGeoRouteSegmentContainer segmentContainer;
 
-    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == QStringLiteral("Link")) &&
-           !m_reader->hasError()) {
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement
+           && m_reader->name() == QStringLiteral("Link")) && !m_reader->hasError()) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == QStringLiteral("LinkId")) {
                 segmentContainer.id = m_reader->readElementText();
@@ -532,7 +538,8 @@ bool QGeoRouteXmlParser::parseLink(QList<QGeoRouteSegmentContainer> &links)
                 QGeoDynamicSpeedInfoContainer speedInfo;
                 if (!parseDynamicSpeedInfo(speedInfo))
                     return false;
-                const double time = speedInfo.trafficTime >= 0 ? speedInfo.trafficTime : speedInfo.baseTime;
+                const double time = speedInfo.trafficTime >= 0
+                                  ? speedInfo.trafficTime : speedInfo.baseTime;
                 if (time >= 0)
                     segmentContainer.segment.setTravelTime(time);
             } else {
@@ -548,32 +555,40 @@ bool QGeoRouteXmlParser::parseLink(QList<QGeoRouteSegmentContainer> &links)
     return true;
 }
 
-bool QGeoRouteXmlParser::parseGeoPoints(const QString &strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName)
+bool QGeoRouteXmlParser::parseGeoPoints(const QString &strPoints, QList<QGeoCoordinate> *geoPoints,
+                                        const QString &elementName)
 {
-    QStringList rawPoints = strPoints.split(' ');
+    const QStringList rawPoints = strPoints.split(' ');
 
-    for (int i = 0; i < rawPoints.length(); ++i) {
-        QStringList coords = rawPoints[i].split(',');
+    for (const auto &rawPoint : rawPoints) {
+        const QStringList coords = rawPoint.split(',');
 
         if (coords.length() != 2) {
-            m_reader->raiseError(QString("Each of the space separated values of \"%1\" is expected to be a comma separated pair of coordinates (value was \"%2\")").arg(elementName).arg(rawPoints[i]));
+            m_reader->raiseError(QStringLiteral("Each of the space separated values of \"%1\" "
+                                                "is expected to be a comma separated pair of "
+                                                "coordinates (value was \"%2\")")
+                                                .arg(elementName).arg(rawPoint));
             return false;
         }
 
         bool ok = false;
-        QString latString = coords[0];
+        const QString latString = coords[0];
         double lat = latString.toDouble(&ok);
 
         if (!ok) {
-            m_reader->raiseError(QString("The latitude portions of \"%1\" are expected to have a value convertable to a double (value was \"%2\")").arg(elementName).arg(latString));
+            m_reader->raiseError(QStringLiteral("The latitude portions of \"%1\" are expected to "
+                                                "have a value convertable to a double (value was "
+                                                "\"%2\")").arg(elementName).arg(latString));
             return false;
         }
 
-        QString lngString = coords[1];
+        const QString lngString = coords[1];
         double lng = lngString.toDouble(&ok);
 
         if (!ok) {
-            m_reader->raiseError(QString("The longitude portions of \"%1\" are expected to have a value convertable to a double (value was \"%2\")").arg(elementName).arg(lngString));
+            m_reader->raiseError(QStringLiteral("The longitude portions of \"%1\" are expected to "
+                                                "have a value convertable to a double (value was "
+                                                "\"%2\")").arg(elementName).arg(lngString));
             return false;
         }
 
@@ -592,8 +607,8 @@ bool QGeoRouteXmlParser::parseBoundingBox(QGeoRectangle &bounds)
     QGeoCoordinate br;
 
     m_reader->readNext();
-    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == QLatin1String("BoundingBox")) &&
-           !m_reader->hasError()) {
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement
+           && m_reader->name() == QLatin1String("BoundingBox")) && !m_reader->hasError()) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == QLatin1String("TopLeft")) {
                 QGeoCoordinate coordinates;

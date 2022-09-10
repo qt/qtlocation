@@ -499,11 +499,11 @@ QGeoShape QGeoProjectionWebMercator::visibleRegion() const
 {
     const QList<QDoubleVector2D> &visibleRegion = visibleGeometry();
     QGeoPolygon poly;
-    for (int i = 0; i < visibleRegion.size(); ++i) {
+    for (qsizetype i = 0; i < visibleRegion.size(); ++i) {
          const QDoubleVector2D &c = visibleRegion.at(i);
         // If a segment spans more than half of the map longitudinally, split in 2.
-        if (i && qAbs(visibleRegion.at(i-1).x() - c.x()) >= 0.5) { // This assumes a segment is never >= 1.0 (whole map span)
-            QDoubleVector2D extraPoint = (visibleRegion.at(i-1) + c) * 0.5;
+        if (i && qAbs(visibleRegion.at(i - 1).x() - c.x()) >= 0.5) { // This assumes a segment is never >= 1.0 (whole map span)
+            QDoubleVector2D extraPoint = (visibleRegion.at(i - 1) + c) * 0.5;
             poly.addCoordinate(wrappedMapProjectionToGeo(extraPoint));
         }
         poly.addCoordinate(wrappedMapProjectionToGeo(c));

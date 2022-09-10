@@ -43,12 +43,14 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoFileTileCacheMapbox::QGeoFileTileCacheMapbox(const QList<QGeoMapType> &mapTypes, int scaleFactor, const QString &directory, QObject *parent)
+QGeoFileTileCacheMapbox::QGeoFileTileCacheMapbox(const QList<QGeoMapType> &mapTypes,
+                                                 int scaleFactor, const QString &directory,
+                                                 QObject *parent)
     :QGeoFileTileCache(directory, parent), m_mapTypes(mapTypes)
 {
     m_scaleFactor = qBound(1, scaleFactor, 2);
-    for (int i=0; i < mapTypes.size(); i++)
-        m_mapNameToId.insert(mapTypes[i].name(), i+1);
+    for (qsizetype i = 0; i < mapTypes.size(); i++)
+        m_mapNameToId.insert(mapTypes[i].name(), i + 1);
 }
 
 QGeoFileTileCacheMapbox::~QGeoFileTileCacheMapbox()
@@ -56,7 +58,8 @@ QGeoFileTileCacheMapbox::~QGeoFileTileCacheMapbox()
 
 }
 
-QString QGeoFileTileCacheMapbox::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const
+QString QGeoFileTileCacheMapbox::tileSpecToFilename(const QGeoTileSpec &spec, const QString &format,
+                                                    const QString &directory) const
 {
     QString filename = spec.plugin();
     filename += QLatin1String("-");
@@ -93,25 +96,23 @@ QGeoTileSpec QGeoFileTileCacheMapbox::filenameToTileSpec(const QString &filename
     if (parts.length() != 3) // 3 because the map name has always a dot in it.
         return QGeoTileSpec();
 
-    QString name = parts.at(0) + QChar('.') + parts.at(1);
-    QStringList fields = name.split('-');
+    const QString name = parts.at(0) + QChar('.') + parts.at(1);
+    const QStringList fields = name.split('-');
 
-    int length = fields.length();
-    if (length != 6 && length != 7) {
+    const qsizetype length = fields.length();
+    if (length != 6 && length != 7)
         return QGeoTileSpec();
-    } else {
-        int scaleIdx = fields.last().indexOf("@");
-        if (scaleIdx < 0 || fields.last().size() <= (scaleIdx + 2))
-            return QGeoTileSpec();
-        int scaleFactor = fields.last()[scaleIdx + 1].digitValue();
-        if (scaleFactor != m_scaleFactor)
-           return QGeoTileSpec();
-    }
+    const qsizetype scaleIdx = fields.last().indexOf("@");
+    if (scaleIdx < 0 || fields.last().size() <= (scaleIdx + 2))
+        return QGeoTileSpec();
+    const int scaleFactor = fields.last()[scaleIdx + 1].digitValue();
+    if (scaleFactor != m_scaleFactor)
+        return QGeoTileSpec();
 
     QList<int> numbers;
 
     bool ok = false;
-    for (int i = 2; i < length-1; ++i) { // skipping -@_X
+    for (qsizetype i = 2; i < length - 1; ++i) { // skipping -@_X
         ok = false;
         int value = fields.at(i).toInt(&ok);
         if (!ok)

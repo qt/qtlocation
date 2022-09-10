@@ -119,28 +119,22 @@ void PlaceSearchReplyEsri::replyFinished()
         return;
 
     QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
-    if (!document.isObject())
-    {
+    if (!document.isObject()) {
         setError(ParseError, tr("Response parse error"));
         return;
     }
 
     QJsonValue suggestions = document.object().value(kCandidatesKey);
-    if (!suggestions.isArray())
-    {
+    if (!suggestions.isArray()) {
         setError(ParseError, tr("Response parse error"));
         return;
     }
 
-    QJsonArray resultsArray = suggestions.toArray();
+    const QJsonArray resultsArray = suggestions.toArray();
 
     QList<QPlaceSearchResult> results;
-    for (int i = 0; i < resultsArray.count(); ++i)
-    {
-        QJsonObject item = resultsArray.at(i).toObject();
-        QPlaceResult placeResult = parsePlaceResult(item);
-        results.append(placeResult);
-    }
+    for (const auto result : resultsArray)
+        results.append(parsePlaceResult(result.toObject()));
 
     setResults(results);
     setFinished(true);

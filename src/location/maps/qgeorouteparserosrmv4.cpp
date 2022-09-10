@@ -253,13 +253,13 @@ static QGeoRoute constructRoute(const QByteArray &geometry, const QJsonArray &in
 {
     QGeoRoute route;
 
-    QList<QGeoCoordinate> path = parsePolyline(geometry);
+    const QList<QGeoCoordinate> path = parsePolyline(geometry);
 
     QGeoRouteSegment firstSegment;
     int firstPosition = -1;
 
-    for (int i = instructions.count() - 1; i >= 0; --i) {
-        QJsonArray instruction = instructions.at(i).toArray();
+    for (qsizetype i = instructions.count() - 1; i >= 0; --i) {
+        const QJsonArray instruction = instructions.at(i).toArray();
 
         if (instruction.count() < 8) {
             qWarning("Instruction does not contain enough fields.");
@@ -358,16 +358,16 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV4Private::parseReply(QList<QGeoRoute> 
 
         routes.append(route);
 
-        QJsonArray alternativeSummaries =
+        const QJsonArray alternativeSummaries =
             object.value(QStringLiteral("alternative_summaries")).toArray();
-        QJsonArray alternativeGeometries =
+        const QJsonArray alternativeGeometries =
             object.value(QStringLiteral("alternative_geometries")).toArray();
-        QJsonArray alternativeInstructions =
+        const QJsonArray alternativeInstructions =
             object.value(QStringLiteral("alternative_instructions")).toArray();
 
         if (alternativeSummaries.count() == alternativeGeometries.count() &&
             alternativeSummaries.count() == alternativeInstructions.count()) {
-            for (int i = 0; i < alternativeSummaries.count(); ++i) {
+            for (qsizetype i = 0; i < alternativeSummaries.count(); ++i) {
                 route = constructRoute(alternativeGeometries.at(i).toString().toLatin1(),
                                        alternativeInstructions.at(i).toArray(),
                                        alternativeSummaries.at(i).toObject(),

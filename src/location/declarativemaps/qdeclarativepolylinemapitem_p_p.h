@@ -339,14 +339,14 @@ public:
         if (m_screenVertices->size())
             a = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(m_screenVertices->first().toDoubleVector2D()));
         QDoubleVector2D b;
-        for (int i = 1; i < m_screenVertices->size(); ++i)
-        {
+        for (qsizetype i = 1; i < m_screenVertices->size(); ++i) {
+            const auto &screenVertice = m_screenVertices->at(i);
             if (!a.isFinite()) {
-                a = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(m_screenVertices->at(i).toDoubleVector2D()));
+                a = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(screenVertice.toDoubleVector2D()));
                 continue;
             }
 
-            b = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(m_screenVertices->at(i).toDoubleVector2D()));
+            b = p.wrappedMapProjectionToItemPosition(p.wrapMapProjection(screenVertice.toDoubleVector2D()));
             if (!b.isFinite()) {
                 a = b;
                 continue;

@@ -935,9 +935,9 @@ void QDeclarativePlace::category_clear(QQmlListProperty<QDeclarativeCategory> *p
     if (object->m_categories.isEmpty())
         return;
 
-    for (int i = 0; i < object->m_categories.count(); ++i) {
-        if (object->m_categories.at(i)->parent() == object)
-            object->m_categoriesToBeDeleted.append(object->m_categories.at(i));
+    for (auto *category : qAsConst(object->m_categories)) {
+        if (category->parent() == object)
+            object->m_categoriesToBeDeleted.append(category);
     }
 
     object->m_categories.clear();

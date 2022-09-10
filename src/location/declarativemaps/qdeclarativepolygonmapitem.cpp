@@ -178,8 +178,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     wrappedPath.reserve(path.size());
     QDoubleVector2D wrappedLeftBound(qInf(), qInf());
     // 1)
-    for (int i = 0; i < path.size(); ++i) {
-        const QDoubleVector2D &coord = path.at(i);
+    for (const auto &coord : path) {
         QDoubleVector2D wrappedProjection = p.wrapMapProjection(coord);
 
         // We can get NaN if the map isn't set up correctly, or the projection
@@ -235,7 +234,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(leftBoundWrapped);
     for (const QList<QDoubleVector2D> &path: clippedPaths) {
         QDoubleVector2D lastAddedPoint;
-        for (int i = 0; i < path.size(); ++i) {
+        for (qsizetype i = 0; i < path.size(); ++i) {
             QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(path.at(i));
             point = point - origin; // (0,0) if point == geoLeftBound_
 
@@ -351,7 +350,7 @@ static void wrapPath(const QGeoPolygon &poly
                      ,QDoubleVector2D *leftBoundWrapped = nullptr)
 {
     QList<QList<QDoubleVector2D> > paths;
-    for (int i = 0; i < 1+poly.holesCount(); ++i) {
+    for (qsizetype i = 0; i < 1 + poly.holesCount(); ++i) {
         QList<QDoubleVector2D> path;
         if (!i) {
             for (const QGeoCoordinate &c : poly.perimeter())
@@ -368,12 +367,9 @@ static void wrapPath(const QGeoPolygon &poly
 
     QList<QDoubleVector2D> wrappedPath;
     // compute 3 sets of "wrapped" coordinates: one w regular mercator, one w regular mercator +- 1.0
-    for (int j = 0; j < paths.size(); ++j) {
-        const QList<QDoubleVector2D> &path = paths.at(j);
+    for (const auto &path : paths) {
         wrappedPath.clear();
-        for (int i = 0; i < path.size(); ++i) {
-            QDoubleVector2D coord = path.at(i);
-
+        for (QDoubleVector2D coord : path) {
             // We can get NaN if the map isn't set up correctly, or the projection
             // is faulty -- probably best thing to do is abort
             if (!qIsFinite(coord.x()) || !qIsFinite(coord.y())) {

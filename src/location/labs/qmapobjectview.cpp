@@ -186,16 +186,13 @@ QMapObjectView::~QMapObjectView()
 QList<QGeoMapObject *> QMapObjectView::geoMapObjectChildren() const
 {
     auto kids = QGeoMapObject::geoMapObjectChildren();
-    auto size = m_instantiatedMapObjects.count();
-    for (int i = 0; i < size; ++i) {
-        auto obj = qobject_cast<QGeoMapObject*>(m_instantiatedMapObjects[i]);
-        if (obj)
+    for (const auto &object : m_instantiatedMapObjects) {
+        if (auto *obj = qobject_cast<QGeoMapObject*>(object))
             kids << obj;
     }
-    for (int i = 0; i < m_userAddedMapObjects.size(); ++i) {
-        auto obj = m_userAddedMapObjects.at(i);
-        if (obj)
-            kids << obj;
+    for (const auto &object : m_userAddedMapObjects) {
+        if (object)
+            kids << object;
     }
     return kids;
 }

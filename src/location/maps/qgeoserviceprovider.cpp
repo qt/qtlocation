@@ -834,14 +834,14 @@ void QGeoServiceProviderPrivate::loadMeta()
     error = QGeoServiceProvider::NotSupportedError;
     errorString = QString(QLatin1String("The geoservices provider %1 is not supported.")).arg(providerName);
 
-    QList<QCborMap> candidates = QGeoServiceProviderPrivate::plugins().values(providerName);
+    const QList<QCborMap> candidates = QGeoServiceProviderPrivate::plugins().values(providerName);
 
     int versionFound = -1;
     int idx = -1;
 
     // figure out which version of the plugin we want
     // (always latest unless experimental)
-    for (int i = 0; i < candidates.size(); ++i) {
+    for (qsizetype i = 0; i < candidates.size(); ++i) {
         QCborMap meta = candidates[i];
         if (meta.contains(QStringLiteral("Version"))
                 && meta.value(QStringLiteral("Version")).isInteger()
@@ -906,8 +906,8 @@ QMultiHash<QString, QCborMap> QGeoServiceProviderPrivate::plugins(bool reload)
 void QGeoServiceProviderPrivate::loadPluginMetadata(QMultiHash<QString, QCborMap> &list)
 {
     QFactoryLoader *l = loader();
-    QList<QPluginParsedMetaData> meta = l->metaData();
-    for (int i = 0; i < meta.size(); ++i) {
+    const QList<QPluginParsedMetaData> meta = l->metaData();
+    for (qsizetype i = 0; i < meta.size(); ++i) {
         QCborMap obj = meta.at(i).value(QtPluginMetaDataKeys::MetaData).toMap();
         obj.insert(QStringLiteral("index"), i);
         list.insert(obj.value(QStringLiteral("Provider")).toString(), obj);

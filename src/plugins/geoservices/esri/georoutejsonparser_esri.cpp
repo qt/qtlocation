@@ -183,7 +183,7 @@ void GeoRouteJsonParserEsri::parseDirection(const QJsonObject &direction)
     };
 
     QGeoRouteSegment firstSegment;
-    for (int i = features.size() - 1; i >= 0; --i)
+    for (qsizetype i = features.size() - 1; i >= 0; --i)
     {
         QJsonObject feature = features.at(i).toObject();
         QJsonObject attributes = feature.value(kDirectionsFeaturesAttributesKey).toObject();
