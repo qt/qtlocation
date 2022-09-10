@@ -695,14 +695,14 @@ void QDeclarativePlace::finished()
         m_errorString.clear();
 
         m_reply->deleteLater();
-        m_reply = 0;
+        m_reply = nullptr;
 
         setStatus(QDeclarativePlace::Ready);
     } else {
         QString errorString = m_reply->errorString();
 
         m_reply->deleteLater();
-        m_reply = 0;
+        m_reply = nullptr;
 
         setStatus(QDeclarativePlace::Error, errorString);
     }
@@ -1173,29 +1173,29 @@ void QDeclarativePlace::primarySignalsEmission(const QString &type)
 QPlaceManager *QDeclarativePlace::manager()
 {
     if (m_status != QDeclarativePlace::Ready && m_status != QDeclarativePlace::Error)
-        return 0;
+        return nullptr;
 
     if (m_reply) {
         m_reply->abort();
         m_reply->deleteLater();
-        m_reply = 0;
+        m_reply = nullptr;
     }
 
     if (!m_plugin) {
            qmlWarning(this) << QStringLiteral("Plugin is not assigned to place.");
-           return 0;
+           return nullptr;
     }
 
     QGeoServiceProvider *serviceProvider = m_plugin->sharedGeoServiceProvider();
     if (!serviceProvider)
-        return 0;
+        return nullptr;
 
     QPlaceManager *placeManager = serviceProvider->placeManager();
 
     if (!placeManager) {
         setStatus(Error, QCoreApplication::translate(CONTEXT_NAME, PLUGIN_ERROR)
                          .arg(m_plugin->name()).arg(serviceProvider->errorString()));
-        return 0;
+        return nullptr;
     }
 
     return placeManager;

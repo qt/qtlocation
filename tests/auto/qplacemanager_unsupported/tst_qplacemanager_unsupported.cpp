@@ -99,8 +99,8 @@ void tst_QPlaceManagerUnsupported::initTestCase()
 #endif
 #endif
 
-    m_provider = 0;
-    m_manager = 0;
+    m_provider = nullptr;
+    m_manager = nullptr;
 
     QStringList providers = QGeoServiceProvider::availableServiceProviders();
     QVERIFY(providers.contains("test.places.unsupported"));

@@ -348,14 +348,14 @@ void QDeclarativeSupportedCategoriesModel::replyFinished()
     if (m_response->error() == QPlaceReply::NoError) {
         m_errorString.clear();
 
-        m_response = 0;
+        m_response = nullptr;
 
         updateLayout();
         setStatus(QDeclarativeSupportedCategoriesModel::Ready);
     } else {
         const QString errorString = m_response->errorString();
 
-        m_response = 0;
+        m_response = nullptr;
 
         setStatus(Error, errorString);
     }

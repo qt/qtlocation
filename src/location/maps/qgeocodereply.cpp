@@ -202,7 +202,7 @@ void QGeoCodeReply::setViewport(const QGeoShape &viewport)
 /*!
     Returns the viewport which contains the results.
 
-    This function will return 0 if no viewport bias
+    This function will return \nullptr if no viewport bias
     was specified in the QGeoCodingManager function which created this reply.
 */
 QGeoShape QGeoCodeReply::viewport() const

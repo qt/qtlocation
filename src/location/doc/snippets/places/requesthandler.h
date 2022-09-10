@@ -323,7 +323,7 @@ public slots:
 
     //5) Discard the rely object when done.
         searchReply->deleteLater();
-        searchReply = 0;
+        searchReply = nullptr;
     }
     // ![Simple search handler]
 
@@ -341,7 +341,7 @@ public slots:
             }
         }
         searchReply->deleteLater();  //discard reply
-        searchReply = 0;
+        searchReply = nullptr;
     }
     //! [Search for places handler cpp]
 
@@ -352,7 +352,7 @@ public slots:
             place = detailsReply->place();
 
         detailsReply->deleteLater(); //discard reply
-        detailsReply = 0;
+        detailsReply = nullptr;
     }
     //! [Details handler cpp]
 
@@ -381,7 +381,7 @@ public slots:
         }
 
         contentReply->deleteLater();
-        contentReply = 0;
+        contentReply = nullptr;
     }
     //! [Image handler]
 
@@ -393,7 +393,7 @@ public slots:
         }
 
         suggestionReply->deleteLater(); //discard reply
-        suggestionReply = 0;
+        suggestionReply = nullptr;
     }
 
     //! [Suggestion handler]
@@ -404,7 +404,7 @@ public slots:
             qDebug() << savePlaceReply->id();
 
         savePlaceReply->deleteLater(); //discard reply
-        savePlaceReply = 0;
+        savePlaceReply = nullptr;
     }
     //! [Save place handler]
 
@@ -415,7 +415,7 @@ public slots:
                      << removePlaceReply->id() << "was successful";
 
         removePlaceReply->deleteLater(); //discard reply
-        removePlaceReply = 0;
+        removePlaceReply = nullptr;
     }
     //! [Remove place handler]
 
@@ -427,7 +427,7 @@ public slots:
             qDebug() << "Failed to initialize categories";
 
         initCatReply->deleteLater();
-        initCatReply = 0;
+        initCatReply = nullptr;
     }
     //! [Initialize categories reply]
 
@@ -451,7 +451,7 @@ public slots:
         }
 
         saveCategoryReply->deleteLater();
-        saveCategoryReply = 0;
+        saveCategoryReply = nullptr;
     }
     //! [Save category handler]
 
@@ -462,7 +462,7 @@ public slots:
                      << removeCategoryReply->id() << "was successful";
 
         removeCategoryReply->deleteLater(); //discard reply
-        removeCategoryReply = 0;
+        removeCategoryReply = nullptr;
     }
     //! [Remove category handler]
 
@@ -505,7 +505,7 @@ public slots:
         }
 
         matchReply->deleteLater();
-        matchReply = 0;
+        matchReply = nullptr;
     }
     //! [Match places handler]
 

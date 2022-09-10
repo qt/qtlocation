@@ -58,7 +58,7 @@ QSGNode *QQSGMapObject::updateMapObjectNode(QSGNode *oldNode,
                                             QQuickWindow * /*window*/)
 {
     delete oldNode;
-    return 0;
+    return nullptr;
 }
 
 void QQSGMapObject::updateGeometry()

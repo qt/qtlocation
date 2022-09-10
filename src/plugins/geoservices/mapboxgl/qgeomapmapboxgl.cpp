@@ -96,10 +96,10 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
 
     if (m_viewportSize.isEmpty()) {
         delete node;
-        return 0;
+        return nullptr;
     }
 
-    QMapboxGL *map = 0;
+    QMapboxGL *map = nullptr;
     if (!node) {
         QOpenGLContext *currentCtx = QOpenGLContext::currentContext();
         if (!currentCtx) {

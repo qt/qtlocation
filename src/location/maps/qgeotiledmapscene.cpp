@@ -584,7 +584,7 @@ QSGNode *QGeoTiledMapScene::updateSceneGraph(QSGNode *oldNode, QQuickWindow *win
     float h = d->m_screenSize.height();
     if (w <= 0 || h <= 0) {
         delete oldNode;
-        return 0;
+        return nullptr;
     }
 
     QGeoTiledMapRootNode *mapRoot = static_cast<QGeoTiledMapRootNode *>(oldNode);

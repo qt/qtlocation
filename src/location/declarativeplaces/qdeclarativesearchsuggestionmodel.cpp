@@ -321,7 +321,7 @@ void QDeclarativeSearchSuggestionModel::queryFinished()
         return;
 
     QPlaceReply *reply = m_reply;
-    m_reply = 0;
+    m_reply = nullptr;
 
     int initialCount = m_suggestions.count();
     beginResetModel();

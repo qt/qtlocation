@@ -257,7 +257,7 @@ void QDeclarativeSearchModelBase::cancel()
 
     if (m_reply) {
         m_reply->deleteLater();
-        m_reply = 0;
+        m_reply = nullptr;
     }
 
     setStatus(Ready);

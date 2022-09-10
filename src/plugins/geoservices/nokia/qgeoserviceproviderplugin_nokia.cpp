@@ -103,7 +103,7 @@ namespace
         checkUsageTerms(parameters, error, errorString);
 
         if (*error != QGeoServiceProvider::NoError)
-            return 0;
+            return nullptr;
 
         QGeoNetworkAccessManager *networkManager = tryGetNetworkAccessManager(parameters);
         if (!networkManager)

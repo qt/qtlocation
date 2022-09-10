@@ -250,7 +250,7 @@ QDeclarativeGeoRoute *QDeclarativeGeoRouteModel::get(int index)
 {
     if (index < 0 || index >= routes_.count()) {
         qmlWarning(this) << QStringLiteral("Index '%1' out of range").arg(index);
-        return 0;
+        return nullptr;
     }
     return routes_.at(index);
 }

@@ -79,7 +79,7 @@ QGeoTileFetcherNokia::QGeoTileFetcherNokia(const QVariantMap &parameters,
                                            QGeoTiledMappingManagerEngineNokia *engine,
                                            const QSize &tileSize,
                                            int ppi)
-:   QGeoTileFetcher(engine), m_engineNokia(engine), m_networkManager(networkManager), m_ppi(ppi), m_copyrightsReply(0),
+:   QGeoTileFetcher(engine), m_engineNokia(engine), m_networkManager(networkManager), m_ppi(ppi), m_copyrightsReply(nullptr),
     m_baseUriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.mapping.host"), MAP_TILES_HOST)),
     m_aerialUriProvider(new QGeoUriProvider(this, parameters, QStringLiteral("here.mapping.host.aerial"), MAP_TILES_HOST_AERIAL))
 {
