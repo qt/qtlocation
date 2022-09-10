@@ -87,7 +87,7 @@ protected:
     void setPath(const QJSValue &value) override;
 
 private:
-    QDeclarativeGeoRoute *route_;
+    QDeclarativeGeoRoute *route_ = nullptr;
 };
 
 QT_END_NAMESPACE

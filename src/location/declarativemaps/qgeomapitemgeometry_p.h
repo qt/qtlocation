@@ -1,6 +1,6 @@
 /****************************************************************************
  **
- ** Copyright (C) 2015 The Qt Company Ltd.
+ ** Copyright (C) 2022 The Qt Company Ltd.
  ** Contact: https://www.qt.io/licensing/
  **
  ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -137,14 +137,13 @@ public:
     mutable bool m_dataChanged = false;
 
 private:
-    QGeoMapItemGeometry(const QGeoMapItemGeometry &other); // Or else it may crash on copy
-    QGeoMapItemGeometry &operator= (const QGeoMapItemGeometry & other); // Or else it may crash on copy
+    Q_DISABLE_COPY(QGeoMapItemGeometry);
 
 protected:
-    bool sourceDirty_;
-    bool screenDirty_;
-    bool clipToViewport_;
-    bool preserveGeometry_;
+    bool sourceDirty_ = true;
+    bool screenDirty_ = true;
+    bool clipToViewport_ = true;
+    bool preserveGeometry_ = false;
     QGeoCoordinate geoLeftBound_;
 
     QPointF firstPointOffset_;

@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2015 Jolla Ltd.
 ** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -142,15 +142,15 @@ private:
     void addItemGroupToMap(QDeclarativeGeoMapItemGroup *item, int index, bool createdItem);
     void addDelegateToMap(QQuickItem *object, int index, bool createdItem = false);
 
-    bool m_componentCompleted;
+    bool m_componentCompleted = false;
     QQmlIncubator::IncubationMode m_incubationMode = QQmlIncubator::Asynchronous;
-    QQmlComponent *m_delegate;
+    QQmlComponent *m_delegate = nullptr;
     QVariant m_itemModel;
-    QDeclarativeGeoMap *m_map;
+    QDeclarativeGeoMap *m_map = nullptr;
     QList<QQuickItem *> m_instantiatedItems;
-    bool m_fitViewport;
+    bool m_fitViewport = false;
     bool m_creatingObject = false;
-    QQmlDelegateModel *m_delegateModel;
+    QQmlDelegateModel *m_delegateModel = nullptr;
     QQuickTransition *m_enter = nullptr;
     QQuickTransition *m_exit = nullptr;
 

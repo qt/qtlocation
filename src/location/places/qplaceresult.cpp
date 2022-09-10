@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -42,21 +42,6 @@
 #include <QtCore/qnumeric.h>
 
 QT_USE_NAMESPACE
-
-QPlaceResultPrivate::QPlaceResultPrivate()
-    :   QPlaceSearchResultPrivate(), distance(qQNaN()), sponsored(false)
-{
-}
-
-QPlaceResultPrivate::QPlaceResultPrivate(const QPlaceResultPrivate &other)
-:   QPlaceSearchResultPrivate(other), distance(other.distance), place(other.place),
-    sponsored(other.sponsored)
-{
-}
-
-QPlaceResultPrivate::~QPlaceResultPrivate()
-{
-}
 
 bool QPlaceResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
 {

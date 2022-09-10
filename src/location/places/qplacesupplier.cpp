@@ -44,23 +44,6 @@ QT_USE_NAMESPACE
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceSupplierPrivate)
 
-QPlaceSupplierPrivate::QPlaceSupplierPrivate() : QSharedData()
-{
-}
-
-QPlaceSupplierPrivate::QPlaceSupplierPrivate(const QPlaceSupplierPrivate &other)
-    : QSharedData()
-{
-    this->name = other.name;
-    this->supplierId = other.supplierId;
-    this->url = other.url;
-    this->icon = other.icon;
-}
-
-QPlaceSupplierPrivate::~QPlaceSupplierPrivate()
-{
-}
-
 bool QPlaceSupplierPrivate::operator==(const QPlaceSupplierPrivate &other) const
 {
     return (

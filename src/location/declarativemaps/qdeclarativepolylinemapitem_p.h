@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -84,8 +84,8 @@ Q_SIGNALS:
     void colorChanged(const QColor &color);
 
 private:
-    qreal width_;
-    QColor color_;
+    qreal width_ = 1.0;
+    QColor color_ = Qt::black;
 };
 
 class QDeclarativePolylineMapItemPrivate;
@@ -158,8 +158,8 @@ public:
     QDeclarativeMapLineProperties m_line;
 
     Backend m_backend = Software;
-    bool m_dirtyMaterial;
-    bool m_updatingGeometry;
+    bool m_dirtyMaterial = true;
+    bool m_updatingGeometry = false;
 
     std::unique_ptr<QDeclarativePolylineMapItemPrivate> m_d;
 

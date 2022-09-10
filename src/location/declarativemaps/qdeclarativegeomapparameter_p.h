@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -82,8 +82,8 @@ private slots:
     void onPropertyUpdated(int index);
 
 private:
-    int m_initialPropertyCount;
-    bool m_complete;
+    const int m_initialPropertyCount = staticMetaObject.propertyCount();
+    bool m_complete = false;
 };
 
 QT_END_NAMESPACE

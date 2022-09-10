@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -123,12 +123,12 @@ private:
     QGeoCoordinate coordinate_;
     QGeoRectangle geoshape_;
     QPointer<QQuickItem> sourceItem_;
-    QQuickItem *opacityContainer_;
+    QQuickItem *opacityContainer_ = nullptr;
     QPointF anchorPoint_;
-    qreal zoomLevel_;
-    bool mapAndSourceItemSet_;
-    bool updatingGeometry_;
-    QMapQuickItemMatrix4x4 *matrix_;
+    qreal zoomLevel_ = 0.0;
+    bool mapAndSourceItemSet_ = false;
+    bool updatingGeometry_ = false;
+    QMapQuickItemMatrix4x4 *matrix_ = nullptr;
 
     friend class QDeclarativeGeoMap;
 };

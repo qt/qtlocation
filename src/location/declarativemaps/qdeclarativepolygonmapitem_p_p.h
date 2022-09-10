@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2020 Paolo Angelelli <paolo.angelelli@gmail.com>
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -89,7 +89,7 @@ public:
 
 protected:
     QPainterPath srcPath_;
-    bool assumeSimple_;
+    bool assumeSimple_ = false;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolygonGeometryOpenGL : public QGeoMapItemGeometry
@@ -143,7 +143,7 @@ public:
     QList<quint32> m_screenIndices;
     QDoubleVector2D m_bboxLeftBoundWrapped;
     QList<WrappedPolygon> m_wrappedPolygons;
-    int m_wrapOffset;
+    int m_wrapOffset = 0;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT MapPolygonShader : public QSGMaterialShader
@@ -270,12 +270,13 @@ public:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItemPrivateCPU: public QDeclarativePolygonMapItemPrivate
 {
 public:
-    QDeclarativePolygonMapItemPrivateCPU(QDeclarativePolygonMapItem &polygon) : QDeclarativePolygonMapItemPrivate(polygon)
+    QDeclarativePolygonMapItemPrivateCPU(QDeclarativePolygonMapItem &polygon)
+        : QDeclarativePolygonMapItemPrivate(polygon)
     {
     }
 
     QDeclarativePolygonMapItemPrivateCPU(QDeclarativePolygonMapItemPrivate &other)
-    : QDeclarativePolygonMapItemPrivate(other)
+        : QDeclarativePolygonMapItemPrivate(other)
     {
     }
 
@@ -453,7 +454,7 @@ public:
     }
 
     QDeclarativePolygonMapItemPrivateOpenGL(QDeclarativePolygonMapItemPrivate &other)
-    : QDeclarativePolygonMapItemPrivate(other)
+        : QDeclarativePolygonMapItemPrivate(other)
     {
     }
 

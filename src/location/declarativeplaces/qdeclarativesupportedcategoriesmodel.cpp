@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2014 Aaron McCarthy <mccarthy.aaron@gmail.com>
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -139,8 +139,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeSupportedCategoriesModel::QDeclarativeSupportedCategoriesModel(QObject *parent)
-:   QAbstractItemModel(parent), m_response(0), m_plugin(0), m_hierarchical(true),
-    m_complete(false), m_status(Null)
+    : QAbstractItemModel(parent)
 {
 }
 

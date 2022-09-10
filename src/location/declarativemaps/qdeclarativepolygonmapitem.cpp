@@ -1,6 +1,6 @@
 /****************************************************************************
  **
- ** Copyright (C) 2015 The Qt Company Ltd.
+ ** Copyright (C) 2022 The Qt Company Ltd.
  ** Contact: https://www.qt.io/licensing/
  **
  ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -153,10 +153,7 @@ QT_BEGIN_NAMESPACE
     \since 5.14
 */
 
-QGeoMapPolygonGeometry::QGeoMapPolygonGeometry()
-:   assumeSimple_(false)
-{
-}
+QGeoMapPolygonGeometry::QGeoMapPolygonGeometry() = default;
 
 /*!
     \internal
@@ -333,7 +330,8 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map, qreal stroke
         this->translate(QPointF(strokeWidth, strokeWidth));
 }
 
-QGeoMapPolygonGeometryOpenGL::QGeoMapPolygonGeometryOpenGL(){
+QGeoMapPolygonGeometryOpenGL::QGeoMapPolygonGeometryOpenGL()
+{
 }
 
 void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const QList<QDoubleVector2D> &path)
@@ -918,9 +916,9 @@ QSGMaterialType *MapPolygonMaterial::type() const
     return &type;
 }
 
-MapPolygonNode::MapPolygonNode() :
-    border_(new MapPolylineNode()),
-    geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
+MapPolygonNode::MapPolygonNode()
+    : border_(new MapPolylineNode()),
+      geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
 {
     geometry_.setDrawingMode(QSGGeometry::DrawTriangles);
     QSGGeometryNode::setMaterial(&fill_material_);

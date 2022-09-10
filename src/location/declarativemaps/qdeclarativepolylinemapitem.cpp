@@ -1,6 +1,6 @@
 /****************************************************************************
  **
- ** Copyright (C) 2015 The Qt Company Ltd.
+ ** Copyright (C) 2022 The Qt Company Ltd.
  ** Contact: https://www.qt.io/licensing/
  **
  ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -316,10 +316,8 @@ static QList<QList<QDoubleVector2D> > clipLine(
     \since 5.14
 */
 
-QDeclarativeMapLineProperties::QDeclarativeMapLineProperties(QObject *parent) :
-    QObject(parent),
-    width_(1.0),
-    color_(Qt::black)
+QDeclarativeMapLineProperties::QDeclarativeMapLineProperties(QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -927,11 +925,8 @@ struct PolylineBackendSelector
 Q_GLOBAL_STATIC(PolylineBackendSelector, mapPolylineBackendSelector)
 
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent),
-    m_line(this),
-    m_dirtyMaterial(true),
-    m_updatingGeometry(false),
-    m_d(new QDeclarativePolylineMapItemPrivateCPU(*this))
+    : QDeclarativeGeoMapItemBase(parent), m_line(this),
+      m_d(new QDeclarativePolylineMapItemPrivateCPU(*this))
 {
     m_itemType = QGeoMap::MapPolyline;
     m_geopath = QGeoPathEager();

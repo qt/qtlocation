@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -52,51 +52,6 @@
 QT_BEGIN_NAMESPACE
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceSearchRequestPrivate)
-
-QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate()
-:   QSharedData(),
-    visibilityScope(QLocation::UnspecifiedVisibility),
-    relevanceHint(QPlaceSearchRequest::UnspecifiedHint),
-    limit(-1)
-{
-}
-
-QPlaceSearchRequestPrivate::QPlaceSearchRequestPrivate(const QPlaceSearchRequestPrivate &other)
-    : QSharedData(other),
-      searchTerm(other.searchTerm),
-      categories(other.categories),
-      searchArea(other.searchArea),
-      recommendationId(other.recommendationId),
-      visibilityScope(other.visibilityScope),
-      relevanceHint(other.relevanceHint),
-      limit(other.limit),
-      searchContext(other.searchContext),
-      related(other.related),
-      page(other.page)
-{
-}
-
-QPlaceSearchRequestPrivate::~QPlaceSearchRequestPrivate()
-{
-}
-
-QPlaceSearchRequestPrivate &QPlaceSearchRequestPrivate::operator=(const QPlaceSearchRequestPrivate &other)
-{
-    if (this != &other) {
-        searchTerm = other.searchTerm;
-        categories = other.categories;
-        searchArea = other.searchArea;
-        recommendationId = other.recommendationId;
-        visibilityScope = other.visibilityScope;
-        relevanceHint = other.relevanceHint;
-        limit = other.limit;
-        searchContext = other.searchContext;
-        related = other.related;
-        page = other.page;
-    }
-
-    return *this;
-}
 
 bool QPlaceSearchRequestPrivate::operator==(const QPlaceSearchRequestPrivate &other) const
 {

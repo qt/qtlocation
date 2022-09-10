@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -151,20 +151,20 @@ protected:
     virtual QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const;
     virtual QGeoTileSpec filenameToTileSpec(const QString &filename) const;
 
-    QCache3Q<QGeoTileSpec, QGeoCachedTileDisk, QCache3QTileEvictionPolicy > diskCache_;
-    QCache3Q<QGeoTileSpec, QGeoCachedTileMemory > memoryCache_;
-    QCache3Q<QGeoTileSpec, QGeoTileTexture > textureCache_;
+    QCache3Q<QGeoTileSpec, QGeoCachedTileDisk, QCache3QTileEvictionPolicy> diskCache_;
+    QCache3Q<QGeoTileSpec, QGeoCachedTileMemory> memoryCache_;
+    QCache3Q<QGeoTileSpec, QGeoTileTexture> textureCache_;
 
     QString directory_;
 
-    int minTextureUsage_;
-    int extraTextureUsage_;
-    CostStrategy costStrategyDisk_;
-    CostStrategy costStrategyMemory_;
-    CostStrategy costStrategyTexture_;
-    bool isDiskCostSet_;
-    bool isMemoryCostSet_;
-    bool isTextureCostSet_;
+    int minTextureUsage_ = 0;
+    int extraTextureUsage_ = 0;
+    CostStrategy costStrategyDisk_ = ByteSize;
+    CostStrategy costStrategyMemory_ = ByteSize;
+    CostStrategy costStrategyTexture_ = ByteSize;
+    bool isDiskCostSet_ = false;
+    bool isMemoryCostSet_ = false;
+    bool isTextureCostSet_ = false;
 };
 
 QT_END_NAMESPACE

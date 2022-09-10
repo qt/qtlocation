@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -67,16 +67,15 @@ class QGeoTileFetcher;
 class QGeoTiledMappingManagerEnginePrivate
 {
 public:
-    QGeoTiledMappingManagerEnginePrivate();
-    ~QGeoTiledMappingManagerEnginePrivate();
+    QGeoTiledMappingManagerEnginePrivate() = default;
 
     QSize tileSize_;
-    int m_tileVersion;
-    QHash<QGeoTiledMap *, QSet<QGeoTileSpec> > mapHash_;
-    QHash<QGeoTileSpec, QSet<QGeoTiledMap *> > tileHash_;
-    QAbstractGeoTileCache::CacheAreas cacheHint_;
-    QAbstractGeoTileCache *tileCache_;
-    QGeoTileFetcher *fetcher_;
+    int m_tileVersion = -1;
+    QHash<QGeoTiledMap *, QSet<QGeoTileSpec>> mapHash_;
+    QHash<QGeoTileSpec, QSet<QGeoTiledMap *>> tileHash_;
+    QAbstractGeoTileCache::CacheAreas cacheHint_ = QAbstractGeoTileCache::AllCaches;
+    QAbstractGeoTileCache *tileCache_ = nullptr;
+    QGeoTileFetcher *fetcher_ = nullptr;
 
 private:
     Q_DISABLE_COPY(QGeoTiledMappingManagerEnginePrivate)

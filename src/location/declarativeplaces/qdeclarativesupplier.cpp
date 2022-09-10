@@ -72,7 +72,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeSupplier::QDeclarativeSupplier(QObject *parent)
-    : QObject(parent), m_icon(0)
+    : QObject(parent)
 {
 }
 
@@ -80,8 +80,7 @@ QDeclarativeSupplier::QDeclarativeSupplier(const QPlaceSupplier &src,
                                            QDeclarativeGeoServiceProvider *plugin,
                                            QObject *parent)
     : QObject(parent),
-      m_src(src),
-      m_icon(0)
+      m_src(src)
 {
     setSupplier(src, plugin);
 }

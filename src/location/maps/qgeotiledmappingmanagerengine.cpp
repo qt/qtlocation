@@ -56,7 +56,6 @@ QT_BEGIN_NAMESPACE
 
 QGeoTiledMappingManagerEngine::QGeoTiledMappingManagerEngine(QObject *parent)
     : QGeoMappingManagerEngine(parent),
-      m_prefetchStyle(QGeoTiledMap::PrefetchTwoNeighbourLayers),
       d_ptr(new QGeoTiledMappingManagerEnginePrivate)
 {
 }
@@ -308,21 +307,6 @@ QAbstractGeoTileCache *QGeoTiledMappingManagerEngine::tileCache()
 QSharedPointer<QGeoTileTexture> QGeoTiledMappingManagerEngine::getTileTexture(const QGeoTileSpec &spec)
 {
     return d_ptr->tileCache_->get(spec);
-}
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
-:   m_tileVersion(-1),
-    cacheHint_(QAbstractGeoTileCache::AllCaches),
-    tileCache_(0),
-    fetcher_(0)
-{
-}
-
-QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate()
-{
 }
 
 QT_END_NAMESPACE

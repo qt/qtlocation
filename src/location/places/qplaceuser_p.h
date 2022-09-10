@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -60,11 +60,6 @@ QT_BEGIN_NAMESPACE
 class QPlaceUserPrivate : public QSharedData
 {
 public:
-    QPlaceUserPrivate();
-    QPlaceUserPrivate(const QPlaceUserPrivate &other);
-
-    ~QPlaceUserPrivate();
-
     bool operator==(const QPlaceUserPrivate &other) const;
 
     QString userId;

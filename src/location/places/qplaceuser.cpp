@@ -44,20 +44,6 @@ QT_USE_NAMESPACE
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceUserPrivate)
 
-QPlaceUserPrivate::QPlaceUserPrivate()
-    : QSharedData()
-{
-}
-
-QPlaceUserPrivate::QPlaceUserPrivate(const QPlaceUserPrivate &other)
-    : QSharedData(), userId(other.userId), name(other.name)
-{
-}
-
-QPlaceUserPrivate::~QPlaceUserPrivate()
-{
-}
-
 bool QPlaceUserPrivate::operator==(const QPlaceUserPrivate &other) const
 {
     return userId == other.userId && name == other.name;

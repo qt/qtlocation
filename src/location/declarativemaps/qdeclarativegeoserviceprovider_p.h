@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -206,12 +206,12 @@ private:
     static QDeclarativePluginParameter *parameter_at(QQmlListProperty<QDeclarativePluginParameter> *prop, qsizetype index);
     static void parameter_clear(QQmlListProperty<QDeclarativePluginParameter> *prop);
 
-    QGeoServiceProvider *sharedProvider_;
+    std::unique_ptr<QGeoServiceProvider> sharedProvider_;
     QString name_;
     QList<QDeclarativePluginParameter *> parameters_;
-    QDeclarativeGeoServiceProviderRequirements *required_;
-    bool complete_;
-    bool experimental_;
+    std::unique_ptr<QDeclarativeGeoServiceProviderRequirements> required_;
+    bool complete_ = false;
+    bool experimental_ = false;
     QStringList locales_;
     QStringList prefer_;
     Q_DISABLE_COPY(QDeclarativeGeoServiceProvider)
@@ -269,11 +269,11 @@ Q_SIGNALS:
     void requirementsChanged();
 
 private:
-    QDeclarativeGeoServiceProvider::MappingFeatures mapping_;
-    QDeclarativeGeoServiceProvider::RoutingFeatures routing_;
-    QDeclarativeGeoServiceProvider::GeocodingFeatures geocoding_;
-    QDeclarativeGeoServiceProvider::PlacesFeatures places_;
-    QDeclarativeGeoServiceProvider::NavigationFeatures navigation_;
+    QDeclarativeGeoServiceProvider::MappingFeatures mapping_ = QDeclarativeGeoServiceProvider::NoMappingFeatures;
+    QDeclarativeGeoServiceProvider::RoutingFeatures routing_ = QDeclarativeGeoServiceProvider::NoRoutingFeatures;
+    QDeclarativeGeoServiceProvider::GeocodingFeatures geocoding_ = QDeclarativeGeoServiceProvider::NoGeocodingFeatures;
+    QDeclarativeGeoServiceProvider::PlacesFeatures places_ = QDeclarativeGeoServiceProvider::NoPlacesFeatures;
+    QDeclarativeGeoServiceProvider::NavigationFeatures navigation_ = QDeclarativeGeoServiceProvider::NoNavigationFeatures;
 };
 
 QT_END_NAMESPACE

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -51,40 +51,8 @@
 
 QT_BEGIN_NAMESPACE
 
-QGeoMapViewportChangeEvent::QGeoMapViewportChangeEvent()
-    : zoomLevelChanged(false),
-      centerChanged(false),
-      mapSizeChanged(false),
-      tiltChanged(false),
-      bearingChanged(false),
-      rollChanged(false)
-{
-}
-
-QGeoMapViewportChangeEvent::QGeoMapViewportChangeEvent(const QGeoMapViewportChangeEvent &other)
-{
-    this->operator=(other);
-}
-
-QGeoMapViewportChangeEvent &QGeoMapViewportChangeEvent::operator=(const QGeoMapViewportChangeEvent &other)
-{
-    if (this == &other)
-        return (*this);
-
-    cameraData = other.cameraData;
-    mapSize = other.mapSize;
-    zoomLevelChanged = other.zoomLevelChanged;
-    centerChanged = other.centerChanged;
-    mapSizeChanged = other.mapSizeChanged;
-    tiltChanged = other.tiltChanged;
-    bearingChanged = other.bearingChanged;
-    rollChanged = other.rollChanged;
-
-    return (*this);
-}
-
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
-:   QQuickItem(parent), map_(0), quickMap_(0), parentGroup_(0)
+    : QQuickItem(parent)
 {
     setFiltersChildMouseEvents(true);
     connect(this, &QDeclarativeGeoMapItemBase::childrenChanged,

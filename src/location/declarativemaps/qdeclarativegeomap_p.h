@@ -295,43 +295,43 @@ private:
 
 private:
     QQuickWindow *m_window = nullptr;
-    QDeclarativeGeoServiceProvider *m_plugin;
-    QGeoMappingManager *m_mappingManager;
-    QDeclarativeGeoMapType *m_activeMapType;
+    QDeclarativeGeoServiceProvider *m_plugin = nullptr;
+    QGeoMappingManager *m_mappingManager = nullptr;
+    QDeclarativeGeoMapType *m_activeMapType = nullptr;
     QList<QDeclarativeGeoMapType *> m_supportedMapTypes;
     QList<QDeclarativeGeoMapItemView *> m_mapViews;
-    QQuickGeoMapGestureArea *m_gestureArea;
+    QQuickGeoMapGestureArea *m_gestureArea = nullptr;
     QPointer<QGeoMap> m_map;
     QPointer<QDeclarativeGeoMapCopyrightNotice> m_copyrights;
     QList<QPointer<QDeclarativeGeoMapItemBase> > m_mapItems;
     QList<QPointer<QDeclarativeGeoMapItemGroup> > m_mapItemGroups;
     QString m_errorString;
-    QGeoServiceProvider::Error m_error;
+    QGeoServiceProvider::Error m_error = QGeoServiceProvider::NoError;
     QGeoRectangle m_visibleRegion;
-    QColor m_color;
+    QColor m_color = QColor::fromRgbF(0.9f, 0.9f, 0.9f);
     QGeoCameraData m_cameraData;
-    bool m_componentCompleted;
-    bool m_pendingFitViewport;
-    bool m_copyrightsVisible;
-    double m_maximumViewportLatitude;
+    bool m_componentCompleted = false;
+    bool m_pendingFitViewport = false;
+    bool m_copyrightsVisible = true;
+    double m_maximumViewportLatitude = 0.0;
     double m_minimumViewportLatitude = 0.0;
-    bool m_initialized;
+    bool m_initialized = false;
     bool m_sgNodeHasChanged = false;
     QList<QDeclarativeGeoMapParameter *> m_mapParameters;
     QList<QGeoMapObject*> m_pendingMapObjects; // Used only in the initialization phase
     QGeoCameraCapabilities m_cameraCapabilities;
-    qreal m_userMinimumZoomLevel;
-    qreal m_userMaximumZoomLevel;
+    qreal m_userMinimumZoomLevel = Q_QNAN;
+    qreal m_userMaximumZoomLevel = Q_QNAN;
 
-    qreal m_minimumTilt;
-    qreal m_maximumTilt;
-    qreal m_userMinimumTilt;
-    qreal m_userMaximumTilt;
+    qreal m_minimumTilt = Q_QNAN;
+    qreal m_maximumTilt = Q_QNAN;
+    qreal m_userMinimumTilt = Q_QNAN;
+    qreal m_userMaximumTilt = Q_QNAN;
 
-    qreal m_minimumFieldOfView;
-    qreal m_maximumFieldOfView;
-    qreal m_userMinimumFieldOfView;
-    qreal m_userMaximumFieldOfView;
+    qreal m_minimumFieldOfView = Q_QNAN;
+    qreal m_maximumFieldOfView = Q_QNAN;
+    qreal m_userMinimumFieldOfView = Q_QNAN;
+    qreal m_userMaximumFieldOfView = Q_QNAN;
 
     int m_copyNoticesVisible = 0;
     qreal m_maxChildZ = 0;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -174,16 +174,16 @@ private:
     void setStatus(Status status);
     void setError(RouteError error, const QString &errorString);
 
-    bool complete_;
+    bool complete_ = false;
 
-    QDeclarativeGeoServiceProvider *plugin_;
-    QDeclarativeGeoRouteQuery *routeQuery_;
+    QDeclarativeGeoServiceProvider *plugin_ = nullptr;
+    QDeclarativeGeoRouteQuery *routeQuery_ = nullptr;
 
     QList<QDeclarativeGeoRoute *> routes_;
-    bool autoUpdate_;
-    Status status_;
+    bool autoUpdate_ = false;
+    Status status_ = QDeclarativeGeoRouteModel::Null;
     QString errorString_;
-    RouteError error_;
+    RouteError error_ = QDeclarativeGeoRouteModel::NoError;
 };
 
 
@@ -459,8 +459,8 @@ private:
     Q_INVOKABLE void doCoordinateChanged();
 
     QGeoRouteRequest request_;
-    bool complete_;
-    bool m_excludedAreaCoordinateChanged;
+    bool complete_ = false;
+    bool m_excludedAreaCoordinateChanged = false;
     bool m_extraParametersChanged = false;
     bool m_waypointsChanged = false;
     QList<QDeclarativeGeoWaypoint *> m_waypoints;

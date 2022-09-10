@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -43,20 +43,6 @@
 QT_USE_NAMESPACE
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceRatingsPrivate)
-
-QPlaceRatingsPrivate::QPlaceRatingsPrivate()
-    :   QSharedData(), average(0), maximum(0), count(0)
-{
-}
-
-QPlaceRatingsPrivate::QPlaceRatingsPrivate(const QPlaceRatingsPrivate &other)
-:   QSharedData(), average(0), maximum(other.maximum), count(other.count)
-{
-}
-
-QPlaceRatingsPrivate::~QPlaceRatingsPrivate()
-{
-}
 
 bool QPlaceRatingsPrivate::operator==(const QPlaceRatingsPrivate &other) const
 {

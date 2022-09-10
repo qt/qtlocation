@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -173,7 +173,7 @@ private:
     void removePageRow(int row);
 
     QList<QDeclarativeCategory *> m_categories;
-    QLocation::VisibilityScope m_visibilityScope;
+    QLocation::VisibilityScope m_visibilityScope = QLocation::UnspecifiedVisibility;
 
     QMap<int, QList<QPlaceSearchResult>> m_pages;
     QList<QPlaceSearchResult> m_results;
@@ -181,7 +181,7 @@ private:
     QList<QDeclarativePlace *> m_places;
     QList<QDeclarativePlaceIcon *> m_icons;
 
-    QDeclarativeGeoServiceProvider *m_favoritesPlugin;
+    QDeclarativeGeoServiceProvider *m_favoritesPlugin = nullptr;
     QVariantMap m_matchParameters;
     bool m_incremental = false;
 };

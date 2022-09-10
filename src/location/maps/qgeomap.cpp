@@ -366,8 +366,7 @@ void QGeoMap::setCopyrightVisible(bool visible)
 QGeoMapPrivate::QGeoMapPrivate(QGeoMappingManagerEngine *engine, QGeoProjection *geoProjection)
     : QObjectPrivate(),
       m_geoProjection(geoProjection),
-      m_engine(engine),
-      m_activeMapType(QGeoMapType())
+      m_engine(engine)
 {
     // Setting the default camera caps without emitting anything
     if (engine)

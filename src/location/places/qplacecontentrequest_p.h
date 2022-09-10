@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -61,19 +61,14 @@ QT_BEGIN_NAMESPACE
 class QPlaceContentRequestPrivate : public QSharedData
 {
 public:
-    QPlaceContentRequestPrivate();
-    QPlaceContentRequestPrivate(const QPlaceContentRequestPrivate &other);
-    ~QPlaceContentRequestPrivate();
-
-    QPlaceContentRequestPrivate &operator=(const QPlaceContentRequestPrivate &other);
     bool operator==(const QPlaceContentRequestPrivate &other) const;
 
     void clear();
 
-    QPlaceContent::Type contentType;
+    QPlaceContent::Type contentType = QPlaceContent::NoType;
     QString placeId;
     QVariant contentContext;
-    int limit;
+    int limit = -1;
 };
 
 QT_END_NAMESPACE
