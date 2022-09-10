@@ -106,7 +106,7 @@ protected:
     void setCacheHint(QAbstractGeoTileCache::CacheAreas cacheHint);
     void setTileCache(QAbstractGeoTileCache *cache);
 
-    QGeoTiledMap::PrefetchStyle m_prefetchStyle;
+    QGeoTiledMap::PrefetchStyle m_prefetchStyle = QGeoTiledMap::PrefetchTwoNeighbourLayers;
     QGeoTiledMappingManagerEnginePrivate *d_ptr;
 
     Q_DECLARE_PRIVATE(QGeoTiledMappingManagerEngine)

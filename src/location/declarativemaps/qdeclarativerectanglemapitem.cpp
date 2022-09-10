@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -143,9 +143,8 @@ struct RectangleBackendSelector
 Q_GLOBAL_STATIC(RectangleBackendSelector, mapRectangleBackendSelector)
 
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), m_border(this), m_color(Qt::transparent), m_dirtyMaterial(true),
-    m_updatingGeometry(false)
-  , m_d(new QDeclarativeRectangleMapItemPrivateCPU(*this))
+    : QDeclarativeGeoMapItemBase(parent), m_border(this),
+      m_d(new QDeclarativeRectangleMapItemPrivateCPU(*this))
 {
     // ToDo: handle envvar, and switch implementation.
     m_itemType = QGeoMap::MapRectangle;

@@ -1,6 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2013 Aaron McCarthy <mccarthy.aaron@gmail.com>
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -58,11 +59,6 @@ QT_BEGIN_NAMESPACE
 class QPlaceProposedSearchResultPrivate : public QPlaceSearchResultPrivate
 {
 public:
-    QPlaceProposedSearchResultPrivate();
-    QPlaceProposedSearchResultPrivate(const QPlaceProposedSearchResultPrivate &other);
-
-    ~QPlaceProposedSearchResultPrivate();
-
     bool compare(const QPlaceSearchResultPrivate *other) const override;
 
     Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(QPlaceProposedSearchResult, QPlaceSearchResult::ProposedSearchResult)

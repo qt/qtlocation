@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -64,22 +64,17 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapViewportChangeEvent
+struct Q_LOCATION_PRIVATE_EXPORT QGeoMapViewportChangeEvent
 {
-public:
-    explicit QGeoMapViewportChangeEvent();
-    QGeoMapViewportChangeEvent(const QGeoMapViewportChangeEvent &other);
-    QGeoMapViewportChangeEvent &operator=(const QGeoMapViewportChangeEvent &other);
-
     QGeoCameraData cameraData;
     QSizeF mapSize;
 
-    bool zoomLevelChanged;
-    bool centerChanged;
-    bool mapSizeChanged;
-    bool tiltChanged;
-    bool bearingChanged;
-    bool rollChanged;
+    bool zoomLevelChanged = false;
+    bool centerChanged = false;
+    bool mapSizeChanged = false;
+    bool tiltChanged = false;
+    bool bearingChanged = false;
+    bool rollChanged = false;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
@@ -159,12 +154,12 @@ private Q_SLOTS:
 
 private:
     QPointer<QGeoMap> map_;
-    QDeclarativeGeoMap *quickMap_;
+    QDeclarativeGeoMap *quickMap_ = nullptr;
 
     QSizeF lastSize_;
     QGeoCameraData lastCameraData_;
 
-    QDeclarativeGeoMapItemGroup *parentGroup_;
+    QDeclarativeGeoMapItemGroup *parentGroup_ = nullptr;
 
     std::unique_ptr<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
     bool m_autoFadeIn = true;

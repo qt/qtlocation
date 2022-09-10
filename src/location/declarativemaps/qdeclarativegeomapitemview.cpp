@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2015 Jolla Ltd.
 ** Contact: Aaron McCarthy <aaron.mccarthy@jollamobile.com>
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -94,8 +94,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapItemView::QDeclarativeGeoMapItemView(QQuickItem *parent)
-    : QDeclarativeGeoMapItemGroup(parent), m_componentCompleted(false), m_delegate(0),
-      m_map(0), m_fitViewport(false), m_delegateModel(0)
+    : QDeclarativeGeoMapItemGroup(parent)
 {
         m_exit = new QQuickTransition(this);
         QQmlListProperty<QQuickAbstractAnimation> anims = m_exit->animations();

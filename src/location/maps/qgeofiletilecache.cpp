@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -89,11 +89,8 @@ QGeoCachedTileDisk::~QGeoCachedTileDisk()
 }
 
 QGeoFileTileCache::QGeoFileTileCache(const QString &directory, QObject *parent)
-    : QAbstractGeoTileCache(parent), directory_(directory), minTextureUsage_(0), extraTextureUsage_(0)
-    ,costStrategyDisk_(ByteSize), costStrategyMemory_(ByteSize), costStrategyTexture_(ByteSize)
-    ,isDiskCostSet_(false), isMemoryCostSet_(false), isTextureCostSet_(false)
+    : QAbstractGeoTileCache(parent), directory_(directory)
 {
-
 }
 
 void QGeoFileTileCache::init()

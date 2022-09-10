@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -85,7 +85,7 @@ protected slots:
     void onMapSizeChanged();
 
 private:
-    QDeclarativeGeoMap *m_quickMap;
+    QDeclarativeGeoMap *m_quickMap = nullptr;
     QDeclarativeGeoMapItemGroup *m_parentGroup = nullptr;
     std::unique_ptr<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
 

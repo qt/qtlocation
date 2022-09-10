@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -59,18 +59,13 @@ QT_BEGIN_NAMESPACE
 class QPlaceRatingsPrivate : public QSharedData
 {
 public:
-    QPlaceRatingsPrivate();
-    QPlaceRatingsPrivate(const QPlaceRatingsPrivate &other);
-
-    ~QPlaceRatingsPrivate();
-
     bool operator==(const QPlaceRatingsPrivate &other) const;
 
     bool isEmpty() const;
 
-    qreal average;
-    qreal maximum;
-    int count;
+    qreal average = 0;
+    qreal maximum = 0;
+    int count = 0;
 };
 
 QT_END_NAMESPACE

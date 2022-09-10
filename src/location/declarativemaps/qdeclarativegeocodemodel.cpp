@@ -118,9 +118,7 @@ QT_BEGIN_NAMESPACE
 
 
 QDeclarativeGeocodeModel::QDeclarativeGeocodeModel(QObject *parent)
-:   QAbstractListModel(parent), autoUpdate_(false), complete_(false), reply_(0), plugin_(0),
-    status_(QDeclarativeGeocodeModel::Null), error_(QDeclarativeGeocodeModel::NoError),
-    address_(0), limit_(-1), offset_(0)
+    : QAbstractListModel(parent)
 {
 }
 

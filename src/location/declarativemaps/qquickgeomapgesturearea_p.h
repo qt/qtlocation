@@ -83,16 +83,13 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMapPinchEvent : public QObject
 
 public:
     QGeoMapPinchEvent(const QPointF &center, qreal angle,
-                                 const QPointF &point1, const QPointF &point2,
-                                 int pointCount = 0, bool accepted = true)
+                      const QPointF &point1, const QPointF &point2,
+                      int pointCount = 0, bool accepted = true)
         : QObject(), m_center(center), m_angle(angle),
           m_point1(point1), m_point2(point2),
-        m_pointCount(pointCount), m_accepted(accepted) {}
-    QGeoMapPinchEvent()
-        : QObject(),
-          m_angle(0.0),
-          m_pointCount(0),
-          m_accepted(true) {}
+          m_pointCount(pointCount), m_accepted(accepted)
+    {}
+    QGeoMapPinchEvent() = default;
 
     QPointF center() const { return m_center; }
     void setCenter(const QPointF &center) { m_center = center; }
@@ -109,11 +106,11 @@ public:
 
 private:
     QPointF m_center;
-    qreal m_angle;
+    qreal m_angle = 0.0;
     QPointF m_point1;
     QPointF m_point2;
-    int m_pointCount;
-    bool m_accepted;
+    int m_pointCount = 0;
+    bool m_accepted = true;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QQuickGeoMapGestureArea: public QQuickItem
@@ -142,7 +139,8 @@ public:
         PanGesture = 0x0002,
         FlickGesture = 0x0004,
         RotationGesture = 0x0008,
-        TiltGesture = 0x0010
+        TiltGesture = 0x0010,
+        AllGestures = 0xffff
     };
 
     Q_DECLARE_FLAGS(AcceptedGestures, GeoMapGesture)
@@ -269,63 +267,54 @@ private:
     void updateFlickParameters(const QPointF &pos);
 
 private:
-    QGeoMap* m_map;
-    QDeclarativeGeoMap *m_declarativeMap;
-    bool m_enabled;
+    QGeoMap* m_map = nullptr;
+    QDeclarativeGeoMap *m_declarativeMap = nullptr;
+    bool m_enabled = true;
 
     // This should be intended as a "two fingers gesture" struct
     struct Pinch
     {
-        Pinch() : m_pinchEnabled(true), m_rotationEnabled(true), m_tiltEnabled(true),
-                  m_startDist(0), m_lastAngle(0.0) {}
-
         QGeoMapPinchEvent m_event;
-        bool m_pinchEnabled;
-        bool m_rotationEnabled;
-        bool m_tiltEnabled;
+        bool m_pinchEnabled = true;
+        bool m_rotationEnabled = true;
+        bool m_tiltEnabled = true;
         struct Zoom
         {
-            Zoom() : m_minimum(0.0), m_maximum(30.0), m_start(0.0), m_previous(0.0),
-                     maximumChange(4.0) {}
-            qreal m_minimum;
-            qreal m_maximum;
-            qreal m_start;
-            qreal m_previous;
-            qreal maximumChange;
+            qreal m_minimum = 0.0;
+            qreal m_maximum = 30.0;
+            qreal m_start = 0.0;
+            qreal m_previous = 0.0;
+            qreal maximumChange = 4.0;
         } m_zoom;
 
         struct Rotation
         {
-            Rotation() : m_startBearing(0.0), m_previousTouchAngle(0.0), m_totalAngle(0.0) {}
-            qreal m_startBearing;
-            qreal m_previousTouchAngle; // needed for detecting crossing +- 180 in a safer way
-            qreal m_totalAngle;
+            qreal m_startBearing = 0.0;
+            qreal m_previousTouchAngle = 0.0; // needed for detecting crossing +- 180 in a safer way
+            qreal m_totalAngle = 0.0;
         } m_rotation;
 
         struct Tilt
         {
-            Tilt() {}
             QPointF m_startTouchCentroid;
             qreal m_startTilt;
         } m_tilt;
 
         QPointF m_lastPoint1;
         QPointF m_lastPoint2;
-        qreal m_startDist;
-        qreal m_lastAngle;
+        qreal m_startDist = 0.0;
+        qreal m_lastAngle = 0.0;
      } m_pinch;
 
-    AcceptedGestures m_acceptedGestures;
+    AcceptedGestures m_acceptedGestures = AllGestures;
 
     struct Pan
     {
-        Pan() : m_maxVelocity(2500), m_deceleration(2500), m_animation(0), m_flickEnabled(true), m_panEnabled(true) {}
-
-        qreal m_maxVelocity;
-        qreal m_deceleration;
-        QQuickGeoCoordinateAnimation *m_animation;
-        bool m_flickEnabled;
-        bool m_panEnabled;
+        qreal m_maxVelocity = 2500;
+        qreal m_deceleration = 2500;
+        QQuickGeoCoordinateAnimation *m_animation = nullptr;
+        bool m_flickEnabled = true;
+        bool m_panEnabled = true;
     } m_flick;
 
 
@@ -347,8 +336,7 @@ private:
     qreal m_distanceBetweenTouchPointsStart;
     QPointF m_twoTouchPointsCentroidStart;
     QPointF m_touchPointsCentroid;
-    bool m_preventStealing;
-    bool m_panEnabled;
+    bool m_preventStealing = false;
 
 private:
     // prototype state machine...

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -143,11 +143,11 @@ private:
     QPlaceManager *manager();
 
     QPlaceCategory m_category;
-    QDeclarativePlaceIcon *m_icon;
-    QDeclarativeGeoServiceProvider *m_plugin;
-    QPlaceReply *m_reply;
-    bool m_complete;
-    Status m_status;
+    QDeclarativePlaceIcon *m_icon = nullptr;
+    QDeclarativeGeoServiceProvider *m_plugin = nullptr;
+    QPlaceReply *m_reply = nullptr;
+    bool m_complete = false;
+    Status m_status = Ready;
     QString m_errorString;
 };
 

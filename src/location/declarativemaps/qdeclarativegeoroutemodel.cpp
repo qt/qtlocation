@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -173,13 +173,7 @@ static QList<QVariantMap> waypointMetadata(const QList<QDeclarativeGeoWaypoint *
 */
 
 QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
-    : QAbstractListModel(parent),
-      complete_(false),
-      plugin_(0),
-      routeQuery_(0),
-      autoUpdate_(false),
-      status_(QDeclarativeGeoRouteModel::Null),
-      error_(QDeclarativeGeoRouteModel::NoError)
+    : QAbstractListModel(parent)
 {
 }
 
@@ -757,12 +751,12 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
 */
 
 QDeclarativeGeoRouteQuery::QDeclarativeGeoRouteQuery(QObject *parent)
-:   QObject(parent), complete_(false), m_excludedAreaCoordinateChanged(false)
+    : QObject(parent)
 {
 }
 
 QDeclarativeGeoRouteQuery::QDeclarativeGeoRouteQuery(const QGeoRouteRequest &request, QObject *parent)
-:   QObject(parent), request_(request), complete_(false), m_excludedAreaCoordinateChanged(false)
+    : QObject(parent), request_(request)
 {
     // Extra params assumed to be already set in the request.
     // Init waypoints

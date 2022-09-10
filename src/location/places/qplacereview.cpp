@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -41,26 +41,6 @@
 #include "qplacereview_p.h"
 
 QT_BEGIN_NAMESPACE
-
-QPlaceReviewPrivate::QPlaceReviewPrivate()
-:   QPlaceContentPrivate(), rating(0)
-{
-}
-
-QPlaceReviewPrivate::QPlaceReviewPrivate(const QPlaceReviewPrivate &other)
-    : QPlaceContentPrivate(other)
-{
-    dateTime = other.dateTime;
-    text = other.text;
-    language = other.language;
-    rating = other.rating;
-    reviewId = other.reviewId;
-    title = other.title;
-}
-
-QPlaceReviewPrivate::~QPlaceReviewPrivate()
-{
-}
 
 bool QPlaceReviewPrivate::compare(const QPlaceContentPrivate *other) const
 {

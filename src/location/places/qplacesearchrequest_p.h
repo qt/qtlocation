@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2018 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -66,11 +66,6 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_PRIVATE_EXPORT QPlaceSearchRequestPrivate : public QSharedData
 {
 public:
-    QPlaceSearchRequestPrivate();
-    QPlaceSearchRequestPrivate(const QPlaceSearchRequestPrivate &other);
-    ~QPlaceSearchRequestPrivate();
-
-    QPlaceSearchRequestPrivate &operator=(const QPlaceSearchRequestPrivate &other);
     bool operator==(const QPlaceSearchRequestPrivate &other) const;
 
     void clear();
@@ -81,10 +76,10 @@ public:
     QList<QPlaceCategory> categories;
     QGeoShape searchArea;
     QString recommendationId;
-    QLocation::VisibilityScope visibilityScope;
-    QPlaceSearchRequest::RelevanceHint relevanceHint;
+    QLocation::VisibilityScope visibilityScope = QLocation::UnspecifiedVisibility;
+    QPlaceSearchRequest::RelevanceHint relevanceHint = QPlaceSearchRequest::UnspecifiedHint;
     QGeoRoute routeSearchArea;
-    int limit;
+    int limit = -1;
     QVariant searchContext;
     bool related = false;
     int page = 0;

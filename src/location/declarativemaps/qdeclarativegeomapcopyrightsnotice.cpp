@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2014 Aaron McCarthy <mccarthy.aaron@gmail.com>
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -100,8 +100,7 @@ public:
 */
 
 QDeclarativeGeoMapCopyrightNotice::QDeclarativeGeoMapCopyrightNotice(QQuickItem *parent)
-:   QQuickPaintedItem(parent), m_copyrightsHtml(0), m_copyrightsVisible(true), m_mapSource(0),
-    m_userDefinedStyleSheet(false)
+:   QQuickPaintedItem(parent)
 {
     // If this item is constructed inside the map, automatically anchor it where it always used to be.
     if (qobject_cast<QDeclarativeGeoMap *>(parent))

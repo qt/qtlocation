@@ -177,25 +177,10 @@ static qreal sanitizeBearing(qreal bearing)
 */
 
 QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
-        : QQuickItem(parent),
-        m_plugin(0),
-        m_mappingManager(0),
-        m_gestureArea(new QQuickGeoMapGestureArea(this)),
-        m_map(0),
-        m_error(QGeoServiceProvider::NoError),
-        m_color(QColor::fromRgbF(0.9f, 0.9f, 0.9f)),
-        m_componentCompleted(false),
-        m_pendingFitViewport(false),
-        m_copyrightsVisible(true),
-        m_maximumViewportLatitude(0.0),
-        m_initialized(false),
-        m_userMinimumZoomLevel(qQNaN()),
-        m_userMaximumZoomLevel(qQNaN()),
-        m_userMinimumTilt(qQNaN()),
-        m_userMaximumTilt(qQNaN()),
-        m_userMinimumFieldOfView(qQNaN()),
-        m_userMaximumFieldOfView(qQNaN())
+    : QQuickItem(parent)
 {
+    m_gestureArea = new QQuickGeoMapGestureArea(this);
+
     setAcceptHoverEvents(false);
     setAcceptTouchEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);

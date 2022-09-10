@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -49,11 +49,6 @@ QT_BEGIN_NAMESPACE
 class QPlaceMatchRequestPrivate : public QSharedData
 {
 public:
-    QPlaceMatchRequestPrivate();
-    QPlaceMatchRequestPrivate(const QPlaceMatchRequestPrivate &other);
-    ~QPlaceMatchRequestPrivate();
-
-    QPlaceMatchRequestPrivate &operator=(const QPlaceMatchRequestPrivate &other);
     bool operator==(const QPlaceMatchRequestPrivate &other) const;
 
     void clear();
@@ -63,32 +58,6 @@ public:
 };
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceMatchRequestPrivate)
-
-QPlaceMatchRequestPrivate::QPlaceMatchRequestPrivate()
-    :   QSharedData()
-{
-}
-
-QPlaceMatchRequestPrivate::QPlaceMatchRequestPrivate(const QPlaceMatchRequestPrivate &other)
-    : QSharedData(other),
-      places(other.places),
-      parameters(other.parameters)
-{
-}
-
-QPlaceMatchRequestPrivate::~QPlaceMatchRequestPrivate()
-{
-}
-
-QPlaceMatchRequestPrivate &QPlaceMatchRequestPrivate::operator=(const QPlaceMatchRequestPrivate &other)
-{
-    if (this != &other) {
-        places = other.places;
-        parameters = other.parameters;
-    }
-
-    return *this;
-}
 
 bool QPlaceMatchRequestPrivate::operator==(const QPlaceMatchRequestPrivate &other) const
 {

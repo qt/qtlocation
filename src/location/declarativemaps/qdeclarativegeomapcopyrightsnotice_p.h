@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2014 Aaron McCarthy <mccarthy.aaron@gmail.com>
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -110,15 +110,15 @@ protected:
 private:
     void createCopyright();
 
-    QTextDocument *m_copyrightsHtml;
+    QTextDocument *m_copyrightsHtml = nullptr;
     QString m_html;
     QImage m_copyrightsImage;
     QString m_activeAnchor;
-    bool m_copyrightsVisible;
+    bool m_copyrightsVisible = true;
     QPointer<QDeclarativeGeoMap> m_mapSource;
     QColor m_backgroundColor;
     QString m_styleSheet;
-    bool m_userDefinedStyleSheet;
+    bool m_userDefinedStyleSheet = false;
 
     Q_DISABLE_COPY(QDeclarativeGeoMapCopyrightNotice)
     Q_DECLARE_PRIVATE(QDeclarativeGeoMapCopyrightNotice)

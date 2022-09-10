@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -59,18 +59,13 @@ QT_BEGIN_NAMESPACE
 class QPlaceResultPrivate : public QPlaceSearchResultPrivate
 {
 public:
-    QPlaceResultPrivate();
-    QPlaceResultPrivate(const QPlaceResultPrivate &other);
-
-    ~QPlaceResultPrivate();
-
     bool compare(const QPlaceSearchResultPrivate *other) const override;
 
     Q_DEFINE_SEARCHRESULT_PRIVATE_HELPER(QPlaceResult, QPlaceSearchResult::PlaceResult)
 
-    qreal distance;
+    qreal distance = Q_QNAN;
     QPlace place;
-    bool sponsored;
+    bool sponsored = false;
 };
 
 QT_END_NAMESPACE

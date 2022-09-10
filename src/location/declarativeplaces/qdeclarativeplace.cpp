@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -185,11 +185,9 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativePlace::QDeclarativePlace(QObject *parent)
-:   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
-    m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
+:   QObject(parent),
     m_extendedAttributes(new QQmlPropertyMap(this)),
-    m_contactDetails(new QDeclarativeContactDetails(this)), m_reply(0), m_plugin(0),
-    m_complete(false), m_favorite(0), m_status(QDeclarativePlace::Ready)
+    m_contactDetails(new QDeclarativeContactDetails(this))
 {
     connect(m_contactDetails, &QDeclarativeContactDetails::valueChanged,
             this, &QDeclarativePlace::contactsModified);
@@ -198,11 +196,10 @@ QDeclarativePlace::QDeclarativePlace(QObject *parent)
 }
 
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
-:   QObject(parent), m_location(0), m_ratings(0), m_supplier(0), m_icon(0),
-    m_reviewModel(0), m_imageModel(0), m_editorialModel(0),
+:   QObject(parent),
     m_extendedAttributes(new QQmlPropertyMap(this)),
-    m_contactDetails(new QDeclarativeContactDetails(this)), m_reply(0), m_plugin(plugin),
-    m_complete(false), m_favorite(0), m_status(QDeclarativePlace::Ready)
+    m_contactDetails(new QDeclarativeContactDetails(this)),
+    m_plugin(plugin)
 {
     Q_ASSERT(plugin);
 

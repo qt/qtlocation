@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -133,7 +133,7 @@ bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
     Constructs an default content object which has no type.
 */
 QPlaceContent::QPlaceContent()
-    :d_ptr(0)
+    : d_ptr(nullptr)
 {
 }
 
@@ -141,7 +141,7 @@ QPlaceContent::QPlaceContent()
     Constructs a new copy of \a other.
 */
 QPlaceContent::QPlaceContent(const QPlaceContent &other)
-    :d_ptr(other.d_ptr)
+    : d_ptr(other.d_ptr)
 {
 }
 
@@ -265,6 +265,6 @@ void QPlaceContent::setAttribution(const QString &attribution)
     Constructs a new content object from the given pointer \a d.
 */
 QPlaceContent::QPlaceContent(QPlaceContentPrivate *d)
-    :d_ptr(d)
+    : d_ptr(d)
 {
 }

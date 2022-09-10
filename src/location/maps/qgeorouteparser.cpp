@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -55,7 +55,8 @@ QT_BEGIN_NAMESPACE
     Private class implementations
 */
 
-QGeoRouteParserPrivate::QGeoRouteParserPrivate() : QObjectPrivate(), trafficSide(QGeoRouteParser::RightHandTraffic)
+QGeoRouteParserPrivate::QGeoRouteParserPrivate()
+    : QObjectPrivate()
 {
 }
 

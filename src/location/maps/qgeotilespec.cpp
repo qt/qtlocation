@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -47,10 +47,14 @@ QT_BEGIN_NAMESPACE
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoTileSpecPrivate)
 
 QGeoTileSpec::QGeoTileSpec()
-    : d(QSharedDataPointer<QGeoTileSpecPrivate>(new QGeoTileSpecPrivate())) {}
+    : d(new QGeoTileSpecPrivate())
+{
+}
 
 QGeoTileSpec::QGeoTileSpec(const QString &plugin, int mapId, int zoom, int x, int y, int version)
-        : d(QSharedDataPointer<QGeoTileSpecPrivate>(new QGeoTileSpecPrivate(plugin, mapId, zoom, x, y, version))) {}
+        : d(new QGeoTileSpecPrivate(plugin, mapId, zoom, x, y, version))
+{
+}
 
 QGeoTileSpec::QGeoTileSpec(const QGeoTileSpec &other) noexcept = default;
 

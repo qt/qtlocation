@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -41,21 +41,6 @@
 #include "qplaceeditorial_p.h"
 
 QT_USE_NAMESPACE
-
-QPlaceEditorialPrivate::QPlaceEditorialPrivate()
-:   QPlaceContentPrivate()
-{
-}
-
-QPlaceEditorialPrivate::QPlaceEditorialPrivate(const QPlaceEditorialPrivate &other)
-:   QPlaceContentPrivate(other), text(other.text), contentTitle(other.contentTitle),
-    language(other.language)
-{
-}
-
-QPlaceEditorialPrivate::~QPlaceEditorialPrivate()
-{
-}
 
 bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
 {

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -146,8 +146,7 @@ void QMapQuickItemMatrix4x4::applyTo(QMatrix4x4 *matrix) const
 
 
 QDeclarativeGeoMapQuickItem::QDeclarativeGeoMapQuickItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), zoomLevel_(0.0),
-    mapAndSourceItemSet_(false), updatingGeometry_(false), matrix_(nullptr)
+    : QDeclarativeGeoMapItemBase(parent)
 {
     m_itemType = QGeoMap::MapQuickItem;
     setFlag(ItemHasContents, true);

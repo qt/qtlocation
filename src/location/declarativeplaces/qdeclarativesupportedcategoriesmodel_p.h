@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -152,12 +152,12 @@ private:
     void updateLayout();
     void emitDataChanged() { Q_EMIT dataChanged(); }
 
-    QPlaceReply *m_response;
+    QPlaceReply *m_response = nullptr;
 
-    QDeclarativeGeoServiceProvider *m_plugin;
-    bool m_hierarchical;
-    bool m_complete;
-    Status m_status;
+    QDeclarativeGeoServiceProvider *m_plugin = nullptr;
+    bool m_hierarchical = true;
+    bool m_complete = false;
+    Status m_status = Null;
     QString m_errorString;
 
     QHash<QString, PlaceCategoryNode *> m_categoriesTree;

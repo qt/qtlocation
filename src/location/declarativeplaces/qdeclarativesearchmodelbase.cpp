@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -55,7 +55,7 @@
 QT_BEGIN_NAMESPACE
 
 QDeclarativeSearchModelBase::QDeclarativeSearchModelBase(QObject *parent)
-:   QAbstractListModel(parent), m_plugin(0), m_reply(0), m_complete(false), m_status(Null)
+    : QAbstractListModel(parent)
 {
 }
 

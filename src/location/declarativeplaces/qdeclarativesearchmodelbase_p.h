@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -147,12 +147,12 @@ protected:
     void setNextPageRequest(const QPlaceSearchRequest &next);
 
     QPlaceSearchRequest m_request;
-    QDeclarativeGeoServiceProvider *m_plugin;
-    QPlaceReply *m_reply;
+    QDeclarativeGeoServiceProvider *m_plugin = nullptr;
+    QPlaceReply *m_reply = nullptr;
 
 private:
-    bool m_complete;
-    Status m_status;
+    bool m_complete = false;
+    Status m_status = Null;
     QString m_errorString;
     QPlaceSearchRequest m_previousPageRequest;
     QPlaceSearchRequest m_nextPageRequest;

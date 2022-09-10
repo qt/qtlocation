@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -44,21 +44,6 @@
 QT_BEGIN_NAMESPACE
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceContentRequestPrivate)
-
-QPlaceContentRequestPrivate::QPlaceContentRequestPrivate()
-:   QSharedData(), contentType(QPlaceContent::NoType), limit(-1)
-{
-}
-
-QPlaceContentRequestPrivate::QPlaceContentRequestPrivate(const QPlaceContentRequestPrivate &other)
-:   QSharedData(other), contentType(other.contentType), placeId(other.placeId),
-    contentContext(other.contentContext), limit(other.limit)
-{
-}
-
-QPlaceContentRequestPrivate::~QPlaceContentRequestPrivate()
-{
-}
 
 bool QPlaceContentRequestPrivate::operator==(const QPlaceContentRequestPrivate &other) const
 {

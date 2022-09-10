@@ -180,29 +180,29 @@ protected:
     QGeoCodingManager *searchManager();
     void setStatus(Status status);
     void setError(GeocodeError error, const QString &errorString);
-    bool autoUpdate_;
-    bool complete_;
+    bool autoUpdate_ = false;
+    bool complete_ = false;
 
 private:
     void setLocations(const QList<QGeoLocation> &locations);
     void abortRequest();
-    QGeoCodeReply *reply_;
+    QGeoCodeReply *reply_ = nullptr;
 
-    QDeclarativeGeoServiceProvider *plugin_;
+    QDeclarativeGeoServiceProvider *plugin_ = nullptr;
     QGeoShape boundingArea_;
 
     QList<QDeclarativeGeoLocation *> declarativeLocations_;
 
-    Status status_;
+    Status status_ = QDeclarativeGeocodeModel::Null;
     QString errorString_;
-    GeocodeError error_;
+    GeocodeError error_ = QDeclarativeGeocodeModel::NoError;
     QVariant queryVariant_;
     QGeoCoordinate coordinate_;
-    QDeclarativeGeoAddress *address_;
+    QDeclarativeGeoAddress *address_ = nullptr;
     QString searchString_;
 
-    int limit_;
-    int offset_;
+    int limit_ = -1;
+    int offset_ = 0;
 };
 
 QT_END_NAMESPACE

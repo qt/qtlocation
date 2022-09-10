@@ -502,12 +502,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QQuickGeoMapGestureArea::QQuickGeoMapGestureArea(QDeclarativeGeoMap *map)
-    : QQuickItem(map),
-      m_map(0),
-      m_declarativeMap(map),
-      m_enabled(true),
-      m_acceptedGestures(PinchGesture | PanGesture | FlickGesture | RotationGesture | TiltGesture),
-      m_preventStealing(false)
+    : QQuickItem(map), m_declarativeMap(map)
 {
     m_touchPointState = touchPoints0;
     m_pinchState = pinchInactive;

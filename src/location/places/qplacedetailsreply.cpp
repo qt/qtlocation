@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -46,8 +46,6 @@ QT_BEGIN_NAMESPACE
 class QPlaceDetailsReplyPrivate : public QPlaceReplyPrivate
 {
 public:
-    QPlaceDetailsReplyPrivate() {}
-    ~QPlaceDetailsReplyPrivate() {}
     QPlace result;
 };
 

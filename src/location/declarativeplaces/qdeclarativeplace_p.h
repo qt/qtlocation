@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -228,31 +228,31 @@ private:
     QPlaceManager *manager();
 
     QList<QDeclarativeCategory *> m_categories;
-    QDeclarativeGeoLocation *m_location;
-    QDeclarativeRatings *m_ratings;
-    QDeclarativeSupplier *m_supplier;
-    QDeclarativePlaceIcon *m_icon;
-    QDeclarativeReviewModel *m_reviewModel;
-    QDeclarativePlaceImageModel *m_imageModel;
-    QDeclarativePlaceEditorialModel *m_editorialModel;
-    QQmlPropertyMap *m_extendedAttributes;
-    QDeclarativeContactDetails *m_contactDetails;
+    QDeclarativeGeoLocation *m_location = nullptr;
+    QDeclarativeRatings *m_ratings = nullptr;
+    QDeclarativeSupplier *m_supplier = nullptr;
+    QDeclarativePlaceIcon *m_icon = nullptr;
+    QDeclarativeReviewModel *m_reviewModel = nullptr;
+    QDeclarativePlaceImageModel *m_imageModel = nullptr;
+    QDeclarativePlaceEditorialModel *m_editorialModel = nullptr;
+    QQmlPropertyMap *m_extendedAttributes = nullptr;
+    QDeclarativeContactDetails *m_contactDetails = nullptr;
 
     QPlace m_src;
 
-    QPlaceReply *m_reply;
+    QPlaceReply *m_reply = nullptr;
 
-    QDeclarativeGeoServiceProvider *m_plugin;
-    bool m_complete;
+    QDeclarativeGeoServiceProvider *m_plugin = nullptr;
+    bool m_complete = false;
 
     QString m_prevPrimaryPhone;
     QString m_prevPrimaryEmail;
     QString m_prevPrimaryFax;
     QUrl m_prevPrimaryWebsite;
 
-    QDeclarativePlace *m_favorite;
+    QDeclarativePlace *m_favorite = nullptr;
 
-    Status m_status;
+    Status m_status = Ready;
     QString m_errorString;
 
     QList<QDeclarativeCategory *>m_categoriesToBeDeleted;

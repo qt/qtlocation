@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -87,19 +87,13 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoServiceProvider::QDeclarativeGeoServiceProvider(QObject *parent)
-:   QObject(parent),
-    sharedProvider_(0),
-    required_(new QDeclarativeGeoServiceProviderRequirements),
-    complete_(false),
-    experimental_(false)
+:   QObject(parent), required_(new QDeclarativeGeoServiceProviderRequirements)
 {
     locales_.append(QLocale().name());
 }
 
 QDeclarativeGeoServiceProvider::~QDeclarativeGeoServiceProvider()
 {
-    delete required_;
-    delete sharedProvider_;
 }
 
 
@@ -143,13 +137,12 @@ void QDeclarativeGeoServiceProvider::tryAttach()
     if (!parametersReady())
         return;
 
-    delete sharedProvider_;
-    sharedProvider_ = nullptr;
+    sharedProvider_.reset();
 
     if (name_.isEmpty())
         return;
 
-    sharedProvider_ = new QGeoServiceProvider(name_, parameterMap());
+    sharedProvider_.reset(new QGeoServiceProvider(name_, parameterMap()));
     sharedProvider_->setQmlEngine(qmlEngine(this));
     sharedProvider_->setLocale(QLocale(locales_.at(0)));
     sharedProvider_->setAllowExperimental(experimental_);
@@ -476,7 +469,7 @@ bool QDeclarativeGeoServiceProvider::supportsNavigation(const QDeclarativeGeoSer
 */
 QDeclarativeGeoServiceProviderRequirements *QDeclarativeGeoServiceProvider::requirements() const
 {
-    return required_;
+    return required_.get();
 }
 
 void QDeclarativeGeoServiceProvider::setRequirements(QDeclarativeGeoServiceProviderRequirements *req)
@@ -487,8 +480,7 @@ void QDeclarativeGeoServiceProvider::setRequirements(QDeclarativeGeoServiceProvi
     if (required_ && *required_ == *req)
         return;
 
-    delete required_;
-    required_ = req;
+    required_.reset(req);
     QQmlEngine::setObjectOwnership(req, QQmlEngine::CppOwnership); // To prevent the engine from making this object disappear
 }
 
@@ -547,7 +539,7 @@ void QDeclarativeGeoServiceProvider::setAllowExperimental(bool allow)
 */
 QGeoServiceProvider *QDeclarativeGeoServiceProvider::sharedGeoServiceProvider() const
 {
-    return sharedProvider_;
+    return sharedProvider_.get();
 }
 
 /*!
@@ -674,12 +666,7 @@ QVariantMap QDeclarativeGeoServiceProvider::parameterMap() const
 *******************************************************************************/
 
 QDeclarativeGeoServiceProviderRequirements::QDeclarativeGeoServiceProviderRequirements(QObject *parent)
-    : QObject(parent),
-      mapping_(QDeclarativeGeoServiceProvider::NoMappingFeatures),
-      routing_(QDeclarativeGeoServiceProvider::NoRoutingFeatures),
-      geocoding_(QDeclarativeGeoServiceProvider::NoGeocodingFeatures),
-      places_(QDeclarativeGeoServiceProvider::NoPlacesFeatures),
-      navigation_(QDeclarativeGeoServiceProvider::NoNavigationFeatures)
+    : QObject(parent)
 {
 }
 

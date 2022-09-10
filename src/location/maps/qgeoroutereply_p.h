@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -67,9 +67,9 @@ public:
     QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QString errorString);
     ~QGeoRouteReplyPrivate();
 
-    QGeoRouteReply::Error error;
+    QGeoRouteReply::Error error = QGeoRouteReply::NoError;
     QString errorString;
-    bool isFinished;
+    bool isFinished = false;
 
     QGeoRouteRequest request;
     QList<QGeoRoute> routes;

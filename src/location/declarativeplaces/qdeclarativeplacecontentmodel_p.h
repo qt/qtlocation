@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -127,15 +127,15 @@ protected:
     QMap<QString, QDeclarativePlaceUser *>m_users;
 
 private:
-    QDeclarativePlace *m_place;
+    QDeclarativePlace *m_place = nullptr;
     QPlaceContent::Type m_type;
-    int m_batchSize;
-    int m_contentCount;
+    int m_batchSize = 1;
+    int m_contentCount = -1;
 
-    QPlaceContentReply *m_reply;
+    QPlaceContentReply *m_reply = nullptr;
     QPlaceContentRequest m_nextRequest;
 
-    bool m_complete;
+    bool m_complete = false;
 };
 
 QT_END_NAMESPACE

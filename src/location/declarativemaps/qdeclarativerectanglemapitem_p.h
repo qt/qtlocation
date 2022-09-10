@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -124,10 +124,10 @@ protected Q_SLOTS:
 private:
     QGeoRectangle m_rectangle;
     QDeclarativeMapLineProperties m_border;
-    QColor m_color;
-    bool m_dirtyMaterial;
+    QColor m_color = Qt::transparent;
+    bool m_dirtyMaterial = true;
 
-    bool m_updatingGeometry;
+    bool m_updatingGeometry = false;
     Backend m_backend = Software;
 
     std::unique_ptr<QDeclarativeRectangleMapItemPrivate> m_d;

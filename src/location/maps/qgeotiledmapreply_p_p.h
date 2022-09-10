@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -61,12 +61,11 @@ class QGeoTiledMapReplyPrivate
 public:
     QGeoTiledMapReplyPrivate(const QGeoTileSpec &spec);
     QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error error, const QString &errorString);
-    ~QGeoTiledMapReplyPrivate();
 
-    QGeoTiledMapReply::Error error;
+    QGeoTiledMapReply::Error error = QGeoTiledMapReply::NoError;
     QString errorString;
-    bool isFinished;
-    bool isCached;
+    bool isFinished = false;
+    bool isCached = false;
 
     QGeoTileSpec spec;
     QByteArray mapImageData;

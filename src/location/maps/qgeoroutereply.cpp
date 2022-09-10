@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -266,14 +266,14 @@ void QGeoRouteReply::abort()
 *******************************************************************************/
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteRequest &request)
-    : error(QGeoRouteReply::NoError),
-      isFinished(false),
-      request(request) {}
+    : request(request)
+{}
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QString errorString)
     : error(error),
       errorString(errorString),
-      isFinished(true) {}
+      isFinished(true)
+{}
 
 QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -141,7 +141,7 @@ QT_BEGIN_NAMESPACE
 */
 
 QDeclarativeGeoMapItemGroup::QDeclarativeGeoMapItemGroup(QQuickItem *parent)
-:   QQuickItem(parent), m_quickMap(nullptr)
+    : QQuickItem(parent)
 {
     connect(this, &QQuickItem::opacityChanged,
             this, &QDeclarativeGeoMapItemGroup::mapItemOpacityChanged);

@@ -399,7 +399,8 @@ QUrl QGeoRouteParserOsrmV4Private::requestUrl(const QGeoRouteRequest &request, c
     return url;
 }
 
-QGeoRouteParserOsrmV4::QGeoRouteParserOsrmV4(QObject *parent) : QGeoRouteParser(*new QGeoRouteParserOsrmV4Private(), parent)
+QGeoRouteParserOsrmV4::QGeoRouteParserOsrmV4(QObject *parent)
+    : QGeoRouteParser(*new QGeoRouteParserOsrmV4Private(), parent)
 {
 }
 

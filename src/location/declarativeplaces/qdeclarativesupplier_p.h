@@ -104,7 +104,7 @@ Q_SIGNALS:
 
 private:
     QPlaceSupplier m_src;
-    QDeclarativePlaceIcon *m_icon;
+    QDeclarativePlaceIcon *m_icon = nullptr;
 };
 
 QT_END_NAMESPACE

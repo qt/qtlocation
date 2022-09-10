@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -354,15 +354,6 @@ QUrl QPlaceManagerEngine::constructIconUrl(const QPlaceIcon &icon, const QSize &
     Q_UNUSED(size);
 
     return QUrl();
-}
-
-QPlaceManagerEnginePrivate::QPlaceManagerEnginePrivate()
-    :   managerVersion(-1), manager(0)
-{
-}
-
-QPlaceManagerEnginePrivate::~QPlaceManagerEnginePrivate()
-{
 }
 
 /*!

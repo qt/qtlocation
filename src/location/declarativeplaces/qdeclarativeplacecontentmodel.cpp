@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -52,8 +52,7 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativePlaceContentModel::QDeclarativePlaceContentModel(QPlaceContent::Type type,
                                                              QObject *parent)
-:   QAbstractListModel(parent), m_place(0), m_type(type), m_batchSize(1), m_contentCount(-1),
-    m_reply(0), m_complete(false)
+    : QAbstractListModel(parent), m_type(type)
 {
 }
 

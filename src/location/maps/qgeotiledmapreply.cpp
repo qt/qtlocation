@@ -282,17 +282,13 @@ void QGeoTiledMapReply::abort()
 *******************************************************************************/
 
 QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(const QGeoTileSpec &spec)
-    : error(QGeoTiledMapReply::NoError),
-      isFinished(false),
-      isCached(false),
-      spec(spec) {}
+    : spec(spec)
+{}
 
 QGeoTiledMapReplyPrivate::QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error error, const QString &errorString)
     : error(error),
       errorString(errorString),
-      isFinished(true),
-      isCached(false) {}
-
-QGeoTiledMapReplyPrivate::~QGeoTiledMapReplyPrivate() {}
+      isFinished(true)
+{}
 
 QT_END_NAMESPACE

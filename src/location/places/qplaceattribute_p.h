@@ -64,8 +64,6 @@ public:
     QPlaceAttributePrivate(){}
     QPlaceAttributePrivate(const QPlaceAttributePrivate &other);
     virtual ~QPlaceAttributePrivate(){}
-
-
     virtual bool operator== (const QPlaceAttributePrivate &other) const;
     virtual QPlaceAttributePrivate *clone() const { return new QPlaceAttributePrivate(*this); }
 

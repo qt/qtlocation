@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2021 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -62,14 +62,9 @@ class QPlaceManager;
 class QPlaceIconPrivate: public QSharedData
 {
 public:
-    QPlaceIconPrivate();
-    QPlaceIconPrivate(const QPlaceIconPrivate &other);
-    ~QPlaceIconPrivate();
-
-    QPlaceIconPrivate &operator=(const QPlaceIconPrivate &other);
     bool operator == (const QPlaceIconPrivate &other) const;
 
-    QPlaceManager *manager;
+    QPlaceManager *manager = nullptr;
     QVariantMap parameters;
 };
 
