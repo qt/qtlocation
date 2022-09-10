@@ -188,19 +188,19 @@ void QDeclarativeGeoMapItemView::modelUpdated(const QQmlChangeSet &changeSet, bo
         // Remove items from the back to the front to retain the mapping to what is received from the changesets
         const QList<QQmlChangeSet::Change> &removes = changeSet.removes();
         std::map<int, int> mapRemoves;
-        for (int i = 0; i < removes.size(); i++)
+        for (qsizetype i = 0; i < removes.size(); i++)
             mapRemoves.insert(std::pair<int, int>(removes.at(i).start(), i));
 
         for (auto rit = mapRemoves.rbegin(); rit != mapRemoves.rend(); ++rit) {
             const QQmlChangeSet::Change &c = removes.at(rit->second);
-            for (int idx = c.end() - 1; idx >= c.start(); --idx)
+            for (auto idx = c.end() - 1; idx >= c.start(); --idx)
                 removeDelegateFromMap(idx);
         }
     }
 
     QBoolBlocker createBlocker(m_creatingObject, true);
     for (const QQmlChangeSet::Change &c: changeSet.inserts()) {
-        for (int idx = c.start(); idx < c.end(); idx++) {
+        for (auto idx = c.start(); idx < c.end(); idx++) {
             QObject *delegateInstance = m_delegateModel->object(idx, m_incubationMode);
             addDelegateToMap(qobject_cast<QQuickItem *>(delegateInstance), idx);
         }
@@ -312,7 +312,7 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems(bool transition)
 
     // with transition = false removeInstantiatedItems aborts ongoing exit transitions //QTBUG-69195
     // Backward as removeItemFromMap modifies m_instantiatedItems
-    for (int i = m_instantiatedItems.size() -1; i >= 0 ; i--)
+    for (qsizetype i = m_instantiatedItems.size() -1; i >= 0 ; i--)
         removeDelegateFromMap(i, transition);
 }
 
@@ -329,7 +329,7 @@ void QDeclarativeGeoMapItemView::instantiateAllItems()
 
     // If here, m_delegateModel may contain data, but QQmlInstanceModel::object for each row hasn't been called yet.
     QBoolBlocker createBlocker(m_creatingObject, true);
-    for (int i = 0; i < m_delegateModel->count(); i++) {
+    for (qsizetype i = 0; i < m_delegateModel->count(); i++) {
         QObject *delegateInstance = m_delegateModel->object(i, m_incubationMode);
         addDelegateToMap(qobject_cast<QQuickItem *>(delegateInstance), i);
     }

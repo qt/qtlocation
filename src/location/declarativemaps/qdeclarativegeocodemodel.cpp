@@ -506,10 +506,8 @@ void QDeclarativeGeocodeModel::setLocations(const QList<QGeoLocation> &locations
     beginResetModel();
     qDeleteAll(declarativeLocations_);
     declarativeLocations_.clear();
-    for (int i = 0;  i < locations.count(); ++i) {
-        QDeclarativeGeoLocation *location = new QDeclarativeGeoLocation(locations.at(i), this);
-        declarativeLocations_.append(location);
-    }
+    for (const auto &location : locations)
+        declarativeLocations_.append(new QDeclarativeGeoLocation(location, this));
     endResetModel();
 }
 

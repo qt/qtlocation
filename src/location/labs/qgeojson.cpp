@@ -518,7 +518,7 @@ static QGeoCoordinate importPosition(const QVariant &position)
 {
     QGeoCoordinate returnedCoordinates;
     const QVariantList positionList = position.value<QVariantList>();
-    for (int i  = 0; i < positionList.size(); ++i) { // Iterating Point coordinates arrays
+    for (qsizetype i  = 0; i < positionList.size(); ++i) { // Iterating Point coordinates arrays
         switch (i) {
         case 0:
             returnedCoordinates.setLongitude(positionList.at(i).toDouble());
@@ -538,13 +538,10 @@ static QGeoCoordinate importPosition(const QVariant &position)
 
 static QList<QGeoCoordinate> importArrayOfPositions(const QVariant &arrayOfPositions)
 {
-    QList <QGeoCoordinate> returnedCoordinates;
+    QList<QGeoCoordinate> returnedCoordinates;
     const QVariantList positionsList = arrayOfPositions.value<QVariantList>();
-    QGeoCoordinate singlePosition;
-    for (int i  = 0; i < positionsList.size(); ++i) { // Iterating the LineString coordinates nested arrays
-        singlePosition = importPosition((positionsList.at(i)));
-        returnedCoordinates.append(singlePosition); // Populating the QList of coordinates
-    }
+    for (const auto &position : positionsList) // Iterating the LineString coordinates nested arrays
+        returnedCoordinates.append(importPosition(position)); // Populating the QList of coordinates
     return returnedCoordinates;
 }
 
@@ -552,11 +549,8 @@ static QList<QList<QGeoCoordinate>> importArrayOfArrayOfPositions(const QVariant
 {
     QList<QList<QGeoCoordinate>> returnedCoordinates;
     const QVariantList positionsList = arrayOfArrayofPositions.value<QVariantList>();
-    QList<QGeoCoordinate> arrayOfPositions;
-    for (int i  = 0; i < positionsList.size(); ++i) { // Iterating the Polygon coordinates nested arrays
-        arrayOfPositions = importArrayOfPositions((positionsList.at(i)));
-        returnedCoordinates << arrayOfPositions;
-    }
+    for (const auto &position : positionsList) // Iterating the Polygon coordinates nested arrays
+        returnedCoordinates << importArrayOfPositions(position);
     return returnedCoordinates;
 }
 
@@ -584,8 +578,8 @@ static QGeoPolygon importPolygon(const QVariantMap &inputMap)
 {
     QGeoPolygon returnedObject;
     const QVariant valueCoordinates = inputMap.value(QStringLiteral("coordinates"));
-    QList<QList<QGeoCoordinate>> perimeters = importArrayOfArrayOfPositions(valueCoordinates);
-    for (int i  = 0; i < perimeters.size(); ++i) { // Import an array of QList<QGeocoordinates>
+    const QList<QList<QGeoCoordinate>> perimeters = importArrayOfArrayOfPositions(valueCoordinates);
+    for (qsizetype i  = 0; i < perimeters.size(); ++i) { // Import an array of QList<QGeocoordinates>
         if (i == 0)
             returnedObject.setPerimeter(perimeters.at(i)); // External perimeter
         else
@@ -600,8 +594,8 @@ static QVariantList importMultiPoint(const QVariantMap &inputMap)
     const QVariantList coordinatesList = inputMap.value(QStringLiteral("coordinates")).value<QVariantList>();
     QVariantMap singlePointMap;
     QGeoCircle parsedPoint;
-    for (int i  = 0; i < coordinatesList.size(); ++i) { // Iterating MultiPoint coordinates nasted arrays
-        parsedPoint.setCenter(importPosition(coordinatesList.at(i)));
+    for (const auto &coordinate : coordinatesList) { // Iterating MultiPoint coordinates nasted arrays
+        parsedPoint.setCenter(importPosition(coordinate));
         singlePointMap.insert(QStringLiteral("type"), QStringLiteral("Point"));
         singlePointMap.insert(QStringLiteral("data"), QVariant::fromValue(parsedPoint));
         returnedObject.append(QVariant::fromValue(singlePointMap));

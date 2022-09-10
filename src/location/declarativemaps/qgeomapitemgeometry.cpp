@@ -62,7 +62,7 @@ QGeoMapItemGeometry::~QGeoMapItemGeometry()
 */
 void QGeoMapItemGeometry::translate(const QPointF &offset)
 {
-    for (int i = 0; i < screenVertices_.size(); ++i)
+    for (qsizetype i = 0; i < screenVertices_.size(); ++i)
         screenVertices_[i] += offset;
 
     firstPointOffset_ += offset;
@@ -82,11 +82,11 @@ void QGeoMapItemGeometry::allocateAndFill(QSGGeometry *geom) const
         geom->allocate(vx.size(), ix.size());
         if (geom->indexType() == QSGGeometry::UnsignedShortType) {
             quint16 *its = geom->indexDataAsUShort();
-            for (int i = 0; i < ix.size(); ++i)
+            for (qsizetype i = 0; i < ix.size(); ++i)
                 its[i] = ix[i];
         } else if (geom->indexType() == QSGGeometry::UnsignedIntType) {
             quint32 *its = geom->indexDataAsUInt();
-            for (int i = 0; i < ix.size(); ++i)
+            for (qsizetype i = 0; i < ix.size(); ++i)
                 its[i] = ix[i];
         }
     } else {
@@ -94,7 +94,7 @@ void QGeoMapItemGeometry::allocateAndFill(QSGGeometry *geom) const
     }
 
     QSGGeometry::Point2D *pts = geom->vertexDataAsPoint2D();
-    for (int i = 0; i < vx.size(); ++i)
+    for (qsizetype i = 0; i < vx.size(); ++i)
         pts[i].set(vx[i].x(), vx[i].y());
 }
 

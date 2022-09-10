@@ -690,7 +690,7 @@ QModelIndex QDeclarativeSupportedCategoriesModel::index(const QString &categoryI
 int QDeclarativeSupportedCategoriesModel::rowToAddChild(PlaceCategoryNode *node, const QPlaceCategory &category)
 {
     Q_ASSERT(node);
-    for (int i = 0; i < node->childIds.count(); ++i) {
+    for (qsizetype i = 0; i < node->childIds.count(); ++i) {
         if (category.name() < m_categoriesTree.value(node->childIds.at(i))->declCategory->name())
             return i;
     }

@@ -840,7 +840,7 @@ void QGeoServiceProviderPrivate::loadMeta()
 
     // figure out which version of the plugin we want
     // (always latest unless experimental)
-    for (int i = 0; i < candidates.size(); ++i) {
+    for (qsizetype i = 0; i < candidates.size(); ++i) {
         QJsonObject meta = candidates[i];
         if (meta.contains(QStringLiteral("Version"))
                 && meta.value(QStringLiteral("Version")).isDouble()
@@ -906,7 +906,7 @@ void QGeoServiceProviderPrivate::loadPluginMetadata(QMultiHash<QString, QJsonObj
 {
     QFactoryLoader *l = loader();
     QList<QJsonObject> meta = l->metaData();
-    for (int i = 0; i < meta.size(); ++i) {
+    for (qsizetype i = 0; i < meta.size(); ++i) {
         QJsonObject obj = meta.at(i).value(QStringLiteral("MetaData")).toObject();
         obj.insert(QStringLiteral("index"), i);
         list.insert(obj.value(QStringLiteral("Provider")).toString(), obj);

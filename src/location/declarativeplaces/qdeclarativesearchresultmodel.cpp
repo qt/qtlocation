@@ -909,7 +909,7 @@ void QDeclarativeSearchResultModel::updateLayout(const QList<QPlace> &favoritePl
     }
 
     m_resultsBuffer.clear();
-    for (int i = start; i < m_results.count(); ++i) {
+    for (qsizetype i = start; i < m_results.count(); ++i) {
         const QPlaceSearchResult &result = m_results.at(i);
 
         if (result.type() == QPlaceSearchResult::PlaceResult) {
@@ -996,7 +996,7 @@ void QDeclarativeSearchResultModel::removePageRow(int row)
 */
 int QDeclarativeSearchResultModel::getRow(const QString &placeId) const
 {
-    for (int i = 0; i < m_places.count(); ++i) {
+    for (qsizetype i = 0; i < m_places.count(); ++i) {
         if (!m_places.at(i))
             continue;
         else if (m_places.at(i)->placeId() == placeId)

@@ -153,7 +153,7 @@ void QGeoFileTileCache::loadTiles()
     formats << QLatin1String("*.*");
 
     QDir dir(directory_);
-    QStringList files = dir.entryList(formats, QDir::Files);
+    const QStringList files = dir.entryList(formats, QDir::Files);
 #if 0 // workaround for QTBUG-60581
     // Method:
     // 1. read each queue file then, if each file exists, deserialize the data into the appropriate
@@ -196,11 +196,11 @@ void QGeoFileTileCache::loadTiles()
     // 2. remaining tiles that aren't registered in a queue get pushed into cache here
     // this is a backup, in case the queue manifest files get deleted or out of sync due to
     // the application not closing down properly
-    for (int i = 0; i < files.size(); ++i) {
-        QGeoTileSpec spec = filenameToTileSpec(files.at(i));
+    for (const auto &file : files) {
+        QGeoTileSpec spec = filenameToTileSpec(file);
         if (spec.zoom() == -1)
             continue;
-        QString filename = dir.filePath(files.at(i));
+        QString filename = dir.filePath(file);
         addToDiskCache(spec, filename);
     }
 }
@@ -432,22 +432,22 @@ QGeoTileSpec QGeoFileTileCache::filenameToTileSpecDefault(const QString &filenam
 {
     QGeoTileSpec emptySpec;
 
-    QStringList parts = filename.split(QLatin1Char('.'));
+    const QStringList parts = filename.split(QLatin1Char('.'));
 
     if (parts.length() != 2)
         return emptySpec;
 
-    QString name = parts.at(0);
-    QStringList fields = name.split(QLatin1Char('-'));
+    const QString name = parts.at(0);
+    const QStringList fields = name.split(QLatin1Char('-'));
 
-    int length = fields.length();
+    qsizetype length = fields.length();
     if (length != 5 && length != 6)
         return emptySpec;
 
     QList<int> numbers;
 
     bool ok = false;
-    for (int i = 1; i < length; ++i) {
+    for (qsizetype i = 1; i < length; ++i) {
         ok = false;
         int value = fields.at(i).toInt(&ok);
         if (!ok)

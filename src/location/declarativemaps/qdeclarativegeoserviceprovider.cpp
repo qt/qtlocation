@@ -654,10 +654,8 @@ QVariantMap QDeclarativeGeoServiceProvider::parameterMap() const
 {
     QVariantMap map;
 
-    for (int i = 0; i < parameters_.size(); ++i) {
-        QDeclarativePluginParameter *parameter = parameters_.at(i);
+    for (const auto *parameter : parameters_)
         map.insert(parameter->name(), parameter->value());
-    }
 
     return map;
 }

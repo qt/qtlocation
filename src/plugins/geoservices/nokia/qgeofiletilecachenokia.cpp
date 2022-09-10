@@ -87,15 +87,15 @@ QGeoTileSpec QGeoFileTileCacheNokia::filenameToTileSpec(const QString &filename)
 {
     QGeoTileSpec emptySpec;
 
-    QStringList parts = filename.split('.');
+    const QStringList parts = filename.split('.');
 
     if (parts.length() != 2)
         return emptySpec;
 
-    QString name = parts.at(0);
-    QStringList fields = name.split('-');
+    const QString name = parts.at(0);
+    const QStringList fields = name.split('-');
 
-    int length = fields.length();
+    const qsizetype length = fields.length();
     if (length != 6 && length != 7)
         return emptySpec;
     else if (fields.last() != m_ppi)
@@ -104,7 +104,7 @@ QGeoTileSpec QGeoFileTileCacheNokia::filenameToTileSpec(const QString &filename)
     QList<int> numbers;
 
     bool ok = false;
-    for (int i = 1; i < length-1; ++i) { // skipping -<ppi>
+    for (qsizetype i = 1; i < length-1; ++i) { // skipping -<ppi>
         ok = false;
         int value = fields.at(i).toInt(&ok);
         if (!ok)

@@ -118,12 +118,11 @@ public:
     {
         QList<T*> res;
         QObjectList kids = children();
-        QList<QQuickItem *> quickKids = childItems();
-        for (int i = 0; i < quickKids.count(); ++i)
-            kids.append(quickKids.at(i));
-        for (auto kid : qAsConst(kids)) {
-            auto val = qobject_cast<T*>(kid);
-            if (val)
+        const QList<QQuickItem *> quickKids = childItems();
+        for (const auto &quickKid : quickKids)
+            kids.append(quickKid);
+        for (auto *kid : qAsConst(kids)) {
+            if (auto *val = qobject_cast<T*>(kid))
                 res.push_back(val);
         }
         return res;

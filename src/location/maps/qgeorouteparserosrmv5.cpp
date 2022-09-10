@@ -62,7 +62,7 @@ static QList<QGeoCoordinate> decodePolyline(const QString &polylineString)
     if (polylineString.isEmpty())
         return path;
 
-    QByteArray data = polylineString.toLatin1();
+    const QByteArray data = polylineString.toLatin1();
 
     bool parsingLatitude = true;
 
@@ -71,7 +71,7 @@ static QList<QGeoCoordinate> decodePolyline(const QString &polylineString)
 
     QGeoCoordinate coord(0, 0);
 
-    for (int i = 0; i < data.length(); ++i) {
+    for (qsizetype i = 0; i < data.length(); ++i) {
         unsigned char c = data.at(i) - 63;
 
         value |= (c & 0x1f) << shift;
@@ -1000,7 +1000,7 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
                 for (const QGeoRouteSegment &s : segments)
                     path.append(s.path());
 
-                for (int i = segments.size() - 1; i > 0; --i)
+                for (qsizetype i = segments.size() - 1; i > 0; --i)
                     segments[i-1].setNextRouteSegment(segments[i]);
 
                 route.setDistance(distance);
@@ -1031,7 +1031,7 @@ QUrl QGeoRouteParserOsrmV5Private::requestUrl(const QGeoRouteRequest &request, c
     QString bearings;
     const QList<QVariantMap> metadata = request.waypointsMetadata();
     const QList<QGeoCoordinate> waypoints = request.waypoints();
-    for (int i = 0; i < waypoints.size(); i++) {
+    for (qsizetype i = 0; i < waypoints.size(); i++) {
         const QGeoCoordinate &c = waypoints.at(i);
         if (notFirst) {
             routingUrl.append(QLatin1Char(';'));

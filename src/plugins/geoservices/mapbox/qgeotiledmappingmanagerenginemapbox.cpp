@@ -123,8 +123,8 @@ QGeoTiledMappingManagerEngineMapbox::QGeoTiledMappingManagerEngineMapbox(const Q
     }
 
     QList<QString> mapIds;
-    for (int i=0; i < mapTypes.size(); ++i)
-         mapIds.push_back(mapTypes[i].name());
+    for (const auto &mapType : qAsConst(mapTypes))
+         mapIds.push_back(mapType.name());
 
     setSupportedMapTypes(mapTypes);
 

@@ -145,7 +145,7 @@ static QList<QList<QDoubleVector2D> > clipLine(
 
     // Step 1: build edges
     std::vector<std::array<double, 4> > edges;
-    for (int i = 1; i < poly.size(); i++)
+    for (qsizetype i = 1; i < poly.size(); i++)
         edges.push_back({ { poly.at(i-1).x(), poly.at(i-1).y(), poly.at(i).x(), poly.at(i).y() } });
     edges.push_back({ { poly.at(poly.size()-1).x(), poly.at(poly.size()-1).y(), poly.at(0).x(), poly.at(0).y() } });
 
@@ -153,7 +153,7 @@ static QList<QList<QDoubleVector2D> > clipLine(
     QList<QDoubleVector2D> subLine;
     std::array<double, 4> intersections = { { 0.0, 0.0, 0.0, 0.0 } };
 
-    for (int i = 0; i < l.size() - 1; ++i) {
+    for (qsizetype i = 0; i < l.size() - 1; ++i) {
         SegmentType type = NoIntersection;
         double t = -1; // valid values are in [0, 1]. Only written if intersects
         double previousT = t;
@@ -388,8 +388,7 @@ QList<QList<QDoubleVector2D> > QGeoMapPolylineGeometry::clipPath(const QGeoMap &
     wrappedPath.reserve(path.size());
     QDoubleVector2D wrappedLeftBound(qInf(), qInf());
     // 1)
-    for (int i = 0; i < path.size(); ++i) {
-        const QDoubleVector2D &coord = path.at(i);
+    for (const auto &coord : path) {
         QDoubleVector2D wrappedProjection = p.wrapMapProjection(coord);
 
         // We can get NaN if the map isn't set up correctly, or the projection
@@ -466,7 +465,7 @@ void QGeoMapPolylineGeometry::pathToScreen(const QGeoMap &map,
     QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(leftBoundWrapped);
     for (const QList<QDoubleVector2D> &path: clippedPaths) {
         QDoubleVector2D lastAddedPoint;
-        for (int i = 0; i < path.size(); ++i) {
+        for (qsizetype i = 0; i < path.size(); ++i) {
             QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(path.at(i));
             point = point - origin; // (0,0) if point == geoLeftBound_
 
@@ -625,7 +624,7 @@ static void clipPathToRect(const QList<qreal> &points,
 
     qreal lastX = 0;
     qreal lastY = 0; // or else used uninitialized
-    for (int i = 0; i < types.size(); ++i) {
+    for (qsizetype i = 0; i < types.size(); ++i) {
         if (i > 0 && types[i] != QPainterPath::MoveToElement) {
             qreal x = points[i * 2], y = points[i * 2 + 1];
             clipSegmentToRect(lastX, lastY, x, y, clipRect, outPoints, outTypes);
@@ -732,10 +731,10 @@ bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
     // screenOutline_ for QGeoMapPolylineGeometry is empty (QRectF(0,0 0x0))
     const QList<QPointF> &verts = vertices();
     QPolygonF tri;
-    for (int i = 0; i < verts.size(); ++i) {
-        tri << verts[i];
+    for (const auto &v : verts) {
+        tri << v;
         if (tri.size() == 3) {
-            if (tri.containsPoint(point,Qt::OddEvenFill))
+            if (tri.containsPoint(point, Qt::OddEvenFill))
                 return true;
             tri.remove(0);
         }
@@ -1688,7 +1687,7 @@ void QGeoMapPolylineGeometryOpenGL::allocateAndFillLineStrip(QSGGeometry *geom,
     geom->allocate(vx.size());
 
     QSGGeometry::Point2D *pts = geom->vertexDataAsPoint2D();
-    for (int i = 0; i < vx.size(); ++i)
+    for (qsizetype i = 0; i < vx.size(); ++i)
         pts[i].set(vx[i].x, vx[i].y);
 }
 

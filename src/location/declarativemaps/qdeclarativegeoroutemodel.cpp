@@ -63,7 +63,7 @@ static bool compareParameterList(const QList<QDeclarativeGeoMapParameter *> &a, 
     if (a.size() != b.size())
         return false;
     if (a != b) {
-        for (int i = 0; i < a.size(); ++i) {
+        for (qsizetype i = 0; i < a.size(); ++i) {
             if (! (*a.at(i) == *b.at(i)))
                 return false;
         }
@@ -73,7 +73,7 @@ static bool compareParameterList(const QList<QDeclarativeGeoMapParameter *> &a, 
 
 static int findWaypoint(const QList<QDeclarativeGeoWaypoint *> &waypoints, const QDeclarativeGeoWaypoint *w)
 {
-    for (int i = waypoints.size() - 1; i >= 0; --i) {
+    for (qsizetype i = waypoints.size() - 1; i >= 0; --i) {
         if (waypoints.at(i) == w || *waypoints.at(i) == *w)
             return i;
     }
@@ -82,7 +82,7 @@ static int findWaypoint(const QList<QDeclarativeGeoWaypoint *> &waypoints, const
 
 static int findWaypoint(const QList<QDeclarativeGeoWaypoint *> &waypoints, const QGeoCoordinate &c)
 {
-    for (int i = waypoints.size() - 1; i >= 0; --i) {
+    for (qsizetype i = waypoints.size() - 1; i >= 0; --i) {
         if (waypoints.at(i)->coordinate() == c)
             return i;
     }
@@ -669,10 +669,11 @@ void QDeclarativeGeoRouteModel::routingFinished(QGeoRouteReply *reply)
     qDeleteAll(routes_);
     // Convert routes to declarative
     routes_.clear();
-    for (int i = 0; i < reply->routes().size(); ++i) {
-        QDeclarativeGeoRoute *route = new QDeclarativeGeoRoute(reply->routes().at(i), this);
-        QQmlEngine::setContextForObject(route, QQmlEngine::contextForObject(this));
-        routes_.append(route);
+    const auto routes = reply->routes();
+    for (const auto &route : routes) {
+        QDeclarativeGeoRoute *declroute = new QDeclarativeGeoRoute(route, this);
+        QQmlEngine::setContextForObject(declroute, QQmlEngine::contextForObject(this));
+        routes_.append(declroute);
     }
     endResetModel();
 
@@ -808,9 +809,9 @@ QList<int> QDeclarativeGeoRouteQuery::featureTypes()
 {
     QList<int> list;
 
-    for (int i = 0; i < request_.featureTypes().count(); ++i) {
-        list.append(static_cast<int>(request_.featureTypes().at(i)));
-    }
+    const auto featureTypes = request_.featureTypes();
+    for (const auto &featureType : featureTypes)
+        list.append(static_cast<int>(featureType));
     return list;
 }
 
@@ -1259,10 +1260,9 @@ void QDeclarativeGeoRouteQuery::setFeatureWeight(FeatureType featureType, Featur
 void QDeclarativeGeoRouteQuery::resetFeatureWeights()
 {
     // reset all feature types.
-    QList<QGeoRouteRequest::FeatureType> featureTypes = request_.featureTypes();
-    for (int i = 0; i < featureTypes.count(); ++i) {
-        request_.setFeatureWeight(featureTypes.at(i), QGeoRouteRequest::NeutralFeatureWeight);
-    }
+    const auto featureTypes = request_.featureTypes();
+    for (const auto &featureType : featureTypes)
+        request_.setFeatureWeight(featureType, QGeoRouteRequest::NeutralFeatureWeight);
     if (complete_) {
         emit featureTypesChanged();
         emit queryDetailsChanged();

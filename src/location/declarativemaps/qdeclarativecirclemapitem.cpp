@@ -223,24 +223,21 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
     }
 
     //3)
-    QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(lb);
+    const QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(lb);
 
     QPainterPath ppi;
     for (const QList<QDoubleVector2D> &path: clippedPaths) {
         QDoubleVector2D lastAddedPoint;
-        for (int i = 0; i < path.size(); ++i) {
+        for (qsizetype i = 0; i < path.size(); ++i) {
             QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(path.at(i));
             //point = point - origin; // Do this using ppi.translate()
 
             if (i == 0) {
                 ppi.moveTo(point.toPointF());
                 lastAddedPoint = point;
-            } else {
-                if ((point - lastAddedPoint).manhattanLength() > 3 ||
-                        i == path.size() - 1) {
-                    ppi.lineTo(point.toPointF());
-                    lastAddedPoint = point;
-                }
+            } else if ((point - lastAddedPoint).manhattanLength() > 3 || i == path.size() - 1) {
+                ppi.lineTo(point.toPointF());
+                lastAddedPoint = point;
             }
         }
         ppi.closeSubpath();
@@ -255,14 +252,14 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
 
     if (ts.indices.type() == QVertexIndexVector::UnsignedInt) {
         const quint32 *ix = reinterpret_cast<const quint32 *>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
+        for (qsizetype i = 0; i < (ts.indices.size()/3*3); ++i)
             screenIndices_ << ix[i];
     } else {
         const quint16 *ix = reinterpret_cast<const quint16 *>(ts.indices.data());
-        for (int i = 0; i < (ts.indices.size()/3*3); ++i)
+        for (qsizetype i = 0; i < (ts.indices.size()/3*3); ++i)
             screenIndices_ << ix[i];
     }
-    for (int i = 0; i < (ts.vertices.size()/2*2); i += 2)
+    for (qsizetype i = 0; i < (ts.vertices.size()/2*2); i += 2)
         screenVertices_ << QPointF(vx[i], vx[i + 1]);
 
     screenBounds_ = ppi.boundingRect();
@@ -603,12 +600,12 @@ void QDeclarativeCircleMapItemPrivate::updateCirclePathForRendering(QList<QDoubl
     bool crossNorthPole = distanceToNorthPole < distance;
     bool crossSouthPole = distanceToSouthPole < distance;
 
-    QList<int> wrapPathIndex;
+    QList<qsizetype> wrapPathIndex;
     QDoubleVector2D prev = p.wrapMapProjection(path.at(0));
 
-    for (int i = 1; i <= path.count(); ++i) {
-        int index = i % path.count();
-        QDoubleVector2D point = p.wrapMapProjection(path.at(index));
+    for (qsizetype i = 1; i <= path.count(); ++i) {
+        const auto index = i % path.count();
+        const QDoubleVector2D point = p.wrapMapProjection(path.at(index));
         double diff = qAbs(point.x() - prev.x());
         if (diff > 0.5) {
             continue;
@@ -616,10 +613,10 @@ void QDeclarativeCircleMapItemPrivate::updateCirclePathForRendering(QList<QDoubl
     }
 
     // find the points in path where wrapping occurs
-    for (int i = 1; i <= path.count(); ++i) {
-        int index = i % path.count();
-        QDoubleVector2D point = p.wrapMapProjection(path.at(index));
-        if ( (qAbs(point.x() - prev.x())) >= 0.5 ) {
+    for (qsizetype i = 1; i <= path.count(); ++i) {
+        const auto index = i % path.count();
+        const QDoubleVector2D point = p.wrapMapProjection(path.at(index));
+        if ((qAbs(point.x() - prev.x())) >= 0.5) {
             wrapPathIndex << index;
             if (wrapPathIndex.size() == 2 || !(crossNorthPole && crossSouthPole))
                 break;
@@ -638,9 +635,9 @@ void QDeclarativeCircleMapItemPrivate::updateCirclePathForRendering(QList<QDoubl
         } else if (center.latitude() < 0) {
             newPoleLat = 1; // -90 latitude
         }
-        for (int i = 0; i < wrapPathIndex.size(); ++i) {
-            int index = wrapPathIndex[i] == 0 ? 0 : wrapPathIndex[i] + i*2;
-            int prevIndex = (index - 1) < 0 ? (path.count() - 1): index - 1;
+        for (qsizetype i = 0; i < wrapPathIndex.size(); ++i) {
+            const qsizetype index = wrapPathIndex[i] == 0 ? 0 : wrapPathIndex[i] + i*2;
+            const qsizetype prevIndex = (index - 1) < 0 ? (path.count() - 1) : index - 1;
             QDoubleVector2D coord0 = path.at(prevIndex);
             QDoubleVector2D coord1 = path.at(index);
             coord0.setY(newPoleLat);
@@ -690,12 +687,12 @@ void QDeclarativeCircleMapItemPrivate::calculatePeripheralPoints(QList<QGeoCoord
     qreal cosLatRad_x_sinRatio = cosLatRad * sinRatio;
     int idx = 0;
     for (int i = 0; i < steps; ++i) {
-        qreal azimuthRad = 2 * M_PI * i / steps;
-        qreal resultLatRad = std::asin(sinLatRad_x_cosRatio
-                                   + cosLatRad_x_sinRatio * std::cos(azimuthRad));
-        qreal resultLonRad = lonRad + std::atan2(std::sin(azimuthRad) * cosLatRad_x_sinRatio,
-                                       cosRatio - sinLatRad * std::sin(resultLatRad));
-        qreal lat2 = QLocationUtils::degrees(resultLatRad);
+        const qreal azimuthRad = 2 * M_PI * i / steps;
+        const qreal resultLatRad = std::asin(sinLatRad_x_cosRatio
+                                 + cosLatRad_x_sinRatio * std::cos(azimuthRad));
+        const qreal resultLonRad = lonRad + std::atan2(std::sin(azimuthRad) * cosLatRad_x_sinRatio,
+                                   cosRatio - sinLatRad * std::sin(resultLatRad));
+        const qreal lat2 = QLocationUtils::degrees(resultLatRad);
         qreal lon2 = QLocationUtils::wrapLong(QLocationUtils::degrees(resultLonRad));
 
         path << QGeoCoordinate(lat2, lon2, center.altitude());

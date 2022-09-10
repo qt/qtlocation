@@ -95,18 +95,14 @@ void GeoCodeReplyEsri::networkReplyFinished()
         switch (operationType()) {
         case Geocode:
         {
-            QJsonArray candidates = object.value(QStringLiteral("candidates")).toArray();
+            const QJsonArray candidates = object.value(QStringLiteral("candidates")).toArray();
 
             QList<QGeoLocation> locations;
 
-            for (int i = 0; i < candidates.count(); i++) {
-                if (!candidates.at(i).isObject())
+            for (const auto candidate : candidates) {
+                if (!candidate.isObject())
                     continue;
-
-                QJsonObject candidate = candidates.at(i).toObject();
-
-                QGeoLocation location = parseCandidate(candidate);
-                locations.append(location);
+                locations.append(parseCandidate(candidate.toObject()));
             }
 
             setLocations(locations);
@@ -116,12 +112,7 @@ void GeoCodeReplyEsri::networkReplyFinished()
 
         case ReverseGeocode:
         {
-            QGeoLocation location = parseAddress(object);
-
-            QList<QGeoLocation> locations;
-            locations.append(location);
-
-            setLocations(locations);
+            setLocations({parseAddress(object)});
             setFinished(true);
         }
             break;
