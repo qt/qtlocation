@@ -101,8 +101,8 @@ public:
 
     virtual QVariantMap metadata() const;
 
-    virtual void setRouteLegs(const QList<QGeoRouteLeg> &legs);
-    virtual QList<QGeoRouteLeg> routeLegs() const;
+    virtual void setRouteLegs(const QList<QGeoRoute> &legs);
+    virtual QList<QGeoRoute> routeLegs() const;
 
     virtual void setExtendedAttributes(const QVariantMap &extendedAttributes);
     virtual QVariantMap extendedAttributes() const;
@@ -157,8 +157,8 @@ public:
     QString engineName() const override;
     int segmentsCount() const override;
 
-    void setRouteLegs(const QList<QGeoRouteLeg> &legs) override;
-    QList<QGeoRouteLeg> routeLegs() const override;
+    void setRouteLegs(const QList<QGeoRoute> &legs) override;
+    QList<QGeoRoute> routeLegs() const override;
 
     void setExtendedAttributes(const QVariantMap &extendedAttributes) override;
     QVariantMap extendedAttributes() const override;
@@ -181,12 +181,12 @@ public:
     QGeoRouteRequest::TravelMode m_travelMode;
 
     QList<QGeoCoordinate> m_path;
-    QList<QGeoRouteLeg> m_legs;
+    QList<QGeoRoute> m_legs;
     QGeoRouteSegment m_firstSegment;
     mutable int m_numSegments;
     std::unique_ptr<QGeoRoute> m_containingRoute;
     QVariantMap m_extendedAttributes;
-    int m_legIndex = 0;
+    int m_legIndex = -1;
 };
 
 QT_END_NAMESPACE

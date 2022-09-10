@@ -131,7 +131,7 @@ private:
     QXmlStreamReader *m_reader;
 
     QList<QGeoRoute> m_results;
-    QList<QGeoRouteLeg> m_legs;
+    QList<QGeoRoute> m_legs;
     QList<QList<QGeoManeuverContainer>> m_maneuvers;
     //QList<QList<QGeoRouteSegmentContainer>> m_segments;
 };

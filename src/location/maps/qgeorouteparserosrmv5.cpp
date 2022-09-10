@@ -940,11 +940,11 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
             QList<QGeoRouteSegment> segments;
 
             const QJsonArray legs = routeObject.value(QLatin1String("legs")).toArray();
-            QList<QGeoRouteLeg> routeLegs;
+            QList<QGeoRoute> routeLegs;
             QGeoRoute route;
             for (int legIndex = 0; legIndex < legs.size(); ++legIndex) {
                 const QJsonValue &l = legs.at(legIndex);
-                QGeoRouteLeg routeLeg;
+                QGeoRoute routeLeg;
                 QList<QGeoRouteSegment> legSegments;
                 if (!l.isObject()) { // invalid leg record
                     error = true;

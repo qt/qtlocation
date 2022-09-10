@@ -308,7 +308,7 @@ QList<QGeoCoordinate> QGeoRoute::path() const
     \sa QGeoRouteLeg
     \since 5.12
 */
-void QGeoRoute::setRouteLegs(const QList<QGeoRouteLeg> &legs)
+void QGeoRoute::setRouteLegs(const QList<QGeoRoute> &legs)
 {
     d_ptr->setRouteLegs(legs);
 }
@@ -319,7 +319,7 @@ void QGeoRoute::setRouteLegs(const QList<QGeoRouteLeg> &legs)
     \sa QGeoRouteLeg
     \since 5.12
 */
-QList<QGeoRouteLeg> QGeoRoute::routeLegs() const
+QList<QGeoRoute> QGeoRoute::routeLegs() const
 {
     return d_ptr->routeLegs();
 }
@@ -342,6 +342,39 @@ void QGeoRoute::setExtendedAttributes(const QVariantMap &extendedAttributes)
 QVariantMap QGeoRoute::extendedAttributes() const
 {
     return d_ptr->extendedAttributes();
+}
+
+/*!
+    Sets the route leg index to \a idx.
+*/
+void QGeoRoute::setLegIndex(int idx)
+{
+    d()->setLegIndex(idx);
+}
+
+/*!
+    Returns the index of this route leg inside the containing QGeoRoute::routeLegs list.
+    Can be used to find the next legs.
+*/
+int QGeoRoute::legIndex() const
+{
+    return const_d()->legIndex();
+}
+
+/*!
+    Sets the \a route that contains this route leg.
+*/
+void QGeoRoute::setOverallRoute(const QGeoRoute &route)
+{
+    d()->setContainingRoute(route);
+}
+
+/*!
+    Returns the route that contains this route leg.
+*/
+QGeoRoute QGeoRoute::overallRoute() const
+{
+    return const_d()->containingRoute();
 }
 
 /*******************************************************************************
@@ -486,14 +519,14 @@ QVariantMap QGeoRoutePrivate::metadata() const
     return QVariantMap();
 }
 
-void QGeoRoutePrivate::setRouteLegs(const QList<QGeoRouteLeg> &/*legs*/)
+void QGeoRoutePrivate::setRouteLegs(const QList<QGeoRoute> &/*legs*/)
 {
 
 }
 
-QList<QGeoRouteLeg> QGeoRoutePrivate::routeLegs() const
+QList<QGeoRoute> QGeoRoutePrivate::routeLegs() const
 {
-    return QList<QGeoRouteLeg>();
+    return QList<QGeoRoute>();
 }
 
 void QGeoRoutePrivate::setExtendedAttributes(const QVariantMap &/*extendedAttributes*/)
@@ -661,12 +694,12 @@ int QGeoRoutePrivateDefault::segmentsCount() const
     return count;
 }
 
-void QGeoRoutePrivateDefault::setRouteLegs(const QList<QGeoRouteLeg> &legs)
+void QGeoRoutePrivateDefault::setRouteLegs(const QList<QGeoRoute> &legs)
 {
     m_legs = legs;
 }
 
-QList<QGeoRouteLeg> QGeoRoutePrivateDefault::routeLegs() const
+QList<QGeoRoute> QGeoRoutePrivateDefault::routeLegs() const
 {
     return m_legs;
 }
@@ -702,54 +735,6 @@ QGeoRoute QGeoRoutePrivateDefault::containingRoute() const
     if (m_containingRoute)
         return *m_containingRoute;
     return QGeoRoute();
-}
-
-/*!
-    \class QGeoRouteLeg
-    \inmodule QtLocation
-    \ingroup QtLocation-routing
-    \since 5.12
-
-    \brief The QGeoRouteLeg class represents a leg of a route, that is the portion
-    of a route between one waypoint and the next.
-    This is a subclass of QGeoRoute, exposing route leg specific API.
-
-    \note QGeoRoute::routeLegs will return an empty list if called on a route leg.
-
-    \sa QGeoRoute
-*/
-
-/*!
-    Sets the route leg index to \a idx.
-*/
-void QGeoRouteLeg::setLegIndex(int idx)
-{
-    d()->setLegIndex(idx);
-}
-
-/*!
-    Returns the index of this route leg inside the containing QGeoRoute::routeLegs list.
-    Can be used to find the next legs.
-*/
-int QGeoRouteLeg::legIndex() const
-{
-    return const_d()->legIndex();
-}
-
-/*!
-    Sets the \a route that contains this route leg.
-*/
-void QGeoRouteLeg::setOverallRoute(const QGeoRoute &route)
-{
-    d()->setContainingRoute(route);
-}
-
-/*!
-    Returns the route that contains this route leg.
-*/
-QGeoRoute QGeoRouteLeg::overallRoute() const
-{
-    return const_d()->containingRoute();
 }
 
 QT_END_NAMESPACE

@@ -51,7 +51,6 @@ QT_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoRectangle;
 class QGeoRouteSegment;
-class QGeoRouteLeg;
 
 class QGeoRoutePrivate;
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoRoutePrivate, Q_LOCATION_EXPORT)
@@ -62,8 +61,11 @@ class Q_LOCATION_EXPORT QGeoRoute
     Q_PROPERTY(QGeoRectangle bounds READ bounds CONSTANT)
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
-    Q_PROPERTY(QList<QGeoRouteLeg> routeLegs READ routeLegs CONSTANT)
+    Q_PROPERTY(QList<QGeoRoute> routeLegs READ routeLegs CONSTANT)
     Q_PROPERTY(QVariantMap extendedAttributes READ extendedAttributes CONSTANT)
+    Q_PROPERTY(int legIndex READ legIndex CONSTANT)
+    Q_PROPERTY(QGeoRoute overallRoute READ overallRoute CONSTANT)
+
 public:
     QGeoRoute();
     QGeoRoute(const QGeoRoute &other) noexcept;
@@ -104,11 +106,17 @@ public:
     void setPath(const QList<QGeoCoordinate> &path);
     QList<QGeoCoordinate> path() const;
 
-    void setRouteLegs(const QList<QGeoRouteLeg> &legs);
-    QList<QGeoRouteLeg> routeLegs() const;
+    void setRouteLegs(const QList<QGeoRoute> &legs);
+    QList<QGeoRoute> routeLegs() const;
 
     void setExtendedAttributes(const QVariantMap &extendedAttributes);
     QVariantMap extendedAttributes() const;
+
+    void setLegIndex(int idx);
+    int legIndex() const;
+
+    void setOverallRoute(const QGeoRoute &route);
+    QGeoRoute overallRoute() const;
 
 protected:
     QGeoRoute(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd);
@@ -119,24 +127,6 @@ private:
     QExplicitlySharedDataPointer<QGeoRoutePrivate> d_ptr;
     bool isEqual(const QGeoRoute &other) const noexcept;
 
-    friend class QDeclarativeGeoRoute;
-    friend class QGeoRoutePrivate;
-};
-
-class Q_LOCATION_EXPORT QGeoRouteLeg: public QGeoRoute
-{
-    Q_GADGET
-
-    Q_PROPERTY(int legIndex READ legIndex CONSTANT)
-    Q_PROPERTY(QGeoRoute overallRoute READ overallRoute CONSTANT)
-public:
-    void setLegIndex(int idx);
-    int legIndex() const;
-
-    void setOverallRoute(const QGeoRoute &route);
-    QGeoRoute overallRoute() const;
-
-private:
     friend class QDeclarativeGeoRoute;
     friend class QGeoRoutePrivate;
 };

@@ -66,7 +66,6 @@ class QDeclarativeGeoServiceProvider;
 class QDeclarativeGeoMap;
 class QNavigationManager;
 class QDeclarativeGeoRoute;
-class QDeclarativeGeoRouteLeg;
 class QDeclarativePositionSource;
 class QGeoMapParameter;
 class QDeclarativeGeoRouteSegment;
@@ -129,7 +128,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeNavigationBasicDirections : public Q
     Q_PROPERTY(int remainingTravelTimeToNextWaypoint READ remainingTravelTimeToNextWaypoint NOTIFY progressInformationChanged)
     Q_PROPERTY(int traveledTime READ traveledTime NOTIFY progressInformationChanged)
     Q_PROPERTY(QDeclarativeGeoRoute *currentRoute READ currentRoute NOTIFY currentRouteChanged)
-    Q_PROPERTY(QDeclarativeGeoRouteLeg *currentRouteLeg READ currentRouteLeg NOTIFY currentRouteChanged)
+    Q_PROPERTY(QDeclarativeGeoRoute *currentRouteLeg READ currentRouteLeg NOTIFY currentRouteChanged)
     Q_PROPERTY(int currentSegment READ currentSegment NOTIFY currentSegmentChanged)
     Q_PROPERTY(QAbstractItemModel *alternativeRoutes READ alternativeRoutes CONSTANT)
 
@@ -147,7 +146,7 @@ public:
     int traveledTime() const;
 
     QDeclarativeGeoRoute *currentRoute() const;
-    QDeclarativeGeoRouteLeg *currentRouteLeg() const;
+    QDeclarativeGeoRoute *currentRouteLeg() const;
     int currentSegment() const;
     QAbstractItemModel *alternativeRoutes();
 
@@ -169,7 +168,7 @@ protected:
     QDeclarativeNavigator *m_navigator;
     QDeclarativeNavigatorPrivate *m_navigatorPrivate;
     QPointer<QDeclarativeGeoRoute> m_currentRoute;
-    QPointer<QDeclarativeGeoRouteLeg> m_currentRouteLeg;
+    QPointer<QDeclarativeGeoRoute> m_currentRouteLeg;
     ReadOnlyListModel<QDeclarativeGeoRoute, QDeclarativeGeoRouteModel::RouteRole> m_routes;
 
     friend class QDeclarativeNavigator;

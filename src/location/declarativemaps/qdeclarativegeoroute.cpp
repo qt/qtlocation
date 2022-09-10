@@ -238,15 +238,15 @@ QDeclarativeGeoRouteQuery *QDeclarativeGeoRoute::routeQuery()
 
     \since QtLocation 5.12
 */
-QList<QDeclarativeGeoRouteLeg *> QDeclarativeGeoRoute::legs()
+QList<QDeclarativeGeoRoute *> QDeclarativeGeoRoute::legs()
 {
     // route_.routeLegs() is expected not to change.
     // The following if condition is expected to be run only once.
     if (route_.routeLegs().size() != legs_.size()) {
         legs_.clear();
-        QList<QGeoRouteLeg> rlegs = route_.routeLegs();
-        for (const QGeoRouteLeg &r: rlegs) {
-            QDeclarativeGeoRouteLeg *dr = new QDeclarativeGeoRouteLeg(r, this);
+        const QList<QGeoRoute> rlegs = route_.routeLegs();
+        for (const auto &r: rlegs) {
+            QDeclarativeGeoRoute *dr = new QDeclarativeGeoRoute(r, this);
             legs_.append(dr);
         }
     }
@@ -297,59 +297,30 @@ bool QDeclarativeGeoRoute::equals(QDeclarativeGeoRoute *other) const
 }
 
 /*!
-    \qmltype RouteLeg
-    \instantiates QDeclarativeGeoRouteLeg
-    \inqmlmodule QtLocation
-    \ingroup qml-QtLocation5-routing
-    \since QtLocation 5.12
+    \qmlproperty int QtLocation::Route::legIndex
 
-    \brief The RouteLeg type represents a leg of a Route, that is the portion
-    of a route between one waypoint and the next.
+    Read-only property which holds the index of the leg within the containing Route's
+    list of QtLocation::Route::legs. The index is -1 if this route is not a leg within
+    an overall route.
 
-    \note Since RouteLeg is a subclass of Route, QtLocation::Route::legs will
-    return an empty list if accessed on a route leg.
+    \sa overallRoute
 */
+int QDeclarativeGeoRoute::legIndex() const
+{
+    return route_.legIndex();
+}
 
 /*!
-    \qmlproperty int QtLocation::RouteLeg::legIndex
-
-    Read-only property which holds the index of the leg within the containing Route's list of QtLocation::Route::legs .
-*/
-
-/*!
-    \qmlproperty Route QtLocation::RouteLeg::overallRoute
+    \qmlproperty Route QtLocation::Route::overallRoute
 
     Read-only property which holds the Route that contains this leg.
 */
 
-
-QDeclarativeGeoRouteLeg::QDeclarativeGeoRouteLeg(QObject *parent)
-    : QDeclarativeGeoRoute(parent)
-{
-
-}
-
-QDeclarativeGeoRouteLeg::QDeclarativeGeoRouteLeg(const QGeoRouteLeg &routeLeg, QObject *parent)
-    : QDeclarativeGeoRoute(routeLeg, parent), m_routeLeg(routeLeg)
-{
-
-}
-
-QDeclarativeGeoRouteLeg::~QDeclarativeGeoRouteLeg()
-{
-
-}
-
-int QDeclarativeGeoRouteLeg::legIndex() const
-{
-    return m_routeLeg.legIndex();
-}
-
-QObject *QDeclarativeGeoRouteLeg::overallRoute() const
+QDeclarativeGeoRoute *QDeclarativeGeoRoute::overallRoute() const
 {
     QDeclarativeGeoRoute *containingRoute = qobject_cast<QDeclarativeGeoRoute *>(parent());
     if (Q_UNLIKELY(!containingRoute))
-        return new QDeclarativeGeoRoute(m_routeLeg.overallRoute(), parent());
+        return new QDeclarativeGeoRoute(route_.overallRoute(), parent());
     return containingRoute;
 }
 

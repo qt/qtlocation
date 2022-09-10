@@ -238,7 +238,6 @@ public:
             qmlRegisterType<QDeclarativeSearchResultModel, 12>(uri, major, minor, "PlaceSearchModel");
             qmlRegisterType<QDeclarativeGeoMap, 12>(uri, major, minor, "Map");
             qmlRegisterType<QDeclarativeGeoRoute, 12>(uri, major, minor, "Route");
-            qmlRegisterType<QDeclarativeGeoRouteLeg, 12>(uri, major, minor, "RouteLeg");
 
             minor = 13;
             qmlRegisterType<QDeclarativeGeoMap, 13>(uri, major, minor, "Map");

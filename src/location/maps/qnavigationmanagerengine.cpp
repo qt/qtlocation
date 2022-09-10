@@ -139,9 +139,9 @@ QGeoRoute QAbstractNavigator::currentRoute() const
     return QGeoRoute();
 }
 
-QGeoRouteLeg QAbstractNavigator::currentRouteLeg() const
+QGeoRoute QAbstractNavigator::currentRouteLeg() const
 {
-    return QGeoRouteLeg();
+    return QGeoRoute();
 }
 
 QList<QGeoRoute> QAbstractNavigator::alternativeRoutes() const

@@ -198,7 +198,7 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
 bool QGeoRouteXmlParser::parseLeg(int legIndex)
 {
     Q_ASSERT(m_reader->isStartElement() && m_reader->name() == QStringLiteral("Leg"));
-    QGeoRouteLeg leg;
+    QGeoRoute leg;
     leg.setLegIndex(legIndex);
     m_reader->readNext();
     QList<QGeoManeuverContainer> maneuvers;

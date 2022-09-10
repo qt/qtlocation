@@ -62,12 +62,10 @@ class QGeoMap;
 class QGeoMapParameter;
 class QMapRouteObject;
 class QGeoRoute;
-class QGeoRouteLeg;
 class QNavigationManager;
 class QNavigationManagerEnginePrivate;
 class QDeclarativeNavigatorParams;
 class QDeclarativeGeoWaypoint;
-class QDeclarativeGeoRouteLeg;
 class QDeclarativeGeoRoute;
 
 /*
@@ -99,7 +97,7 @@ public:
     virtual double traveledDistance() const;
     virtual int traveledTime() const;
     virtual QGeoRoute currentRoute() const;
-    virtual QGeoRouteLeg currentRouteLeg() const;
+    virtual QGeoRoute currentRouteLeg() const;
     virtual QList<QGeoRoute> alternativeRoutes() const = 0;
     virtual int currentSegment() const;
     virtual void setAutomaticReroutingEnabled(bool autoRerouting) = 0;

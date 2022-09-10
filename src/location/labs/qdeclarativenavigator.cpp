@@ -717,7 +717,7 @@ QDeclarativeGeoRoute *QDeclarativeNavigationBasicDirections::currentRoute() cons
     return m_currentRoute;
 }
 
-QDeclarativeGeoRouteLeg *QDeclarativeNavigationBasicDirections::currentRouteLeg() const
+QDeclarativeGeoRoute *QDeclarativeNavigationBasicDirections::currentRouteLeg() const
 {
     if (!m_navigatorPrivate->m_ready
             || !m_navigatorPrivate->m_navigator
@@ -752,7 +752,7 @@ void QDeclarativeNavigationBasicDirections::onCurrentRouteLegChanged()
 {
     if (m_currentRouteLeg)
         m_currentRouteLeg->deleteLater();
-    m_currentRouteLeg = new QDeclarativeGeoRouteLeg(m_navigatorPrivate->m_navigator->currentRouteLeg(), this);
+    m_currentRouteLeg = new QDeclarativeGeoRoute(m_navigatorPrivate->m_navigator->currentRouteLeg(), this);
     emit currentRouteLegChanged();
 }
 
