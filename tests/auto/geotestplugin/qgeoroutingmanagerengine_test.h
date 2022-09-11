@@ -48,7 +48,6 @@ class QGeoRoutePrivateDefaultAlt : public QGeoRoutePrivateDefault
 public:
     QGeoRoutePrivateDefaultAlt() : QGeoRoutePrivateDefault()
     {
-        m_travelTime = 123456; // To identify this is actually a QGeoRoutePrivateDefaultAlt
     }
     QGeoRoutePrivateDefaultAlt(const QGeoRoutePrivateDefaultAlt &other)
         : QGeoRoutePrivateDefault(other) {}
@@ -57,6 +56,10 @@ public:
     void setTravelTime(int travelTime) override
     {
         Q_UNUSED(travelTime);
+    }
+    int travelTime() const override
+    {
+        return 123456; // To identify this is actually a QGeoRoutePrivateDefaultAlt
     }
 };
 

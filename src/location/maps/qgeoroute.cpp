@@ -665,6 +665,7 @@ QList<QGeoCoordinate> QGeoRoutePrivateDefault::path() const
 void QGeoRoutePrivateDefault::setFirstSegment(const QGeoRouteSegment &firstSegment)
 {
     m_firstSegment = firstSegment;
+    m_numSegments = -1;
 }
 
 QGeoRouteSegment QGeoRoutePrivateDefault::firstSegment() const
@@ -683,15 +684,20 @@ int QGeoRoutePrivateDefault::segmentsCount() const
         return m_numSegments;
 
     int count = 0;
-    QGeoRouteSegment segment = m_firstSegment;
-    while (segment.isValid()) {
+    forEachSegment([&count](const QGeoRouteSegment &){
         ++count;
-        if (segment.isLegLastSegment() && m_containingRoute) // if containing route, this is a leg
-            break;
-        segment = segment.nextRouteSegment();
-    }
+    });
     m_numSegments = count;
     return count;
+}
+
+QList<QGeoRouteSegment> QGeoRoutePrivateDefault::segments() const
+{
+    QList<QGeoRouteSegment> segments;
+    forEachSegment([&segments](const QGeoRouteSegment &segment){
+        segments.append(segment);
+    });
+    return segments;
 }
 
 void QGeoRoutePrivateDefault::setRouteLegs(const QList<QGeoRoute> &legs)

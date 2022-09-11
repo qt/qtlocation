@@ -109,6 +109,7 @@ public:
 
     virtual QString engineName() const = 0;
     virtual int segmentsCount() const = 0;
+    virtual QList<QGeoRouteSegment> segments() const = 0;
 
     // QGeoRouteLeg API
     virtual void setLegIndex(int idx);
@@ -156,6 +157,7 @@ public:
 
     QString engineName() const override;
     int segmentsCount() const override;
+    QList<QGeoRouteSegment> segments() const override;
 
     void setRouteLegs(const QList<QGeoRoute> &legs) override;
     QList<QGeoRoute> routeLegs() const override;
@@ -169,6 +171,18 @@ public:
     void setContainingRoute(const QGeoRoute &route) override;
     QGeoRoute containingRoute() const override;
 
+private:
+    template<typename Functor>
+    inline void forEachSegment(Functor &&functor) const {
+        QGeoRouteSegment segment = m_firstSegment;
+        while (segment.isValid()) {
+            functor(segment);
+            // if containing route, this is a leg
+            if (segment.isLegLastSegment() && m_containingRoute)
+                break;
+            segment = segment.nextRouteSegment();
+        }
+    }
     QString m_id;
     QGeoRouteRequest m_request;
 

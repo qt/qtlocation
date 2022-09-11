@@ -175,23 +175,7 @@ void QDeclarativeGeoRoute::setPath(const QList<QGeoCoordinate> &value)
 
 QList<QGeoRouteSegment> QDeclarativeGeoRoute::segments()
 {
-    return segments_;
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoRoute::appendSegment(const QGeoRouteSegment &segment)
-{
-    segments_.append(segment);
-}
-
-/*!
-    \internal
-*/
-void QDeclarativeGeoRoute::clearSegments()
-{
-    segments_.clear();
+    return route_.d_ptr->segments();
 }
 
 /*!
@@ -206,7 +190,7 @@ void QDeclarativeGeoRoute::clearSegments()
 
 int QDeclarativeGeoRoute::segmentsCount() const
 {
-    return qMax(route_.d_ptr->segmentsCount(), segments_.count());
+    return route_.d_ptr->segmentsCount();
 }
 
 const QGeoRoute &QDeclarativeGeoRoute::route() const
@@ -221,10 +205,12 @@ const QGeoRoute &QDeclarativeGeoRoute::route() const
 
     \since 5.11
 */
-QDeclarativeGeoRouteQuery *QDeclarativeGeoRoute::routeQuery()
+QDeclarativeGeoRouteQuery *QDeclarativeGeoRoute::routeQuery() const
 {
-    if (!routeQuery_)
-        routeQuery_ = new QDeclarativeGeoRouteQuery(route_.request(), this);
+    if (!routeQuery_) {
+        routeQuery_ = new QDeclarativeGeoRouteQuery(route_.request(),
+                                                    const_cast<QDeclarativeGeoRoute *>(this));
+    }
     return routeQuery_;
 }
 
@@ -238,19 +224,13 @@ QDeclarativeGeoRouteQuery *QDeclarativeGeoRoute::routeQuery()
 
     \since QtLocation 5.12
 */
-QList<QDeclarativeGeoRoute *> QDeclarativeGeoRoute::legs()
+QList<QDeclarativeGeoRoute *> QDeclarativeGeoRoute::legs() const
 {
-    // route_.routeLegs() is expected not to change.
-    // The following if condition is expected to be run only once.
-    if (route_.routeLegs().size() != legs_.size()) {
-        legs_.clear();
-        const QList<QGeoRoute> rlegs = route_.routeLegs();
-        for (const auto &r: rlegs) {
-            QDeclarativeGeoRoute *dr = new QDeclarativeGeoRoute(r, this);
-            legs_.append(dr);
-        }
-    }
-    return legs_;
+    QList<QDeclarativeGeoRoute *> legs;
+    const QList<QGeoRoute> rlegs = route_.routeLegs();
+    for (const auto &r : rlegs)
+        legs.append(new QDeclarativeGeoRoute(r, const_cast<QDeclarativeGeoRoute *>(this)));
+    return legs;
 }
 
 /*!
@@ -268,18 +248,9 @@ QList<QDeclarativeGeoRoute *> QDeclarativeGeoRoute::legs()
 
     \since QtLocation 5.13
 */
-QQmlPropertyMap *QDeclarativeGeoRoute::extendedAttributes() const
+QVariantMap QDeclarativeGeoRoute::extendedAttributes() const
 {
-    if (!m_extendedAttributes) {
-        QDeclarativeGeoRoute *self = const_cast<QDeclarativeGeoRoute *>(this);
-        self->m_extendedAttributes = new QQmlPropertyMap(self);
-        // Fill it
-        const QVariantMap &xAttrs = route_.extendedAttributes();
-        const QStringList &keys = xAttrs.keys();
-        for (const QString &key: keys)
-            self->m_extendedAttributes->insert(key, xAttrs.value(key));
-    }
-    return m_extendedAttributes;
+    return route_.extendedAttributes();
 }
 
 /*!
