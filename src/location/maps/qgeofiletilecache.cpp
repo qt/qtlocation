@@ -555,7 +555,7 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::getFromMemory(const QGeoTileS
         QImage image;
         if (!image.loadFromData(tm->bytes)) {
             handleError(spec, QLatin1String("Problem with tile image"));
-            return QSharedPointer<QGeoTileTexture>(0);
+            return QSharedPointer<QGeoTileTexture>();
         }
         QSharedPointer<QGeoTileTexture> tt = addToTextureCache(spec, image);
         if (tt)
@@ -588,7 +588,7 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::getFromDisk(const QGeoTileSpe
         // This is a truly invalid image. The fetcher should try again.
         if (!image.loadFromData(bytes)) {
             handleError(spec, QLatin1String("Problem with tile image"));
-            return QSharedPointer<QGeoTileTexture>(0);
+            return QSharedPointer<QGeoTileTexture>();
         }
 
         // Converting it here, instead of in each QSGTexture::bind()
