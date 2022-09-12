@@ -490,7 +490,7 @@ void QGeoMapMapboxGL::onMapItemGeometryChanged()
     emit sgNodeChanged();
 }
 
-void QGeoMapMapboxGL::onParameterPropertyUpdated(QGeoMapParameter *param, const char *)
+void QGeoMapMapboxGL::onParameterPropertyUpdated(QGeoMapParameter *param)
 {
     Q_D(QGeoMapMapboxGL);
 

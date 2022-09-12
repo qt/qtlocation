@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -50,16 +50,6 @@ QGeoMapParameter::QGeoMapParameter(QObject *parent) : QObject(parent)
 
 }
 
-QGeoMapParameter::QGeoMapParameter(const QList<QPair<QLatin1String, QVariant> > &properties, QObject *parent) : QObject(parent)
-{
-    for (const auto &p: properties) {
-        if (p.first == QLatin1String("type"))
-            setType(p.second.toString());
-        else
-            updateProperty(p.first.data(), p.second);
-    }
-}
-
 QGeoMapParameter::~QGeoMapParameter()
 {
 }
@@ -83,18 +73,20 @@ void QGeoMapParameter::setType(const QString &type)
 // DO NOT USE to set "type"
 void QGeoMapParameter::updateProperty(const char *propertyName, QVariant value)
 {
-    setProperty(propertyName, value);
+    const QMetaProperty property = metaObject()->property(metaObject()->indexOfProperty(propertyName));
+    property.write(this, value);
     // This should technically be emitted only for dynamically added properties.
     // Since this object has only type defined as Q_PROPERTY() which is a set-once
     // no check is really needed here.
-    emit propertyUpdated(this, propertyName);
+    emit propertyUpdated(this, property);
 }
 
 QVariantMap QGeoMapParameter::toVariantMap() const
 {
     QVariantMap res;
     const QMetaObject *metaObj = metaObject();
-    for (int i = 2; i < metaObj->propertyCount(); ++i) { // 0 is objectName, 1 is type, we want to skip both of them here.
+    // 0 is objectName, 1 is type, we want to skip both of them here.
+    for (int i = m_initialPropertyCount; i < metaObj->propertyCount(); ++i) {
         const char *propName = metaObj->property(i).name();
         res[QLatin1String(propName)] = property(propName);
     }

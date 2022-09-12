@@ -50,19 +50,25 @@ namespace {
 class SignalMapper : public QObject
 {
     Q_OBJECT
-
-    int i;
 public:
-    explicit SignalMapper(int i, QObject *parent = nullptr)
-        : QObject(parent), i(i) {}
+    explicit SignalMapper(const QMetaProperty &p, QDeclarativeGeoMapParameter *parent)
+        : QObject(parent), property(p)
+    {}
 
-public Q_SLOTS:
-    void map() { emit mapped(i); }
+    inline static QMetaMethod forwarder =
+        staticMetaObject.method(staticMetaObject.indexOfSlot("forward()"));
 
-Q_SIGNALS:
-    void mapped(int);
+public slots:
+    void forward()
+    {
+        QDeclarativeGeoMapParameter *that = static_cast<QDeclarativeGeoMapParameter *>(parent());
+        that->propertyUpdated(that, property);
+    }
+
+private:
+    const QMetaProperty property;
 };
-} // unnamed namespace
+}
 
 /*!
     \qmltype MapParameter
@@ -109,18 +115,9 @@ QDeclarativeGeoMapParameter::QDeclarativeGeoMapParameter(QObject *parent)
 {
 }
 
-QDeclarativeGeoMapParameter::~QDeclarativeGeoMapParameter()
-{
-}
-
 bool QDeclarativeGeoMapParameter::isComponentComplete() const
 {
     return m_complete;
-}
-
-int QDeclarativeGeoMapParameter::initialPropertyCount() const
-{
-    return m_initialPropertyCount;
 }
 
 void QDeclarativeGeoMapParameter::classBegin()
@@ -130,25 +127,16 @@ void QDeclarativeGeoMapParameter::classBegin()
 void QDeclarativeGeoMapParameter::componentComplete()
 {
     for (int i = m_initialPropertyCount; i < metaObject()->propertyCount(); ++i) {
-        QMetaProperty property = metaObject()->property(i);
+        const QMetaProperty property = metaObject()->property(i);
 
-        if (!property.hasNotifySignal()) {
+        if (!property.hasNotifySignal())
             return;
-        }
 
-        SignalMapper *mapper = new SignalMapper(i, this);
-
-        const QByteArray signalName = '2' + property.notifySignal().methodSignature(); // TODO: explain why '2'
-        QObject::connect(this, signalName, mapper, SLOT(map()));
-        QObject::connect(mapper, SIGNAL(mapped(int)), this, SLOT(onPropertyUpdated(int)));
+        SignalMapper *mapper = new SignalMapper(property, this);
+        QObject::connect(this, property.notifySignal(), mapper, SignalMapper::forwarder);
     }
     m_complete = true;
     emit completed(this);
-}
-
-void QDeclarativeGeoMapParameter::onPropertyUpdated(int index)
-{
-    emit propertyUpdated(this, metaObject()->property(index).name());
 }
 
 QT_END_NAMESPACE
