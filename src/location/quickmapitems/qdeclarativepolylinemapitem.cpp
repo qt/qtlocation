@@ -1265,64 +1265,6 @@ void QDeclarativePolylineMapItem::updatePolish()
     m_d->updatePolish();
 }
 
-void QDeclarativePolylineMapItem::updateLineStyleParameter(QGeoMapParameter *p,
-                                                           const char *propertyName,
-                                                           bool update)
-{
-    static const QByteArrayList acceptedParameterTypes = QByteArrayList()
-        << QByteArrayLiteral("lineCap")
-        << QByteArrayLiteral("pen");
-    switch (acceptedParameterTypes.indexOf(QByteArray(propertyName))) {
-    case -1:
-        qWarning() << "Invalid property " << QLatin1String(propertyName) << " for parameter lineStyle";
-        break;
-    case 0: // lineCap
-        {
-            const QVariant lineCap = p->property("lineCap");
-            m_d->m_penCapStyle = lineCap.value<Qt::PenCapStyle>(); // if invalid, will return 0 == FlatCap
-            if (update)
-                markSourceDirtyAndUpdate();
-            break;
-        }
-    case 1: // penStyle
-        {
-            const QVariant penStyle = p->property("pen");
-            m_d->m_penStyle = penStyle.value<Qt::PenStyle>();
-            if (m_d->m_penStyle == Qt::NoPen)
-                m_d->m_penStyle = Qt::SolidLine;
-            if (update)
-                markSourceDirtyAndUpdate();
-            break;
-        }
-    }
-}
-
-void QDeclarativePolylineMapItem::updateLineStyleParameter(QGeoMapParameter *p, const char *propertyName)
-{
-    updateLineStyleParameter(p, propertyName, true);
-}
-
-void QDeclarativePolylineMapItem::componentComplete()
-{
-    QQuickItem::componentComplete();
-    // Set up Dynamic Parameters
-    QList<QGeoMapParameter *> dynamicParameters = quickChildren<QGeoMapParameter>();
-    for (QGeoMapParameter *p : qAsConst(dynamicParameters)) {
-        if (p->type() == QLatin1String("lineStyle")) {
-            updateLineStyleParameter(p, "lineCap", false);
-            updateLineStyleParameter(p, "pen", false);
-            connect(p, &QGeoMapParameter::propertyUpdated,
-                    this, static_cast<void (QDeclarativePolylineMapItem::*)(QGeoMapParameter *, const char *)>(&QDeclarativePolylineMapItem::updateLineStyleParameter));
-            markSourceDirtyAndUpdate();
-        }
-    }
-}
-
-void QDeclarativePolylineMapItem::markSourceDirtyAndUpdate()
-{
-    m_d->markSourceDirtyAndUpdate();
-}
-
 /*!
     \internal
 */

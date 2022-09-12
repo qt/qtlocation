@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -65,13 +65,12 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMapParameter : public QObject
     Q_PROPERTY(QString type READ type WRITE setType)
 public:
     explicit QGeoMapParameter(QObject *parent = nullptr);
-    QGeoMapParameter(const QList<QPair<QLatin1String, QVariant>> &properties, QObject *parent = nullptr);
-    virtual ~QGeoMapParameter();
+    ~QGeoMapParameter();
 
     bool operator==(const QGeoMapParameter &other) const;
 
-    virtual QString type() const;
-    virtual void setType(const QString &type);
+    QString type() const;
+    void setType(const QString &type);
 
     void updateProperty(const char *propertyName, QVariant value);
 
@@ -79,10 +78,11 @@ public:
     bool hasProperty(const char *propertyName) const;
 
 Q_SIGNALS:
-    void propertyUpdated(QGeoMapParameter *param, const char *propertyName);
+    void propertyUpdated(QGeoMapParameter *param, const QMetaProperty &property);
 
 protected:
     QString m_type;
+    const int m_initialPropertyCount = staticMetaObject.propertyCount();
 
     Q_DISABLE_COPY(QGeoMapParameter)
     friend class QGeoMap;

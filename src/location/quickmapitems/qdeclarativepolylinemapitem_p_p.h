@@ -504,8 +504,6 @@ public:
     virtual bool contains(const QPointF &point) const = 0;
 
     QDeclarativePolylineMapItem &m_poly;
-    Qt::PenStyle m_penStyle = Qt::SolidLine;
-    Qt::PenCapStyle m_penCapStyle = Qt::SquareCap;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateCPU: public QDeclarativePolylineMapItemPrivate
@@ -784,7 +782,7 @@ public:
                          &m_geometry,
                          combinedMatrix,
                          cameraCenter,
-                         m_penCapStyle,
+                         Qt::FlatCap,
                          false,
                          m_poly.zoomForLOD(int(map->cameraData().zoomLevel())));
             m_geometry.setPreserveGeometry(false);

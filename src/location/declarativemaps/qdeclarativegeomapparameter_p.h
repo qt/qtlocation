@@ -62,10 +62,10 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapParameter : public QGeoMapPara
 {
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
+    // this type must not declare any additional properties
 
 public:
     explicit QDeclarativeGeoMapParameter(QObject *parent = nullptr);
-    virtual ~QDeclarativeGeoMapParameter();
 
     bool isComponentComplete() const;
 
@@ -73,16 +73,11 @@ Q_SIGNALS:
     void completed(QDeclarativeGeoMapParameter *);
 
 protected:
-    int initialPropertyCount() const;
     // QQmlParserStatus implementation
     void classBegin() override;
     void componentComplete() override;
 
-private slots:
-    void onPropertyUpdated(int index);
-
 private:
-    const int m_initialPropertyCount = staticMetaObject.propertyCount();
     bool m_complete = false;
 };
 

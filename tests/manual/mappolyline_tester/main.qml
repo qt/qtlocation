@@ -190,11 +190,6 @@ Window {
                        ? MapPolygon.Software : MapPolygon.OpenGL
             }
 
-            function miterValue()
-            {
-                return (miterSwitch.checked) ? Qt.RoundCap : Qt.FlatCap
-            }
-
             MapPolyline {
                 id: tstPolyLine // to verify the polygon stays where it's supposed to
                 line.color: 'black'
@@ -236,10 +231,6 @@ Window {
                     { latitude: 45, longitude: 174 },
                     { latitude: 43, longitude: -168 }
                 ]
-                DynamicParameter {
-                    type: "lineStyle"
-                    property var lineCap: miterValue()
-                }
 
                 MouseArea {
                     anchors.fill: parent
@@ -298,23 +289,12 @@ Window {
         }
         checked: false
     }
-    C2.Switch {
-        text: qsTr("Miter")
-        id: miterSwitch
-        anchors {
-            top: leftSwitch.bottom
-            left: parent.left
-            leftMargin: 12
-            rightMargin: 12
-        }
-        checked: false
-    }
     C2.Slider {
         id: sliWidth
         orientation: Qt.Vertical
         anchors {
             left: parent.left
-            top: miterSwitch.bottom
+            top: leftSwitch.bottom
             bottom: parent.bottom
             topMargin: 10
             leftMargin: 10

@@ -27,6 +27,7 @@
 ****************************************************************************/
 
 #include "qgeotiledmap_test.h"
+#include <QtCore/QMetaProperty>
 #include <QtPositioning/QGeoCoordinate>
 #include <QtLocation/private/qgeotiledmap_p_p.h>
 #include <QtLocation/private/qgeomapparameter_p.h>
@@ -60,8 +61,8 @@ public:
             cameraData.setCenter(newCenter);
             q->setCameraData(cameraData);
             // Connect for further changes handling
-            q->connect(param, SIGNAL(propertyUpdated(QGeoMapParameter *, const char *)),
-                       q, SLOT(onCameraCenter_testChanged(QGeoMapParameter*, const char*)));
+            q->connect(param, &QGeoMapParameter::propertyUpdated,
+                       q, &QGeoTiledMapTest::onCameraCenter_testChanged);
 
         }
     }
@@ -97,12 +98,12 @@ QGeoTiledMapTest::QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine,
 {
 }
 
-void QGeoTiledMapTest::onCameraCenter_testChanged(QGeoMapParameter *param, const char *propertyName)
+void QGeoTiledMapTest::onCameraCenter_testChanged(QGeoMapParameter *param, const QMetaProperty &property)
 {
-    if (strcmp(propertyName, "center") == 0) {
+    if (strcmp(property.name(), "center") == 0) {
         QGeoCameraData cameraData = this->cameraData();
         // Not testing for propertyName as this param has only one allowed property
-        QGeoCoordinate newCenter = param->property(propertyName).value<QGeoCoordinate>();
+        QGeoCoordinate newCenter = property.read(param).value<QGeoCoordinate>();
         cameraData.setCenter(newCenter);
         setCameraData(cameraData);
     }

@@ -139,7 +139,6 @@ Q_SIGNALS:
     void backendChanged();
 
 protected Q_SLOTS:
-    void markSourceDirtyAndUpdate();
     void updateAfterLinePropertiesChanged();
     void afterViewportChanged(const QGeoMapViewportChangeEvent &event) override;
 
@@ -147,9 +146,6 @@ protected:
     void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
     void setPathFromGeoList(const QList<QGeoCoordinate> &path);
     void updatePolish() override;
-    void componentComplete() override;
-    void updateLineStyleParameter(QGeoMapParameter *p, const char *propertyName);
-    void updateLineStyleParameter(QGeoMapParameter *p, const char *propertyName, bool update);
 
 #ifdef QT_LOCATION_DEBUG
 public:
