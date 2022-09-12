@@ -435,7 +435,7 @@ QSharedPointer<T> QCache3Q<Key,T,EvPolicy>::object(const Key &key) const
 {
     if (!lookup_.contains(key)) {
         const_cast<QCache3Q<Key,T,EvPolicy> *>(this)->missCount_++;
-        return QSharedPointer<T>(0);
+        return QSharedPointer<T>();
     }
 
     QCache3Q<Key,T,EvPolicy> *me = const_cast<QCache3Q<Key,T,EvPolicy> *>(this);

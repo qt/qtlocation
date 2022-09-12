@@ -170,7 +170,7 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCacheOsm::getFromOfflineStorage(cons
     QImage image;
     if (!image.loadFromData(bytes)) {
         handleError(spec, QLatin1String("Problem with tile image"));
-        return QSharedPointer<QGeoTileTexture>(0);
+        return QSharedPointer<QGeoTileTexture>();
     }
 
     addToMemoryCache(spec, bytes, QString());
