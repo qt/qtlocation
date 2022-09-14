@@ -39,6 +39,8 @@
 ****************************************************************************/
 
 #include "qgeojson_p.h"
+#include <qvariant.h>
+#include <qjsondocument.h>
 #include <qjsonobject.h>
 #include <qjsonvalue.h>
 #include <qjsonarray.h>
@@ -50,25 +52,25 @@
 
 QT_BEGIN_NAMESPACE
 
-/*! \class QGeoJson
+/*! \namespace QGeoJson
     \inmodule QtLocation
     \since 5.13
 
-    QGeoJson class can be used to convert between a GeoJSON document (see the
-    \l {https://en.wikipedia.org/wiki/GeoJSON} {Wikipedia page}, \l
-    {https://tools.ietf.org/html/rfc7946} {RFC}) and a \l
-    {http://doc.qt.io/qt-5/qvariant.html#QVariantList-typedef} {QVariantList}
-    of \l QVariantMap elements ready to be used as Model in a \l MapItemView.
-    WARNING! This private class is part of Qt labs, thus not stable API, it is
+    The methods in the QGeoJson namespace can be used to convert between a
+    GeoJSON document (see the \l {https://en.wikipedia.org/wiki/GeoJSON}
+    {Wikipedia page}, \l {https://tools.ietf.org/html/rfc7946} {RFC}) and a
+    \l QVariantList of \l QVariantMap elements ready to be used as Model in
+    a \l MapItemView.
+
+    \note This private class is part of Qt labs, thus not stable API, it is
     part of the experimental components of QtLocation. Until it is promoted to
     public API, it may be subject to source and binary-breaking changes.
 
     \section2 Importing GeoJSON
 
-    The importGeoJson() method accepts a \l
-    {http://doc.qt.io/qt-5/qjsondocument.html} {QJsonDocument} from which it
-    extracts a single \l {https://tools.ietf.org/html/rfc7159} {JSON} object,
-    since the GeoJSON RFC expects that a valid GeoJSON Document has in its root
+    The importGeoJson() method accepts a \l QJsonDocument from which it
+    extracts a single \l {https://tools.ietf.org/html/rfc7159} {JSON} object.
+    The GeoJSON RFC expects that a valid GeoJSON Document has in its root
     a single JSON object. This method doesn't perform any validation on the
     input. The importer returns a QVariantList containing a single QVariantMap.
     This map has always at least 2 (key, value) pairs. The first one has \c
@@ -943,6 +945,9 @@ static QJsonObject exportFeatureCollection(const QVariantMap &featureCollection)
     return exportedFeatureCollection;
 }
 
+namespace QGeoJson
+{
+
 /*!
 This method imports the \a geoJson document, expected to contain valid GeoJSON
 data, into a QVariantList structured like described in the section \l
@@ -952,7 +957,7 @@ data, into a QVariantList structured like described in the section \l
 
 \sa exportGeoJson
 */
-QVariantList QGeoJson::importGeoJson(const QJsonDocument &geoJson)
+QVariantList importGeoJson(const QJsonDocument &geoJson)
 {
     QVariantList returnedList;
     QJsonObject object = geoJson.object(); // Read json object from imported doc
@@ -1087,7 +1092,7 @@ the data converted to GeoJSON.
 
 \sa importGeoJson
 */
-QJsonDocument QGeoJson::exportGeoJson(const QVariantList &geoData)
+QJsonDocument exportGeoJson(const QVariantList &geoData)
 {
     QVariantMap exportMap = geoData.at(0).value<QVariantMap>(); // Extracting the QVMap
     QJsonObject newObject;
@@ -1125,7 +1130,7 @@ QJsonDocument QGeoJson::exportGeoJson(const QVariantList &geoData)
 }
 
 // Functions for toString
-QTextStream &operator << (QTextStream &stream, const QGeoCoordinate &crd)
+QTextStream &operator<<(QTextStream &stream, const QGeoCoordinate &crd)
 {
     stream << "{ " << QString::number(crd.latitude(), 'f', 3) << ", "
                    << QString::number(crd.longitude(), 'f', 3) << ", "
@@ -1133,7 +1138,7 @@ QTextStream &operator << (QTextStream &stream, const QGeoCoordinate &crd)
     return stream;
 }
 
-QTextStream &operator << (QTextStream &stream, const QGeoShape &shape)
+QTextStream &operator<<(QTextStream &stream, const QGeoShape &shape)
 {
     switch (shape.type()) {
     case QGeoShape::CircleType: {
@@ -1164,9 +1169,9 @@ QTextStream &operator << (QTextStream &stream, const QGeoShape &shape)
     return stream;
 }
 
-static const QString sTab = QStringLiteral("  ");
 
-QString printQvariant(const QVariant v, int tabs = 0) {
+static QString printQvariant(const QVariant v, int tabs = 0) {
+    static constexpr QStringView sTab(u"  ");
     QString sTabs;
     QString res;
     QTextStream stream(&res);
@@ -1230,8 +1235,10 @@ QString printQvariant(const QVariant v, int tabs = 0) {
   \l {Importing GeoJSON}, and returns a string containing the same data in a
   readable form.
 */
-QString QGeoJson::toString(const QVariantList &geoData) {
+QString toString(const QVariantList &geoData) {
     return printQvariant(geoData.first(), 0);
 }
+
+}  // namespace QGeoJson
 
 QT_END_NAMESPACE

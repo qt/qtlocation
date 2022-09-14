@@ -41,9 +41,8 @@
 #ifndef QGEOJSON_H
 #define QGEOJSON_H
 
-#include <QtCore/qvariant.h>
-#include <QtCore/qjsondocument.h>
 #include <QtLocation/private/qlocationglobal_p.h>
+#include <QtCore/QVariantList>
 
 //
 //  W A R N I N G
@@ -56,25 +55,22 @@
 // We mean it.
 //
 
-
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoJson
-{
-public:
+class QJsonDocument;
+class QString;
 
+namespace QGeoJson {
     // This method imports a GeoJSON file to a QVariantList
-    static QVariantList importGeoJson(const QJsonDocument &doc);
+    Q_LOCATION_PRIVATE_EXPORT QVariantList importGeoJson(const QJsonDocument &doc);
 
     // This method exports a GeoJSON file from a QVariantList
-    static QJsonDocument exportGeoJson(const QVariantList &list);
+    Q_LOCATION_PRIVATE_EXPORT QJsonDocument exportGeoJson(const QVariantList &list);
 
     // This method exports the content of the imported QVariantList in a
     // readable format
-    static QString toString(const QVariantList
-    &importedGeoJson);
-
-};
+    Q_LOCATION_PRIVATE_EXPORT QString toString(const QVariantList &importedGeoJson);
+}
 
 QT_END_NAMESPACE
 
