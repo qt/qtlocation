@@ -51,7 +51,7 @@
 QT_BEGIN_NAMESPACE
 
 QGeoCodeReplyOsm::QGeoCodeReplyOsm(QNetworkReply *reply, bool includeExtraData, QObject *parent)
-:   QGeoCodeReply(*new QGeoCodeReplyOsmPrivate, parent), m_includeExtraData(includeExtraData)
+:   QGeoCodeReply(parent), m_includeExtraData(includeExtraData)
 {
     if (!reply) {
         setError(UnknownError, QStringLiteral("Null reply"));
@@ -202,21 +202,4 @@ void QGeoCodeReplyOsm::networkReplyError(QNetworkReply::NetworkError error)
     setError(QGeoCodeReply::CommunicationError, reply->errorString());
 }
 
-QGeoCodeReplyOsmPrivate::QGeoCodeReplyOsmPrivate()
-{
-
-}
-
-QGeoCodeReplyOsmPrivate::~QGeoCodeReplyOsmPrivate()
-{
-
-}
-
-QVariantMap QGeoCodeReplyOsmPrivate::extraData() const
-{
-    return m_extraData;
-}
-
 QT_END_NAMESPACE
-
-

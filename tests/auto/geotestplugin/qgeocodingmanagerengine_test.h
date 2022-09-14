@@ -45,29 +45,11 @@
 
 QT_USE_NAMESPACE
 
-
-class GeocodeReplyTestPrivate : public QGeoCodeReplyPrivate
-{
-public:
-    GeocodeReplyTestPrivate()
-    {
-    }
-    ~GeocodeReplyTestPrivate()
-    {
-    }
-    QVariantMap extraData() const override
-    {
-        return m_extraData;
-    }
-
-    QVariantMap m_extraData;
-};
-
 class GeocodeReplyTest :public QGeoCodeReply
 {
     Q_OBJECT
 public:
-    GeocodeReplyTest(QObject *parent = 0) : QGeoCodeReply (*new GeocodeReplyTestPrivate, parent) {}
+    using QGeoCodeReply::QGeoCodeReply;
 
     void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}
@@ -129,8 +111,6 @@ public:
 
         if (errorCode_ == QGeoCodeReply::NoError)
             setLocations(geocodeReply_, searchString, limit, offset);
-        if (includeExtendedData_)
-            injectExtra(geocodeReply_, extendedReplyData_);
 
         if (finishRequestImmediately_) {
             // check if we should finish with error
@@ -152,8 +132,6 @@ public:
         geocodeReply_ = new GeocodeReplyTest();
         connect(geocodeReply_, SIGNAL(aborted()), this, SLOT(requestAborted()));
         geocodeReply_->callSetViewport(bounds);
-        if (includeExtendedData_)
-            injectExtra(geocodeReply_, extendedReplyData_);
 
         if (address.street().startsWith("error")) {
             errorString_ = address.street();
@@ -249,8 +227,6 @@ public:
 
         setLocations(geocodeReply_, coordinate);
         geocodeReply_->callSetViewport(bounds);
-        if (includeExtendedData_)
-            injectExtra(geocodeReply_, extendedReplyData_);
 
         if (coordinate.latitude() > 70) {
             errorString_ = "error";
@@ -290,13 +266,6 @@ protected:
              geocodeReply_->callSetFinished(true);
          }
          emit finished(geocodeReply_);
-     }
-
-     static void injectExtra(QGeoCodeReply *reply, const QVariantMap &extra)
-     {
-         GeocodeReplyTestPrivate *replyPrivate
-                 = static_cast<GeocodeReplyTestPrivate *>(QGeoCodeReplyPrivate::get(*reply));
-         replyPrivate->m_extraData = extra;
      }
 
      static void injectExtra(QGeoLocation &location, const QVariantMap &extra)

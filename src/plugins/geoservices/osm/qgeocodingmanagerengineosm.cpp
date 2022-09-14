@@ -132,11 +132,6 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::geocode(const QString &address, int l
     QNetworkReply *reply = m_networkManager->get(request);
 
     QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, m_includeExtraData, this);
-    if (m_debugQuery) {
-        QGeoCodeReplyOsmPrivate *replyPrivate
-                = static_cast<QGeoCodeReplyOsmPrivate *>(QGeoCodeReplyPrivate::get(*geocodeReply));
-        replyPrivate->m_extraData["request_url"] = url;
-    }
 
     connect(geocodeReply, &QGeoCodeReplyOsm::finished,
             this, &QGeoCodingManagerEngineOsm::replyFinished);
@@ -169,11 +164,6 @@ QGeoCodeReply *QGeoCodingManagerEngineOsm::reverseGeocode(const QGeoCoordinate &
     QNetworkReply *reply = m_networkManager->get(request);
 
     QGeoCodeReplyOsm *geocodeReply = new QGeoCodeReplyOsm(reply, m_includeExtraData, this);
-    if (m_debugQuery) {
-        QGeoCodeReplyOsmPrivate *replyPrivate
-                = static_cast<QGeoCodeReplyOsmPrivate *>(QGeoCodeReplyPrivate::get(*geocodeReply));
-        replyPrivate->m_extraData["request_url"] = url;
-    }
 
     connect(geocodeReply, &QGeoCodeReplyOsm::finished,
             this, &QGeoCodingManagerEngineOsm::replyFinished);

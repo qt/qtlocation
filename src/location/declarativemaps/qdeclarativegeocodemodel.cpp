@@ -391,7 +391,6 @@ void QDeclarativeGeocodeModel::geocodeFinished(QGeoCodeReply *reply)
     reply->deleteLater();
     reply_ = 0;
     int oldCount = declarativeLocations_.count();
-    // const QVariantMap &extraData = QGeoCodeReplyPrivate::get(*reply)->extraData();
     setLocations(reply->locations());
     setError(NoError, QString());
     setStatus(QDeclarativeGeocodeModel::Ready);

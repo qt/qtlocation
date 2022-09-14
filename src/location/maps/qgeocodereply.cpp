@@ -103,19 +103,13 @@ QGeoCodeReply::QGeoCodeReply(QObject *parent)
     : QObject(parent),
       d_ptr(new QGeoCodeReplyPrivate()) {}
 
-QGeoCodeReply::QGeoCodeReply(QGeoCodeReplyPrivate &dd, QObject *parent)
-    : QObject(parent),
-      d_ptr(&dd)
-{
-
-}
-
 /*!
     Constructs a geocode reply with a given \a error and \a errorString and the specified \a parent.
 */
 QGeoCodeReply::QGeoCodeReply(Error error, const QString &errorString, QObject *parent)
     : QObject(parent),
-      d_ptr(new QGeoCodeReplyPrivate(error, errorString)) {}
+      d_ptr(new QGeoCodeReplyPrivate(error, errorString))
+{}
 
 /*!
     Destroys this reply object.
@@ -268,7 +262,7 @@ void QGeoCodeReply::abort()
     This may be more than locations().length() if the number of responses
     was less than the number requested.
 */
-int QGeoCodeReply::limit() const
+qsizetype QGeoCodeReply::limit() const
 {
     return d_ptr->limit;
 }
@@ -277,7 +271,7 @@ int QGeoCodeReply::limit() const
     Returns the offset into the entire result set at which to start
     fetching results.
 */
-int QGeoCodeReply::offset() const
+qsizetype QGeoCodeReply::offset() const
 {
     return d_ptr->offset;
 }
@@ -287,7 +281,7 @@ int QGeoCodeReply::offset() const
 
     If \a limit is -1 then all available responses will be returned.
 */
-void QGeoCodeReply::setLimit(int limit)
+void QGeoCodeReply::setLimit(qsizetype limit)
 {
     d_ptr->limit = limit;
 }
@@ -296,7 +290,7 @@ void QGeoCodeReply::setLimit(int limit)
     Sets the offset in the entire result set at which to start
     fetching result to \a offset.
 */
-void QGeoCodeReply::setOffset(int offset)
+void QGeoCodeReply::setOffset(qsizetype offset)
 {
     d_ptr->offset = offset;
 }
@@ -333,25 +327,11 @@ void QGeoCodeReply::setOffset(int offset)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoCodeReplyPrivate::QGeoCodeReplyPrivate()
-    : error(QGeoCodeReply::NoError),
-      isFinished(false),
-      limit(-1),
-      offset(0) {}
+QGeoCodeReplyPrivate::QGeoCodeReplyPrivate() = default;
 
 QGeoCodeReplyPrivate::QGeoCodeReplyPrivate(QGeoCodeReply::Error error, const QString &errorString)
-    : error(error),
-      errorString(errorString),
-      isFinished(true),
-      limit(-1),
-      offset(0) {}
-
-QGeoCodeReplyPrivate::~QGeoCodeReplyPrivate() = default;
-
-QVariantMap QGeoCodeReplyPrivate::extraData() const
-{
-    return QVariantMap();
-}
+    : error(error), errorString(errorString), isFinished(true)
+{}
 
 const QGeoCodeReplyPrivate *QGeoCodeReplyPrivate::get(const QGeoCodeReply &reply)
 {
