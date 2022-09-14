@@ -61,19 +61,13 @@ QT_BEGIN_NAMESPACE
 class QPlaceAttributePrivate : public QSharedData
 {
 public:
-    QPlaceAttributePrivate(){}
-    QPlaceAttributePrivate(const QPlaceAttributePrivate &other);
-    virtual ~QPlaceAttributePrivate(){}
-    virtual bool operator== (const QPlaceAttributePrivate &other) const;
-    virtual QPlaceAttributePrivate *clone() const { return new QPlaceAttributePrivate(*this); }
+    bool operator== (const QPlaceAttributePrivate &other) const;
 
     bool isEmpty() const;
 
     QString label;
     QString text;
 };
-
-template<> QPlaceAttributePrivate *QSharedDataPointer<QPlaceAttributePrivate>::clone();
 
 QT_END_NAMESPACE
 

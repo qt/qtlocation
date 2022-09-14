@@ -44,18 +44,6 @@ QT_USE_NAMESPACE
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlaceAttributePrivate)
 
-template<> QPlaceAttributePrivate *QSharedDataPointer<QPlaceAttributePrivate>::clone()
-{
-    return d->clone();
-}
-
-QPlaceAttributePrivate::QPlaceAttributePrivate(const QPlaceAttributePrivate &other)
-    : QSharedData(other),
-      label(other.label),
-      text(other.text)
-{
-}
-
 bool QPlaceAttributePrivate::operator== (const QPlaceAttributePrivate &other) const
 {
     return label == other.label
