@@ -275,6 +275,4 @@ QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QStrin
       isFinished(true)
 {}
 
-QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
-
 QT_END_NAMESPACE

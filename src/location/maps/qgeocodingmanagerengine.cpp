@@ -323,10 +323,4 @@ QLocale QGeoCodingManagerEngine::locale() const
     signal. Use deleteLater() instead.
 */
 
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoCodingManagerEnginePrivate::QGeoCodingManagerEnginePrivate() = default;
-QGeoCodingManagerEnginePrivate::~QGeoCodingManagerEnginePrivate() = default;
-
 QT_END_NAMESPACE

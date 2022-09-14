@@ -64,10 +64,6 @@ QT_BEGIN_NAMESPACE
 class QGeoRouteRequestPrivate : public QSharedData
 {
 public:
-    QGeoRouteRequestPrivate();
-    QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other);
-    ~QGeoRouteRequestPrivate();
-
     bool operator==(const QGeoRouteRequestPrivate &other) const;
 
     QList<QGeoCoordinate> waypoints;

@@ -524,10 +524,6 @@ QVariantMap QGeoRouteRequest::extraParameters() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoRouteRequestPrivate::QGeoRouteRequestPrivate() = default;
-QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other) = default;
-QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() = default;
-
 bool QGeoRouteRequestPrivate::operator==(const QGeoRouteRequestPrivate &other) const
 {
     return ((waypoints == other.waypoints)

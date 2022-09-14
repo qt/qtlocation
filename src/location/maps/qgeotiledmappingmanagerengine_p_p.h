@@ -67,18 +67,13 @@ class QGeoTileFetcher;
 class QGeoTiledMappingManagerEnginePrivate
 {
 public:
-    QGeoTiledMappingManagerEnginePrivate() = default;
-
     QSize tileSize_;
     int m_tileVersion = -1;
     QHash<QGeoTiledMap *, QSet<QGeoTileSpec>> mapHash_;
     QHash<QGeoTileSpec, QSet<QGeoTiledMap *>> tileHash_;
     QAbstractGeoTileCache::CacheAreas cacheHint_ = QAbstractGeoTileCache::AllCaches;
-    QAbstractGeoTileCache *tileCache_ = nullptr;
+    std::unique_ptr<QAbstractGeoTileCache> tileCache_;
     QGeoTileFetcher *fetcher_ = nullptr;
-
-private:
-    Q_DISABLE_COPY(QGeoTiledMappingManagerEnginePrivate)
 };
 
 QT_END_NAMESPACE
