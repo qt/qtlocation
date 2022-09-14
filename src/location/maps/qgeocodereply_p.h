@@ -67,21 +67,19 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoCodeReplyPrivate
 public:
     QGeoCodeReplyPrivate();
     QGeoCodeReplyPrivate(QGeoCodeReply::Error error, const QString &errorString);
-    virtual ~QGeoCodeReplyPrivate();
 
-    virtual QVariantMap extraData() const;
     static const QGeoCodeReplyPrivate *get(const QGeoCodeReply &reply);
     static QGeoCodeReplyPrivate *get(QGeoCodeReply &reply);
 
-    QGeoCodeReply::Error error;
+    QGeoCodeReply::Error error = QGeoCodeReply::NoError;
     QString errorString;
-    bool isFinished;
+    bool isFinished = false;
 
     QGeoShape viewport;
     QList<QGeoLocation> locations;
 
-    int limit;
-    int offset;
+    qsizetype limit = -1;
+    qsizetype offset = 0;
 private:
     Q_DISABLE_COPY(QGeoCodeReplyPrivate)
 };

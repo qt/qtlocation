@@ -75,8 +75,8 @@ public:
     QGeoShape viewport() const;
     QList<QGeoLocation> locations() const;
 
-    int limit() const;
-    int offset() const;
+    qsizetype limit() const;
+    qsizetype offset() const;
 
     virtual void abort();
 
@@ -87,7 +87,6 @@ Q_SIGNALS:
 
 protected:
     explicit QGeoCodeReply(QObject *parent = nullptr);
-    explicit QGeoCodeReply(QGeoCodeReplyPrivate &dd, QObject *parent = nullptr);
 
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);
@@ -96,8 +95,8 @@ protected:
     void addLocation(const QGeoLocation &location);
     void setLocations(const QList<QGeoLocation> &locations);
 
-    void setLimit(int limit);
-    void setOffset(int offset);
+    void setLimit(qsizetype limit);
+    void setOffset(qsizetype offset);
 
 private:
     QGeoCodeReplyPrivate *d_ptr;

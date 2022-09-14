@@ -62,16 +62,6 @@ private:
     bool m_includeExtraData = false;
 };
 
-class QGeoCodeReplyOsmPrivate : public QGeoCodeReplyPrivate
-{
-public:
-    QGeoCodeReplyOsmPrivate();
-    ~QGeoCodeReplyOsmPrivate();
-    QVariantMap extraData() const override;
-
-    QVariantMap m_extraData;
-};
-
 QT_END_NAMESPACE
 
 #endif // QGEOCODEREPLYOSM_H
