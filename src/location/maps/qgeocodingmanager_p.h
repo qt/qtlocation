@@ -62,10 +62,9 @@ class QGeoCodingManagerEngine;
 class QGeoCodingManagerPrivate
 {
 public:
-    QGeoCodingManagerPrivate();
-    ~QGeoCodingManagerPrivate();
+    QGeoCodingManagerPrivate() = default;
 
-    QGeoCodingManagerEngine *engine = nullptr;
+    std::unique_ptr<QGeoCodingManagerEngine> engine;
 
 private:
     Q_DISABLE_COPY(QGeoCodingManagerPrivate)

@@ -60,8 +60,7 @@ QT_BEGIN_NAMESPACE
 class QGeoCodingManagerEnginePrivate
 {
 public:
-    QGeoCodingManagerEnginePrivate();
-    ~QGeoCodingManagerEnginePrivate();
+    QGeoCodingManagerEnginePrivate() = default;
 
     QString managerName;
     QLocale locale;

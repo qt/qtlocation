@@ -91,14 +91,14 @@ QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject
     : QObject(parent),
       d_ptr(new QGeoRoutingManagerPrivate())
 {
-    d_ptr->engine = engine;
+    d_ptr->engine.reset(engine);
     if (d_ptr->engine) {
         d_ptr->engine->setParent(this);
 
-        connect(d_ptr->engine, &QGeoRoutingManagerEngine::finished,
+        connect(d_ptr->engine.get(), &QGeoRoutingManagerEngine::finished,
                 this, &QGeoRoutingManager::finished);
 
-        connect(d_ptr->engine, &QGeoRoutingManagerEngine::errorOccurred,
+        connect(d_ptr->engine.get(), &QGeoRoutingManagerEngine::errorOccurred,
                 this, &QGeoRoutingManager::errorOccurred);
     } else {
         qFatal("The routing manager engine that was set for this routing manager was NULL.");
@@ -327,11 +327,5 @@ Use deleteLater() instead.
 
 /*******************************************************************************
 *******************************************************************************/
-
-QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate() = default;
-QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
-{
-    delete engine;
-}
 
 QT_END_NAMESPACE

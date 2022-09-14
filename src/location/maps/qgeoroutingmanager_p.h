@@ -60,13 +60,7 @@ class QGeoRoutingManagerEngine;
 class QGeoRoutingManagerPrivate
 {
 public:
-    QGeoRoutingManagerPrivate();
-    ~QGeoRoutingManagerPrivate();
-
-    QGeoRoutingManagerEngine *engine = nullptr;
-
-private:
-    Q_DISABLE_COPY(QGeoRoutingManagerPrivate)
+    std::unique_ptr<QGeoRoutingManagerEngine> engine;
 };
 
 QT_END_NAMESPACE

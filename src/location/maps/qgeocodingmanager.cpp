@@ -84,14 +84,14 @@ QGeoCodingManager::QGeoCodingManager(QGeoCodingManagerEngine *engine, QObject *p
     : QObject(parent),
       d_ptr(new QGeoCodingManagerPrivate())
 {
-    d_ptr->engine = engine;
+    d_ptr->engine.reset(engine);
     if (d_ptr->engine) {
         d_ptr->engine->setParent(this);
 
-        connect(d_ptr->engine, &QGeoCodingManagerEngine::finished,
+        connect(d_ptr->engine.get(), &QGeoCodingManagerEngine::finished,
                 this, &QGeoCodingManager::finished);
 
-        connect(d_ptr->engine, &QGeoCodingManagerEngine::errorOccurred,
+        connect(d_ptr->engine.get(), &QGeoCodingManagerEngine::errorOccurred,
                 this, &QGeoCodingManager::errorOccurred);
     } else {
         qFatal("The geocoding manager engine that was set for this geocoding manager was NULL.");
@@ -306,16 +306,6 @@ QLocale QGeoCodingManager::locale() const
     \note Do not delete the \a reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
-
-/*******************************************************************************
-*******************************************************************************/
-
-QGeoCodingManagerPrivate::QGeoCodingManagerPrivate() = default;
-
-QGeoCodingManagerPrivate::~QGeoCodingManagerPrivate()
-{
-    delete engine;
-}
 
 /*******************************************************************************
 *******************************************************************************/
