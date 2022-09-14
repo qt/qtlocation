@@ -49,7 +49,7 @@ class QPlaceCategoriesReplyMapbox : public QPlaceReply
     Q_OBJECT
 
 public:
-    explicit QPlaceCategoriesReplyMapbox(QObject *parent = 0);
+    explicit QPlaceCategoriesReplyMapbox(QObject *parent = nullptr);
     ~QPlaceCategoriesReplyMapbox();
 
 public slots:

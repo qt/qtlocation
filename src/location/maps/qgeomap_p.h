@@ -166,7 +166,7 @@ public:
     QRectF visibleArea() const;
 
 protected:
-    QGeoMap(QGeoMapPrivate &dd, QObject *parent = 0);
+    QGeoMap(QGeoMapPrivate &dd, QObject *parent = nullptr);
     void setCameraData(const QGeoCameraData &cameraData);
     void setCameraCapabilities(const QGeoCameraCapabilities &cameraCapabilities);
     virtual QSGNode *updateSceneGraph(QSGNode *node, QQuickWindow *window) = 0;

@@ -51,7 +51,7 @@ class QGeoMapReplyMapbox : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    explicit QGeoMapReplyMapbox(QNetworkReply *reply, const QGeoTileSpec &spec, const QString &format, QObject *parent = 0);
+    explicit QGeoMapReplyMapbox(QNetworkReply *reply, const QGeoTileSpec &spec, const QString &format, QObject *parent = nullptr);
     ~QGeoMapReplyMapbox();
 
 private Q_SLOTS:

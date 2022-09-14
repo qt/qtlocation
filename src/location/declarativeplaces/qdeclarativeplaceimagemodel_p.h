@@ -61,7 +61,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlaceImageModel : public QDeclarativ
     Q_OBJECT
 
 public:
-    explicit QDeclarativePlaceImageModel(QObject *parent = 0);
+    explicit QDeclarativePlaceImageModel(QObject *parent = nullptr);
     ~QDeclarativePlaceImageModel();
 
     QVariant data(const QModelIndex &index, int role) const override;

@@ -64,7 +64,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapParameter : public QGeoMapPara
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QDeclarativeGeoMapParameter(QObject *parent = 0);
+    explicit QDeclarativeGeoMapParameter(QObject *parent = nullptr);
     virtual ~QDeclarativeGeoMapParameter();
 
     bool isComponentComplete() const;

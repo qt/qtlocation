@@ -71,7 +71,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeMapLineProperties : public QObject
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
 
 public:
-    explicit QDeclarativeMapLineProperties(QObject *parent = 0);
+    explicit QDeclarativeMapLineProperties(QObject *parent = nullptr);
 
     QColor color() const;
     void setColor(const QColor &color);
@@ -105,7 +105,7 @@ public:
         OpenGLExtruded = 2,
     };
 
-    explicit QDeclarativePolylineMapItem(QQuickItem *parent = 0);
+    explicit QDeclarativePolylineMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativePolylineMapItem();
 
     void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;

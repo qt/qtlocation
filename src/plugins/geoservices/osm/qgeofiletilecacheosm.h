@@ -54,7 +54,7 @@ class QGeoFileTileCacheOsm : public QGeoFileTileCache
 public:
     QGeoFileTileCacheOsm(const QList<QGeoTileProviderOsm *> &providers,
                          const QString &offlineDirectory = QString(),
-                         const QString &directory = QString(), QObject *parent = 0);
+                         const QString &directory = QString(), QObject *parent = nullptr);
     ~QGeoFileTileCacheOsm();
 
     QSharedPointer<QGeoTileTexture> get(const QGeoTileSpec &spec) override;

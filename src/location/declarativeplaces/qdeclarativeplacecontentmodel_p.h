@@ -78,7 +78,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlaceContentModel : public QAbstract
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QDeclarativePlaceContentModel(QPlaceContent::Type type, QObject *parent = 0);
+    explicit QDeclarativePlaceContentModel(QPlaceContent::Type type, QObject *parent = nullptr);
     ~QDeclarativePlaceContentModel();
 
     QDeclarativePlace *place() const;

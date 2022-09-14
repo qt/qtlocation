@@ -86,7 +86,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
     Q_PROPERTY(int lodThreshold READ lodThreshold WRITE setLodThreshold NOTIFY lodThresholdChanged REVISION 15)
 
 public:
-    explicit QDeclarativeGeoMapItemBase(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMapItemBase(QQuickItem *parent = nullptr);
     virtual ~QDeclarativeGeoMapItemBase();
 
     virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);

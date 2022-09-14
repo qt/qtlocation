@@ -50,7 +50,7 @@ class QPlaceSearchSuggestionReplyImpl : public QPlaceSearchSuggestionReply
     Q_OBJECT
 
 public:
-    explicit QPlaceSearchSuggestionReplyImpl(QNetworkReply *reply, QObject *parent = 0);
+    explicit QPlaceSearchSuggestionReplyImpl(QNetworkReply *reply, QObject *parent = nullptr);
     ~QPlaceSearchSuggestionReplyImpl();
 
 private slots:

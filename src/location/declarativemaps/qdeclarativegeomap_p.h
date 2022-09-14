@@ -111,7 +111,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
 
 public:
 
-    explicit QDeclarativeGeoMap(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMap(QQuickItem *parent = nullptr);
     ~QDeclarativeGeoMap();
 
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);

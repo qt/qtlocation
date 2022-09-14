@@ -61,7 +61,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlaceEditorialModel : public QDeclar
     Q_OBJECT
 
 public:
-    explicit QDeclarativePlaceEditorialModel(QObject *parent = 0);
+    explicit QDeclarativePlaceEditorialModel(QObject *parent = nullptr);
     ~QDeclarativePlaceEditorialModel();
 
     QVariant data(const QModelIndex &index, int role) const override;

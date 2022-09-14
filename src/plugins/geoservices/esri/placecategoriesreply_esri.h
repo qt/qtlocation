@@ -49,7 +49,7 @@ class PlaceCategoriesReplyEsri : public QPlaceReply
     Q_OBJECT
 
 public:
-    explicit PlaceCategoriesReplyEsri(QObject *parent = 0);
+    explicit PlaceCategoriesReplyEsri(QObject *parent = nullptr);
     ~PlaceCategoriesReplyEsri();
 
     void emitFinished();

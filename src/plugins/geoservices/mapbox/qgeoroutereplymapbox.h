@@ -51,7 +51,7 @@ class QGeoRouteReplyMapbox : public QGeoRouteReply
     Q_OBJECT
 
 public:
-    QGeoRouteReplyMapbox(QNetworkReply *reply, const QGeoRouteRequest &request, QObject *parent = 0);
+    QGeoRouteReplyMapbox(QNetworkReply *reply, const QGeoRouteRequest &request, QObject *parent = nullptr);
     ~QGeoRouteReplyMapbox();
 
 private Q_SLOTS:

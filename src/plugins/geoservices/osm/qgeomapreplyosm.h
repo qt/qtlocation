@@ -50,7 +50,8 @@ class QGeoMapReplyOsm : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    QGeoMapReplyOsm(QNetworkReply *reply, const QGeoTileSpec &spec, const QString &imageFormat, QObject *parent = 0);
+    QGeoMapReplyOsm(QNetworkReply *reply, const QGeoTileSpec &spec, const QString &imageFormat,
+                    QObject *parent = nullptr);
     ~QGeoMapReplyOsm();
 
 private Q_SLOTS:

@@ -110,8 +110,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlP
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QDeclarativePlace(QObject *parent = 0);
-    QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent = 0);
+    explicit QDeclarativePlace(QObject *parent = nullptr);
+    QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent = nullptr);
     ~QDeclarativePlace();
 
     enum Status {Ready, Saving, Fetching, Removing, Error};

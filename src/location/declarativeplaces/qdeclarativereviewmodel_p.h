@@ -61,7 +61,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeReviewModel : public QDeclarativePla
     Q_OBJECT
 
 public:
-    explicit QDeclarativeReviewModel(QObject *parent = 0);
+    explicit QDeclarativeReviewModel(QObject *parent = nullptr);
     ~QDeclarativeReviewModel();
 
     QVariant data(const QModelIndex &index, int role) const override;

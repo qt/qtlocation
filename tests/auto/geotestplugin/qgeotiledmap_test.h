@@ -48,7 +48,7 @@ class QGeoTiledMapTest: public QGeoTiledMap
 public:
     QGeoTiledMapTest(QGeoTiledMappingManagerEngine *engine,
                      const QGeoTiledMapTestOptions &options,
-                     QObject *parent = 0);
+                     QObject *parent = nullptr);
 
 protected slots:
     void onCameraCenter_testChanged(QGeoMapParameter *param, const char *propertyName);

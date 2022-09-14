@@ -69,7 +69,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSearchSuggestionModel : public QDecl
     Q_PROPERTY(QStringList suggestions READ suggestions NOTIFY suggestionsChanged)
 
 public:
-    explicit QDeclarativeSearchSuggestionModel(QObject *parent = 0);
+    explicit QDeclarativeSearchSuggestionModel(QObject *parent = nullptr);
     ~QDeclarativeSearchSuggestionModel();
 
     QString searchTerm() const;

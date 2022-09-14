@@ -50,7 +50,7 @@ class QGeoCodeReplyMapbox : public QGeoCodeReply
     Q_OBJECT
 
 public:
-    explicit QGeoCodeReplyMapbox(QNetworkReply *reply, QObject *parent = 0);
+    explicit QGeoCodeReplyMapbox(QNetworkReply *reply, QObject *parent = nullptr);
     ~QGeoCodeReplyMapbox();
 
 private Q_SLOTS:

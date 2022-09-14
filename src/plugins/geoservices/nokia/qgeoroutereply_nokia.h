@@ -51,7 +51,8 @@ class QGeoRouteReplyNokia : public QGeoRouteReply
 {
     Q_OBJECT
 public:
-    QGeoRouteReplyNokia(const QGeoRouteRequest &request, const QList<QNetworkReply*> &replies, QObject *parent = 0);
+    QGeoRouteReplyNokia(const QGeoRouteRequest &request, const QList<QNetworkReply*> &replies,
+                        QObject *parent = nullptr);
     ~QGeoRouteReplyNokia();
 
 private Q_SLOTS:

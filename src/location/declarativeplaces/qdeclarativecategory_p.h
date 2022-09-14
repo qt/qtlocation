@@ -84,8 +84,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCategory : public QObject, public QQ
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QDeclarativeCategory(QObject *parent = 0);
-    QDeclarativeCategory(const QPlaceCategory &category, QDeclarativeGeoServiceProvider *plugin, QObject *parent = 0);
+    explicit QDeclarativeCategory(QObject *parent = nullptr);
+    QDeclarativeCategory(const QPlaceCategory &category, QDeclarativeGeoServiceProvider *plugin, QObject *parent = nullptr);
     ~QDeclarativeCategory();
 
     enum Visibility {

@@ -71,7 +71,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRouteMapItem : public QDeclarativePo
     Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
 
 public:
-    explicit QDeclarativeRouteMapItem(QQuickItem *parent = 0);
+    explicit QDeclarativeRouteMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativeRouteMapItem();
 
     QDeclarativeGeoRoute *route() const;

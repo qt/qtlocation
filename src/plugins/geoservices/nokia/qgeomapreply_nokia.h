@@ -52,7 +52,7 @@ class QGeoMapReplyNokia : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent = 0);
+    QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTileSpec &spec, QObject *parent = nullptr);
     ~QGeoMapReplyNokia();
 
 private Q_SLOTS:

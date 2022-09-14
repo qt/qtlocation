@@ -115,7 +115,7 @@ public:
         MissingRequiredParameterError
     };
 
-    explicit QDeclarativeGeoRouteModel(QObject *parent = 0);
+    explicit QDeclarativeGeoRouteModel(QObject *parent = nullptr);
     ~QDeclarativeGeoRouteModel();
 
     // From QQmlParserStatus
@@ -206,7 +206,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoWaypoint : public QGeoCoordinateO
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    QDeclarativeGeoWaypoint(QObject *parent = 0);
+    QDeclarativeGeoWaypoint(QObject *parent = nullptr);
     virtual ~QDeclarativeGeoWaypoint();
 
     bool operator==(const QDeclarativeGeoWaypoint &other) const;
@@ -303,8 +303,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
 
 public:
 
-    explicit QDeclarativeGeoRouteQuery(QObject *parent = 0);
-    QDeclarativeGeoRouteQuery(const QGeoRouteRequest &request, QObject *parent = 0); // init from request. For instances intended to be read only
+    explicit QDeclarativeGeoRouteQuery(QObject *parent = nullptr);
+    QDeclarativeGeoRouteQuery(const QGeoRouteRequest &request, QObject *parent = nullptr); // init from request. For instances intended to be read only
     ~QDeclarativeGeoRouteQuery();
 
     // From QQmlParserStatus

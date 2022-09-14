@@ -47,7 +47,7 @@ QT_USE_NAMESPACE
 class MockGeoNetworkReply : public QNetworkReply
 {
 public:
-    MockGeoNetworkReply( QObject* parent = 0);
+    MockGeoNetworkReply( QObject* parent = nullptr);
     void abort() override;
 
     void setFile(QFile* file);
@@ -111,7 +111,7 @@ void MockGeoNetworkReply::complete()
 class MockGeoNetworkAccessManager : public QGeoNetworkAccessManager
 {
 public:
-    MockGeoNetworkAccessManager(QObject* parent = 0);
+    MockGeoNetworkAccessManager(QObject* parent = nullptr);
     QNetworkReply *get(const QNetworkRequest& request) override;
     QNetworkReply *post(const QNetworkRequest &request, const QByteArray &data) override;
 

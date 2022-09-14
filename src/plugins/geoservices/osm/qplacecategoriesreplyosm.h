@@ -49,7 +49,7 @@ class QPlaceCategoriesReplyOsm : public QPlaceReply
     Q_OBJECT
 
 public:
-    explicit QPlaceCategoriesReplyOsm(QObject *parent = 0);
+    explicit QPlaceCategoriesReplyOsm(QObject *parent = nullptr);
     ~QPlaceCategoriesReplyOsm();
 
     void emitFinished();

@@ -50,7 +50,7 @@ class QGeoFileTileCacheMapbox : public QGeoFileTileCache
 {
     Q_OBJECT
 public:
-    QGeoFileTileCacheMapbox(const QList<QGeoMapType> &mapTypes, int scaleFactor, const QString &directory = QString(), QObject *parent = 0);
+    QGeoFileTileCacheMapbox(const QList<QGeoMapType> &mapTypes, int scaleFactor, const QString &directory = QString(), QObject *parent = nullptr);
     ~QGeoFileTileCacheMapbox();
 
 protected:

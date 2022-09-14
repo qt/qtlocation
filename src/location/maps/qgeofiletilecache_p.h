@@ -93,7 +93,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoFileTileCache : public QAbstractGeoTileCache
 {
     Q_OBJECT
 public:
-    QGeoFileTileCache(const QString &directory = QString(), QObject *parent = 0);
+    QGeoFileTileCache(const QString &directory = QString(), QObject *parent = nullptr);
     ~QGeoFileTileCache();
 
     void setMaxDiskUsage(int diskUsage) override;

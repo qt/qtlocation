@@ -91,7 +91,7 @@ Q_SIGNALS:
     void supportedMapTypesChanged();
 
 protected:
-    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
+    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = nullptr);
 
 private:
     QGeoMappingManagerPrivate *d_ptr;

@@ -49,7 +49,7 @@ class QPlaceCategoriesReplyHere : public QPlaceReply
     Q_OBJECT
 
 public:
-    explicit QPlaceCategoriesReplyHere(QObject *parent = 0);
+    explicit QPlaceCategoriesReplyHere(QObject *parent = nullptr);
     ~QPlaceCategoriesReplyHere();
 
     void emitFinished();

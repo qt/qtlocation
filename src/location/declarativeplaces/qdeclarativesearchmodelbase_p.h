@@ -89,7 +89,7 @@ public:
         Error
     };
 
-    explicit QDeclarativeSearchModelBase(QObject *parent = 0);
+    explicit QDeclarativeSearchModelBase(QObject *parent = nullptr);
     ~QDeclarativeSearchModelBase();
 
     QDeclarativeGeoServiceProvider *plugin() const;

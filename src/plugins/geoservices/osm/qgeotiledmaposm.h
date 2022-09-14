@@ -58,7 +58,7 @@ class QGeoTiledMapOsm: public Map
     Q_OBJECT
 
 public:
-    QGeoTiledMapOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent = 0);
+    QGeoTiledMapOsm(QGeoTiledMappingManagerEngineOsm *engine, QObject *parent = nullptr);
     ~QGeoTiledMapOsm();
 
 protected:

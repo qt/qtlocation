@@ -93,7 +93,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSupportedCategoriesModel : public QA
     Q_ENUMS(Roles) //The Roles enum is for internal usage only.
 
 public:
-    explicit QDeclarativeSupportedCategoriesModel(QObject *parent = 0);
+    explicit QDeclarativeSupportedCategoriesModel(QObject *parent = nullptr);
     virtual ~QDeclarativeSupportedCategoriesModel();
 
     // From QQmlParserStatus

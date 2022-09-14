@@ -50,7 +50,8 @@ class QGeoRouteReplyOsm : public QGeoRouteReply
     Q_OBJECT
 
 public:
-    QGeoRouteReplyOsm(QNetworkReply *reply, const QGeoRouteRequest &request, QObject *parent = 0);
+    QGeoRouteReplyOsm(QNetworkReply *reply, const QGeoRouteRequest &request,
+                      QObject *parent = nullptr);
     ~QGeoRouteReplyOsm();
 
 private Q_SLOTS:

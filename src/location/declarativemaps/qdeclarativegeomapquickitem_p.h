@@ -82,7 +82,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapQuickItem : public QDeclarativ
     Q_PROPERTY(QQuickItem *sourceItem READ sourceItem WRITE setSourceItem NOTIFY sourceItemChanged)
 
 public:
-    explicit QDeclarativeGeoMapQuickItem(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMapQuickItem(QQuickItem *parent = nullptr);
     ~QDeclarativeGeoMapQuickItem();
 
     void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map) override;

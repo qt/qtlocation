@@ -237,7 +237,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoServiceProviderRequirements : pub
                NOTIFY navigationRequirementsChanged)
 
 public:
-    explicit QDeclarativeGeoServiceProviderRequirements(QObject *parent = 0);
+    explicit QDeclarativeGeoServiceProviderRequirements(QObject *parent = nullptr);
     ~QDeclarativeGeoServiceProviderRequirements();
 
     QDeclarativeGeoServiceProvider::MappingFeatures mappingRequirements() const;

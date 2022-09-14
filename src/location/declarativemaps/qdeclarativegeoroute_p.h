@@ -81,8 +81,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRoute : public QObject
 
 
 public:
-    explicit QDeclarativeGeoRoute(QObject *parent = 0);
-    QDeclarativeGeoRoute(const QGeoRoute &route, QObject *parent = 0);
+    explicit QDeclarativeGeoRoute(QObject *parent = nullptr);
+    QDeclarativeGeoRoute(const QGeoRoute &route, QObject *parent = nullptr);
     ~QDeclarativeGeoRoute();
 
     QGeoRectangle bounds() const;

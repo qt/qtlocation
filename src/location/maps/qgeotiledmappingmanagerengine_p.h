@@ -71,7 +71,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappi
     Q_OBJECT
 
 public:
-    explicit QGeoTiledMappingManagerEngine(QObject *parent = 0);
+    explicit QGeoTiledMappingManagerEngine(QObject *parent = nullptr);
     virtual ~QGeoTiledMappingManagerEngine();
 
     QGeoTileFetcher *tileFetcher();
