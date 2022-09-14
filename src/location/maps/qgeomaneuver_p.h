@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -60,74 +60,37 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoManeuverPrivate : public QSharedData
+class QGeoManeuverPrivate : public QSharedData
 {
 public:
-    virtual ~QGeoManeuverPrivate();
-    virtual QGeoManeuverPrivate *clone() = 0;
+    bool equals(const QGeoManeuverPrivate &other) const;
 
-    virtual bool valid() const;
-    virtual void setValid(bool valid);
+    bool valid() const;
+    void setValid(bool valid);
 
-    virtual QString id() const;
-    virtual void setId(const QString &id);
+    QString id() const;
+    void setId(const QString &id);
 
-    virtual QGeoCoordinate position() const;
-    virtual void setPosition(const QGeoCoordinate &position);
+    QGeoCoordinate position() const;
+    void setPosition(const QGeoCoordinate &position);
 
-    virtual QString text() const;
-    virtual void setText(const QString &text);
+    QString text() const;
+    void setText(const QString &text);
 
-    virtual QGeoManeuver::InstructionDirection direction() const;
-    virtual void setDirection(QGeoManeuver::InstructionDirection direction);
+    QGeoManeuver::InstructionDirection direction() const;
+    void setDirection(QGeoManeuver::InstructionDirection direction);
 
-    virtual int timeToNextInstruction() const;
-    virtual void setTimeToNextInstruction(int timeToNextInstruction);
+    int timeToNextInstruction() const;
+    void setTimeToNextInstruction(int timeToNextInstruction);
 
-    virtual qreal distanceToNextInstruction() const;
-    virtual void setDistanceToNextInstruction(qreal distanceToNextInstruction);
+    qreal distanceToNextInstruction() const;
+    void setDistanceToNextInstruction(qreal distanceToNextInstruction);
 
-    virtual QGeoCoordinate waypoint() const;
-    virtual void setWaypoint(const QGeoCoordinate &waypoint);
+    QGeoCoordinate waypoint() const;
+    void setWaypoint(const QGeoCoordinate &waypoint);
 
-    virtual QVariantMap extendedAttributes() const;
-    virtual void setExtendedAttributes(const QVariantMap &extendedAttributes);
-
-    virtual bool equals(const QGeoManeuverPrivate &other) const;
-};
-
-class Q_LOCATION_PRIVATE_EXPORT QGeoManeuverPrivateDefault : public QGeoManeuverPrivate
-{
-public:
-    ~QGeoManeuverPrivateDefault();
-    QGeoManeuverPrivate *clone() override;
-
-    bool valid() const override;
-    void setValid(bool valid) override;
-
-    QString id() const override;
-    void setId(const QString &id) override;
-
-    QGeoCoordinate position() const override;
-    void setPosition(const QGeoCoordinate &position) override;
-
-    QString text() const override;
-    void setText(const QString &text) override;
-
-    QGeoManeuver::InstructionDirection direction() const override;
-    void setDirection(QGeoManeuver::InstructionDirection direction) override;
-
-    int timeToNextInstruction() const override;
-    void setTimeToNextInstruction(int timeToNextInstruction) override;
-
-    qreal distanceToNextInstruction() const override;
-    void setDistanceToNextInstruction(qreal distanceToNextInstruction) override;
-
-    QGeoCoordinate waypoint() const override;
-    void setWaypoint(const QGeoCoordinate &waypoint) override;
-
-    QVariantMap extendedAttributes() const override;
-    void setExtendedAttributes(const QVariantMap &extendedAttributes) override;
+    QVariantMap extendedAttributes() const;
+    void setExtendedAttributes(const QVariantMap &extendedAttributes);
 
     QString m_id;
     QGeoCoordinate m_position;

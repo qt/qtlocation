@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -44,12 +44,6 @@
 #include "qgeocoordinate.h"
 
 QT_BEGIN_NAMESPACE
-
-template<>
-QGeoManeuverPrivate *QSharedDataPointer<QGeoManeuverPrivate>::clone()
-{
-    return d->clone();
-}
 
 QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QGeoManeuverPrivate)
 
@@ -155,7 +149,7 @@ The instruction indicates that the direction of travel should bear to the left.
     setWaypoint() is called.
 */
 QGeoManeuver::QGeoManeuver()
-    : d_ptr(new QGeoManeuverPrivateDefault()) {}
+    : d_ptr(new QGeoManeuverPrivate()) {}
 
 /*!
     Constructs a maneuver object from the contents of \a other.
@@ -419,196 +413,95 @@ bool QGeoManeuverPrivate::equals(const QGeoManeuverPrivate &other) const
             && (waypoint() == other.waypoint()));
 }
 
-bool QGeoManeuverPrivate::valid() const
-{
-    return false;
-}
-
-void QGeoManeuverPrivate::setValid(bool valid)
-{
-    Q_UNUSED(valid);
-}
-
-QString QGeoManeuverPrivate::id() const
-{
-    return QString();
-}
-
-void QGeoManeuverPrivate::setId(const QString &id)
-{
-    Q_UNUSED(id);
-}
-
-QGeoCoordinate QGeoManeuverPrivate::position() const
-{
-    return QGeoCoordinate();
-}
-
-void QGeoManeuverPrivate::setPosition(const QGeoCoordinate &position)
-{
-    Q_UNUSED(position);
-}
-
-QString QGeoManeuverPrivate::text() const
-{
-    return QString();
-}
-
-void QGeoManeuverPrivate::setText(const QString &text)
-{
-    Q_UNUSED(text);
-}
-
-QGeoManeuver::InstructionDirection QGeoManeuverPrivate::direction() const
-{
-    return QGeoManeuver::NoDirection;
-}
-
-void QGeoManeuverPrivate::setDirection(QGeoManeuver::InstructionDirection direction)
-{
-    Q_UNUSED(direction);
-}
-
-int QGeoManeuverPrivate::timeToNextInstruction() const
-{
-    return 0;
-}
-
-void QGeoManeuverPrivate::setTimeToNextInstruction(int timeToNextInstruction)
-{
-    Q_UNUSED(timeToNextInstruction);
-}
-
-qreal QGeoManeuverPrivate::distanceToNextInstruction() const
-{
-    return 0;
-}
-
-void QGeoManeuverPrivate::setDistanceToNextInstruction(qreal distanceToNextInstruction)
-{
-    Q_UNUSED(distanceToNextInstruction);
-}
-
-QGeoCoordinate QGeoManeuverPrivate::waypoint() const
-{
-    return QGeoCoordinate();
-}
-
-void QGeoManeuverPrivate::setWaypoint(const QGeoCoordinate &waypoint)
-{
-    Q_UNUSED(waypoint);
-}
-
-QVariantMap QGeoManeuverPrivate::extendedAttributes() const
-{
-    return QVariantMap();
-}
-
-void QGeoManeuverPrivate::setExtendedAttributes(const QVariantMap &extendedAttributes)
-{
-    Q_UNUSED(extendedAttributes);
-}
-
-
-
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoManeuverPrivate::~QGeoManeuverPrivate() = default;
-
-QGeoManeuverPrivateDefault::~QGeoManeuverPrivateDefault() = default;
-
-QGeoManeuverPrivate *QGeoManeuverPrivateDefault::clone()
-{
-    return new QGeoManeuverPrivateDefault(*this);
-}
-
-bool QGeoManeuverPrivateDefault::valid() const
+bool QGeoManeuverPrivate::valid() const
 {
     return m_valid;
 }
 
-void QGeoManeuverPrivateDefault::setValid(bool valid)
+void QGeoManeuverPrivate::setValid(bool valid)
 {
     m_valid = valid;
 }
 
-QString QGeoManeuverPrivateDefault::id() const
+QString QGeoManeuverPrivate::id() const
 {
     return m_id;
 }
 
-void QGeoManeuverPrivateDefault::setId(const QString &id)
+void QGeoManeuverPrivate::setId(const QString &id)
 {
     m_id = id;
 }
 
-QGeoCoordinate QGeoManeuverPrivateDefault::position() const
+QGeoCoordinate QGeoManeuverPrivate::position() const
 {
     return m_position;
 }
 
-void QGeoManeuverPrivateDefault::setPosition(const QGeoCoordinate &position)
+void QGeoManeuverPrivate::setPosition(const QGeoCoordinate &position)
 {
     m_position = position;
 }
 
-QString QGeoManeuverPrivateDefault::text() const
+QString QGeoManeuverPrivate::text() const
 {
     return m_text;
 }
 
-void QGeoManeuverPrivateDefault::setText(const QString &text)
+void QGeoManeuverPrivate::setText(const QString &text)
 {
     m_text = text;
 }
 
-QGeoManeuver::InstructionDirection QGeoManeuverPrivateDefault::direction() const
+QGeoManeuver::InstructionDirection QGeoManeuverPrivate::direction() const
 {
     return m_direction;
 }
 
-void QGeoManeuverPrivateDefault::setDirection(QGeoManeuver::InstructionDirection direction)
+void QGeoManeuverPrivate::setDirection(QGeoManeuver::InstructionDirection direction)
 {
     m_direction = direction;
 }
 
-int QGeoManeuverPrivateDefault::timeToNextInstruction() const
+int QGeoManeuverPrivate::timeToNextInstruction() const
 {
     return m_timeToNextInstruction;
 }
 
-void QGeoManeuverPrivateDefault::setTimeToNextInstruction(int timeToNextInstruction)
+void QGeoManeuverPrivate::setTimeToNextInstruction(int timeToNextInstruction)
 {
     m_timeToNextInstruction = timeToNextInstruction;
 }
 
-qreal QGeoManeuverPrivateDefault::distanceToNextInstruction() const
+qreal QGeoManeuverPrivate::distanceToNextInstruction() const
 {
     return m_distanceToNextInstruction;
 }
 
-void QGeoManeuverPrivateDefault::setDistanceToNextInstruction(qreal distanceToNextInstruction)
+void QGeoManeuverPrivate::setDistanceToNextInstruction(qreal distanceToNextInstruction)
 {
     m_distanceToNextInstruction = distanceToNextInstruction;
 }
 
-QGeoCoordinate QGeoManeuverPrivateDefault::waypoint() const
+QGeoCoordinate QGeoManeuverPrivate::waypoint() const
 {
     return m_waypoint;
 }
 
-void QGeoManeuverPrivateDefault::setWaypoint(const QGeoCoordinate &waypoint)
+void QGeoManeuverPrivate::setWaypoint(const QGeoCoordinate &waypoint)
 {
     m_waypoint = waypoint;
 }
 
-QVariantMap QGeoManeuverPrivateDefault::extendedAttributes() const
+QVariantMap QGeoManeuverPrivate::extendedAttributes() const
 {
     return m_extendedAttributes;
 }
 
-void QGeoManeuverPrivateDefault::setExtendedAttributes(const QVariantMap &extendedAttributes)
+void QGeoManeuverPrivate::setExtendedAttributes(const QVariantMap &extendedAttributes)
 {
     m_extendedAttributes = extendedAttributes;
 }
