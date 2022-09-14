@@ -84,7 +84,6 @@ void QGeoTiledMapScene::updateSceneParameters()
     const float delta = d->m_cameraData.zoomLevel() - d->m_intZoomLevel;
     d->m_linearScaling = qAbs(delta) > 0.05 || d->isTiltedOrRotated();
     d->m_sideLength = 1 << d->m_intZoomLevel;
-    d->m_mapEdgeSize = std::pow(2.0, d->m_cameraData.zoomLevel()) * d->m_tileSize;
 }
 
 void QGeoTiledMapScene::setTileSize(int tileSize)
@@ -149,22 +148,7 @@ void QGeoTiledMapScene::clearTexturedTiles()
 }
 
 QGeoTiledMapScenePrivate::QGeoTiledMapScenePrivate()
-    : QObjectPrivate(),
-      m_tileSize(0),
-#ifdef QT_LOCATION_DEBUG
-      m_scaleFactor(1.0),
-#else
-      m_scaleFactor(10.0),
-#endif
-      m_intZoomLevel(0),
-      m_sideLength(0),
-      m_minTileX(-1),
-      m_minTileY(-1),
-      m_maxTileX(-1),
-      m_maxTileY(-1),
-      m_tileXWrapsBelow(0),
-      m_linearScaling(false),
-      m_dropTextures(false)
+    : QObjectPrivate()
 {
 }
 

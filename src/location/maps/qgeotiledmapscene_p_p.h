@@ -150,7 +150,7 @@ public:
 public:
 
     QSize m_screenSize; // in pixels
-    int m_tileSize; // the pixel resolution for each tile
+    int m_tileSize = 0; // the pixel resolution for each tile
     QGeoCameraData m_cameraData;
     QRectF m_visibleArea;
     QSet<QGeoTileSpec> m_visibleTiles;
@@ -162,28 +162,32 @@ public:
 
     // scales up the tile geometry and the camera altitude, resulting in no visible effect
     // other than to control the accuracy of the render by keeping the values in a sensible range
-    double m_scaleFactor;
+    double m_scaleFactor =
+#ifdef QT_LOCATION_DEBUG
+        1.0;
+#else
+        10.0;
+#endif
 
     // rounded down, positive zoom is zooming in, corresponding to reduced altitude
-    int m_intZoomLevel;
+    int m_intZoomLevel = 0;
 
     // mercatorToGrid transform
     // the number of tiles in each direction for the whole map (earth) at the current zoom level.
     // it is 1<<zoomLevel
-    int m_sideLength;
-    double m_mapEdgeSize;
+    int m_sideLength = 0;
 
     QHash<QGeoTileSpec, QSharedPointer<QGeoTileTexture> > m_textures;
     QList<QGeoTileSpec> m_updatedTextures;
 
     // tilesToGrid transform
-    int m_minTileX; // the minimum tile index, i.e. 0 to sideLength which is 1<< zoomLevel
-    int m_minTileY;
-    int m_maxTileX;
-    int m_maxTileY;
-    int m_tileXWrapsBelow; // the wrap point as a tile index
-    bool m_linearScaling;
-    bool m_dropTextures;
+    int m_minTileX = -1; // the minimum tile index, i.e. 0 to sideLength which is 1<< zoomLevel
+    int m_minTileY = -1;
+    int m_maxTileX = -1;
+    int m_maxTileY = -1;
+    int m_tileXWrapsBelow = 0; // the wrap point as a tile index
+    bool m_linearScaling = false;
+    bool m_dropTextures = false;
 
 #ifdef QT_LOCATION_DEBUG
     double m_sideLengthPixel;
