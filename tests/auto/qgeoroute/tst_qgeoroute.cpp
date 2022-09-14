@@ -251,11 +251,11 @@ void tst_QGeoRoute::operators()
     QVERIFY(!(qgeoroute != qgeoroutecopy));
 
 
-    QGeoRouteAlt rAlt;
     QGeoRoute r;
-    QCOMPARE(rAlt.travelTime(), 123456);
     QCOMPARE(r.travelTime(), 0);
-    r = rAlt;
+    QGeoRoute r2;
+    r2.setTravelTime(123456);
+    r = r2;
     QCOMPARE(r.travelTime(), 123456);
 }
 

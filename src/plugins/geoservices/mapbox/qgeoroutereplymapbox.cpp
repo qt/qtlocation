@@ -48,48 +48,6 @@
 #include <QtLocation/QGeoRouteSegment>
 #include <QtLocation/QGeoManeuver>
 
-namespace {
-
-class QGeoRouteMapbox : public QGeoRoute
-{
-public:
-    QGeoRouteMapbox(const QGeoRoute &other, const QVariantMap &metadata);
-};
-
-class QGeoRoutePrivateMapbox : public QGeoRoutePrivateDefault
-{
-public:
-    QGeoRoutePrivateMapbox(const QGeoRoutePrivateDefault &other, const QVariantMap &metadata);
-
-    QString engineName() const override;
-    QVariantMap metadata() const override;
-
-    QVariantMap m_metadata;
-};
-
-QGeoRouteMapbox::QGeoRouteMapbox(const QGeoRoute &other, const QVariantMap &metadata)
-    : QGeoRoute(QExplicitlySharedDataPointer<QGeoRoutePrivateMapbox>(new QGeoRoutePrivateMapbox(*static_cast<const QGeoRoutePrivateDefault *>(QGeoRoutePrivate::routePrivateData(other)), metadata)))
-{
-}
-
-QGeoRoutePrivateMapbox::QGeoRoutePrivateMapbox(const QGeoRoutePrivateDefault &other, const QVariantMap &metadata)
-    : QGeoRoutePrivateDefault(other)
-    , m_metadata(metadata)
-{
-}
-
-QString QGeoRoutePrivateMapbox::engineName() const
-{
-    return QStringLiteral("mapbox");
-}
-
-QVariantMap QGeoRoutePrivateMapbox::metadata() const
-{
-    return m_metadata;
-}
-
-} // namespace
-
 QT_BEGIN_NAMESPACE
 
 QGeoRouteReplyMapbox::QGeoRouteReplyMapbox(QNetworkReply *reply, const QGeoRouteRequest &request,
@@ -139,9 +97,14 @@ void QGeoRouteReplyMapbox::networkReplyFinished()
     QVariantMap metadata;
     metadata["osrm.reply-json"] = routeReply;
 
+    QVariantMap extAttr;
+    extAttr["engine"] = "mapbox";
+    extAttr["metadata"] = metadata;
+
     QList<QGeoRoute> mapboxRoutes;
     for (const QGeoRoute &route : routes.mid(0, request().numberAlternativeRoutes() + 1)) {
-        QGeoRouteMapbox mapboxRoute(route, metadata);
+        QGeoRoute mapboxRoute(route);
+        mapboxRoute.setExtendedAttributes(extAttr);
         mapboxRoutes.append(mapboxRoute);
     }
 

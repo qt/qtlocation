@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -65,111 +65,50 @@ QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoRoutePrivate : public QSharedData
+class QGeoRoutePrivate : public QSharedData
 {
 public:
-    QGeoRoutePrivate();
-    QGeoRoutePrivate(const QGeoRoutePrivate &other);
-    virtual ~QGeoRoutePrivate();
-    virtual QGeoRoutePrivate *clone() = 0;
+    bool operator==(const QGeoRoutePrivate &other) const;
+    bool equals(const QGeoRoutePrivate &other) const;
 
-    bool operator == (const QGeoRoutePrivate &other) const;
+    void setId(const QString &id);
+    QString id() const;
 
-    virtual void setId(const QString &id);
-    virtual QString id() const;
+    void setRequest(const QGeoRouteRequest &request);
+    QGeoRouteRequest request() const;
 
-    virtual void setRequest(const QGeoRouteRequest &request);
-    virtual QGeoRouteRequest request() const;
+    void setBounds(const QGeoRectangle &bounds);
+    QGeoRectangle bounds() const;
 
-    virtual void setBounds(const QGeoRectangle &bounds);
-    virtual QGeoRectangle bounds() const;
+    void setTravelTime(int travelTime);
+    int travelTime() const;
 
-    virtual void setTravelTime(int travelTime);
-    virtual int travelTime() const;
+    void setDistance(qreal distance);
+    qreal distance() const;
 
-    virtual void setDistance(qreal distance);
-    virtual qreal distance() const;
+    void setTravelMode(QGeoRouteRequest::TravelMode mode);
+    QGeoRouteRequest::TravelMode travelMode() const;
 
-    virtual void setTravelMode(QGeoRouteRequest::TravelMode mode);
-    virtual QGeoRouteRequest::TravelMode travelMode() const;
+    void setPath(const QList<QGeoCoordinate> &path);
+    QList<QGeoCoordinate> path() const;
 
-    virtual void setPath(const QList<QGeoCoordinate> &path);
-    virtual QList<QGeoCoordinate> path() const;
+    void setFirstSegment(const QGeoRouteSegment &firstSegment);
+    QGeoRouteSegment firstSegment() const;
 
-    virtual void setFirstSegment(const QGeoRouteSegment &firstSegment);
-    virtual QGeoRouteSegment firstSegment() const;
+    int segmentsCount() const;
+    QList<QGeoRouteSegment> segments() const;
 
-    virtual QVariantMap metadata() const;
+    void setRouteLegs(const QList<QGeoRoute> &legs);
+    QList<QGeoRoute> routeLegs() const;
 
-    virtual void setRouteLegs(const QList<QGeoRoute> &legs);
-    virtual QList<QGeoRoute> routeLegs() const;
-
-    virtual void setExtendedAttributes(const QVariantMap &extendedAttributes);
-    virtual QVariantMap extendedAttributes() const;
-
-    virtual QString engineName() const = 0;
-    virtual int segmentsCount() const = 0;
-    virtual QList<QGeoRouteSegment> segments() const = 0;
+    void setExtendedAttributes(const QVariantMap &extendedAttributes);
+    QVariantMap extendedAttributes() const;
 
     // QGeoRouteLeg API
-    virtual void setLegIndex(int idx);
-    virtual int legIndex() const;
-    virtual void setContainingRoute(const QGeoRoute &route);
-    virtual QGeoRoute containingRoute() const;
-
-    static const QGeoRoutePrivate *routePrivateData(const QGeoRoute &route);
-
-protected:
-    virtual bool equals(const QGeoRoutePrivate &other) const;
-};
-
-class Q_LOCATION_PRIVATE_EXPORT  QGeoRoutePrivateDefault : public QGeoRoutePrivate
-{
-public:
-    QGeoRoutePrivateDefault();
-    QGeoRoutePrivateDefault(const QGeoRoutePrivateDefault &other);
-    ~QGeoRoutePrivateDefault() override;
-    QGeoRoutePrivate *clone() override;
-
-    void setId(const QString &id) override;
-    QString id() const override;
-
-    void setRequest(const QGeoRouteRequest &request) override;
-    QGeoRouteRequest request() const override;
-
-    void setBounds(const QGeoRectangle &bounds) override;
-    QGeoRectangle bounds() const override;
-
-    void setTravelTime(int travelTime) override;
-    int travelTime() const override;
-
-    void setDistance(qreal distance) override;
-    qreal distance() const override;
-
-    void setTravelMode(QGeoRouteRequest::TravelMode mode) override;
-    QGeoRouteRequest::TravelMode travelMode() const override;
-
-    void setPath(const QList<QGeoCoordinate> &path) override;
-    QList<QGeoCoordinate> path() const override;
-
-    void setFirstSegment(const QGeoRouteSegment &firstSegment) override;
-    QGeoRouteSegment firstSegment() const override;
-
-    QString engineName() const override;
-    int segmentsCount() const override;
-    QList<QGeoRouteSegment> segments() const override;
-
-    void setRouteLegs(const QList<QGeoRoute> &legs) override;
-    QList<QGeoRoute> routeLegs() const override;
-
-    void setExtendedAttributes(const QVariantMap &extendedAttributes) override;
-    QVariantMap extendedAttributes() const override;
-
-    // QGeoRouteLeg API
-    void setLegIndex(int idx) override;
-    int legIndex() const override;
-    void setContainingRoute(const QGeoRoute &route) override;
-    QGeoRoute containingRoute() const override;
+    void setLegIndex(int idx);
+    int legIndex() const;
+    void setContainingRoute(const QGeoRoute &route);
+    QGeoRoute containingRoute() const;
 
 private:
     template<typename Functor>
@@ -189,15 +128,15 @@ private:
     QGeoRectangle m_bounds;
     mutable QList<QGeoRouteSegment> m_routeSegments;
 
-    int m_travelTime;
-    qreal m_distance;
+    int m_travelTime = 0;
+    qreal m_distance = 0.0;
 
     QGeoRouteRequest::TravelMode m_travelMode;
 
     QList<QGeoCoordinate> m_path;
     QList<QGeoRoute> m_legs;
     QGeoRouteSegment m_firstSegment;
-    mutable int m_numSegments;
+    mutable int m_numSegments = -1;
     std::unique_ptr<QGeoRoute> m_containingRoute;
     QVariantMap m_extendedAttributes;
     int m_legIndex = -1;

@@ -42,36 +42,6 @@
 
 QT_USE_NAMESPACE
 
-
-class QGeoRoutePrivateDefaultAlt : public QGeoRoutePrivateDefault
-{
-public:
-    QGeoRoutePrivateDefaultAlt() : QGeoRoutePrivateDefault()
-    {
-    }
-    QGeoRoutePrivateDefaultAlt(const QGeoRoutePrivateDefaultAlt &other)
-        : QGeoRoutePrivateDefault(other) {}
-    ~QGeoRoutePrivateDefaultAlt() {}
-
-    void setTravelTime(int travelTime) override
-    {
-        Q_UNUSED(travelTime);
-    }
-    int travelTime() const override
-    {
-        return 123456; // To identify this is actually a QGeoRoutePrivateDefaultAlt
-    }
-};
-
-class QGeoRouteAlt : public QGeoRoute
-{
-public:
-    QGeoRouteAlt()
-    : QGeoRoute(QExplicitlySharedDataPointer<QGeoRoutePrivate>(new QGeoRoutePrivateDefaultAlt()))
-    {
-    }
-};
-
 class RouteReplyTest :public QGeoRouteReply
 {
     Q_OBJECT
@@ -176,10 +146,10 @@ public:
 
         for (int i = 0; i < request.numberAlternativeRoutes(); ++i) {
             QGeoRoute route;
-            if (alternateGeoRouteImplementation_)
-                route = QGeoRouteAlt();
             route.setPath(request.waypoints());
             route.setTravelTime(travelTime);
+            if (alternateGeoRouteImplementation_)
+                route.setTravelTime(123456);
 
             const QList<QVariantMap> metadata = request.waypointsMetadata();
             for (const auto &meta: metadata) {

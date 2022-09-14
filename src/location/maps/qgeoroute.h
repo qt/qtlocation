@@ -119,7 +119,6 @@ public:
     QGeoRoute overallRoute() const;
 
 protected:
-    QGeoRoute(const QExplicitlySharedDataPointer<QGeoRoutePrivate> &dd);
     QExplicitlySharedDataPointer<QGeoRoutePrivate> &d();
     const QExplicitlySharedDataPointer<QGeoRoutePrivate> &const_d() const;
 
