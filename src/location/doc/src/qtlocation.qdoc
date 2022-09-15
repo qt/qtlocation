@@ -188,8 +188,8 @@ Qt Location available for a new platform.
         \li \l {Places Backend} {Places}
         \li Information for places backend implementors
     \row
-        \li \l {Qt Location QML API changes since 5.4}{API changes}
-        \li Information about QML API changes since 5.4
+        \li \l {Changes to Qt Location}{API changes}
+        \li Information about porting from Qt 5 to Qt 6
 \endtable
 
     \section1 Licenses and Attributions
