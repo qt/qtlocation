@@ -53,25 +53,25 @@ qt_internal_add_module(Location
         places/qplacematchrequest.cpp places/qplacemanager.cpp
         places/qplacecategory.cpp places/qplaceuser.cpp
         places/qplacesearchresult.cpp places/qplacemanagerengine.cpp
-        places/qplacereview.cpp places/qplacecontentreply.cpp
+        places/qplacecontentreply.cpp
         places/qplacecontentrequest.cpp places/qplacesearchreply.cpp
         places/qplacereply.cpp places/qplacedetailsreply.cpp
         places/qplaceratings.cpp places/qplacecontactdetail.cpp
-        places/qplaceproposedsearchresult.cpp places/qplaceeditorial.cpp
+        places/qplaceproposedsearchresult.cpp
         places/qplace.cpp places/qplacesupplier.cpp
-        places/qplaceattribute.cpp places/qplaceimage.cpp
+        places/qplaceattribute.cpp
         places/qplacesearchsuggestionreply.cpp places/qplaceresult.cpp
         places/qplacematchreply.cpp places/qplacecontent.cpp
         places/qplaceidreply.cpp
         places/qplaceicon.h places/qplaceuser.h
         places/qplaceattribute_p.h places/qplacematchrequest.h
-        places/qplacecontentreply.h places/qplacereview.h
+        places/qplacecontentreply.h
         places/qplacecategory.h places/qplacesearchrequest.h
         places/qplacecategory_p.h
         places/qplaceproposedsearchresult.h places/qplacemanagerengine.h
         places/qplacecontentrequest.h places/qplacemanagerengine_p.h
         places/qplace.h places/qplacecontentrequest_p.h
-        places/qplaceeditorial.h places/qplaceattribute.h
+        places/qplaceattribute.h
         places/qplacedetailsreply.h
         places/qplaceratings_p.h places/unsupportedreplies_p.h
         places/qplacereply.h places/qplace_p.h places/qplaceresult_p.h
@@ -80,7 +80,7 @@ qt_internal_add_module(Location
         places/qplacematchreply.h
         places/qplacecontent.h places/qplacesearchreply.h
         places/qplacesupplier_p.h places/qplaceratings.h
-        places/qplaceimage.h places/qplacesearchresult.h
+        places/qplacesearchresult.h
         places/qplaceidreply.h places/qplaceuser_p.h places/qplaceicon_p.h
         places/qplacecontactdetail.h places/qplacesearchsuggestionreply.h
         places/qplacecontent_p.h places/qplacesearchrequest_p.h
