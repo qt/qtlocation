@@ -40,39 +40,37 @@
 #ifndef QPLACEIMAGE_H
 #define QPLACEIMAGE_H
 
-#include <QtCore/QSharedDataPointer>
-#include <QtCore/QString>
 #include <QtLocation/QPlaceContent>
+
+#include <QtCore/QString>
+#include <QtCore/QUrl>
+#include <QtCore/QVariant>
 
 QT_BEGIN_NAMESPACE
 
-class QPlaceImagePrivate;
-class QUrl;
-
+#if QT_DEPRECATED_SINCE(6, 0)
 class Q_LOCATION_EXPORT QPlaceImage : public QPlaceContent
 {
 public:
-    QPlaceImage();
-#ifdef Q_QDOC
-    QPlaceImage(const QPlaceContent &other);
-#else
-    Q_DECLARE_CONTENT_COPY_CTOR(QPlaceImage)
-#endif
+    QT_DEPRECATED_VERSION_X_6_0("Use QPlaceContent") QPlaceImage();
+    QT_DEPRECATED_VERSION_X_6_0("Use QPlaceContent") QPlaceImage(const QPlaceContent &other);
 
-    virtual ~QPlaceImage();
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QUrl url() const
+    { return value(QPlaceContent::ImageUrl).value<QUrl>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setUrl(const QUrl &url)
+    { setValue(QPlaceContent::ImageUrl, QVariant::fromValue(url)); }
 
-    QUrl url() const;
-    void setUrl(const QUrl &url);
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QString imageId() const
+    { return value(QPlaceContent::ImageId).value<QString>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setImageId(const QString &identifier)
+    { setValue(QPlaceContent::ImageId, QVariant::fromValue(identifier)); }
 
-    QString imageId() const;
-    void setImageId(const QString &identifier);
-
-    QString mimeType() const;
-    void setMimeType(const QString &data);
-
-private:
-    Q_DECLARE_CONTENT_D_FUNC(QPlaceImage)
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QString mimeType() const
+    { return value(QPlaceContent::ImageMimeType).value<QString>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setMimeType(const QString &type)
+    { setValue(QPlaceContent::ImageMimeType, QVariant::fromValue(type)); }
 };
+#endif
 
 QT_END_NAMESPACE
 

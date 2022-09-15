@@ -57,10 +57,7 @@
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceSupplier>
 #include <QtLocation/QPlaceIcon>
-#include <QtLocation/QPlaceImage>
-#include <QtLocation/QPlaceEditorial>
 #include <QtLocation/QPlaceRatings>
-#include <QtLocation/QPlaceReview>
 #include <QtLocation/QPlaceUser>
 
 QT_BEGIN_NAMESPACE

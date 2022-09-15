@@ -42,39 +42,44 @@
 
 #include <QtLocation/QPlaceContent>
 
+#include <QtCore/QDateTime>
+#include <QtCore/QVariant>
+
 QT_BEGIN_NAMESPACE
 
-class QDateTime;
-class QPlaceReviewPrivate;
-
+#if QT_DEPRECATED_SINCE(6, 0)
 class Q_LOCATION_EXPORT QPlaceReview : public QPlaceContent
 {
 public:
-    QPlaceReview();
-#ifdef Q_QDOC
-    QPlaceReview(const QPlaceContent &other);
-#else
-    Q_DECLARE_CONTENT_COPY_CTOR(QPlaceReview)
-#endif
-    virtual ~QPlaceReview();
+    QT_DEPRECATED_VERSION_X_6_0("Use QPlaceContent") QPlaceReview();
+    QT_DEPRECATED_VERSION_X_6_0("Use QPlaceContent") QPlaceReview(const QPlaceContent &other);
 
-    QDateTime dateTime() const;
-    void setDateTime(const QDateTime &dt);
-    QString text() const;
-    void setText(const QString &text);
-    QString language() const;
-    void setLanguage(const QString &data);
-
-    qreal rating() const;
-    void setRating(qreal data);
-    QString reviewId() const;
-    void setReviewId(const QString &identifier);
-    QString title() const;
-    void setTitle(const QString &data);
-
-private:
-    Q_DECLARE_CONTENT_D_FUNC(QPlaceReview)
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QDateTime dateTime() const
+    { return value(QPlaceContent::ReviewDateTime).value<QDateTime>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setDateTime(const QDateTime &dateTime)
+    { setValue(QPlaceContent::ReviewDateTime, QVariant::fromValue(dateTime)); }
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QString text() const
+    { return value(QPlaceContent::ReviewText).value<QString>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setText(const QString &text)
+    { setValue(QPlaceContent::ReviewText, QVariant::fromValue(text)); }
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QString language() const
+    { return value(QPlaceContent::ReviewLanguage).value<QString>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setLanguage(const QString &language)
+    { setValue(QPlaceContent::ReviewLanguage, QVariant::fromValue(language)); }
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") qreal rating() const
+    { return value(QPlaceContent::ReviewRating).value<qreal>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setRating(qreal rating)
+    { setValue(QPlaceContent::ReviewRating, QVariant::fromValue(rating)); }
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QString reviewId() const
+    { return value(QPlaceContent::ReviewId).value<QString>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setReviewId(const QString &identifier)
+    { setValue(QPlaceContent::ReviewId, QVariant::fromValue(identifier)); }
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QString title() const
+    { return value(QPlaceContent::ReviewTitle).value<QString>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setTitle(const QString &title)
+    { setValue(QPlaceContent::ReviewTitle, QVariant::fromValue(title)); }
 };
+#endif
 
 QT_END_NAMESPACE
 

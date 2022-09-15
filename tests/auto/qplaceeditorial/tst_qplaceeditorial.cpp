@@ -37,18 +37,15 @@
 
 QT_USE_NAMESPACE
 
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_DEPRECATED
+
 class tst_QPlaceEditorial : public QObject
 {
     Q_OBJECT
 
 public:
     tst_QPlaceEditorial();
-
-    //needed for QLocationTestUtils::testConversion
-    QPlaceEditorial initialSubObject();
-    bool checkType(const QPlaceContent &);
-    void detach(QPlaceContent *);
-    void setSubClassProperty(QPlaceEditorial *);
 
 private Q_SLOTS:
     void constructorTest();
@@ -57,48 +54,12 @@ private Q_SLOTS:
     void titleTest();
     void languageTest();
     void operatorsTest();
-    void conversionTest();
 };
 
 tst_QPlaceEditorial::tst_QPlaceEditorial()
 {
 }
 
-QPlaceEditorial tst_QPlaceEditorial::initialSubObject()
-{
-    QPlaceUser user;
-    user.setName("user 1");
-    user.setUserId("0001");
-
-    QPlaceSupplier supplier;
-    supplier.setName("supplier");
-    supplier.setSupplierId("1");
-
-    QPlaceEditorial editorial;
-    editorial.setTitle("title");
-    editorial.setText("text");
-    editorial.setLanguage("en");
-    editorial.setUser(user);
-    editorial.setSupplier(supplier);
-    editorial.setAttribution("attribution");
-
-    return editorial;
-}
-
-bool tst_QPlaceEditorial::checkType(const QPlaceContent &content)
-{
-    return content.type() == QPlaceContent::EditorialType;
-}
-
-void tst_QPlaceEditorial::detach(QPlaceContent *content)
-{
-    content->setAttribution("attribution");
-}
-
-void tst_QPlaceEditorial::setSubClassProperty(QPlaceEditorial * editorial)
-{
-    editorial->setTitle("new title");
-}
 void tst_QPlaceEditorial::constructorTest()
 {
     QPlaceEditorial testObj;
@@ -155,12 +116,8 @@ void tst_QPlaceEditorial::operatorsTest()
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
-void tst_QPlaceEditorial::conversionTest()
-{
-    QLocationTestUtils::testConversion<tst_QPlaceEditorial,
-                                       QPlaceContent,
-                                       QPlaceEditorial>(this);
-}
+QT_WARNING_POP
+
 QTEST_APPLESS_MAIN(tst_QPlaceEditorial);
 
 #include "tst_qplaceeditorial.moc"

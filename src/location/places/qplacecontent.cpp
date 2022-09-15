@@ -40,31 +40,24 @@
 #include "qplacecontent.h"
 #include "qplacecontent_p.h"
 
-#include <QtCore/QUrl>
-
 QT_USE_NAMESPACE
-
-template<> QPlaceContentPrivate *QSharedDataPointer<QPlaceContentPrivate>::clone()
-{
-    return d->clone();
-}
 
 inline QPlaceContentPrivate *QPlaceContent::d_func()
 {
-    return static_cast<QPlaceContentPrivate *>(d_ptr.data());
+    return d_ptr.data();
 }
 
 inline const QPlaceContentPrivate *QPlaceContent::d_func() const
 {
-    return static_cast<const QPlaceContentPrivate *>(d_ptr.constData());
+    return d_ptr.constData();
 }
 
 bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
 {
-    return supplier == other->supplier
-            && user == other->user
-            && attribution == other->attribution;
+    return data == other->data;
 }
+
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QPlaceContentPrivate)
 
 /*!
     \class QPlaceContent
@@ -130,39 +123,79 @@ bool QPlaceContentPrivate::compare(const QPlaceContentPrivate *other) const
 */
 
 /*!
+    \enum QPlaceContent::DataTag
+
+    Defines the value entry of the content object
+
+    \value ContentSupplier
+        The supplier who contributed this content
+    \value ContentUser
+        The user who contributed this content
+    \value ContentAttribution
+        Returns a rich text attribution string
+        \note Some providers may require that the attribution
+        of a particular content item always be displayed
+        when the content item is shown.
+    \value ImageId
+        The image's identifier
+    \value ImageUrl
+        The image's url
+    \value ImageMimeType
+        The image's MIME type
+    \value EditorialTitle
+        The title of the editorial
+    \value EditorialText
+        A textual description of the place. Depending upon the provider, the
+        text could be either rich (HTML based) text or plain text.
+    \value EditorialLanguage
+        The language of the editorial. Typically this would be a language code
+        in the 2 letter ISO 639-1 format.
+    \value ReviewId
+        The identifier of the review
+    \value ReviewDateTime
+        The date and time that the review was submitted
+    \value ReviewTitle
+        The title of the review
+    \value ReviewText
+        The text of the review. Depending on the provider, the text could be
+        rich (HTML based) or plain text.
+    \value ReviewLanguage
+        The language of the review. Typically this would be a language code
+        in the 2 letter ISO 639-1 format.
+    \value ReviewRating
+        This review's rating of the place
+    \value CustomDataTag
+*/
+
+/*!
     Constructs an default content object which has no type.
 */
-QPlaceContent::QPlaceContent()
-    : d_ptr(nullptr)
-{
-}
+QPlaceContent::QPlaceContent(Type type)
+    : d_ptr(new QPlaceContentPrivate(type))
+{}
 
 /*!
     Constructs a new copy of \a other.
 */
-QPlaceContent::QPlaceContent(const QPlaceContent &other)
-    : d_ptr(other.d_ptr)
-{
-}
+QPlaceContent::QPlaceContent(const QPlaceContent &other) noexcept = default;
 
 /*!
     Assigns the \a other content object to this and returns a reference
     to this content object.
 */
-QPlaceContent &QPlaceContent::operator=(const QPlaceContent &other)
-{
-    if (this == &other)
-        return *this;
-
-    d_ptr = other.d_ptr;
-    return *this;
-}
+QPlaceContent &QPlaceContent::operator=(const QPlaceContent &other) noexcept = default;
 
 /*!
     Destroys the content object.
 */
-QPlaceContent::~QPlaceContent()
+QPlaceContent::~QPlaceContent() = default;
+
+/*!
+    \internal
+*/
+void QPlaceContent::detach()
 {
+    d_ptr.detach();
 }
 
 /*!
@@ -188,7 +221,7 @@ bool QPlaceContent::operator==(const QPlaceContent &other) const
     if (type() != other.type())
         return false;
 
-    return d_ptr->compare(other.d_ptr);
+    return d_ptr->compare(other.d_ptr.constData());
 }
 
 /*!
@@ -201,70 +234,31 @@ bool QPlaceContent::operator!=(const QPlaceContent &other) const
 }
 
 /*!
-    Returns the supplier who contributed this content.
+    Returns the list of data tags for which values are stored in this
+    content objects.
 */
-QPlaceSupplier QPlaceContent::supplier() const
+QList<QPlaceContent::DataTag> QPlaceContent::dataTags() const
 {
     Q_D(const QPlaceContent);
-
-    return d->supplier;
+    return d->data.keys();
 }
 
 /*!
-    Sets the \a supplier of the content.
+    Returns the value stored for the data \a tag, or an invalid QVariant
+    if there is no data for that tag.
 */
-void QPlaceContent::setSupplier(const QPlaceSupplier &supplier)
-{
-    Q_D(QPlaceContent);
-
-    d->supplier = supplier;
-}
-
-/*!
-    Returns the user who contributed this content.
-*/
-QPlaceUser QPlaceContent::user() const
+QVariant QPlaceContent::value(QPlaceContent::DataTag tag) const
 {
     Q_D(const QPlaceContent);
-    return d->user;
+    return d->data.value(tag);
 }
 
 /*!
-    Sets the \a user who contributed this content.
+    Sets the value stored for the data \a tag to \a value.
 */
-void QPlaceContent::setUser(const QPlaceUser &user)
+void QPlaceContent::setValue(QPlaceContent::DataTag tag, const QVariant &value)
 {
+    detach();
     Q_D(QPlaceContent);
-    d->user = user;
-}
-
-/*!
-    Returns a rich text attribution string.
-
-    \b {Note}: Some providers may require that the attribution
-    of a particular content item always be displayed
-    when the content item is shown.
-*/
-QString QPlaceContent::attribution() const
-{
-    Q_D(const QPlaceContent);
-    return d->attribution;
-}
-
-/*!
-    Sets a rich text \a attribution string for this content item.
-*/
-void QPlaceContent::setAttribution(const QString &attribution)
-{
-    Q_D(QPlaceContent);
-    d->attribution = attribution;
-}
-
-/*!
-    \internal
-    Constructs a new content object from the given pointer \a d.
-*/
-QPlaceContent::QPlaceContent(QPlaceContentPrivate *d)
-    : d_ptr(d)
-{
+    d->data[tag] = value;
 }

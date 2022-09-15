@@ -43,13 +43,10 @@
 #include <QtLocation/QPlaceContactDetail>
 #include <QtLocation/QPlaceContentReply>
 #include <QtLocation/QPlaceContentRequest>
-#include <QtLocation/QPlaceEditorial>
 #include <QtLocation/QPlaceIcon>
-#include <QtLocation/QPlaceImage>
 #include <QtLocation/QPlaceManager>
 #include <QtLocation/QPlaceRatings>
 #include <QtLocation/QPlaceResult>
-#include <QtLocation/QPlaceReview>
 #include <QtLocation/QPlaceSearchReply>
 #include <QtLocation/QPlaceSearchRequest>
 #include "../../placemanager_utils/placemanager_utils.h"
@@ -621,30 +618,27 @@ void tst_QPlaceManagerNokia::content()
 
     QVERIFY(results.count() > 0);
 
-    for (auto iter = results.cbegin(), end = results.cend(); iter != end; ++iter) {
+    for (const auto &content : qAsConst(results)) {
         switch (type) {
-        case (QPlaceContent::ImageType): {
-            QPlaceImage image = iter.value();
-            QVERIFY(!image.url().isEmpty());
+        case QPlaceContent::ImageType:
+            QVERIFY(!content.value(QPlaceContent::ImageUrl).value<QUrl>().isEmpty());
             break;
-        } case (QPlaceContent::ReviewType) : {
-            QPlaceReview review = iter.value();
-            QVERIFY(!review.dateTime().isValid());
-            QVERIFY(!review.text().isEmpty());
-            QVERIFY(review.rating() >= 1 && review.rating() <= 5);
-
-            //title and language fields are optional and thus have not been
+        case QPlaceContent::ReviewType:
+            //review title and language fields are optional and thus have not been
             //explicitly tested
+            QVERIFY(!content.value(QPlaceContent::ReviewDateTime).value<QDateTime>().isValid());
+            QVERIFY(!content.value(QPlaceContent::ReviewText).value<QString>().isEmpty());
+            QVERIFY(content.value(QPlaceContent::ReviewRating).toReal() >= 1 &&
+                    content.value(QPlaceContent::ReviewRating).toReal() <= 5);
             break;
-        } case (QPlaceContent::EditorialType): {
-            QPlaceEditorial editorial = iter.value();
-            QVERIFY(!editorial.text().isEmpty());
-
-            //The language field is optional and thus has not been
+        case QPlaceContent::EditorialType:
+            //The editorial language field is optional and thus has not been
             //explicitly tested.
+            QVERIFY(!content.value(QPlaceContent::EditorialText).value<QString>().isEmpty());
             break;
-        } default:
-            QFAIL("Unknown content type");
+        default:
+            QVERIFY2(false, "Unexpected content type");
+            break;
         }
     }
 

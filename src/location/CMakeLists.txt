@@ -67,17 +67,17 @@ qt_internal_add_module(Location
         places/qplaceattribute_p.h places/qplacematchrequest.h
         places/qplacecontentreply.h places/qplacereview.h
         places/qplacecategory.h places/qplacesearchrequest.h
-        places/qplacecategory_p.h places/qplaceeditorial_p.h
+        places/qplacecategory_p.h
         places/qplaceproposedsearchresult.h places/qplacemanagerengine.h
         places/qplacecontentrequest.h places/qplacemanagerengine_p.h
         places/qplace.h places/qplacecontentrequest_p.h
         places/qplaceeditorial.h places/qplaceattribute.h
-        places/qplacedetailsreply.h places/qplaceimage_p.h
+        places/qplacedetailsreply.h
         places/qplaceratings_p.h places/unsupportedreplies_p.h
         places/qplacereply.h places/qplace_p.h places/qplaceresult_p.h
         places/qplacemanager.h places/qplacereply_p.h
         places/qplacesearchresult_p.h places/qplaceresult.h
-        places/qplacereview_p.h places/qplacematchreply.h
+        places/qplacematchreply.h
         places/qplacecontent.h places/qplacesearchreply.h
         places/qplacesupplier_p.h places/qplaceratings.h
         places/qplaceimage.h places/qplacesearchresult.h

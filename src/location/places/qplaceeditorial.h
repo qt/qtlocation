@@ -42,32 +42,31 @@
 
 #include <QtLocation/QPlaceContent>
 
+#include <QtCore/QVariant>
+
 QT_BEGIN_NAMESPACE
 
-class QPlaceEditorialPrivate;
-
+#if QT_DEPRECATED_SINCE(6, 0)
 class Q_LOCATION_EXPORT QPlaceEditorial : public QPlaceContent
 {
 public:
-    QPlaceEditorial();
-#ifdef Q_QDOC
-    QPlaceEditorial(const QPlaceContent &other);
-#else
-    Q_DECLARE_CONTENT_COPY_CTOR(QPlaceEditorial)
-#endif
+    QT_DEPRECATED_VERSION_X_6_0("Use QPlaceContent") QPlaceEditorial();
+    QT_DEPRECATED_VERSION_X_6_0("Use QPlaceContent") QPlaceEditorial(const QPlaceContent &other);
 
-    virtual ~QPlaceEditorial();
-
-    QString text() const;
-    void setText(const QString &text);
-    QString title() const;
-    void setTitle(const QString &data);
-    QString language() const;
-    void setLanguage(const QString &data);
-
-private:
-    Q_DECLARE_CONTENT_D_FUNC(QPlaceEditorial)
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QString text() const
+    { return value(QPlaceContent::EditorialText).value<QString>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setText(const QString &text)
+    { setValue(QPlaceContent::EditorialText, QVariant::fromValue(text)); }
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QString title() const
+    { return value(QPlaceContent::EditorialTitle).value<QString>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setTitle(const QString &title)
+    { setValue(QPlaceContent::EditorialTitle, QVariant::fromValue(title)); }
+    QT_DEPRECATED_VERSION_X_6_0("Use value()") QString language() const
+    { return value(QPlaceContent::EditorialLanguage).value<QString>(); }
+    QT_DEPRECATED_VERSION_X_6_0("Use setValue()") void setLanguage(const QString &language)
+    { setValue(QPlaceContent::EditorialLanguage, QVariant::fromValue(language)); }
 };
+#endif
 
 QT_END_NAMESPACE
 

@@ -38,18 +38,9 @@
 ****************************************************************************/
 
 #include "qplaceeditorial.h"
-#include "qplaceeditorial_p.h"
+#include "qplacecontent_p.h"
 
 QT_USE_NAMESPACE
-
-bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
-{
-    const QPlaceEditorialPrivate *od = static_cast<const QPlaceEditorialPrivate *>(other);
-    return QPlaceContentPrivate::compare(other)
-           && text == od->text
-           && contentTitle == od->contentTitle
-           && language == od->language;
-}
 
 /*!
     \class QPlaceEditorial
@@ -69,84 +60,20 @@ bool QPlaceEditorialPrivate::compare(const QPlaceContentPrivate *other) const
     \sa QPlaceContent
 */
 
+#if QT_DEPRECATED_SINCE(6, 0)
 /*!
     Constructs a new editorial object.
 */
 QPlaceEditorial::QPlaceEditorial()
-:   QPlaceContent(new QPlaceEditorialPrivate)
-{
-}
-
-/*!
-    Destructor.
-*/
-QPlaceEditorial::~QPlaceEditorial()
+    : QPlaceContent(QPlaceContent::EditorialType)
 {
 }
 
 /*!
     \fn QPlaceEditorial::QPlaceEditorial(const QPlaceContent &other)
-    Constructs a copy of \a other if possible, otherwise constructs a default editorial object.
+    Constructs a copy of \a other if possible, otherwise constructs a default
+    editorial object.
 */
-Q_IMPLEMENT_CONTENT_COPY_CTOR(QPlaceEditorial)
+Q_IMPLEMENT_CONTENT_COPY_CTOR(QPlaceEditorial, QPlaceContent::EditorialType)
 
-Q_IMPLEMENT_CONTENT_D_FUNC(QPlaceEditorial)
-
-/*!
-    Returns a textual description of the place.
-
-    Depending upon the provider, the
-    editorial text could be either rich(HTML based) text or plain text.
-*/
-QString QPlaceEditorial::text() const
-{
-    Q_D(const QPlaceEditorial);
-    return d->text;
-}
-
-/*!
-    Sets the \a text of the editorial.
-*/
-void QPlaceEditorial::setText(const QString &text)
-{
-    Q_D(QPlaceEditorial);
-    d->text = text;
-}
-
-/*!
-    Returns the title of the editorial.
-*/
-QString QPlaceEditorial::title() const
-{
-    Q_D(const QPlaceEditorial);
-    return d->contentTitle;
-}
-
-/*!
-    Sets the \a title of the editorial.
-*/
-void QPlaceEditorial::setTitle(const QString &title)
-{
-    Q_D(QPlaceEditorial);
-    d->contentTitle = title;
-}
-
-/*!
-    Returns the language of the editorial.   Typically this would be a language code
-    in the 2 letter ISO 639-1 format.
-*/
-QString QPlaceEditorial::language() const
-{
-    Q_D(const QPlaceEditorial);
-    return d->language;
-}
-
-/*!
-    Sets the \a language of the editorial. Typically this would be a language code
-    in the 2 letter ISO 639-1 format.
-*/
-void QPlaceEditorial::setLanguage(const QString &language)
-{
-    Q_D(QPlaceEditorial);
-    d->language = language;
-}
+#endif // QT_DEPRECATED_SINCE(6, 0)

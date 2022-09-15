@@ -57,48 +57,29 @@
 
 #include <QtCore/QSharedData>
 #include <QtCore/QString>
-#include <QtCore/QUrl>
+#include <QtCore/QVariant>
 
 QT_BEGIN_NAMESPACE
-
-
-#define Q_IMPLEMENT_CONTENT_D_FUNC(Class) \
-    Class##Private *Class::d_func() { return reinterpret_cast<Class##Private *>(d_ptr.data()); } \
-    const Class##Private *Class::d_func() const { return reinterpret_cast<const Class##Private *>(d_ptr.constData()); } \
-
-#define Q_IMPLEMENT_CONTENT_COPY_CTOR(Class) \
-    Class::Class(const QPlaceContent &other) : QPlaceContent() { Class##Private::copyIfPossible(d_ptr, other); }
-
-#define Q_DEFINE_CONTENT_PRIVATE_HELPER(Class, ContentType) \
-    QPlaceContentPrivate *clone() const override { return new Class##Private(*this); } \
-    QPlaceContent::Type type() const override {return ContentType;} \
-    static void copyIfPossible(QSharedDataPointer<QPlaceContentPrivate> &d_ptr, const QPlaceContent &other) \
-    { \
-        if (other.type() == ContentType) \
-            d_ptr = extract_d(other); \
-        else \
-            d_ptr = new Class##Private; \
-    }
 
 class QPlaceContentPrivate : public QSharedData
 {
 public:
-    QPlaceContentPrivate(){}
-    virtual ~QPlaceContentPrivate(){}
+    QPlaceContentPrivate(QPlaceContent::Type type)
+        : m_type(type)
+    {}
+    bool compare(const QPlaceContentPrivate *other) const;
+    QPlaceContent::Type type() const { return m_type; }
 
-    virtual bool compare(const QPlaceContentPrivate *other) const;
-    virtual QPlaceContentPrivate *clone() const = 0;
-    virtual QPlaceContent::Type type() const = 0;
-
-    /* Helper functions for C++ protection rules */
-    static const QSharedDataPointer<QPlaceContentPrivate> &extract_d(const QPlaceContent &other) {return other.d_ptr;}
-
-    QPlaceSupplier supplier;
-    QPlaceUser user;
-    QString attribution;
+    QMap<QPlaceContent::DataTag, QVariant> data;
+    const QPlaceContent::Type m_type = QPlaceContent::NoType;
 };
 
-template<> QPlaceContentPrivate *QSharedDataPointer<QPlaceContentPrivate>::clone();
+#define Q_IMPLEMENT_CONTENT_COPY_CTOR(ContentClass, ContentType)            \
+ContentClass::ContentClass(const QPlaceContent &other)                      \
+    : QPlaceContent(other.type() == ContentType ? other : QPlaceContent(ContentType)) \
+{                                                                           \
+}                                                                           \
+
 
 QT_END_NAMESPACE
 

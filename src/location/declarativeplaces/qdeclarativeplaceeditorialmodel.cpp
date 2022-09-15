@@ -40,7 +40,7 @@
 #include "qdeclarativeplaceeditorialmodel_p.h"
 
 #include <QtCore/QUrl>
-#include <QtLocation/QPlaceEditorial>
+#include <QtLocation/QPlaceContent>
 
 QT_BEGIN_NAMESPACE
 
@@ -146,15 +146,15 @@ QVariant QDeclarativePlaceEditorialModel::data(const QModelIndex &index, int rol
     if (index.row() >= rowCount(index.parent()) || index.row() < 0)
         return QVariant();
 
-    const QPlaceEditorial &description = m_content.value(index.row());
+    const QPlaceContent &content = m_content.value(index.row());
 
     switch (role) {
     case TextRole:
-        return description.text();
+        return content.value(QPlaceContent::EditorialText);
     case TitleRole:
-        return description.title();
+        return content.value(QPlaceContent::EditorialTitle);
     case LanguageRole:
-        return description.language();
+        return content.value(QPlaceContent::EditorialLanguage);
     }
 
     return QDeclarativePlaceContentModel::data(index, role);

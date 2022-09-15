@@ -36,18 +36,15 @@
 
 QT_USE_NAMESPACE
 
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_DEPRECATED
+
 class tst_QPlaceImage : public QObject
 {
     Q_OBJECT
 
 public:
     tst_QPlaceImage();
-
-    //needed for QLocationTestUtils::testConversion
-    QPlaceImage initialSubObject();
-    bool checkType(const QPlaceContent &);
-    void detach(QPlaceContent *);
-    void setSubClassProperty(QPlaceImage *);
 
 private Q_SLOTS:
     void constructorTest();
@@ -56,47 +53,10 @@ private Q_SLOTS:
     void mimeTypeTest();
     void attributionTest();
     void operatorsTest();
-    void conversionTest();
 };
 
 tst_QPlaceImage::tst_QPlaceImage()
 {
-}
-
-QPlaceImage tst_QPlaceImage::initialSubObject()
-{
-    QPlaceUser user;
-    user.setName("user 1");
-    user.setUserId("0001");
-
-    QPlaceSupplier supplier;
-    supplier.setName("supplier");
-    supplier.setSupplierId("1");
-
-    QPlaceImage image;
-    image.setUrl(QUrl(QStringLiteral("file:///opt/icon/img.png")));
-    image.setImageId("0001");
-    image.setMimeType("image/png");
-    image.setUser(user);
-    image.setSupplier(supplier);
-    image.setAttribution("attribution");
-
-    return image;
-}
-
-bool tst_QPlaceImage::checkType(const QPlaceContent &content)
-{
-    return content.type() == QPlaceContent::ImageType;
-}
-
-void tst_QPlaceImage::detach(QPlaceContent *content)
-{
-    content->setAttribution("attribution");
-}
-
-void tst_QPlaceImage::setSubClassProperty(QPlaceImage *image)
-{
-    image->setImageId("0002");
 }
 
 void tst_QPlaceImage::constructorTest()
@@ -157,12 +117,7 @@ void tst_QPlaceImage::operatorsTest()
     QVERIFY2(testObj != testObj2, "Object should be different");
 }
 
-void tst_QPlaceImage::conversionTest()
-{
-    QLocationTestUtils::testConversion<tst_QPlaceImage,
-                                       QPlaceContent,
-                                       QPlaceImage>(this);
-}
+QT_WARNING_POP
 
 QTEST_APPLESS_MAIN(tst_QPlaceImage);
 

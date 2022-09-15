@@ -33,15 +33,13 @@
 #include <QtPositioning/QGeoCoordinate>
 
 #include <qplace.h>
-#include <qplaceimage.h>
+#include <qplacecontent.h>
 #include <qplaceattribute.h>
 #include <qplacecategory.h>
 #include <qplacecontactdetail.h>
 #include <qplaceicon.h>
 #include <qplaceratings.h>
-#include <qplacereview.h>
 #include <qplacesupplier.h>
-#include <qplaceeditorial.h>
 
 QT_USE_NAMESPACE
 
@@ -172,14 +170,14 @@ void tst_Place::imageContentTest()
     QPlace place;
     QVERIFY2(place.content(QPlaceContent::ImageType).count() ==0,"Wrong default value");
 
-    QPlaceImage dummyImage;
-    dummyImage.setUrl(QUrl("www.dummy.one"));
+    QPlaceContent dummyImage(QPlaceContent::ImageType);
+    dummyImage.setValue(QPlaceContent::ImageUrl, QUrl("www.dummy.one"));
 
-    QPlaceImage dummyImage2;
-    dummyImage2.setUrl(QUrl("www.dummy.two"));
+    QPlaceContent dummyImage2(QPlaceContent::ImageType);
+    dummyImage2.setValue(QPlaceContent::ImageUrl, QUrl("www.dummy.two"));
 
-    QPlaceImage dummyImage3;
-    dummyImage3.setUrl(QUrl("www.dummy.three"));
+    QPlaceContent dummyImage3(QPlaceContent::ImageType);
+    dummyImage3.setValue(QPlaceContent::ImageUrl, QUrl("www.dummy.three"));
 
     QPlaceContent::Collection imageCollection;
     imageCollection.insert(0,dummyImage);
@@ -190,17 +188,17 @@ void tst_Place::imageContentTest()
     QPlaceContent::Collection retrievedCollection = place.content(QPlaceContent::ImageType);
 
     QCOMPARE(retrievedCollection.count(), 3);
-    QCOMPARE(QPlaceImage(retrievedCollection.value(0)), dummyImage);
-    QCOMPARE(QPlaceImage(retrievedCollection.value(1)), dummyImage2);
-    QCOMPARE(QPlaceImage(retrievedCollection.value(2)), dummyImage3);
+    QCOMPARE(retrievedCollection.value(0), dummyImage);
+    QCOMPARE(retrievedCollection.value(1), dummyImage2);
+    QCOMPARE(retrievedCollection.value(2), dummyImage3);
 
     //replace the second and insert a sixth image
     //indexes 4 and 5 are "missing"
-    QPlaceImage dummyImage2New;
-    dummyImage2.setUrl(QUrl("www.dummy.two.new"));
+    QPlaceContent dummyImage2New(QPlaceContent::ImageType);
+    dummyImage2.setValue(QPlaceContent::ImageUrl, QUrl("www.dummy.two.new"));
 
-    QPlaceImage dummyImage6;
-    dummyImage6.setUrl(QUrl("www.dummy.six"));
+    QPlaceContent dummyImage6(QPlaceContent::ImageType);
+    dummyImage6.setValue(QPlaceContent::ImageUrl, QUrl("www.dummy.six"));
 
     imageCollection.clear();
     imageCollection.insert(1, dummyImage2New);
@@ -209,12 +207,12 @@ void tst_Place::imageContentTest()
 
     retrievedCollection = place.content(QPlaceContent::ImageType);
     QCOMPARE(retrievedCollection.count(), 4);
-    QCOMPARE(QPlaceImage(retrievedCollection.value(0)), dummyImage);
-    QCOMPARE(QPlaceImage(retrievedCollection.value(1)), dummyImage2New);
-    QCOMPARE(QPlaceImage(retrievedCollection.value(2)), dummyImage3);
-    QCOMPARE(QPlaceImage(retrievedCollection.value(3)), QPlaceImage());
-    QCOMPARE(QPlaceImage(retrievedCollection.value(4)), QPlaceImage());
-    QCOMPARE(QPlaceImage(retrievedCollection.value(5)), dummyImage6);
+    QCOMPARE(retrievedCollection.value(0), dummyImage);
+    QCOMPARE(retrievedCollection.value(1), dummyImage2New);
+    QCOMPARE(retrievedCollection.value(2), dummyImage3);
+    QCOMPARE(retrievedCollection.value(3), QPlaceContent());
+    QCOMPARE(retrievedCollection.value(4), QPlaceContent());
+    QCOMPARE(retrievedCollection.value(5), dummyImage6);
 }
 
 void tst_Place::reviewContentTest()
@@ -222,14 +220,14 @@ void tst_Place::reviewContentTest()
     QPlace place;
     QVERIFY2(place.content(QPlaceContent::ReviewType).count() ==0,"Wrong default value");
 
-    QPlaceReview dummyReview;
-    dummyReview.setTitle(QStringLiteral("Review 1"));
+    QPlaceContent dummyReview(QPlaceContent::ReviewType);
+    dummyReview.setValue(QPlaceContent::ReviewTitle, QStringLiteral("Review 1"));
 
-    QPlaceReview dummyReview2;
-    dummyReview2.setTitle(QStringLiteral("Review 2"));
+    QPlaceContent dummyReview2(QPlaceContent::ReviewType);
+    dummyReview2.setValue(QPlaceContent::ReviewTitle, QStringLiteral("Review 2"));
 
-    QPlaceReview dummyReview3;
-    dummyReview3.setTitle(QStringLiteral("Review 3"));
+    QPlaceContent dummyReview3(QPlaceContent::ReviewType);
+    dummyReview3.setValue(QPlaceContent::ReviewTitle, QStringLiteral("Review 3"));
 
     QPlaceContent::Collection reviewCollection;
     reviewCollection.insert(0,dummyReview);
@@ -240,17 +238,17 @@ void tst_Place::reviewContentTest()
     QPlaceContent::Collection retrievedCollection = place.content(QPlaceContent::ReviewType);
 
     QCOMPARE(retrievedCollection.count(), 3);
-    QCOMPARE(QPlaceReview(retrievedCollection.value(0)), dummyReview);
-    QCOMPARE(QPlaceReview(retrievedCollection.value(1)), dummyReview2);
-    QCOMPARE(QPlaceReview(retrievedCollection.value(2)), dummyReview3);
+    QCOMPARE(retrievedCollection.value(0), dummyReview);
+    QCOMPARE(retrievedCollection.value(1), dummyReview2);
+    QCOMPARE(retrievedCollection.value(2), dummyReview3);
 
     //replace the second and insert a sixth review
     //indexes 4 and 5 are "missing"
-    QPlaceReview dummyReview2New;
-    dummyReview2.setTitle(QStringLiteral("Review 2 new"));
+    QPlaceContent dummyReview2New(QPlaceContent::ReviewType);
+    dummyReview2.setValue(QPlaceContent::ReviewTitle, QStringLiteral("Review 2 new"));
 
-    QPlaceReview dummyReview6;
-    dummyReview6.setTitle(QStringLiteral("Review 6"));
+    QPlaceContent dummyReview6(QPlaceContent::ReviewType);
+    dummyReview6.setValue(QPlaceContent::ReviewTitle, QStringLiteral("Review 6"));
 
     reviewCollection.clear();
     reviewCollection.insert(1, dummyReview2New);
@@ -259,12 +257,12 @@ void tst_Place::reviewContentTest()
 
     retrievedCollection = place.content(QPlaceContent::ReviewType);
     QCOMPARE(retrievedCollection.count(), 4);
-    QCOMPARE(QPlaceReview(retrievedCollection.value(0)), dummyReview);
-    QCOMPARE(QPlaceReview(retrievedCollection.value(1)), dummyReview2New);
-    QCOMPARE(QPlaceReview(retrievedCollection.value(2)), dummyReview3);
-    QCOMPARE(QPlaceReview(retrievedCollection.value(3)), QPlaceReview());
-    QCOMPARE(QPlaceReview(retrievedCollection.value(4)), QPlaceReview());
-    QCOMPARE(QPlaceReview(retrievedCollection.value(5)), dummyReview6);
+    QCOMPARE(retrievedCollection.value(0), dummyReview);
+    QCOMPARE(retrievedCollection.value(1), dummyReview2New);
+    QCOMPARE(retrievedCollection.value(2), dummyReview3);
+    QCOMPARE(retrievedCollection.value(3), QPlaceContent());
+    QCOMPARE(retrievedCollection.value(4), QPlaceContent());
+    QCOMPARE(retrievedCollection.value(5), dummyReview6);
 }
 
 void tst_Place::editorialContentTest()
@@ -272,14 +270,14 @@ void tst_Place::editorialContentTest()
     QPlace place;
     QVERIFY2(place.content(QPlaceContent::EditorialType).count() == 0, "Wrong default value");
 
-    QPlaceEditorial dummyEditorial;
-    dummyEditorial.setTitle(QStringLiteral("Editorial 1"));
+    QPlaceContent dummyEditorial(QPlaceContent::EditorialType);
+    dummyEditorial.setValue(QPlaceContent::EditorialTitle, QStringLiteral("Editorial 1"));
 
-    QPlaceEditorial dummyEditorial2;
-    dummyEditorial2.setTitle(QStringLiteral("Editorial 2"));
+    QPlaceContent dummyEditorial2(QPlaceContent::EditorialType);
+    dummyEditorial2.setValue(QPlaceContent::EditorialTitle, QStringLiteral("Editorial 2"));
 
-    QPlaceEditorial dummyEditorial3;
-    dummyEditorial3.setTitle(QStringLiteral("Editorial 3"));
+    QPlaceContent dummyEditorial3(QPlaceContent::EditorialType);
+    dummyEditorial3.setValue(QPlaceContent::EditorialTitle, QStringLiteral("Editorial 3"));
 
     QPlaceContent::Collection editorialCollection;
     editorialCollection.insert(0,dummyEditorial);
@@ -290,17 +288,17 @@ void tst_Place::editorialContentTest()
     QPlaceContent::Collection retrievedCollection = place.content(QPlaceContent::EditorialType);
 
     QCOMPARE(retrievedCollection.count(), 3);
-    QCOMPARE(QPlaceEditorial(retrievedCollection.value(0)), dummyEditorial);
-    QCOMPARE(QPlaceEditorial(retrievedCollection.value(1)), dummyEditorial2);
-    QCOMPARE(QPlaceEditorial(retrievedCollection.value(2)), dummyEditorial3);
+    QCOMPARE(retrievedCollection.value(0), dummyEditorial);
+    QCOMPARE(retrievedCollection.value(1), dummyEditorial2);
+    QCOMPARE(retrievedCollection.value(2), dummyEditorial3);
 
     //replace the second and insert a sixth editorial
     //indexes 4 and 5 are "missing"
-    QPlaceEditorial dummyEditorial2New;
-    dummyEditorial2.setTitle(QStringLiteral("Editorial 2 new"));
+    QPlaceContent dummyEditorial2New(QPlaceContent::EditorialType);
+    dummyEditorial2.setValue(QPlaceContent::EditorialTitle, QStringLiteral("Editorial 2 new"));
 
-    QPlaceEditorial dummyEditorial6;
-    dummyEditorial6.setTitle(QStringLiteral("Editorial 6"));
+    QPlaceContent dummyEditorial6(QPlaceContent::EditorialType);
+    dummyEditorial6.setValue(QPlaceContent::EditorialTitle, QStringLiteral("Editorial 6"));
 
     editorialCollection.clear();
     editorialCollection.insert(1, dummyEditorial2New);
@@ -309,12 +307,12 @@ void tst_Place::editorialContentTest()
 
     retrievedCollection = place.content(QPlaceContent::EditorialType);
     QCOMPARE(retrievedCollection.count(), 4);
-    QCOMPARE(QPlaceEditorial(retrievedCollection.value(0)), dummyEditorial);
-    QCOMPARE(QPlaceEditorial(retrievedCollection.value(1)), dummyEditorial2New);
-    QCOMPARE(QPlaceEditorial(retrievedCollection.value(2)), dummyEditorial3);
-    QCOMPARE(QPlaceEditorial(retrievedCollection.value(3)), QPlaceEditorial());
-    QCOMPARE(QPlaceEditorial(retrievedCollection.value(4)), QPlaceEditorial());
-    QCOMPARE(QPlaceEditorial(retrievedCollection.value(5)), dummyEditorial6);
+    QCOMPARE(retrievedCollection.value(0), dummyEditorial);
+    QCOMPARE(retrievedCollection.value(1), dummyEditorial2New);
+    QCOMPARE(retrievedCollection.value(2), dummyEditorial3);
+    QCOMPARE(retrievedCollection.value(3), QPlaceContent());
+    QCOMPARE(retrievedCollection.value(4), QPlaceContent());
+    QCOMPARE(retrievedCollection.value(5), dummyEditorial6);
 }
 
 void tst_Place::categoriesTest()

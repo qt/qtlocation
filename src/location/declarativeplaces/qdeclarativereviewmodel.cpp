@@ -40,7 +40,7 @@
 #include "qdeclarativereviewmodel_p.h"
 
 #include <QtCore/QDateTime>
-#include <QtLocation/QPlaceReview>
+#include <QtLocation/QPlaceContent>
 
 QT_BEGIN_NAMESPACE
 
@@ -149,21 +149,21 @@ QVariant QDeclarativeReviewModel::data(const QModelIndex &index, int role) const
     if (index.row() >= rowCount(index.parent()) || index.row() < 0)
         return QVariant();
 
-    const QPlaceReview &review = m_content.value(index.row());
+    const QPlaceContent &content = m_content.value(index.row());
 
     switch (role) {
     case DateTimeRole:
-        return review.dateTime();
+        return content.value(QPlaceContent::ReviewDateTime);
     case TextRole:
-        return review.text();
+        return content.value(QPlaceContent::ReviewText);
     case LanguageRole:
-        return review.language();
+        return content.value(QPlaceContent::ReviewLanguage);
     case RatingRole:
-        return review.rating();
+        return content.value(QPlaceContent::ReviewRating);
     case ReviewIdRole:
-        return review.reviewId();
+        return content.value(QPlaceContent::ReviewId);
     case TitleRole:
-        return review.title();
+        return content.value(QPlaceContent::ReviewTitle);
     }
 
     return QDeclarativePlaceContentModel::data(index, role);

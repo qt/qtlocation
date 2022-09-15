@@ -153,10 +153,14 @@ void QDeclarativePlaceContentModel::initializeCollection(int totalCount, const Q
             continue;
 
         m_content.insert(i.key(), content);
-        if (!m_suppliers.contains(content.supplier().supplierId()))
-            m_suppliers.insert(content.supplier().supplierId(), content.supplier());
-        if (!m_users.contains(content.user().userId()))
-            m_users.insert(content.user().userId(), content.user());
+        const auto supplier = content.value(QPlaceContent::ContentSupplier)
+                                     .value<QPlaceSupplier>();
+        if (!m_suppliers.contains(supplier.supplierId()))
+            m_suppliers.insert(supplier.supplierId(), supplier);
+        const auto user = content.value(QPlaceContent::ContentUser)
+                                 .value<QPlaceUser>();
+        if (!m_users.contains(user.userId()))
+            m_users.insert(user.userId(), user);
     }
 
     m_contentCount = totalCount;
@@ -193,11 +197,13 @@ QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role)
 
     switch (role) {
     case SupplierRole:
-        return QVariant::fromValue(m_suppliers.value(content.supplier().supplierId()));
+        return QVariant::fromValue(m_suppliers.value(content.value(QPlaceContent::ContentSupplier)
+                                              .value<QPlaceSupplier>().supplierId()));
     case PlaceUserRole:
-        return QVariant::fromValue(m_users.value(content.user().userId()));
+        return QVariant::fromValue(m_users.value(content.value(QPlaceContent::ContentUser)
+                                          .value<QPlaceUser>().userId()));
     case AttributionRole:
-        return content.attribution();
+        return content.value(QPlaceContent::ContentAttribution);
     default:
         return QVariant();
     }
@@ -333,10 +339,14 @@ void QDeclarativePlaceContentModel::fetchFinished()
                     const QPlaceContent &content = contents.value(i);
 
                     m_content.insert(i, content);
-                    if (!m_suppliers.contains(content.supplier().supplierId()))
-                        m_suppliers.insert(content.supplier().supplierId(), content.supplier());
-                    if (!m_users.contains(content.user().userId()))
-                        m_users.insert(content.user().userId(), content.user());
+                    const auto supplier = content.value(QPlaceContent::ContentSupplier)
+                                                 .value<QPlaceSupplier>();
+                    if (!m_suppliers.contains(supplier.supplierId()))
+                        m_suppliers.insert(supplier.supplierId(), supplier);
+                    const auto user = content.value(QPlaceContent::ContentUser)
+                                             .value<QPlaceUser>();
+                    if (!m_users.contains(user.userId()))
+                        m_users.insert(user.userId(), user);
                 }
                 endInsertRows();
                 startIndex = -1;
@@ -356,10 +366,14 @@ void QDeclarativePlaceContentModel::fetchFinished()
                 for (int i = startIndex; i <= currentIndex; ++i) {
                     const QPlaceContent &content = contents.value(i);
                     m_content.insert(i, content);
-                    if (!m_suppliers.contains(content.supplier().supplierId()))
-                        m_suppliers.insert(content.supplier().supplierId(), content.supplier());
-                    if (!m_users.contains(content.user().userId()))
-                        m_users.insert(content.user().userId(), content.user());
+                    const auto supplier = content.value(QPlaceContent::ContentSupplier)
+                                                 .value<QPlaceSupplier>();
+                    if (!m_suppliers.contains(supplier.supplierId()))
+                        m_suppliers.insert(supplier.supplierId(), supplier);
+                    const auto user = content.value(QPlaceContent::ContentUser)
+                                             .value<QPlaceUser>();
+                    if (!m_users.contains(user.userId()))
+                        m_users.insert(user.userId(), user);
                 }
                 emit dataChanged(index(startIndex),index(currentIndex));
                 startIndex = -1;

@@ -64,12 +64,12 @@ QList<QPlaceCategory> parseCategories(const QJsonArray &categoryArray,
                              const QPlaceManagerEngineNokiaV2 *engine);
 QList<QPlaceContactDetail> parseContactDetails(const QJsonArray &contacts);
 
-QPlaceImage parseImage(const QJsonObject &imageObject,
-                       const QPlaceManagerEngineNokiaV2 *engine);
-QPlaceReview parseReview(const QJsonObject &reviewObject,
+QPlaceContent parseImage(const QJsonObject &imageObject,
                          const QPlaceManagerEngineNokiaV2 *engine);
-QPlaceEditorial parseEditorial(const QJsonObject &editorialObject,
-                               const QPlaceManagerEngineNokiaV2 *engine);
+QPlaceContent parseReview(const QJsonObject &reviewObject,
+                          const QPlaceManagerEngineNokiaV2 *engine);
+QPlaceContent parseEditorial(const QJsonObject &editorialObject,
+                             const QPlaceManagerEngineNokiaV2 *engine);
 
 void parseCollection(QPlaceContent::Type type, const QJsonObject &object,
                      QPlaceContent::Collection *collection, int *totalCount,

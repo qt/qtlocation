@@ -43,16 +43,13 @@
 #include <QtLocation/QPlaceManagerEngine>
 #include <QtLocation/QPlaceReply>
 #include <QtLocation/QPlaceDetailsReply>
-#include <QtLocation/QPlaceEditorial>
 #include <QtLocation/QPlaceIdReply>
-#include <QtLocation/QPlaceImage>
 #include <QtLocation/QPlaceSearchSuggestionReply>
 #include <QtLocation/QPlaceSearchReply>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/QPlaceResult>
 #include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlace>
-#include <QtLocation/QPlaceReview>
 #include <QtLocation/private/qplace_p.h>
 #include <QtTest/QTest>
 
@@ -306,45 +303,64 @@ public:
                             m_placeRecommendations.insert(place.placeId(), recommendations);
 
                             QJsonArray revArray = p.value(QStringLiteral("reviews")).toArray();
-                            QList<QPlaceReview> reviews;
+                            QList<QPlaceContent> reviews;
                             for (int j = 0; j < revArray.count(); ++j) {
                                 QJsonObject ro = revArray.at(j).toObject();
-                                QPlaceReview review;
-                                if (ro.contains(QStringLiteral("title")))
-                                    review.setTitle(ro.value(QStringLiteral("title")).toString());
-                                if (ro.contains(QStringLiteral("text")))
-                                    review.setText(ro.value(QStringLiteral("text")).toString());
+                                QPlaceContent review(QPlaceContent::ReviewType);
+                                if (ro.contains(QStringLiteral("title"))) {
+                                    review.setValue(QPlaceContent::ReviewTitle,
+                                                    ro.value(QStringLiteral("title")).toString());
+                                }
+                                if (ro.contains(QStringLiteral("text"))) {
+                                    review.setValue(QPlaceContent::ReviewText,
+                                                    ro.value(QStringLiteral("text")).toString());
+                                }
 
-                                if (ro.contains(QStringLiteral("language")))
-                                    review.setLanguage(ro.value("language").toString());
+                                if (ro.contains(QStringLiteral("language"))) {
+                                    review.setValue(QPlaceContent::ReviewLanguage,
+                                                    ro.value("language").toString());
+                                }
 
-                                if (ro.contains(QStringLiteral("rating")))
-                                    review.setRating(ro.value("rating").toDouble());
+                                if (ro.contains(QStringLiteral("rating"))) {
+                                    review.setValue(QPlaceContent::ReviewRating,
+                                                    ro.value("rating").toDouble());
+                                }
 
-                                if (ro.contains(QStringLiteral("dateTime")))
-                                    review.setDateTime(QDateTime::fromString(
-                                                           ro.value(QStringLiteral("dateTime")).toString(),
-                                                           QStringLiteral("hh:mm dd-MM-yyyy")));
-                                if (ro.contains(QStringLiteral("reviewId")))
-                                    review.setReviewId(ro.value("reviewId").toString());
+                                if (ro.contains(QStringLiteral("dateTime"))) {
+                                    const QString dtString =
+                                        ro.value(QStringLiteral("dateTime")).toString();
+                                    review.setValue(QPlaceContent::ReviewDateTime,
+                                                    QDateTime::fromString(dtString,
+                                                        QStringLiteral("hh:mm dd-MM-yyyy")));
+                                }
+                                if (ro.contains(QStringLiteral("reviewId"))) {
+                                    review.setValue(QPlaceContent::ReviewId,
+                                                    ro.value("reviewId").toString());
+                                }
 
                                 reviews << review;
                             }
                             m_placeReviews.insert(place.placeId(), reviews);
 
                             QJsonArray imgArray = p.value(QStringLiteral("images")).toArray();
-                            QList<QPlaceImage> images;
+                            QList<QPlaceContent> images;
                             for (int j = 0; j < imgArray.count(); ++j) {
                                 QJsonObject imgo = imgArray.at(j).toObject();
-                                QPlaceImage image;
-                                if (imgo.contains(QStringLiteral("url")))
-                                    image.setUrl(imgo.value(QStringLiteral("url")).toString());
+                                QPlaceContent image(QPlaceContent::ImageType);
+                                if (imgo.contains(QStringLiteral("url"))) {
+                                    image.setValue(QPlaceContent::ImageUrl,
+                                                  imgo.value(QStringLiteral("url")).toString());
+                                }
 
-                                if (imgo.contains("imageId"))
-                                    image.setImageId(imgo.value(QStringLiteral("imageId")).toString());
+                                if (imgo.contains("imageId")) {
+                                    image.setValue(QPlaceContent::ImageId,
+                                                imgo.value(QStringLiteral("imageId")).toString());
+                                }
 
-                                if (imgo.contains("mimeType"))
-                                    image.setMimeType(imgo.value(QStringLiteral("mimeType")).toString());
+                                if (imgo.contains("mimeType")) {
+                                    image.setValue(QPlaceContent::ImageMimeType,
+                                                imgo.value(QStringLiteral("mimeType")).toString());
+                                }
 
                                 images << image;
                             }
@@ -352,18 +368,24 @@ public:
                             m_placeImages.insert(place.placeId(), images);
 
                             QJsonArray edArray = p.value(QStringLiteral("editorials")).toArray();
-                            QList<QPlaceEditorial> editorials;
+                            QList<QPlaceContent> editorials;
                             for (int j = 0; j < edArray.count(); ++j) {
                                 QJsonObject edo = edArray.at(j).toObject();
-                                QPlaceEditorial editorial;
-                                if (edo.contains(QStringLiteral("title")))
-                                    editorial.setTitle(edo.value(QStringLiteral("title")).toString());
+                                QPlaceContent editorial(QPlaceContent::EditorialType);
+                                if (edo.contains(QStringLiteral("title"))) {
+                                    editorial.setValue(QPlaceContent::EditorialTitle,
+                                                    edo.value(QStringLiteral("title")).toString());
+                                }
 
-                                if (edo.contains(QStringLiteral("text")))
-                                    editorial.setText(edo.value(QStringLiteral("text")).toString());
+                                if (edo.contains(QStringLiteral("text"))) {
+                                    editorial.setValue(QPlaceContent::EditorialText,
+                                                    edo.value(QStringLiteral("text")).toString());
+                                }
 
-                                if (edo.contains(QStringLiteral("language")))
-                                    editorial.setLanguage(edo.value(QStringLiteral("language")).toString());
+                                if (edo.contains(QStringLiteral("language"))) {
+                                    editorial.setValue(QPlaceContent::EditorialLanguage,
+                                                edo.value(QStringLiteral("language")).toString());
+                                }
 
                                 editorials << editorial;
                             }
@@ -718,9 +740,9 @@ private:
     QHash<QString, QPlaceCategory> m_categories;
     QHash<QString, QStringList> m_childCategories;
     QHash<QString, QStringList> m_placeRecommendations;
-    QHash<QString, QList<QPlaceReview> > m_placeReviews;
-    QHash<QString, QList<QPlaceImage> > m_placeImages;
-    QHash<QString, QList<QPlaceEditorial> > m_placeEditorials;
+    QHash<QString, QList<QPlaceContent>> m_placeReviews;
+    QHash<QString, QList<QPlaceContent>> m_placeImages;
+    QHash<QString, QList<QPlaceContent>> m_placeEditorials;
 };
 
 #endif

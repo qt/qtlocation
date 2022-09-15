@@ -40,7 +40,7 @@
 #include "qdeclarativeplaceimagemodel_p.h"
 
 #include <QtCore/QUrl>
-#include <QtLocation/QPlaceImage>
+#include <QtLocation/QPlaceContent>
 
 QT_BEGIN_NAMESPACE
 
@@ -145,15 +145,15 @@ QVariant QDeclarativePlaceImageModel::data(const QModelIndex &index, int role) c
     if (index.row() >= rowCount(index.parent()) || index.row() < 0)
         return QVariant();
 
-    const QPlaceImage &image = m_content.value(index.row());
+    const QPlaceContent &image = m_content.value(index.row());
 
     switch (role) {
     case UrlRole:
-        return image.url();
+        return image.value(QPlaceContent::ImageUrl);
     case ImageIdRole:
-        return image.imageId();
+        return image.value(QPlaceContent::ImageId);
     case MimeTypeRole:
-        return image.mimeType();
+        return image.value(QPlaceContent::ImageMimeType);
     }
 
     return QDeclarativePlaceContentModel::data(index, role);
