@@ -50,6 +50,126 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \qmltype ContentModel
+    \instantiates QDeclarativePlaceContentModel
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-models
+    \since QtLocation 5.5
+
+    \brief The EditorialModel type provides a model of place content.
+
+    The EditorialModel is a read-only model used to fetch editorials related to a \l Place.
+    Binding a \l Place via \l EditorialModel::place initiates an initial fetch of editorials.
+    The model performs fetches incrementally and is intended to be used in conjunction
+    with a View such as a \l ListView.  When the View reaches the last of the editorials
+    currently in the model, a fetch is performed to retrieve more if they are available.
+    The View is automatically updated as the editorials are received.  The number of
+    editorials which are fetched at a time is specified by the \l batchSize property.
+    The total number of editorials available can be accessed via the \l totalCount property.
+
+    The model returns data for the following roles:
+
+    \table
+        \header
+            \li Role
+            \li Type
+            \li Description
+        \row
+            \li supplier
+            \li \l Supplier
+            \li The supplier of the content.
+        \row
+            \li user
+            \li \l {QtLocation::User}{User}
+            \li The user who contributed the content.
+        \row
+            \li attribution
+            \li string
+            \li Attribution text which must be displayed when displaying the content.
+        \row
+            \li url
+            \li url
+            \li The URL of the image.
+        \row
+            \li imageId
+            \li string
+            \li The identifier of the image.
+        \row
+            \li mimeType
+            \li string
+            \li The MIME type of the image.
+        \row
+            \li text
+            \li string
+            \li The editorial's textual description of the place.  It can be either rich (HTML based) text or plain text
+               depending upon the provider.
+        \row
+            \li title
+            \li string
+            \li The title of the editorial.
+        \row
+            \li language
+            \li string
+            \li The language that the editorial is written in.
+        \row
+            \li dateTime
+            \li datetime
+            \li The date and time that the review was posted.
+        \row
+            \li text
+            \li string
+            \li The review's textual description of the place.  It can be either rich (HTML based) text or plain text
+               depending on the provider.
+        \row
+            \li language
+            \li string
+            \li The language that the review is written in.
+        \row
+            \li rating
+            \li real
+            \li The rating that the reviewer gave to the place.
+        \row
+            \li reviewId
+            \li string
+            \li The identifier of the review.
+        \row
+            \li title
+            \li string
+            \li The title of the review.
+    \endtable
+
+    \section1 Example
+
+    The following example shows how to display editorials for a place:
+
+    \snippet declarative/places.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
+    \codeline
+    \snippet declarative/places.qml EditorialModel
+
+*/
+
+/*!
+    \qmlproperty Place EditorialModel::place
+
+    This property holds the Place that the editorials are for.
+*/
+
+/*!
+    \qmlproperty int EditorialModel::batchSize
+
+    This property holds the batch size to use when fetching more editorials items.
+*/
+
+/*!
+    \qmlproperty int EditorialModel::totalCount
+
+    This property holds the total number of editorial items for the place.
+*/
+
+
 QDeclarativePlaceContentModel::QDeclarativePlaceContentModel(QPlaceContent::Type type,
                                                              QObject *parent)
     : QAbstractListModel(parent), m_type(type)
@@ -194,16 +314,44 @@ QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role)
         return QVariant();
 
     const QPlaceContent &content = m_content.value(index.row());
+    if (content.type() != m_type)
+        return QVariant();
 
     switch (role) {
-    case SupplierRole:
+    case ContentSupplierRole:
         return QVariant::fromValue(m_suppliers.value(content.value(QPlaceContent::ContentSupplier)
                                               .value<QPlaceSupplier>().supplierId()));
-    case PlaceUserRole:
+    case ContentUserRole:
         return QVariant::fromValue(m_users.value(content.value(QPlaceContent::ContentUser)
                                           .value<QPlaceUser>().userId()));
-    case AttributionRole:
+    case ContentAttributionRole:
         return content.value(QPlaceContent::ContentAttribution);
+    case ImageUrlRole:
+        return content.value(QPlaceContent::ImageUrl);
+    case ImageIdRole:
+        return content.value(QPlaceContent::ImageId);
+    case ImageMimeTypeRole:
+        return content.value(QPlaceContent::ImageMimeType);
+
+    case EditorialTextRole:
+        return content.value(QPlaceContent::EditorialText);
+    case EditorialTitleRole:
+        return content.value(QPlaceContent::EditorialTitle);
+    case EditorialLanguageRole:
+        return content.value(QPlaceContent::EditorialLanguage);
+
+    case ReviewDateTimeRole:
+        return content.value(QPlaceContent::ReviewDateTime);
+    case ReviewTextRole:
+        return content.value(QPlaceContent::ReviewText);
+    case ReviewLanguageRole:
+        return content.value(QPlaceContent::ReviewLanguage);
+    case ReviewRatingRole:
+        return content.value(QPlaceContent::ReviewRating);
+    case ReviewIdRole:
+        return content.value(QPlaceContent::ReviewId);
+    case ReviewTitleRole:
+        return content.value(QPlaceContent::ReviewTitle);
     default:
         return QVariant();
     }
@@ -212,9 +360,32 @@ QVariant QDeclarativePlaceContentModel::data(const QModelIndex &index, int role)
 QHash<int, QByteArray> QDeclarativePlaceContentModel::roleNames() const
 {
     QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
-    roles.insert(SupplierRole, "supplier");
-    roles.insert(PlaceUserRole, "user");
-    roles.insert(AttributionRole, "attribution");
+    roles.insert(ContentSupplierRole, "supplier");
+    roles.insert(ContentUserRole, "user");
+    roles.insert(ContentAttributionRole, "attribution");
+
+    switch (m_type) {
+    case QPlaceContent::EditorialType:
+        roles.insert(EditorialTextRole, "text");
+        roles.insert(EditorialTitleRole, "title");
+        roles.insert(EditorialLanguageRole, "language");
+        break;
+    case QPlaceContent::ImageType:
+        roles.insert(ImageUrlRole, "url");
+        roles.insert(ImageIdRole, "imageId");
+        roles.insert(ImageMimeTypeRole, "mimeType");
+        break;
+    case QPlaceContent::ReviewType:
+        roles.insert(ReviewDateTimeRole, "dateTime");
+        roles.insert(ReviewTextRole, "text");
+        roles.insert(ReviewLanguageRole, "language");
+        roles.insert(ReviewRatingRole, "rating");
+        roles.insert(ReviewIdRole, "reviewId");
+        roles.insert(ReviewTitleRole, "title");
+        break;
+    default:
+        break;
+    }
     return roles;
 }
 

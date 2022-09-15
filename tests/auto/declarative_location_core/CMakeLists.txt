@@ -9,6 +9,7 @@ qt_internal_add_test(tst_declarative_location_core
         main.cpp
     LIBRARIES
         Qt::Location
+        Qt::LocationPrivate
         Qt::Quick
     TESTDATA ${test_data}
 )

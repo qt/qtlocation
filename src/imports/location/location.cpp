@@ -186,7 +186,7 @@ public:
             qmlRegisterType<QDeclarativePlaceEditorialModel         >(uri, major, minor, "EditorialModel");
             qmlRegisterType<QDeclarativePlaceImageModel             >(uri, major, minor, "ImageModel");
             qmlRegisterType<QDeclarativePlace                       >(uri, major, minor, "Place");
-            qmlRegisterType<QDeclarativeReviewModel                 >(uri, major, minor, "ReviewModel");
+            qmlRegisterType<QDeclarativePlaceReviewModel            >(uri, major, minor, "ReviewModel");
             qmlRegisterType<QDeclarativeRectangleMapItem            >(uri, major, minor, "MapRectangle");
             qmlRegisterType<QDeclarativeCircleMapItem               >(uri, major, minor, "MapCircle");
             qmlRegisterAnonymousType<QDeclarativeMapLineProperties  >(uri, major);

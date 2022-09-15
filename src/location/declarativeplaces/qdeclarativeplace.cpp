@@ -261,10 +261,10 @@ QDeclarativeGeoServiceProvider *QDeclarativePlace::plugin() const
 
     This property holds a model which can be used to retrieve reviews about the place.
 */
-QDeclarativeReviewModel *QDeclarativePlace::reviewModel()
+QDeclarativePlaceReviewModel *QDeclarativePlace::reviewModel()
 {
     if (!m_reviewModel) {
-        m_reviewModel = new QDeclarativeReviewModel(this);
+        m_reviewModel = new QDeclarativePlaceReviewModel(this);
         m_reviewModel->setPlace(this);
     }
 

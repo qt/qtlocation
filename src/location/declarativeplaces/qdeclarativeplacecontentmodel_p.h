@@ -99,10 +99,21 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     enum Roles {
-        SupplierRole = Qt::UserRole,
-        PlaceUserRole,
-        AttributionRole,
-        UserRole //indicator for next conten type specific role
+        ContentSupplierRole = Qt::UserRole,
+        ContentUserRole,
+        ContentAttributionRole,
+        EditorialTitleRole,
+        EditorialTextRole,
+        EditorialLanguageRole,
+        ImageIdRole,
+        ImageUrlRole,
+        ImageMimeTypeRole,
+        ReviewIdRole,
+        ReviewDateTimeRole,
+        ReviewTitleRole,
+        ReviewTextRole,
+        ReviewLanguageRole,
+        ReviewRatingRole
     };
 
     bool canFetchMore(const QModelIndex &parent) const override;
@@ -135,6 +146,30 @@ private:
     QPlaceContentRequest m_nextRequest;
 
     bool m_complete = false;
+};
+
+class QDeclarativePlaceReviewModel : public QDeclarativePlaceContentModel
+{
+public:
+    explicit QDeclarativePlaceReviewModel(QObject *parent = nullptr)
+        : QDeclarativePlaceContentModel(QPlaceContent::ReviewType, parent)
+    {}
+};
+
+class QDeclarativePlaceEditorialModel : public QDeclarativePlaceContentModel
+{
+public:
+    explicit QDeclarativePlaceEditorialModel(QObject *parent = nullptr)
+        : QDeclarativePlaceContentModel(QPlaceContent::EditorialType, parent)
+    {}
+};
+
+class QDeclarativePlaceImageModel : public QDeclarativePlaceContentModel
+{
+public:
+    explicit QDeclarativePlaceImageModel(QObject *parent = nullptr)
+        : QDeclarativePlaceContentModel(QPlaceContent::ImageType, parent)
+    {}
 };
 
 QT_END_NAMESPACE

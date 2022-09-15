@@ -62,9 +62,7 @@
 
 #include <QtPositioningQuick/private/qdeclarativegeolocation_p.h>
 #include <QtLocation/private/qdeclarativecategory_p.h>
-#include <QtLocation/private/qdeclarativereviewmodel_p.h>
-#include <QtLocation/private/qdeclarativeplaceimagemodel_p.h>
-#include <QtLocation/private/qdeclarativeplaceeditorialmodel_p.h>
+#include <QtLocation/private/qdeclarativeplacecontentmodel_p.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -90,7 +88,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlP
     Q_PROPERTY(QString placeId READ placeId WRITE setPlaceId NOTIFY placeIdChanged)
     Q_PROPERTY(QString attribution READ attribution WRITE setAttribution NOTIFY attributionChanged)
 
-    Q_PROPERTY(QDeclarativeReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
+    Q_PROPERTY(QDeclarativePlaceReviewModel *reviewModel READ reviewModel NOTIFY reviewModelChanged)
     Q_PROPERTY(QDeclarativePlaceImageModel *imageModel READ imageModel NOTIFY imageModelChanged)
     Q_PROPERTY(QDeclarativePlaceEditorialModel *editorialModel READ editorialModel NOTIFY editorialModelChanged)
 
@@ -129,7 +127,7 @@ public:
     void setPlugin(QDeclarativeGeoServiceProvider *plugin);
     QDeclarativeGeoServiceProvider *plugin() const;
 
-    QDeclarativeReviewModel *reviewModel();
+    QDeclarativePlaceReviewModel *reviewModel();
     QDeclarativePlaceImageModel *imageModel();
     QDeclarativePlaceEditorialModel *editorialModel();
 
@@ -231,7 +229,7 @@ private:
     QPlaceRatings m_ratings;
     QPlaceSupplier m_supplier;
     QPlaceIcon m_icon;
-    QDeclarativeReviewModel *m_reviewModel = nullptr;
+    QDeclarativePlaceReviewModel *m_reviewModel = nullptr;
     QDeclarativePlaceImageModel *m_imageModel = nullptr;
     QDeclarativePlaceEditorialModel *m_editorialModel = nullptr;
     QQmlPropertyMap *m_extendedAttributes = nullptr;
