@@ -44,7 +44,6 @@
 #include "placesv2/qplacesearchsuggestionreplyimpl.h"
 #include "placesv2/qplacesearchreplyhere.h"
 #include "placesv2/qplacedetailsreplyimpl.h"
-#include "placesv2/qplaceidreplyimpl.h"
 #include "qgeonetworkaccessmanager.h"
 #include "qgeouriprovider.h"
 #include "uri_constants.h"
@@ -541,64 +540,6 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineNokiaV2::searchSuggestions(const
     connect(reply, &QPlaceSearchSuggestionReplyImpl::errorOccurred,
             this, &QPlaceManagerEngineNokiaV2::replyError);
 
-    return reply;
-}
-
-QPlaceIdReply *QPlaceManagerEngineNokiaV2::savePlace(const QPlace &place)
-{
-    QPlaceIdReplyImpl *reply = new QPlaceIdReplyImpl(QPlaceIdReply::SavePlace, this);
-    reply->setId(place.placeId());
-    QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
-                              Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
-                              Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, SAVING_PLACE_NOT_SUPPORTED)));
-    connect(reply, &QPlaceIdReplyImpl::finished,
-            this, &QPlaceManagerEngineNokiaV2::replyFinished);
-    connect(reply, &QPlaceIdReplyImpl::errorOccurred,
-            this, &QPlaceManagerEngineNokiaV2::replyError);
-    return reply;
-}
-
-QPlaceIdReply *QPlaceManagerEngineNokiaV2::removePlace(const QString &placeId)
-{
-    QPlaceIdReplyImpl *reply = new QPlaceIdReplyImpl(QPlaceIdReply::RemovePlace, this);
-    reply->setId(placeId);
-    QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
-                              Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
-                              Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, REMOVING_PLACE_NOT_SUPPORTED)));
-    connect(reply, &QPlaceIdReplyImpl::finished,
-            this, &QPlaceManagerEngineNokiaV2::replyFinished);
-    connect(reply, &QPlaceIdReplyImpl::errorOccurred,
-            this, &QPlaceManagerEngineNokiaV2::replyError);
-    return reply;
-}
-
-QPlaceIdReply *QPlaceManagerEngineNokiaV2::saveCategory(const QPlaceCategory &category, const QString &parentId)
-{
-    Q_UNUSED(parentId);
-
-    QPlaceIdReplyImpl *reply = new QPlaceIdReplyImpl(QPlaceIdReply::SaveCategory, this);
-    reply->setId(category.categoryId());
-    QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
-                              Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
-                              Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, SAVING_CATEGORY_NOT_SUPPORTED)));
-    connect(reply, &QPlaceIdReplyImpl::finished,
-            this, &QPlaceManagerEngineNokiaV2::replyFinished);
-    connect(reply, &QPlaceIdReplyImpl::errorOccurred,
-            this, &QPlaceManagerEngineNokiaV2::replyError);
-    return reply;
-}
-
-QPlaceIdReply *QPlaceManagerEngineNokiaV2::removeCategory(const QString &categoryId)
-{
-    QPlaceIdReplyImpl *reply = new QPlaceIdReplyImpl(QPlaceIdReply::RemoveCategory, this);
-    reply->setId(categoryId);
-    QMetaObject::invokeMethod(reply, "setError", Qt::QueuedConnection,
-                              Q_ARG(QPlaceReply::Error, QPlaceReply::UnsupportedError),
-                              Q_ARG(QString, QCoreApplication::translate(NOKIA_PLUGIN_CONTEXT_NAME, REMOVING_CATEGORY_NOT_SUPPORTED)));
-    connect(reply, &QPlaceIdReplyImpl::finished,
-            this, &QPlaceManagerEngineNokiaV2::replyFinished);
-    connect(reply, &QPlaceIdReplyImpl::errorOccurred,
-            this, &QPlaceManagerEngineNokiaV2::replyError);
     return reply;
 }
 

@@ -50,6 +50,8 @@
 
 #include <QStaticText>
 
+#include <QtLocation/private/qgeocameradata_p.h>
+
 QT_BEGIN_NAMESPACE
 
 /*

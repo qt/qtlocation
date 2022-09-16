@@ -54,6 +54,7 @@
 #include <QtCore/qstandardpaths.h>
 
 #include <QtPositioning/private/qwebmercator_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
 
 QT_BEGIN_NAMESPACE
 
