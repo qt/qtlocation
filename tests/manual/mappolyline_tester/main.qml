@@ -46,7 +46,7 @@ Window {
     Shortcut {
         sequence: "Ctrl+R"
         onActivated: {
-            rotation = rotation + 36
+            rotation += 30
         }
     }
 
@@ -101,7 +101,7 @@ Window {
             }
             MouseArea {
                 anchors.fill: parent
-                onClicked: {
+                onClicked: (mouse) => {
                     mouse.accepted = false
                     var crd = map.toCoordinate(Qt.point(mouse.x, mouse.y))
                     var s = crd.toString(0)
