@@ -324,34 +324,28 @@ void QDeclarativePlace::setPlace(const QPlace &src)
         emit locationChanged();
     }
 
-    setRatings(m_src.ratings());
-    setSupplier(m_src.supplier());
-    setIcon(m_src.icon());
-
-    if (previous.name() != m_src.name()) {
+    if (previous.ratings() != m_src.ratings())
+        emit ratingsChanged();
+    if (previous.supplier() != m_src.supplier())
+        emit supplierChanged();
+    if (previous.icon() != m_src.icon())
+        emit iconChanged();
+    if (previous.name() != m_src.name())
         emit nameChanged();
-    }
-    if (previous.placeId() != m_src.placeId()) {
+    if (previous.placeId() != m_src.placeId())
         emit placeIdChanged();
-    }
-    if (previous.attribution() != m_src.attribution()) {
+    if (previous.attribution() != m_src.attribution())
         emit attributionChanged();
-    }
-    if (previous.detailsFetched() != m_src.detailsFetched()) {
+    if (previous.detailsFetched() != m_src.detailsFetched())
         emit detailsFetchedChanged();
-    }
-    if (previous.primaryPhone() != m_src.primaryPhone()) {
+    if (previous.primaryPhone() != m_src.primaryPhone())
         emit primaryPhoneChanged();
-    }
-    if (previous.primaryFax() != m_src.primaryFax()) {
+    if (previous.primaryFax() != m_src.primaryFax())
         emit primaryFaxChanged();
-    }
-    if (previous.primaryEmail() != m_src.primaryEmail()) {
+    if (previous.primaryEmail() != m_src.primaryEmail())
         emit primaryEmailChanged();
-    }
-    if (previous.primaryWebsite() != m_src.primaryWebsite()) {
+    if (previous.primaryWebsite() != m_src.primaryWebsite())
         emit primaryWebsiteChanged();
-    }
 
     if (m_reviewModel && m_src.totalContentCount(QPlaceContent::ReviewType) >= 0) {
         m_reviewModel->initializeCollection(m_src.totalContentCount(QPlaceContent::ReviewType),
@@ -372,7 +366,9 @@ void QDeclarativePlace::setPlace(const QPlace &src)
 
 QPlace QDeclarativePlace::place() const
 {
-    // The following properties are not stored in m_src but instead stored in QDeclarative* objects
+    // The properties handled explicirly here are not stored in m_src, but
+    // but are instead stored in QDeclarative* objects which we need to update
+    // explicitly.
 
     QPlace result = m_src;
 
@@ -385,15 +381,6 @@ QPlace QDeclarativePlace::place() const
 
     // Location
     result.setLocation(m_location ? m_location->location() : QGeoLocation());
-
-    // Rating
-    result.setRatings(m_ratings);
-
-    // Supplier
-    result.setSupplier(m_supplier);
-
-    // Icon
-    result.setIcon(m_icon);
 
     //contact details
     QList<QPlaceContactDetail> cppDetails;
@@ -443,17 +430,15 @@ QDeclarativeGeoLocation *QDeclarativePlace::location() const
 */
 void QDeclarativePlace::setRatings(const QPlaceRatings &rating)
 {
-    if (m_ratings == rating)
-        return;
-
-    m_ratings = rating;
-    emit ratingsChanged();
+    if (m_src.ratings() != rating) {
+        m_src.setRatings(rating);
+        emit ratingsChanged();
+    }
 }
 
 QPlaceRatings QDeclarativePlace::ratings() const
 {
-
-    return m_ratings;
+    return m_src.ratings();
 }
 
 /*!
@@ -464,16 +449,15 @@ QPlaceRatings QDeclarativePlace::ratings() const
 */
 void QDeclarativePlace::setSupplier(const QPlaceSupplier &supplier)
 {
-    if (m_supplier == supplier)
-        return;
-
-    m_supplier = supplier;
-    emit supplierChanged();
+    if (m_src.supplier() != supplier) {
+        m_src.setSupplier(supplier);
+        emit supplierChanged();
+    }
 }
 
 QPlaceSupplier QDeclarativePlace::supplier() const
 {
-    return m_supplier;
+    return m_src.supplier();
 }
 
 /*!
@@ -483,16 +467,15 @@ QPlaceSupplier QDeclarativePlace::supplier() const
 */
 QPlaceIcon QDeclarativePlace::icon() const
 {
-    return m_icon;
+    return m_src.icon();
 }
 
 void QDeclarativePlace::setIcon(const QPlaceIcon &icon)
 {
-    if (m_icon == icon)
-        return;
-
-    m_icon = icon;
-    emit iconChanged();
+    if (m_src.icon() != icon) {
+        m_src.setIcon(icon);
+        emit iconChanged();
+    }
 }
 
 /*!

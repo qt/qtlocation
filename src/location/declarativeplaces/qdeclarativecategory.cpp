@@ -165,12 +165,12 @@ void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
     if (category.categoryId() != previous.categoryId())
         emit categoryIdChanged();
 
-    setIcon(m_category.icon());
+    if (category.icon() != previous.icon())
+        emit iconChanged();
 }
 
 QPlaceCategory QDeclarativeCategory::category()
 {
-    m_category.setIcon(m_icon);
     return m_category;
 }
 
@@ -262,16 +262,15 @@ void QDeclarativeCategory::setVisibility(Visibility visibility)
 */
 QPlaceIcon QDeclarativeCategory::icon() const
 {
-    return m_icon;
+    return m_category.icon();
 }
 
 void QDeclarativeCategory::setIcon(const QPlaceIcon &icon)
 {
-    if (m_icon == icon)
-        return;
-
-    m_icon = icon;
-    emit iconChanged();
+    if (m_category.icon() != icon) {
+        m_category.setIcon(icon);
+        emit iconChanged();
+    }
 }
 
 /*!

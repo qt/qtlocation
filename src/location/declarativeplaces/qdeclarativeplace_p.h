@@ -226,9 +226,6 @@ private:
 
     QList<QDeclarativeCategory *> m_categories;
     QDeclarativeGeoLocation *m_location = nullptr;
-    QPlaceRatings m_ratings;
-    QPlaceSupplier m_supplier;
-    QPlaceIcon m_icon;
     QDeclarativePlaceReviewModel *m_reviewModel = nullptr;
     QDeclarativePlaceImageModel *m_imageModel = nullptr;
     QDeclarativePlaceEditorialModel *m_editorialModel = nullptr;

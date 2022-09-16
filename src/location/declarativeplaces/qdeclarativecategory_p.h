@@ -141,7 +141,6 @@ private:
     QPlaceManager *manager();
 
     QPlaceCategory m_category;
-    QPlaceIcon m_icon;
     QDeclarativeGeoServiceProvider *m_plugin = nullptr;
     QPlaceReply *m_reply = nullptr;
     bool m_complete = false;
