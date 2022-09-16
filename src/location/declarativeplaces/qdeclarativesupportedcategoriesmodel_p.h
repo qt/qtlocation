@@ -71,14 +71,6 @@ class QGeoServiceProvider;
 class QPlaceManager;
 class QPlaceReply;
 
-class PlaceCategoryNode
-{
-public:
-    QString parentId;
-    QStringList childIds;
-    QSharedPointer<QDeclarativeCategory> declCategory;
-};
-
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public QQmlParserStatus
 {
     Q_OBJECT
@@ -146,6 +138,13 @@ private Q_SLOTS:
     void connectNotificationSignals();
 
 private:
+    struct PlaceCategoryNode
+    {
+        QString parentId;
+        QStringList childIds;
+        QSharedPointer<QDeclarativeCategory> declCategory;
+    };
+
     QStringList populateCategories(QPlaceManager *, const QPlaceCategory &parent);
     QModelIndex index(const QString &categoryId) const;
     int rowToAddChild(PlaceCategoryNode *, const QPlaceCategory &category);
