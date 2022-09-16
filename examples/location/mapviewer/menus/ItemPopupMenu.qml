@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -55,9 +55,12 @@ Menu {
     property variant type
     signal itemClicked(string item)
 
-    function update() {
-        clear()
-        addItem(qsTr("Info")).triggered.connect(function(){itemClicked("show" + type + "Info")})
-        addItem(qsTr("Delete")).triggered.connect(function(){itemClicked("delete" + type )})
+    MenuItem {
+        text: qsTr("Info")
+        onTriggered: itemClicked("show" + type + "Info")
+    }
+    MenuItem {
+        text: qsTr("Delete")
+        onTriggered: itemClicked("delete" + type)
     }
 }

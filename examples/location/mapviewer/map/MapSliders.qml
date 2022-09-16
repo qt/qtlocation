@@ -70,7 +70,7 @@ Row {
     anchors.right: rightEdge() ? parent.right : undefined
     anchors.left: rightEdge() ? undefined : parent.left
 
-    Button {
+    AbstractButton {
         id: sliderToggler
         width: 32
         height: 96
@@ -83,11 +83,6 @@ Row {
                         xScale: rightEdge() ? 1 : -1
                     }
 
-//        style:  ButtonStyle {
-//                    background: Rectangle {
-//                        color: "transparent"
-//                    }
-//                }
         background: Rectangle {
             color: "transparent"
         }
@@ -218,7 +213,6 @@ Row {
 
             // The sliders row
             Row {
-                spacing: -10
                 id: sliderRow
                 height: sliderContainer.slidersHeight
 

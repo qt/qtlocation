@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -79,7 +79,7 @@ MapQuickItem {
             drag.target: marker
             preventStealing: true
 
-            onPressed : {
+            onPressed : (mouse) => {
                 map.pressX = mouse.x
                 map.pressY = mouse.y
                 map.currentMarker = -1
@@ -91,7 +91,7 @@ MapQuickItem {
                 }
             }
 
-            onPressAndHold:{
+            onPressAndHold: (mouse) => {
                 if (Math.abs(map.pressX - mouse.x ) < map.jitterThreshold
                         && Math.abs(map.pressY - mouse.y ) < map.jitterThreshold) {
                     var p = map.fromCoordinate(marker.coordinate)

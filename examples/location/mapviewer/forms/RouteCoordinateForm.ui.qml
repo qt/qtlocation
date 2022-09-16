@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -102,9 +102,9 @@ Item {
             Label {
                 id: label1
                 text: qsTr("From")
-                anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: true
-                Layout.columnSpan : 2
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignHCenter
             }
 
             Label {
@@ -130,9 +130,9 @@ Item {
             Label {
                 id: label6
                 text: qsTr("To")
-                anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: true
                 Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignHCenter
             }
 
             Label {

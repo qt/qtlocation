@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -119,8 +119,6 @@ Rectangle{
                 topLeft.longitude=  getMapVisibleRegion().topLeft.longitude
                 bottomRight.latitude =  getMapVisibleRegion().bottomRight.latitude
                 bottomRight.longitude=  getMapVisibleRegion().bottomRight.longitude
-                console.log("TopLeft: " + topLeft)
-                console.log("BotRigh: " + bottomRight)
             }
         }
     }
