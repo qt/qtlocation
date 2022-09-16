@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -57,18 +57,26 @@ Menu {
     property int mapItemsCount
     signal itemClicked(string item)
 
-    function update() {
-        clear()
-        addItem(qsTr("Add Marker")).triggered.connect(function(){itemClicked("addMarker")})
-        addItem(qsTr("Get coordinate")).triggered.connect(function(){itemClicked("getCoordinate")})
-        addItem(qsTr("Fit Viewport To Map Items")).triggered.connect(function(){itemClicked("fitViewport")})
-
-        if (markersCount > 0) {
-            addItem(qsTr("Delete all markers")).triggered.connect(function(){itemClicked("deleteMarkers")})
-        }
-
-        if (mapItemsCount > 0) {
-            addItem(qsTr("Delete all items")).triggered.connect(function(){itemClicked("deleteItems")})
-        }
+    MenuItem {
+        text: qsTr("Add Marker")
+        onTriggered: itemClicked("addMarker")
+    }
+    MenuItem {
+        text: qsTr("Get coordinate")
+        onTriggered: itemClicked("getCoordinate")
+    }
+    MenuItem {
+        text: qsTr("Fit Viewport To Map Items")
+        onTriggered: itemClicked("fitViewport")
+    }
+    MenuItem {
+        text: qsTr("Delete all markers")
+        enabled: markersCount > 0
+        onTriggered: itemClicked("deleteMarkers")
+    }
+    MenuItem {
+        text: qsTr("Delete all items")
+        enabled: mapItemsCount > 0
+        onTriggered: itemClicked("deleteItems")
     }
 }

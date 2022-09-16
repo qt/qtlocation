@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -311,7 +311,7 @@ Map {
         mapItems = new Array();
     }
 
-    Keys.onPressed: {
+    Keys.onPressed: (event) => {
         if (event.key === Qt.Key_Plus) {
             map.zoomLevel++;
         } else if (event.key === Qt.Key_Minus) {
@@ -464,7 +464,7 @@ Map {
                 hoverEnabled: false
                 property variant lastCoordinate
 
-                onPressed : {
+                onPressed : (mouse) => {
                     map.lastX = mouse.x + parent.x
                     map.lastY = mouse.y + parent.y
                     map.pressX = mouse.x + parent.x
@@ -472,7 +472,7 @@ Map {
                     lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
                 }
 
-                onPositionChanged: {
+                onPositionChanged: (mouse) => {
                     if (mouse.button == Qt.LeftButton) {
                         map.lastX = mouse.x + parent.x
                         map.lastY = mouse.y + parent.y
@@ -530,7 +530,7 @@ Map {
                 hoverEnabled: false
                 property variant lastCoordinate
 
-                onPressed : {
+                onPressed : (mouse) => {
                     map.lastX = mouse.x + parent.x
                     map.lastY = mouse.y + parent.y
                     map.pressX = mouse.x + parent.x
@@ -538,7 +538,7 @@ Map {
                     lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
                 }
 
-                onPositionChanged: {
+                onPositionChanged: (mouse) => {
                     if (Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
                             Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
                         if (pressed) parent.radius = parent.center.distanceTo(
@@ -550,7 +550,7 @@ Map {
                     }
                 }
 
-                onPressAndHold:{
+                onPressAndHold: (mouse) => {
                     if (Math.abs(map.pressX - parent.x- mouse.x ) < map.jitterThreshold
                             && Math.abs(map.pressY - parent.y - mouse.y ) < map.jitterThreshold) {
                         showPointMenu(lastCoordinate);
@@ -610,7 +610,7 @@ Map {
             }
         }
 
-        onDoubleClicked: {
+        onDoubleClicked: (mouse) => {
             var mouseGeoPos = map.toCoordinate(Qt.point(mouse.x, mouse.y));
             var preZoomPoint = map.fromCoordinate(mouseGeoPos, false);
             if (mouse.button === Qt.LeftButton) {
@@ -629,7 +629,7 @@ Map {
             lastY = -1;
         }
 
-        onPressAndHold:{
+        onPressAndHold: (mouse) => {
             if (Math.abs(map.pressX - mouse.x ) < map.jitterThreshold
                     && Math.abs(map.pressY - mouse.y ) < map.jitterThreshold) {
                 showMainMenu(lastCoordinate);

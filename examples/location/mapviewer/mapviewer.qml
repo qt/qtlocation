@@ -60,6 +60,7 @@ ApplicationWindow {
     id: appWindow
     property variant map
     property variant minimap
+    property variant plugin
     property variant parameters
 
     //defaults
@@ -70,8 +71,6 @@ ApplicationWindow {
 
     function createMap(provider)
     {
-        var plugin
-
         if (parameters && parameters.length>0)
             plugin = Qt.createQmlObject ('import QtLocation; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', appWindow)
         else
@@ -174,9 +173,11 @@ ApplicationWindow {
 
     MainMenu {
         id: mainMenu
+        plugin: appWindow.plugin
 
         function toggleMiniMapState()
         {
+            console.log("MiniMap with " + plugin)
             if (minimap) {
                 minimap.destroy()
                 minimap = null
@@ -200,10 +201,8 @@ ApplicationWindow {
             createMap(providerName)
             if (map.error === Map.NoError) {
                 selectMapType(map.activeMapType)
-                toolsMenu.createMenu(map);
             } else {
-                mapTypeMenu.clear();
-                toolsMenu.clear();
+                mainMenu.clearMenu(mapTypeMenu)
             }
         }
 
@@ -293,11 +292,10 @@ ApplicationWindow {
             mapPopupMenu.coordinate = coordinate
             mapPopupMenu.markersCount = map.markers.length
             mapPopupMenu.mapItemsCount = map.mapItems.length
-            mapPopupMenu.update()
             mapPopupMenu.popup()
         }
 
-        onItemClicked: {
+        onItemClicked: (item) => {
             stackView.pop(page)
             switch (item) {
             case "addMarker":
@@ -328,13 +326,12 @@ ApplicationWindow {
         {
             stackView.pop(page)
             markerPopupMenu.markersCount = map.markers.length
-            markerPopupMenu.update()
+            markerPopupMenu.currentMarker = map.currentMarker
             markerPopupMenu.popup()
         }
 
         function askForCoordinate()
         {
-            console.log("askForCoordinate")
             stackView.push("forms/ReverseGeocode.qml",
                                 { "title": qsTr("New Coordinate"),
                                    "coordinate":   map.markers[map.currentMarker].coordinate})
@@ -349,7 +346,7 @@ ApplicationWindow {
             stackView.pop(page)
         }
 
-        onItemClicked: {
+        onItemClicked: (item) => {
             stackView.pop(page)
             switch (item) {
             case "deleteMarker":
@@ -399,7 +396,6 @@ ApplicationWindow {
         {
             stackView.pop(page)
             itemPopupMenu.type = type
-            itemPopupMenu.update()
             itemPopupMenu.popup()
         }
 
@@ -484,7 +480,7 @@ support"
             height: page.height
             onFollowmeChanged: mainMenu.isFollowMe = map.followme
             onSupportedMapTypesChanged: mainMenu.mapTypeMenu.createMenu(map)
-            onCoordinatesCaptured: {
+            onCoordinatesCaptured: (latitude, longitude) => {
                 var text = "<b>" + qsTr("Latitude:") + "</b> " + Helper.roundNumber(latitude,4) + "<br/><b>" + qsTr("Longitude:") + "</b> " + Helper.roundNumber(longitude,4)
                 stackView.showMessage(qsTr("Coordinates"),text);
             }
@@ -516,10 +512,10 @@ support"
                     stackView.showMessage(title,message);
                 }
             }
-            onShowMainMenu: mapPopupMenu.show(coordinate)
-            onShowMarkerMenu: markerPopupMenu.show(coordinate)
-            onShowRouteMenu: itemPopupMenu.show("Route",coordinate)
-            onShowPointMenu: itemPopupMenu.show("Point",coordinate)
+            onShowMainMenu: (coordinate) => mapPopupMenu.show(coordinate)
+            onShowMarkerMenu: (coordinate) => markerPopupMenu.show(coordinate)
+            onShowRouteMenu: (coordinate) => itemPopupMenu.show("Route",coordinate)
+            onShowPointMenu: (coordinate) => itemPopupMenu.show("Point",coordinate)
             onShowRouteList: stackView.showRouteListPage()
         }
     }

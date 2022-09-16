@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -56,31 +56,58 @@ Menu {
     property int markersCount
     signal itemClicked(string item)
 
-    function update() {
-        clear()
-        addItem(qsTr("Delete")).triggered.connect(function(){itemClicked("deleteMarker")})
-        addItem(qsTr("Coordinates")).triggered.connect(function(){itemClicked("getMarkerCoordinate")})
-        addItem(qsTr("Move to")).triggered.connect(function(){itemClicked("moveMarkerTo")})
-        if (currentMarker == markersCount-2){
-            addItem(qsTr("Route to next point")).triggered.connect(function(){itemClicked("routeToNextPoint")});
-            addItem(qsTr("Distance to next point")).triggered.connect(function(){itemClicked("distanceToNextPoint")});
-        }
-        if (currentMarker < markersCount-2){
-            addItem(qsTr("Route to next points")).triggered.connect(function(){itemClicked("routeToNextPoints")});
-            addItem(qsTr("Distance to next point")).triggered.connect(function(){itemClicked("distanceToNextPoint")});
-        }
+    MenuItem {
+        text: qsTr("Delete")
+        onTriggered: itemClicked("deleteMarker")
+    }
+    MenuItem {
+        text: qsTr("Coordinates")
+        onTriggered: itemClicked("getMarkerCoordinate")
+    }
+    MenuItem {
+        text: qsTr("Move to")
+        onTriggered: itemClicked("moveMarkerTo")
+    }
+    MenuItem {
+        text: currentMarker < markersCount-2 ? qsTr("Route to next points")
+                                             : qsTr("Route to next point")
+        enabled: currentMarker <= markersCount - 2
+        onTriggered: currentMarker < markersCount-2 ? itemClicked("routeToNextPoints")
+                                                    : itemClicked("routeToNextPoint")
+    }
+    MenuItem {
+        text: currentMarker < markersCount-2 ? qsTr("Distance to next points")
+                                             : qsTr("Distance to next point")
+        enabled: currentMarker <= markersCount - 2
+        onTriggered: currentMarker < markersCount-2 ? itemClicked("distanceToNextPoints")
+                                                    : itemClicked("distanceToNextPoint")
+    }
+    Menu {
+        title: qsTr("Draw...")
 
-        var menu = addMenu(qsTr("Draw..."))
-        menu.addItem(qsTr("Image")).triggered.connect(function(){itemClicked("drawImage")})
-
-        if (currentMarker <= markersCount-2){
-            menu.addItem(qsTr("Rectangle")).triggered.connect(function(){itemClicked("drawRectangle")})
-            menu.addItem(qsTr("Circle")).triggered.connect(function(){itemClicked("drawCircle")})
-            menu.addItem(qsTr("Polyline")).triggered.connect(function(){itemClicked("drawPolyline")})
+        MenuItem {
+            text: qsTr("Image")
+            onTriggered: itemClicked("drawImage")
         }
-
-        if (currentMarker < markersCount-2){
-            menu.addItem(qsTr("Polygon")).triggered.connect(function(){itemClicked("drawPolygonMenu")})
+        MenuItem {
+            text: qsTr("Rectangle")
+            enabled: currentMarker <= markersCount - 2
+            onTriggered: itemClicked("drawRectangle")
+        }
+        MenuItem {
+            text: qsTr("Circle")
+            enabled: currentMarker <= markersCount - 2
+            onTriggered: itemClicked("drawCircle")
+        }
+        MenuItem {
+            text: qsTr("Polyline")
+            enabled: currentMarker <= markersCount - 2
+            onTriggered: itemClicked("drawPolyline")
+        }
+        MenuItem {
+            text: qsTr("Polygon")
+            enabled: currentMarker < markersCount-2
+            onTriggered: itemClicked("drawPolygonMenu")
         }
     }
 }

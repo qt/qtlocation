@@ -105,8 +105,8 @@ Item {
                 id: label1
                 text: qsTr("From")
                 font.bold: true
-                anchors.horizontalCenter: parent.horizontalCenter
-                Layout.columnSpan : 2
+                Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignHCenter
             }
 
             Label {
@@ -143,8 +143,8 @@ Item {
                 id: label6
                 text: qsTr("To")
                 font.bold: true
-                anchors.horizontalCenter: parent.horizontalCenter
                 Layout.columnSpan: 2
+                Layout.alignment: Qt.AlignHCenter
             }
 
             Label {

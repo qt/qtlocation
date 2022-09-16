@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -53,9 +53,11 @@ import QtQuick.Controls
 import QtLocation
 
 MenuBar {
-    property variant  providerMenu: providerMenu
-    property variant  mapTypeMenu: mapTypeMenu
-    property variant  toolsMenu: toolsMenu
+    id: menuBar
+    property variant providerMenu: providerMenu
+    property variant mapTypeMenu: mapTypeMenu
+    property variant toolsMenu: toolsMenu
+    property variant plugin
     property alias isFollowMe: toolsMenu.isFollowMe
     property alias isMiniMap: toolsMenu.isMiniMap
 
@@ -119,49 +121,49 @@ MenuBar {
         id: toolsMenu
         property bool isFollowMe: false;
         property bool isMiniMap: false;
+        property variant plugin: menuBar.plugin
+
         title: qsTr("Tools")
 
-        Component {
-            id: menuItem
-            MenuItem {
-
-            }
+        Action {
+            text: qsTr("Reverse geocode")
+            enabled: plugin ? plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature) : false
+            onTriggered: selectTool("RevGeocode")
         }
-
-        function createMenu(map)
-        {
-            clearMenu(toolsMenu)
-            if (map.plugin.supportsGeocoding(Plugin.ReverseGeocodingFeature)) {
-                addItem(menuItem.createObject(toolsMenu, { text: qsTr("Reverse geocode") }))
-                itemAt(count-1).triggered.connect(function(){selectTool("RevGeocode")})
-            }
-            if (map.plugin.supportsGeocoding()) {
-                addItem(menuItem.createObject(toolsMenu, { text: qsTr("Geocode") }))
-                itemAt(count-1).triggered.connect(function(){selectTool("Geocode")})
-            }
-            if (map.plugin.supportsRouting()) {
-                addItem(menuItem.createObject(toolsMenu, { text: qsTr("Route with coordinates") }))
-                itemAt(count-1).triggered.connect(function(){selectTool("CoordinateRoute")})
-                addItem(menuItem.createObject(toolsMenu, { text: qsTr("Route with address") }))
-                itemAt(count-1).triggered.connect(function(){selectTool("AddressRoute")})
-            }
-
-            addItem(menuItem.createObject(toolsMenu, { text: "" }))
-            var item = itemAt(count-1)
-            item.text = Qt.binding(function() { return isMiniMap ? qsTr("Hide minimap") : qsTr("Minimap") })
-            item.triggered.connect(function() {toggleMapState("MiniMap")})
-
-            addItem(menuItem.createObject(toolsMenu, { text: "" }))
-            item = itemAt(count-1)
-            item.text = Qt.binding(function() { return isFollowMe ? qsTr("Stop following") : qsTr("Follow me")})
-            item.triggered.connect(function() {toggleMapState("FollowMe")})
-
-            addItem(menuItem.createObject(toolsMenu, { text: qsTr("Language") }))
-            itemAt(count-1).triggered.connect(function(){selectTool("Language")})
-            addItem(menuItem.createObject(toolsMenu, { text: qsTr("Prefetch Map Data") }))
-            itemAt(count-1).triggered.connect(function(){selectTool("Prefetch")})
-            addItem(menuItem.createObject(toolsMenu, { text: qsTr("Clear Map Data") }))
-            itemAt(count-1).triggered.connect(function(){selectTool("Clear")})
+        MenuItem {
+            text: qsTr("Geocode")
+            enabled: plugin ? plugin.supportsGeocoding() : false
+            onTriggered: selectTool("Geocode")
+        }
+        MenuItem {
+            text: qsTr("Route with coordinates")
+            enabled: plugin ? plugin.supportsRouting() : false
+            onTriggered: selectTool("CoordinateRoute")
+        }
+        MenuItem {
+            text: qsTr("Route with address")
+            enabled: plugin ? plugin.supportsRouting() : false
+            onTriggered: selectTool("AddressRoute")
+        }
+        MenuItem {
+            text: isMiniMap ? qsTr("Hide minimap") : qsTr("Minimap")
+            onTriggered: toggleMapState("MiniMap")
+        }
+        MenuItem {
+            text: isFollowMe ? qsTr("Stop following") : qsTr("Follow me")
+            onTriggered: toggleMapState("FollowMe")
+        }
+        MenuItem {
+            text: qsTr("Language")
+            onTriggered: selectTool("Language")
+        }
+        MenuItem {
+            text: qsTr("Prefetch Map Data")
+            onTriggered: selectTool("Prefetch")
+        }
+        MenuItem {
+            text: qsTr("Clear Map Data")
+            onTriggered: selectTool("Clear")
         }
     }
 }
