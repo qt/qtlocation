@@ -83,12 +83,6 @@ public:
 
     QPlaceSearchSuggestionReply *searchSuggestions(const QPlaceSearchRequest &query) override;
 
-    QPlaceIdReply *savePlace(const QPlace &place) override;
-    QPlaceIdReply *removePlace(const QString &placeId) override;
-
-    QPlaceIdReply *saveCategory(const QPlaceCategory &category, const QString &parentId) override;
-    QPlaceIdReply *removeCategory(const QString &categoryId) override;
-
     QPlaceReply *initializeCategories() override;
     QString parentCategoryId(const QString &categoryId) const override;
     QStringList childCategoryIds(const QString &categoryId) const override;
