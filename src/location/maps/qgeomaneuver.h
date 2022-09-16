@@ -42,7 +42,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/qshareddata.h>
-#include <QtQml/qqml.h>
 #include <QtLocation/qlocationglobal.h>
 
 QT_BEGIN_NAMESPACE
@@ -65,8 +64,6 @@ class Q_LOCATION_EXPORT QGeoManeuver
     Q_PROPERTY(qreal distanceToNextInstruction READ distanceToNextInstruction CONSTANT)
     Q_PROPERTY(QGeoCoordinate waypoint READ waypoint CONSTANT)
     Q_PROPERTY(QVariantMap extendedAttributes READ extendedAttributes CONSTANT)
-
-    QML_NAMED_ELEMENT(RouteManeuver)
 
 public:
     enum InstructionDirection {
