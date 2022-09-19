@@ -146,8 +146,7 @@ function testReset(testCase, model, place)
 
     dataModel.model = model;
     model.place = place;
-    testCase.wait(1);
-    testCase.verify(model.totalCount > 0);
+    testCase.tryVerify(() => { return model.totalCount > 0 }, 100);
     testCase.verify(dataModel.items.count > 0);
 
     model.place = null;
