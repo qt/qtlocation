@@ -1236,6 +1236,8 @@ static QString printQvariant(const QVariant v, int tabs = 0) {
   readable form.
 */
 QString toString(const QVariantList &geoData) {
+    if (geoData.isEmpty())
+        return QString();
     return printQvariant(geoData.first(), 0);
 }
 

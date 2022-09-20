@@ -158,8 +158,11 @@ public:
             }
             features.append(entry);
         }
-        if (nodeType.isEmpty()) // Dirty hack to handle (=skip) the first MIV used to process the fictitious list with 1 element
+        if (nodeType.isEmpty()) { // Dirty hack to handle (=skip) the first MIV used to process the fictitious list with 1 element
+            if (features.isEmpty())
+                return root;
             return features.first().toMap();
+        }
         root["data"] = features;
         return root;
     }
