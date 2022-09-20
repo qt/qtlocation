@@ -55,11 +55,10 @@ import QtLocation
 ListView {
     id:view
     property Place place
-    signal showReview(variant review)
-    width: parent.width
-    height: parent.height
+    signal showReview(var review)
     model: place.reviewModel
     delegate: ReviewDelegate {
+        width: ListView.view.width
         onShowReview: view.showReview(model)
     }
 }

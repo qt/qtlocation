@@ -53,9 +53,9 @@ import QtQuick
 MessageForm {
     property string title
     property string message
-    property variant backPage
+    property var backPage
 
-    signal closeForm(variant backPage)
+    signal closeForm(var backPage)
 
     button.onClicked: {
         closeForm(backPage)

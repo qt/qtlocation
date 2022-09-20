@@ -53,8 +53,8 @@ import QtPositioning
 
 SearchCenterForm {
     property string title;
-    property variant coordinate
-    signal changeSearchCenter(variant coordinate)
+    property var coordinate
+    signal changeSearchCenter(var coordinate)
     signal closeForm()
 
     goButton.onClicked: {
@@ -74,7 +74,7 @@ SearchCenterForm {
     Component.onCompleted: {
         latitude.text = "" + coordinate.latitude
         longitude.text = "" + coordinate.longitude
-        if (title.length != 0)
+        if (title.length !== 0)
             tabTitle.text = title;
     }
 }

@@ -60,6 +60,7 @@ Item {
     property alias orderGroup: orderGroup
     property alias distanceOrderButton: distanceOrderButton
     property alias nameOrderButton: nameOrderButton
+    property alias unspecifiedButton: unspecifiedButton
     property alias favoritesButton: favoritesButton
     property alias locales: locales
 
@@ -122,18 +123,26 @@ Item {
                 Layout.columnSpan: 2
             }
 
-            ExclusiveGroup { id: orderGroup }
+            ButtonGroup { id: orderGroup }
+
             RadioButton {
                 id: distanceOrderButton
                 text: qsTr("Order by distance")
-                exclusiveGroup: orderGroup
+                ButtonGroup.group: orderGroup
                 Layout.columnSpan: 2
             }
 
             RadioButton {
                 id: nameOrderButton
                 text: qsTr("Order by name")
-                exclusiveGroup: orderGroup
+                ButtonGroup.group: orderGroup
+                Layout.columnSpan: 2
+            }
+
+            RadioButton {
+                id: unspecifiedButton
+                text: qsTr("Unspecified")
+                ButtonGroup.group: orderGroup
                 Layout.columnSpan: 2
             }
 
@@ -162,8 +171,6 @@ Item {
                 Layout.fillHeight: true
                 Layout.columnSpan: 2
             }
-
-
         }
     }
 }

@@ -70,12 +70,9 @@ Item {
     property alias imagesButton: imagesButton
     property alias findSimilarButton: findSimilarButton
     property alias ratingView: ratingView
-    width: parent.width
-    height: parent.height
 
     ScrollView {
         id:scrollView
-        flickableItem.interactive: true
         anchors.fill: parent
         anchors.margins: 15
 
@@ -90,7 +87,7 @@ Item {
 
                 Image {
                     id: placeIcon
-                    source: "../resources/marker.png"
+                    source: Qt.resolvedUrl("../resources/marker.png")
                     anchors.margins: 30
                 }
 
@@ -112,8 +109,6 @@ Item {
             }
 
             Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
                 Layout.columnSpan: 2
                 height: 1
                 color: "#46a2da"
@@ -124,7 +119,6 @@ Item {
                 id: addressBox
                 Layout.fillWidth: true
                 Layout.columnSpan: 2
-                flat: true
                 title: qsTr("Address")
 
                 GridLayout {
@@ -153,8 +147,6 @@ Item {
             }
 
             Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
                 Layout.columnSpan: 2
                 height: 1
                 color: "#46a2da"
@@ -165,7 +157,6 @@ Item {
                 id: categoriesBox
                 Layout.fillWidth: true
                 Layout.columnSpan: 2
-                flat: true
                 title: qsTr("Categories")
 
                 Label {
@@ -176,8 +167,6 @@ Item {
             }
 
             Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
                 height: 1
                 color: "#46a2da"
                 visible: contactDetailsBox.visible
@@ -187,7 +176,6 @@ Item {
                 id: contactDetailsBox
                 Layout.fillWidth: true
                 Layout.columnSpan: 2
-                flat: true
                 title: qsTr("Contact details")
                 GridLayout {
                     id: gridLayout4
@@ -240,8 +228,6 @@ Item {
 
             Rectangle {
                 Layout.columnSpan: 2
-                anchors.left: parent.left
-                anchors.right: parent.right
                 height: 1
                 color: "#46a2da"
                 visible: informationBox.visible
@@ -251,7 +237,6 @@ Item {
                 id: informationBox
                 Layout.fillWidth: true
                 Layout.columnSpan: 2
-                flat: true
                 title: qsTr("Additional information")
                 ColumnLayout {
                     Label {

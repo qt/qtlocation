@@ -57,7 +57,7 @@ Row {
     Repeater {
         model: Math.ceil(rating)
         Image {
-            source: "../../resources/star.png"
+            source: Qt.resolvedUrl("../resources/star.png")
             width: size
             height: size
         }

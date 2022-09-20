@@ -60,7 +60,6 @@ Item {
     signal searchCategory()
     signal showSubcategories()
 
-    width: parent.width
     height: Math.max(icon.height, labelItem.height * 2)
 
     Image {
@@ -107,7 +106,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.rightMargin: 15
         visible: model.hasModelChildren
-        iconSource: "../../resources/right.png"
+        icon.source: Qt.resolvedUrl("../resources/right.png")
         onClicked: root.showSubcategories()
     }
     //! [CategoryModel delegate arrow]

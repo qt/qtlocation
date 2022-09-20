@@ -53,31 +53,38 @@ import QtQuick.Controls
 import QtLocation
 
 MenuBar {
-    property variant providerMenu: providerMenu
-    property variant settingsMenu: settingsMenu
+    property var providerMenu: providerMenu
+    property var settingsMenu: settingsMenu
 
-    signal selectProvider(string providerName)
-    signal selectSetting(string setting);
+    signal selectProvider(providerName: string)
+    signal selectSetting(settings: string);
 
+    function getMenuItem(menuText, parentItem) {
+        var menuItem = Qt.createQmlObject('import QtQuick; import QtQuick.Controls; MenuItem {}', parent)
+        menuItem.text = qsTr(menuText)
+        return menuItem
+    }
 
+    function clearMenu(menu) {
+        while (menu.contentData.length > 0)
+            menu.removeItem(menu.itemAt(0))
+    }
 
     Menu {
         id: providerMenu
         title: qsTr("Provider")
 
-        function createMenu(plugins)
-        {
-            clear()
+        function create(plugins) {
+            clearMenu(providerMenu)
             for (var i = 0; i < plugins.length; i++) {
-                createProviderMenuItem(plugins[i]);
+                createProvider(plugins[i])
             }
         }
 
-        function createProviderMenuItem(provider)
-        {
-            var item = addItem(provider);
-            item.checkable = true;
-            item.triggered.connect(function(){selectProvider(provider)})
+        function createProvider(itemVal) {
+            var item = getMenuItem(itemVal, providerMenu)
+            addItem(item)
+            item.triggered.connect(function(){selectProvider(itemVal)})
         }
     }
 
@@ -85,17 +92,17 @@ MenuBar {
         id: settingsMenu
         title: qsTr("Settings")
 
-        function createMenu(map)
-        {
-            clear()
-            var item = addItem(qsTr("Search Center"));
-            item.triggered.connect(function(){selectSetting("searchCenter")})
-            item = addItem(qsTr("Search Bounding Box"));
-            item.triggered.connect(function(){selectSetting("searchBoundingBox")})
-            item = addItem(qsTr("Search Bounding Circle"));
-            item.triggered.connect(function(){selectSetting("searchBoundingCircle")})
-            item = addItem(qsTr("Search Options"));
-            item.triggered.connect(function(){selectSetting("SearchOptions")})
+        function create(settings) {
+            clearMenu(settingsMenu)
+            for (var i = 0; i < settings.length; i++) {
+                createSetting(settings[i])
+            }
+        }
+
+        function createSetting(itemVal) {
+            var item = getMenuItem(itemVal, providerMenu)
+            addItem(item)
+            item.triggered.connect(function(){selectSetting(itemVal)})
         }
     }
 }

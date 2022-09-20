@@ -52,8 +52,8 @@ import QtQuick
 import QtPositioning
 
 SearchBoundingCircleForm {
-    property variant searchRegion
-    signal changeSearchBoundingCircle(variant coordinate, real radius)
+    property var searchRegion
+    signal changeSearchBoundingCircle(var coordinate, real radius)
     signal closeForm()
 
     goButton.onClicked: {

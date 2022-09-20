@@ -69,7 +69,7 @@ ToolBar {
     }
 
     function showSearch(text) {
-        if (text != null) {
+        if (text !== null) {
             searchText.ignoreTextChange = true
             searchText.text = text
             searchText.ignoreTextChange = false
@@ -97,12 +97,12 @@ ToolBar {
         }
         ToolButton {
             id: searchButton
-            iconSource:  "../../resources/search.png"
+            icon.source: Qt.resolvedUrl("../resources/search.png")
             onClicked: doSearch(searchText.text)
         }
         ToolButton {
             id: categoryButton
-            iconSource:  "../../resources/categories.png"
+            icon.source: Qt.resolvedUrl("../resources/categories.png")
             onClicked: showCategories()
         }
     }
@@ -116,12 +116,12 @@ ToolBar {
         visible: opacity ? true : false
         ToolButton {
             id: backButton
-            iconSource:  "../../resources/left.png"
+            icon.source: Qt.resolvedUrl("../resources/left.png")
             onClicked: goBack()
         }
         ToolButton {
             id: mapButton
-            iconSource:  "../../resources/search.png"
+            icon.source: Qt.resolvedUrl("../resources/search.png")
             onClicked: showMap()
         }
         Item {

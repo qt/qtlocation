@@ -54,14 +54,14 @@ import QtQuick.Controls
 //! [PlaceSearchSuggestionModel view 1]
 ListView {
     id: suggestionView
-    property variant suggestionModel
+    property var suggestionModel
     signal suggestionSelected(string text)
 //! [PlaceSearchSuggestionModel view 1]
     snapMode: ListView.SnapToItem
 //! [PlaceSearchSuggestionModel view 2]
     model: suggestionModel
     delegate: Item {
-        width: parent.width
+        width. ListView.view.width
         height: label.height * 1.5
         Label {
             id: label
