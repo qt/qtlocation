@@ -77,12 +77,13 @@ SearchOptionsForm {
     }
 
     Component.onCompleted: {
-          locales.visible = root.plugin != null && root.plugin.supportsPlaces(Plugin.LocalizedPlacesFeature);
+          locales.visible = root.plugin !== null && root.plugin.supportsPlaces(Plugin.LocalizedPlacesFeature);
           favoritesButton.visible = false;
 //          favoritesButton.enabled = placeSearchModel.favoritesPlugin !== null)
 //                        isFavoritesEnabled = true;
           locales.text = root.plugin.locales.join(Qt.locale().groupSeparator);
-          distanceOrderButton.checked = model.relevanceHint == PlaceSearchModel.DistanceHint
-          nameOrderButton.checked = model.relevanceHint == PlaceSearchModel.LexicalPlaceNameHint
+          distanceOrderButton.checked = model.relevanceHint === PlaceSearchModel.DistanceHint
+          nameOrderButton.checked = model.relevanceHint === PlaceSearchModel.LexicalPlaceNameHint
+          unspecifiedButton.checked = model.relevanceHint === PlaceSearchModel.UnspecifiedHint
     }
 }

@@ -56,22 +56,19 @@ import QtQuick.Layouts
 //! [PlaceSearchModel place list]
 ListView {
     id: searchView
-    width: parent.width
-    height: parent.height
 
-    property variant placeSearchModel
-    signal showPlaceDetails(variant place, variant distance)
+    property var placeSearchModel
+    signal showPlaceDetails(var place, var distance)
     signal showMap()
 
     model: placeSearchModel
     delegate: SearchResultDelegate {
-        onShowPlaceDetails: searchView.showPlaceDetails(place, distance)
-        onSearchFor: placeSearchModel.searchForText(query);
+        width: ListView.view.width
+        onShowPlaceDetails: function (place, distance) { searchView.showPlaceDetails(place, distance) }
+        onSearchFor: function (query) { placeSearchModel.searchForText(query) }
     }
 
-    footer:
-
-        RowLayout {
+    footer: RowLayout {
         width: parent.width
 
         Button {

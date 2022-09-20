@@ -56,11 +56,11 @@ import QtQml.Models
 //! [CategoryModel view]
 ListView {
     id: root
-    property variant categoryModel
-    property variant rootIndex
+    property var categoryModel
+    property var rootIndex
 
-    signal searchCategory(variant category)
-    signal showSubcategories(variant index)
+    signal searchCategory(var category)
+    signal showSubcategories(var index)
 
     snapMode: ListView.SnapToItem
 
@@ -69,6 +69,7 @@ ListView {
         model: root.categoryModel
         rootIndex: root.rootIndex
         delegate: CategoryDelegate {
+            width: ListView.view.width
             onSearchCategory: root.searchCategory(category);
             onShowSubcategories: root.showSubcategories(delegeteDataModel.modelIndex(index))
         }

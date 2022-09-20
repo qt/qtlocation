@@ -57,10 +57,9 @@ import "../helper.js" as Helper
 Item {
     id: root
 
-    signal showPlaceDetails(variant place,variant distance)
+    signal showPlaceDetails(var place,var distance)
     signal searchFor(string query)
 
-    width: parent.width
     height: childrenRect.height
 
     //! [PlaceSearchModel place delegate]
@@ -102,7 +101,7 @@ Item {
                 Image {
                     // anchors.verticalCenter: parent.verticalCenter
                     id:icon
-                    source: place.favorite ? "../../resources/star.png" : place.icon.url()
+                    source: place.favorite ? Qt.resolvedUrl("../resources/star.png") : place.icon.url()
                     Layout.rowSpan: 2
                 }
 

@@ -55,11 +55,10 @@ import QtLocation
 ListView {
     id:view
     property Place place
-    signal showEditorial(variant editorial)
-    width: parent.width
-    height: parent.height
+    signal showEditorial(var editorial)
     model: place.editorialModel
     delegate: EditorialDelegate {
+        width: ListView.view.width
         onShowEditorial: view.showEditorial(model)
     }
 }

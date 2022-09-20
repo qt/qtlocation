@@ -58,19 +58,18 @@ import "items"
 ApplicationWindow {
     id: appWindow
     property Map map
-    property variant parameters
-    property variant searchLocation: map ? map.center : QtPositioning.coordinate()
-    property variant searchRegion: QtPositioning.circle(searchLocation)
-    property variant searchRegionItem
+    property var parameters
+    property var searchLocation: map ? map.center : QtPositioning.coordinate()
+    property var searchRegion: QtPositioning.circle(searchLocation)
+    property var searchRegionItem
 
     property Plugin favoritesPlugin
 
     function getPlugins() {
-        var plugin = Qt.createQmlObject('import QtLocation 5.3; Plugin {}', appWindow);
+        var plugin = Qt.createQmlObject('import QtLocation; Plugin {}', appWindow);
         var myArray = new Array;
         for (var i = 0; i < plugin.availableServiceProviders.length; i++) {
-            var tempPlugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
-
+            var tempPlugin = Qt.createQmlObject ('import QtLocation; Plugin {name: "' + plugin.availableServiceProviders[i]+ '"}', appWindow)
             if (tempPlugin.supportsPlaces() && tempPlugin.supportsMapping() )
                 myArray.push(tempPlugin.name)
         }
@@ -80,14 +79,14 @@ ApplicationWindow {
 
     function initializeProviders(pluginParameters)
     {
-        var parameters = new Array()
+        var parameters = []
         for (var prop in pluginParameters) {
-            var parameter = Qt.createQmlObject('import QtLocation 5.3; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',appWindow)
+            var parameter = Qt.createQmlObject('import QtLocation; PluginParameter{ name: "'+ prop + '"; value: "' + pluginParameters[prop]+'"}',appWindow)
             parameters.push(parameter)
         }
         appWindow.parameters = parameters
         var plugins = getPlugins()
-        mainMenu.providerMenu.createMenu(plugins)
+        mainMenu.providerMenu.create(plugins)
         for (var i = 0; i<plugins.length; i++) {
             if (plugins[i] === "osm")
                 mainMenu.selectProvider(plugins[i])
@@ -97,9 +96,9 @@ ApplicationWindow {
     function createMap(provider) {
         var plugin;
         if (parameters && parameters.length>0)
-            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', appWindow)
+            plugin = Qt.createQmlObject ('import QtLocation; Plugin{ name:"' + provider + '"; parameters: appWindow.parameters}', appWindow)
         else
-            plugin = Qt.createQmlObject ('import QtLocation 5.3; Plugin{ name:"' + provider + '"}', appWindow)
+            plugin = Qt.createQmlObject ('import QtLocation; Plugin{ name:"' + provider + '"}', appWindow)
 
         if (map)
             map.destroy();
@@ -117,48 +116,46 @@ ApplicationWindow {
     height: 640
     visible: true
     menuBar: mainMenu
-    toolBar: searchBar
+    header: searchBar
 
     MainMenu {
         id: mainMenu
-        onSelectProvider: {
-            stackView.pop(page)
-            for (var i = 0; i < providerMenu.items.length; i++) {
-                providerMenu.items[i].checked = providerMenu.items[i].text === providerName
-            }
 
+        property var settings: ["Search Center", "Search Bounding Box", "Search Bounding Circle", "Search Options"]
+
+        onSelectProvider: function (providerName) {
+            stackView.pop(page)
+            for (var i = 0; i < providerMenu.contentData.length; i++) {
+                providerMenu.contentData[i].checked = providerMenu.contentData[i].text === providerName
+            }
             createMap(providerName)
             if (map.error === Map.NoError) {
-                settingsMenu.createMenu(map);
+                settingsMenu.create(settings)
             } else {
-                settingsMenu.clear();
+                mainMenu.clearMenu(settingsMenu)
             }
         }
-        onSelectSetting: {
-            stackView.pop({tem:page,immediate: true})
+
+        onSelectSetting: function (setting) {
+            stackView.pop({item:page,immediate: true})
             switch (setting) {
-            case "searchCenter":
-                stackView.push({ item: Qt.resolvedUrl("forms/SearchCenter.qml") ,
-                                   properties: { "coordinate": map.center}})
+            case "Search Center":
+                stackView.push(Qt.resolvedUrl("forms/SearchCenter.qml"), { "coordinate": map.center })
                 stackView.currentItem.changeSearchCenter.connect(stackView.changeSearchCenter)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
-            case "searchBoundingBox":
-                stackView.push({ item: Qt.resolvedUrl("forms/SearchBoundingBox.qml") ,
-                                   properties: { "searchRegion": searchRegion}})
+            case "Search Bounding Box":
+                stackView.push(Qt.resolvedUrl("forms/SearchBoundingBox.qml"), { "searchRegion": searchRegion })
                 stackView.currentItem.changeSearchBoundingBox.connect(stackView.changeSearchBoundingBox)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
-            case "searchBoundingCircle":
-                stackView.push({ item: Qt.resolvedUrl("forms/SearchBoundingCircle.qml") ,
-                                   properties: { "searchRegion": searchRegion}})
+            case "Search Bounding Circle":
+                stackView.push(Qt.resolvedUrl("forms/SearchBoundingCircle.qml"), { "searchRegion": searchRegion })
                 stackView.currentItem.changeSearchBoundingCircle.connect(stackView.changeSearchBoundingCircle)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
-            case "SearchOptions":
-                stackView.push({ item: Qt.resolvedUrl("forms/SearchOptions.qml") ,
-                                   properties: { "plugin": map.plugin,
-                                       "model": placeSearchModel}})
+            case "Search Options":
+                stackView.push(Qt.resolvedUrl("forms/SearchOptions.qml"), { "plugin": map.plugin, "model": placeSearchModel })
                 stackView.currentItem.changeSearchSettings.connect(stackView.changeSearchSettings)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
@@ -184,17 +181,18 @@ ApplicationWindow {
         }
         onGoBack: stackView.pop()
     //! [PlaceSearchSuggestionModel search text changed 2]
-        onSearchTextChanged: {
+        onSearchTextChanged: function (searchText) {
             if (searchText.length >= 3 && suggestionModel != null) {
                 suggestionModel.searchTerm = searchText;
                 suggestionModel.update();
             }
         }
     //! [PlaceSearchSuggestionModel search text changed 2]
-        onDoSearch: {
+        onDoSearch: function (searchText) {
             if (searchText.length > 0)
                 placeSearchModel.searchForText(searchText);
         }
+
         onShowMap: stackView.pop(page)
     //! [PlaceSearchSuggestionModel search text changed 3]
     }
@@ -205,41 +203,45 @@ ApplicationWindow {
 
         function showMessage(title,message,backPage)
         {
-            push({ item: Qt.resolvedUrl("forms/Message.qml") ,
-                     properties: {
-                         "title" : title,
-                         "message" : message,
-                         "backPage" : backPage
-                     }})
+            stackView.push(Qt.resolvedUrl("forms/Message.qml") ,
+                 {
+                     "title" : title,
+                     "message" : message,
+                     "backPage" : backPage
+                 })
             currentItem.closeForm.connect(closeMessage)
         }
 
         function closeMessage(backPage)
         {
-            pop(backPage)
+            stackView.pop(backPage)
         }
 
         function closeForm()
         {
-            pop(page)
+            stackView.pop(page)
         }
 
         function enterCategory(index)
         {
-            push({ item: Qt.resolvedUrl("views/CategoryView.qml") ,
-                     properties: { "categoryModel": categoryModel,
-                         "rootIndex" : index
-                     }})
+            stackView.push(Qt.resolvedUrl("views/CategoryView.qml"),
+                 {
+                     "categoryModel": categoryModel,
+                     "rootIndex" : index
+                 })
             currentItem.showSubcategories.connect(stackView.enterCategory)
             currentItem.searchCategory.connect(placeSearchModel.searchForCategory)
         }
 
         function showSuggestions()
         {
-            if (currentItem.objectName != "suggestionView") {
+            if (currentItem.objectName !== "suggestionView") {
                 stackView.pop(page)
-                push({ item: Qt.resolvedUrl("views/SuggestionView.qml") ,
-                         properties: { "suggestionModel": suggestionModel }
+                stackView.push(Qt.resolvedUrl("views/SuggestionView.qml"),
+                     {
+                          "suggestionModel": suggestionModel,
+                          "width": stackView.width,
+                          "height": stackView.height
                      })
                 currentItem.objectName = "suggestionView"
                 currentItem.suggestionSelected.connect(searchBar.showSearch)
@@ -249,10 +251,13 @@ ApplicationWindow {
 
         function showPlaces()
         {
-            if (currentItem.objectName != "searchResultView") {
+            if (currentItem.objectName !== "searchResultView") {
                 stackView.pop({tem:page,immediate: true})
-                push({ item: Qt.resolvedUrl("views/SearchResultView.qml") ,
-                         properties: { "placeSearchModel": placeSearchModel }
+                stackView.push(Qt.resolvedUrl("views/SearchResultView.qml"),
+                     {
+                         "placeSearchModel": placeSearchModel,
+                         "width": stackView.width,
+                         "height": stackView.height
                      })
                 currentItem.showPlaceDetails.connect(showPlaceDatails)
                 currentItem.showMap.connect(searchBar.showMap)
@@ -262,9 +267,12 @@ ApplicationWindow {
 
         function showPlaceDatails(place, distance)
         {
-            push({ item: Qt.resolvedUrl("forms/PlaceDetails.qml") ,
-                     properties: { "place": place,
-                         "distanceToPlace": distance }
+            stackView.push(Qt.resolvedUrl("forms/PlaceDetails.qml") ,
+                 {
+                     "place": place,
+                     "distanceToPlace": distance,
+                     "width": stackView.width,
+                     "height": stackView.height
                  })
             currentItem.searchForSimilar.connect(searchForSimilar)
             currentItem.showReviews.connect(showReviews)
@@ -274,38 +282,53 @@ ApplicationWindow {
 
         function showEditorials(place)
         {
-            push({ item: Qt.resolvedUrl("views/EditorialView.qml") ,
-                     properties: { "place": place }
+            stackView.push(Qt.resolvedUrl("views/EditorialView.qml"),
+                 {
+                    "place": place,
+                    "width": stackView.width,
+                    "height": stackView.height
                  })
             currentItem.showEditorial.connect(showEditorial)
         }
 
         function showReviews(place)
         {
-            push({ item: Qt.resolvedUrl("views/ReviewView.qml") ,
-                     properties: { "place": place }
+            stackView.push(Qt.resolvedUrl("views/ReviewView.qml") ,
+                 {
+                    "place": place,
+                    "width": stackView.width,
+                    "height": stackView.height
                  })
             currentItem.showReview.connect(showReview)
         }
 
         function showImages(place)
         {
-            push({ item: Qt.resolvedUrl("views/ImageView.qml") ,
-                     properties: { "place": place }
+            stackView.push(Qt.resolvedUrl("views/ImageView.qml") ,
+                 {
+                     "place": place,
+                     "width": stackView.width,
+                     "height": stackView.height
                  })
         }
 
         function showEditorial(editorial)
         {
-            push({ item: Qt.resolvedUrl("views/EditorialPage.qml") ,
-                     properties: { "editorial": editorial }
+            stackView.push(Qt.resolvedUrl("views/EditorialPage.qml") ,
+                 {
+                     "editorial": editorial,
+                     "width": stackView.width,
+                     "height": stackView.height
                  })
         }
 
         function showReview(review)
         {
-            push({ item: Qt.resolvedUrl("views/ReviewPage.qml") ,
-                     properties: { "review": review }
+            stackView.push(Qt.resolvedUrl("views/ReviewPage.qml") ,
+                 {
+                     "review": review,
+                     "width": stackView.width,
+                     "height": stackView.height
                  })
         }
 
@@ -328,7 +351,7 @@ ApplicationWindow {
                 map.removeMapItem(searchRegionItem);
                 searchRegionItem.destroy();
             }
-            searchRegionItem = Qt.createQmlObject('import QtLocation 5.3; MapRectangle { color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page, "MapRectangle");
+            searchRegionItem = Qt.createQmlObject('import QtLocation; MapRectangle { color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page, "MapRectangle");
             searchRegionItem.topLeft = searchRegion.topLeft;
             searchRegionItem.bottomRight = searchRegion.bottomRight;
             map.addMapItem(searchRegionItem);
@@ -344,7 +367,7 @@ ApplicationWindow {
                 map.removeMapItem(searchRegionItem);
                 searchRegionItem.destroy();
             }
-            searchRegionItem = Qt.createQmlObject('import QtLocation 5.3; MapCircle { color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page, "MapRectangle");
+            searchRegionItem = Qt.createQmlObject('import QtLocation; MapCircle { color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page, "MapRectangle");
             searchRegionItem.center = searchRegion.center;
             searchRegionItem.radius = searchRegion.radius;
             map.addMapItem(searchRegionItem);
@@ -355,7 +378,7 @@ ApplicationWindow {
             stackView.pop(page)
             /*if (isFavoritesEnabled) {
                 if (favoritesPlugin == null)
-                    favoritesPlugin = Qt.createQmlObject('import QtLocation 5.3; Plugin { name: "places_jsondb" }', page);
+                    favoritesPlugin = Qt.createQmlObject('import QtLocation; Plugin { name: "places_jsondb" }', page);
                 favoritesPlugin.parameters = pluginParametersFromMap(pluginParameters);
                 placeSearchModel.favoritesPlugin = favoritesPlugin;
             } else {
@@ -457,10 +480,10 @@ ApplicationWindow {
                     height: page.height
 
                     onErrorChanged: {
-                        if (map.error != Map.NoError) {
+                        if (map.error !== Map.NoError) {
                             var title = qsTr("ProviderError");
                             var message =  map.errorString + "<br/><br/><b>" + qsTr("Try to select other provider") + "</b>";
-                            if (map.error == Map.MissingRequiredParameterError)
+                            if (map.error === Map.MissingRequiredParameterError)
                                 message += "<br/>" + qsTr("or see") + " \'mapviewer --help\' "
                                         + qsTr("how to pass plugin parameters.");
                             stackView.showMessage(title,message);
@@ -498,6 +521,7 @@ ApplicationWindow {
         anchors.fill: parent
         Behavior on opacity { NumberAnimation{} }
     }
+
     BusyIndicator {
         id: busyIndicator
         anchors.centerIn: parent

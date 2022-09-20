@@ -53,13 +53,13 @@ import "../helper.js" as Helper
 
 PlaceDetailsForm {
 
-    property variant place
+    property var place
     property real distanceToPlace
 
-    signal searchForSimilar(variant place)
-    signal showReviews(variant place)
-    signal showEditorials(variant place)
-    signal showImages(variant place)
+    signal searchForSimilar(var place)
+    signal showReviews(var place)
+    signal showEditorials(var place)
+    signal showImages(var place)
 
     function placeAddress(place) {
         if (!place)
@@ -75,7 +75,7 @@ PlaceDetailsForm {
         var result = "";
 
         for (var i = 0; i < categories.length; ++i) {
-            if (result == "") {
+            if (result === "") {
                 result = categories[i].name;
             } else {
                 result = result + ", " + categories[i].name;
@@ -115,7 +115,7 @@ PlaceDetailsForm {
         placeName.text = place ? (place.favorite ? place.favorite.name : place.name) : ""
         placeIcon.source = place ? (place.favorite ? place.favorite.icon.url(Qt.size(40,40))
                                         : place.icon.url() == "" ?
-                                          "../resources/marker.png"
+                                          Qt.resolvedUrl("../resources/marker.png")
                                         : place.icon.url(Qt.size(40,40))) : ""
         ratingView.rating = (place && place.ratings) ? place.ratings.average : 0
         distance.text = Helper.formatDistance(distanceToPlace)

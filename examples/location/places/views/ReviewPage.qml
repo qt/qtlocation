@@ -55,9 +55,7 @@ import QtQuick.Layouts
 
 Item {
     id: root
-    property variant review
-    width: parent.width
-    height: parent.height
+    property var review
 
     ScrollView {
         id: scrollView

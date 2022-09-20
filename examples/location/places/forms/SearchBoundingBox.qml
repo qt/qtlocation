@@ -52,8 +52,8 @@ import QtQuick
 import QtPositioning
 
 SearchBoundingBoxForm {
-    property variant searchRegion
-    signal changeSearchBoundingBox(variant coordinate, real widthDeg, real heightDeg)
+    property var searchRegion
+    signal changeSearchBoundingBox(var coordinate, real widthDeg, real heightDeg)
     signal closeForm()
 
     goButton.onClicked: {

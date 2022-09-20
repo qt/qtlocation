@@ -55,9 +55,7 @@ import QtQuick.Layouts
 
 Item {
     id: root
-    property variant editorial
-    width: parent.width
-    height: parent.height
+    property var editorial
 
     ScrollView {
         id: scrollView

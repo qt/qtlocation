@@ -57,7 +57,7 @@ import "../helper.js" as Helper
 Map {
     id: map
     property bool followme: false
-    property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
+    property var scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
 
     function calculateScale()
     {
@@ -101,7 +101,7 @@ Map {
     onCenterChanged:{
         scaleTimer.restart()
         if (map.followme)
-            if (map.center != positionSource.position.coordinate) map.followme = false
+            if (map.center !== positionSource.position.coordinate) map.followme = false
     }
 
     onZoomLevelChanged:{
@@ -147,19 +147,19 @@ Map {
 
         Image {
             id: scaleImageLeft
-            source: "../../resources/scale_end.png"
+            source: Qt.resolvedUrl("../resources/scale_end.png")
             anchors.bottom: parent.bottom
             anchors.right: scaleImage.left
         }
         Image {
             id: scaleImage
-            source: "../../resources/scale.png"
+            source: Qt.resolvedUrl("../resources/scale.png")
             anchors.bottom: parent.bottom
             anchors.right: scaleImageRight.left
         }
         Image {
             id: scaleImageRight
-            source: "../../resources/scale_end.png"
+            source: Qt.resolvedUrl("../resources/scale_end.png")
             anchors.bottom: parent.bottom
             anchors.right: parent.right
         }
@@ -209,8 +209,8 @@ Map {
     Slider {
         id: zoomSlider;
         z: map.z + 3
-        minimumValue: map.minimumZoomLevel;
-        maximumValue: map.maximumZoomLevel;
+        from: map.minimumZoomLevel;
+        to: map.maximumZoomLevel;
         anchors.margins: 10
         anchors.bottom: scale.top
         anchors.top: parent.top

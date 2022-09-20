@@ -56,7 +56,6 @@ Item {
     id: root
     signal showReview()
 
-    width: parent.width
     height: icon.height + 8
 
     Image {
