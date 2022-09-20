@@ -105,7 +105,7 @@ class PlaceReply : public QPlaceReply
     friend class QPlaceManagerEngineTest;
 
 public:
-    PlaceReply(QObject *parent = 0)
+    PlaceReply(QObject *parent = nullptr)
     :   QPlaceReply(parent)
     { }
 
@@ -122,7 +122,7 @@ class ContentReply : public QPlaceContentReply
     friend class QPlaceManagerEngineTest;
 
 public:
-    ContentReply(QObject *parent = 0)
+    ContentReply(QObject *parent = nullptr)
     : QPlaceContentReply(parent)
     {}
 
@@ -144,7 +144,7 @@ class DetailsReply : public QPlaceDetailsReply
     friend class QPlaceManagerEngineTest;
 
 public:
-    DetailsReply(QObject *parent = 0)
+    DetailsReply(QObject *parent = nullptr)
     :   QPlaceDetailsReply(parent)
     { }
 
@@ -166,7 +166,7 @@ class IdReply : public QPlaceIdReply
     friend class QPlaceManagerEngineTest;
 
 public:
-    IdReply(QPlaceIdReply::OperationType type, QObject *parent = 0)
+    IdReply(QPlaceIdReply::OperationType type, QObject *parent = nullptr)
     :   QPlaceIdReply(type, parent)
     { }
 
@@ -186,7 +186,7 @@ class PlaceSearchReply : public QPlaceSearchReply
     Q_OBJECT
 
 public:
-    PlaceSearchReply(const QList<QPlaceSearchResult> &results, QObject *parent = 0)
+    PlaceSearchReply(const QList<QPlaceSearchResult> &results, QObject *parent = nullptr)
     :   QPlaceSearchReply(parent)
     {
         setResults(results);
@@ -208,7 +208,7 @@ class SuggestionReply : public QPlaceSearchSuggestionReply
     Q_OBJECT
 
 public:
-    SuggestionReply(const QStringList &suggestions, QObject *parent = 0)
+    SuggestionReply(const QStringList &suggestions, QObject *parent = nullptr)
     :   QPlaceSearchSuggestionReply(parent)
     {
         setSuggestions(suggestions);

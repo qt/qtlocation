@@ -115,7 +115,7 @@ public:
         LocationRole = Qt::UserRole + 1
     };
 
-    explicit QDeclarativeGeocodeModel(QObject *parent = 0);
+    explicit QDeclarativeGeocodeModel(QObject *parent = nullptr);
     virtual ~QDeclarativeGeocodeModel();
 
     // From QQmlParserStatus

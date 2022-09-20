@@ -64,7 +64,7 @@ class PlaceManagerUtils : public QObject
 {
     Q_OBJECT
 public:
-    PlaceManagerUtils(QObject *parent = 0);
+    PlaceManagerUtils(QObject *parent = nullptr);
 
     static bool doSavePlace(QPlaceManager *manager,
                      const QPlace &place,

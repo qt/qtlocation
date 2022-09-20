@@ -75,7 +75,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMappingManagerEngine : public QObject
     Q_OBJECT
 
 public:
-    explicit QGeoMappingManagerEngine(QObject *parent = 0);
+    explicit QGeoMappingManagerEngine(QObject *parent = nullptr);
     virtual ~QGeoMappingManagerEngine();
 
     virtual QGeoMap *createMap() = 0;

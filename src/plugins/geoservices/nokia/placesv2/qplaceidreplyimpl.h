@@ -49,7 +49,7 @@ class QPlaceIdReplyImpl : public QPlaceIdReply
     Q_OBJECT
 
 public:
-    QPlaceIdReplyImpl(QPlaceIdReply::OperationType type, QObject *parent = 0);
+    QPlaceIdReplyImpl(QPlaceIdReply::OperationType type, QObject *parent = nullptr);
     ~QPlaceIdReplyImpl();
 
     void setId(const QString &id);

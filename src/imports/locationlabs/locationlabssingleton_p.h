@@ -60,7 +60,7 @@ class LocationLabsSingleton : public QObject
     Q_OBJECT
 
 public:
-    explicit LocationLabsSingleton(QObject *parent = 0);
+    explicit LocationLabsSingleton(QObject *parent = nullptr);
 
     Q_INVOKABLE QList<QObject *> mapObjectsAt(const QGeoCoordinate &coordinate, QDeclarativeGeoMap *map) const;
 };

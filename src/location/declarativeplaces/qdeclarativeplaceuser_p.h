@@ -67,8 +67,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlaceUser : public QObject
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
 public:
-    explicit QDeclarativePlaceUser(QObject *parent = 0);
-    explicit QDeclarativePlaceUser(const QPlaceUser &src, QObject *parent = 0);
+    explicit QDeclarativePlaceUser(QObject *parent = nullptr);
+    explicit QDeclarativePlaceUser(const QPlaceUser &src, QObject *parent = nullptr);
     ~QDeclarativePlaceUser();
 
     QPlaceUser user() const;

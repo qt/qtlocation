@@ -69,8 +69,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRatings : public QObject
     Q_PROPERTY(int count READ count WRITE setCount NOTIFY countChanged)
 
 public:
-    explicit QDeclarativeRatings(QObject *parent = 0);
-    explicit QDeclarativeRatings(const QPlaceRatings &src, QObject *parent = 0);
+    explicit QDeclarativeRatings(QObject *parent = nullptr);
+    explicit QDeclarativeRatings(const QPlaceRatings &src, QObject *parent = nullptr);
     ~QDeclarativeRatings();
 
     QPlaceRatings ratings() const;

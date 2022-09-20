@@ -193,7 +193,7 @@ class RetryFuture : public QObject
 {
     Q_OBJECT
 public:
-    RetryFuture(const QGeoTileSpec &tile, QGeoTiledMap *map, QGeoTiledMappingManagerEngine* engine, QObject *parent = 0);
+    RetryFuture(const QGeoTileSpec &tile, QGeoTiledMap *map, QGeoTiledMappingManagerEngine* engine, QObject *parent = nullptr);
 
 public Q_SLOTS:
     void retry();

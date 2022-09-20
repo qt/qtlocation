@@ -69,8 +69,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlaceAttribute : public QObject
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
 
 public:
-    explicit QDeclarativePlaceAttribute(QObject *parent = 0);
-    explicit QDeclarativePlaceAttribute(const QPlaceAttribute &src, QObject *parent = 0);
+    explicit QDeclarativePlaceAttribute(QObject *parent = nullptr);
+    explicit QDeclarativePlaceAttribute(const QPlaceAttribute &src, QObject *parent = nullptr);
     ~QDeclarativePlaceAttribute();
 
     QPlaceAttribute attribute() const;

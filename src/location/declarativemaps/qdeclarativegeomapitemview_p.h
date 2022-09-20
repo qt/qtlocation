@@ -90,7 +90,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemView : public QDeclarative
     Q_PROPERTY(bool incubateDelegates READ incubateDelegates WRITE setIncubateDelegates NOTIFY incubateDelegatesChanged REVISION 12)
 
 public:
-    explicit QDeclarativeGeoMapItemView(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMapItemView(QQuickItem *parent = nullptr);
     ~QDeclarativeGeoMapItemView();
 
     QVariant model() const;

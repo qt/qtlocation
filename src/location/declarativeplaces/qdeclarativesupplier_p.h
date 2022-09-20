@@ -75,8 +75,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSupplier : public QObject, public QQ
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    explicit QDeclarativeSupplier(QObject *parent = 0);
-    explicit QDeclarativeSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent = 0);
+    explicit QDeclarativeSupplier(QObject *parent = nullptr);
+    explicit QDeclarativeSupplier(const QPlaceSupplier &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent = nullptr);
     ~QDeclarativeSupplier();
 
     // From QQmlParserStatus

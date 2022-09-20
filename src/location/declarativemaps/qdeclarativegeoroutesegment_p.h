@@ -70,8 +70,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteSegment : public QObject
     Q_PROPERTY(QGeoManeuver maneuver READ maneuver CONSTANT)
 
 public:
-    explicit QDeclarativeGeoRouteSegment(QObject *parent = 0);
-    QDeclarativeGeoRouteSegment(const QGeoRouteSegment &segment, QObject *parent = 0);
+    explicit QDeclarativeGeoRouteSegment(QObject *parent = nullptr);
+    QDeclarativeGeoRouteSegment(const QGeoRouteSegment &segment, QObject *parent = nullptr);
     ~QDeclarativeGeoRouteSegment();
 
     int travelTime() const;

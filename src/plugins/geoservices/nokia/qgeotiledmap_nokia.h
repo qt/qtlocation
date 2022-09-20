@@ -58,7 +58,7 @@ class QGeoTiledMapNokia: public Map
 {
 Q_OBJECT
 public:
-    QGeoTiledMapNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent = 0);
+    QGeoTiledMapNokia(QGeoTiledMappingManagerEngineNokia *engine, QObject *parent = nullptr);
     ~QGeoTiledMapNokia();
 
     QString getViewCopyright() const;

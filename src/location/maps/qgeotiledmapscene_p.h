@@ -68,7 +68,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapScene : public QObject
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoTiledMapScene)
 public:
-    explicit QGeoTiledMapScene(QObject *parent = 0);
+    explicit QGeoTiledMapScene(QObject *parent = nullptr);
     virtual ~QGeoTiledMapScene();
 
     void setScreenSize(const QSize &size);

@@ -48,11 +48,13 @@ class QGeoFileTileCacheNokia : public QGeoFileTileCache
 {
     Q_OBJECT
 public:
-    QGeoFileTileCacheNokia(int ppi, const QString &directory = QString(), QObject *parent = 0);
+    QGeoFileTileCacheNokia(int ppi, const QString &directory = QString(),
+                           QObject *parent = nullptr);
     ~QGeoFileTileCacheNokia();
 
 protected:
-    QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format, const QString &directory) const override;
+    QString tileSpecToFilename(const QGeoTileSpec &spec, const QString &format,
+                               const QString &directory) const override;
     QGeoTileSpec filenameToTileSpec(const QString &filename) const override;
 
     QString m_ppi;

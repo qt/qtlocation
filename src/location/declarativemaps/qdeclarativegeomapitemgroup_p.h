@@ -62,7 +62,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemGroup : public QQuickItem
 {
     Q_OBJECT
 public:
-    explicit QDeclarativeGeoMapItemGroup(QQuickItem *parent = 0);
+    explicit QDeclarativeGeoMapItemGroup(QQuickItem *parent = nullptr);
     virtual ~QDeclarativeGeoMapItemGroup();
 
     void setParentGroup(QDeclarativeGeoMapItemGroup &parentGroup);

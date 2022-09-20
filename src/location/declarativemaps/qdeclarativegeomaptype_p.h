@@ -89,7 +89,7 @@ public:
         CustomMap = 100
     };
 
-    QDeclarativeGeoMapType(const QGeoMapType &mapType, QObject *parent = 0);
+    QDeclarativeGeoMapType(const QGeoMapType &mapType, QObject *parent = nullptr);
     ~QDeclarativeGeoMapType();
 
     MapStyle style() const;

@@ -51,7 +51,8 @@ class QGeoCodeReplyOsm : public QGeoCodeReply
     Q_OBJECT
 
 public:
-    explicit QGeoCodeReplyOsm(QNetworkReply *reply, bool includeExtraData = false, QObject *parent = 0);
+    explicit QGeoCodeReplyOsm(QNetworkReply *reply, bool includeExtraData = false,
+                              QObject *parent = nullptr);
     ~QGeoCodeReplyOsm();
 
 private Q_SLOTS:

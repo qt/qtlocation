@@ -130,7 +130,7 @@ public:
     static QString baseLocationCacheDirectory();
 
 protected:
-    QAbstractGeoTileCache(QObject *parent = 0);
+    QAbstractGeoTileCache(QObject *parent = nullptr);
     virtual void printStats() = 0;
 
     friend class QGeoTiledMappingManagerEngine;

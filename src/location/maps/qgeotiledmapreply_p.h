@@ -72,8 +72,8 @@ public:
         UnknownError
     };
 
-    QGeoTiledMapReply(const QGeoTileSpec &spec, QObject *parent = 0);
-    QGeoTiledMapReply(Error error, const QString &errorString, QObject *parent = 0);
+    QGeoTiledMapReply(const QGeoTileSpec &spec, QObject *parent = nullptr);
+    QGeoTiledMapReply(Error error, const QString &errorString, QObject *parent = nullptr);
     virtual ~QGeoTiledMapReply();
 
     bool isFinished() const;

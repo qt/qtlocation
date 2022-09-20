@@ -64,8 +64,8 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMapParameter : public QObject
 
     Q_PROPERTY(QString type READ type WRITE setType)
 public:
-    explicit QGeoMapParameter(QObject *parent = 0);
-    QGeoMapParameter(const QList<QPair<QLatin1String, QVariant>> &properties, QObject *parent = 0);
+    explicit QGeoMapParameter(QObject *parent = nullptr);
+    QGeoMapParameter(const QList<QPair<QLatin1String, QVariant>> &properties, QObject *parent = nullptr);
     virtual ~QGeoMapParameter();
 
     bool operator==(const QGeoMapParameter &other) const;

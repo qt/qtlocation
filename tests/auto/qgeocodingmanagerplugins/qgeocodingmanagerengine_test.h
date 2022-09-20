@@ -43,7 +43,7 @@ class GeocodeReplyTest : public QGeoCodeReply
 {
     Q_OBJECT
 public:
-    GeocodeReplyTest(QObject *parent = 0) : QGeoCodeReply(parent) {}
+    GeocodeReplyTest(QObject *parent = nullptr) : QGeoCodeReply(parent) {}
 
     void  callAddLocation ( const QGeoLocation & location ) {addLocation(location);}
     void  callSetError ( Error error, const QString & errorString ) {setError(error, errorString);}

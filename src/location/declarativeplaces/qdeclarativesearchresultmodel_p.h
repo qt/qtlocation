@@ -92,7 +92,7 @@ public:
         LexicalPlaceNameHint = QPlaceSearchRequest::LexicalPlaceNameHint
     };
 
-    explicit QDeclarativeSearchResultModel(QObject *parent = 0);
+    explicit QDeclarativeSearchResultModel(QObject *parent = nullptr);
     ~QDeclarativeSearchResultModel();
 
     QString searchTerm() const;

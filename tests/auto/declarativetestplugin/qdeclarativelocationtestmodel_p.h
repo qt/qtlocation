@@ -62,7 +62,7 @@ class QDeclarativeLocationTestModel : public QAbstractListModel, public QQmlPars
     Q_INTERFACES(QQmlParserStatus)
 
 public:
-    QDeclarativeLocationTestModel(QObject* parent = 0);
+    QDeclarativeLocationTestModel(QObject* parent = nullptr);
     ~QDeclarativeLocationTestModel();
 
     enum Roles {

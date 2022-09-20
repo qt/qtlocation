@@ -49,7 +49,8 @@ class QGeoCodeReplyNokia : public QGeoCodeReply
 {
     Q_OBJECT
 public:
-    QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offset, const QGeoShape &viewport, bool manualBoundsRequired, QObject *parent = 0);
+    QGeoCodeReplyNokia(QNetworkReply *reply, int limit, int offset, const QGeoShape &viewport,
+                       bool manualBoundsRequired, QObject *parent = nullptr);
     ~QGeoCodeReplyNokia();
 
 private Q_SLOTS:
