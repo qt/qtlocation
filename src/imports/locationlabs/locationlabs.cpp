@@ -37,29 +37,14 @@
 **
 ****************************************************************************/
 
-#include <QtLocation/private/qmapiconobject_p.h>
-#include <QtLocation/private/qmapobjectview_p.h>
-#include <QtLocation/private/qmaprouteobject_p.h>
-#include <QtLocation/private/qmapcircleobject_p.h>
-#include <QtLocation/private/qmappolygonobject_p.h>
-#include <QtLocation/private/qmappolylineobject_p.h>
 #include <QtLocation/private/qdeclarativenavigator_p.h>
 #include <QtLocation/private/qdeclarativenavigator_p_p.h>
 #include <QtLocation/private/qnavigationmanagerengine_p.h>
 #include <QtQml/qqmlextensionplugin.h>
 #include <QtQml/qqml.h>
 #include <QtCore/QDebug>
-#include "locationlabssingleton_p.h"
 
 QT_BEGIN_NAMESPACE
-
-static QObject *singleton_type_factory(QQmlEngine *engine, QJSEngine *jsEngine)
-{
-    Q_UNUSED(engine);
-    Q_UNUSED(jsEngine);
-
-    return new LocationLabsSingleton;
-}
 
 class QtLocationLabsDeclarativeModule: public QQmlExtensionPlugin
 {
@@ -78,16 +63,9 @@ public:
             int minor = 0;
 
             // Register the 1.0 labs types
-            qmlRegisterType<QMapIconObject>(uri, major, minor, "MapIconObject");
-            qmlRegisterType<QMapObjectView>(uri, major, minor, "MapObjectView");
-            qmlRegisterType<QMapRouteObject>(uri, major, minor, "MapRouteObject");
-            qmlRegisterType<QMapCircleObject>(uri, major, minor, "MapCircleObject");
-            qmlRegisterType<QMapPolygonObject>(uri, major, minor, "MapPolygonObject");
-            qmlRegisterType<QMapPolylineObject>(uri, major, minor, "MapPolylineObject");
             qmlRegisterAnonymousType<QDeclarativeNavigationBasicDirections>(uri, major);
             qmlRegisterType<QDeclarativeNavigator>(uri, major, minor, "Navigator");
             qmlRegisterAnonymousType<QAbstractNavigator>(uri, major);
-            qmlRegisterSingletonType<LocationLabsSingleton>(uri, major, minor, "QtLocationLabs", singleton_type_factory);
         } else {
             qDebug() << "Unsupported URI given to load location QML plugin: " << QLatin1String(uri);
         }

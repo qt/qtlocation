@@ -69,7 +69,6 @@ class QGeoMap;
 class QGeoMapController;
 class QGeoMapParameter;
 class QDeclarativeGeoMapItemBase;
-class QGeoMapObjectPrivate;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
 {
@@ -83,7 +82,6 @@ public:
     const QGeoCameraCapabilities &cameraCapabilities() const;
 
     static const QGeoMapPrivate *get(const QGeoMap &map);
-    virtual QGeoMapObjectPrivate *createMapObjectImplementation(QGeoMapObject *obj);
 
 protected:
     /* Hooks into the actual map implementations */
@@ -93,8 +91,6 @@ protected:
     virtual QGeoMap::ItemTypes supportedMapItemTypes() const;
     virtual void addMapItem(QDeclarativeGeoMapItemBase *item);
     virtual void removeMapItem(QDeclarativeGeoMapItemBase *item);
-
-    virtual QList<QGeoMapObject *> mapObjects() const;
 
     virtual void changeViewportSize(const QSize &size) = 0; // called by QGeoMap::setSize()
     virtual void changeCameraData(const QGeoCameraData &oldCameraData) = 0; // called by QGeoMap::setCameraData()

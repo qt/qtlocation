@@ -46,7 +46,6 @@
 #include "qgeocameracapabilities_p.h"
 #include "qgeomap_p.h"
 #include "qdeclarativegeomapparameter_p.h"
-#include "qgeomapobject_p.h"
 #include "qgeoprojection_p.h"
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoRectangle>
@@ -265,9 +264,6 @@ QDeclarativeGeoMap::~QDeclarativeGeoMap()
         delete m_copyrights.data();
     m_copyrights.clear();
 
-    for (auto obj: qAsConst(m_pendingMapObjects))
-        obj->setMap(nullptr); // worst case: going to be setMap(nullptr)'d twice
-
     delete m_map; // map objects get reset here
 }
 
@@ -366,9 +362,6 @@ void QDeclarativeGeoMap::initialize()
                                       // BUT not in this case, since m_cameraData is already == cameraData.
                                       // So, emit visibleRegionChanged() separately, as
                                       // the effective visible region becomes available only now.
-
-    for (const auto &obj : qAsConst(m_pendingMapObjects))
-        obj->setMap(m_map);
 
     m_initialized = true;
 
@@ -913,9 +906,6 @@ bool QDeclarativeGeoMap::addMapChild(QObject *child)
     if (mapItem)
         return addMapItem_real(mapItem);
 
-    QGeoMapObject *mapObject = qobject_cast<QGeoMapObject *>(child);
-    if (mapObject)
-        addMapObject(mapObject); // this emits mapObjectsChanged, != mapItemsChanged
     return false;
 }
 
@@ -934,9 +924,6 @@ bool QDeclarativeGeoMap::removeMapChild(QObject *child)
     if (mapItem)
         return removeMapItem_real(mapItem);
 
-    QGeoMapObject *mapObject = qobject_cast<QGeoMapObject *>(child);
-    if (mapObject)
-        removeMapObject(mapObject); // this emits mapObjectsChanged, != mapItemsChanged
     return false;
 }
 
@@ -1886,75 +1873,6 @@ QList<QObject *> QDeclarativeGeoMap::mapParameters()
     for (QDeclarativeGeoMapParameter *p : qAsConst(m_mapParameters))
         ret << p;
     return ret;
-}
-
-/*
-    \internal
-*/
-void QDeclarativeGeoMap::addMapObject(QGeoMapObject *object)
-{
-    if (!object || object->map())
-        return;
-
-    if (!m_initialized) {
-        m_pendingMapObjects.append(object);
-        return;
-    }
-
-    int curObjects = m_map->mapObjects().size();
-    // object adds itself to the map
-    object->setMap(m_map);
-
-    if (curObjects != m_map->mapObjects().size())
-        emit mapObjectsChanged();
-}
-
-/*
-    \internal
-*/
-void QDeclarativeGeoMap::removeMapObject(QGeoMapObject *object)
-{
-    if (!object || object->map() != m_map) // if !initialized this is fine, since both object and m_map are supposed to be NULL
-        return;
-
-    if (!m_initialized) {
-        m_pendingMapObjects.removeOne(object);
-        return;
-    }
-
-    int curObjects = m_map->mapObjects().size();
-    // object adds itself to the map
-    object->setMap(nullptr);
-
-    if (curObjects != m_map->mapObjects().size())
-        emit mapObjectsChanged();
-}
-
-/*
-    \internal
-*/
-void QDeclarativeGeoMap::clearMapObjects()
-{
-    if (!m_initialized) {
-        m_pendingMapObjects.clear();
-    } else {
-        const QList<QGeoMapObject *> objs = m_map->mapObjects();
-        for (QGeoMapObject *o: objs)
-            o->setMap(nullptr);
-        if (objs.size())
-            emit mapObjectsChanged();
-    }
-}
-
-/*
-    \internal
-*/
-QList<QGeoMapObject *> QDeclarativeGeoMap::mapObjects()
-{
-    if (!m_initialized)
-        return m_pendingMapObjects;
-    else
-        return m_map->mapObjects();
 }
 
 /*!

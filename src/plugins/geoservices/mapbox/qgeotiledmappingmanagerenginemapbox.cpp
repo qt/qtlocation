@@ -44,12 +44,7 @@
 #include <QtLocation/private/qgeomaptype_p.h>
 #include <QtLocation/private/qgeotiledmap_p.h>
 #include "qgeofiletilecachemapbox.h"
-#ifdef LOCATIONLABS
-#include <QtLocation/private/qgeotiledmaplabs_p.h>
-typedef QGeoTiledMapLabs Map;
-#else
 typedef QGeoTiledMap Map;
-#endif
 
 QT_BEGIN_NAMESPACE
 

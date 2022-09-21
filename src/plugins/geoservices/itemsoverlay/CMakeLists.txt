@@ -13,9 +13,3 @@ qt_internal_add_plugin(QGeoServiceProviderFactoryItemsOverlayPlugin
     DEFINES
         QT_NO_FOREACH
 )
-
-qt_internal_extend_target(QGeoServiceProviderFactoryItemsOverlayPlugin
-    CONDITION QT_FEATURE_location_labs_plugin
-    DEFINES
-        LOCATIONLABS
-)

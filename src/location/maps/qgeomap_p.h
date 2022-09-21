@@ -70,7 +70,6 @@ class QSGNode;
 class QQuickWindow;
 class QGeoMapParameter;
 class QDeclarativeGeoMapItemBase;
-class QGeoMapObject;
 class QDeclarativeGeoMap;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMap : public QObject
@@ -144,10 +143,6 @@ public:
     void removeMapItem(QDeclarativeGeoMapItemBase *item);
     void clearMapItems();
 
-    virtual bool createMapObjectImplementation(QGeoMapObject *obj);
-    QList<QGeoMapObject *> mapObjects() const;
-
-
     virtual QString copyrightsStyleSheet() const;
     virtual void setAcceptedGestures(bool pan, bool flick, bool pinch, bool rotate, bool tilt);
     virtual bool handleEvent(QEvent *event);
@@ -158,8 +153,6 @@ public:
     virtual bool fitViewportToGeoRectangle(const QGeoRectangle &rectangle, const QMargins &borders);
 
     virtual void setCopyrightVisible(bool visible);
-    virtual void removeMapObject(QGeoMapObject *obj);
-    virtual QList<QObject *> mapObjectsAt(const QGeoCoordinate &coordinate) const;
     virtual void setItemToWindowTransform(const QTransform &itemToWindowTransform);
 
     void setVisibleArea(const QRectF &visibleArea);

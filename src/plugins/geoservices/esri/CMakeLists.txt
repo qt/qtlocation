@@ -32,9 +32,3 @@ qt_internal_extend_target(GeoServiceProviderFactoryEsriPlugin
     SOURCES
         ${plugin_resource_files}
 )
-
-qt_internal_extend_target(GeoServiceProviderFactoryEsriPlugin
-    CONDITION QT_FEATURE_location_labs_plugin
-    DEFINES
-        LOCATIONLABS
-)
