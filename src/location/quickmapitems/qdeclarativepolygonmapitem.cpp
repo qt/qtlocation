@@ -1010,8 +1010,8 @@ void MapPolygonNodeGL::update(const QColor &fillColor,
 
 MapPolygonShader::MapPolygonShader() : QSGMaterialShader(*new QSGMaterialShaderPrivate(this))
 {
-    setShaderFileName(VertexStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polygon.vert.qsb"));
-    setShaderFileName(FragmentStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polygon.frag.qsb"));
+    setShaderFileName(VertexStage, QLatin1String(":/location/quickmapitems/shaders/polygon.vert.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String(":/location/quickmapitems/shaders/polygon.frag.qsb"));
 }
 
 bool MapPolygonShader::updateUniformData(RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)

@@ -74,49 +74,48 @@ qt_internal_add_module(Location
         places/qplaceimage.h places/qplaceimage_p.h places/qplaceimage.cpp
         places/qplacereview.h places/qplacereview_p.h places/qplacereview.cpp
         places/qplaceeditorial.h places/qplaceeditorial_p.h places/qplaceeditorial.cpp
-        declarativemaps/qdeclarativegeomapitembase_p.h
-        declarativemaps/qdeclarativegeomapitembase.cpp
-        declarativemaps/qdeclarativegeomap_p.h declarativemaps/qdeclarativegeomap.cpp
-        declarativemaps/qdeclarativegeomapitemtransitionmanager_p.h
-        declarativemaps/qdeclarativegeomapitemtransitionmanager.cpp
-        declarativemaps/qquickgeomapgesturearea_p.h declarativemaps/qquickgeomapgesturearea.cpp
-        declarativemaps/qdeclarativegeomapitemgroup_p.h
-        declarativemaps/qdeclarativegeomapitemgroup.cpp
-        declarativemaps/qdeclarativegeomapquickitem_p.h
-        declarativemaps/qdeclarativegeomapquickitem.cpp
-        declarativemaps/qdeclarativegeomapcopyrightsnotice_p.h
-        declarativemaps/qdeclarativegeomapcopyrightsnotice.cpp
         declarativemaps/qdeclarativegeoserviceprovider_p.h
         declarativemaps/qdeclarativegeoserviceprovider.cpp
         declarativemaps/qdeclarativegeomaptype_p.h declarativemaps/qdeclarativegeomaptype.cpp
         declarativemaps/qdeclarativegeomapparameter_p.h
         declarativemaps/qdeclarativegeomapparameter.cpp
-        declarativemaps/qdeclarativegeomapitemview_p.h
-        declarativemaps/qdeclarativegeomapitemview.cpp
         declarativemaps/qgeomapobject_p.h declarativemaps/qgeomapobject_p_p.h
         declarativemaps/qgeomapobject.cpp
         declarativemaps/qparameterizableobject_p.h declarativemaps/qparameterizableobject.cpp
-        declarativemaps/qdeclarativegeomapitemutils.cpp
-        declarativemaps/qdeclarativegeomapitemutils_p.h
-        declarativemaps/qdeclarativepolylinemapitem.cpp
-        declarativemaps/qdeclarativepolylinemapitem_p.h
-        declarativemaps/qdeclarativepolylinemapitem_p_p.h
         declarativemaps/error_messages.cpp declarativemaps/error_messages_p.h
         declarativemaps/locationvaluetypehelper.cpp declarativemaps/locationvaluetypehelper_p.h
-        declarativemaps/qdeclarativerectanglemapitem.cpp
-        declarativemaps/qdeclarativerectanglemapitem_p.h
-        declarativemaps/qdeclarativerectanglemapitem_p_p.h
-        declarativemaps/qdeclarativecirclemapitem.cpp declarativemaps/qdeclarativecirclemapitem_p.h
-        declarativemaps/qdeclarativecirclemapitem_p_p.h
-        declarativemaps/qdeclarativeroutemapitem.cpp declarativemaps/qdeclarativeroutemapitem_p.h
         declarativemaps/qdeclarativegeocodemodel.cpp declarativemaps/qdeclarativegeocodemodel_p.h
-        declarativemaps/qgeomapitemgeometry.cpp declarativemaps/qgeomapitemgeometry_p.h
-        declarativemaps/qdeclarativepolygonmapitem.cpp
-        declarativemaps/qdeclarativepolygonmapitem_p.h
-        declarativemaps/qdeclarativepolygonmapitem_p_p.h
         declarativemaps/qdeclarativegeoroute.cpp declarativemaps/qdeclarativegeoroute_p.h
         declarativemaps/qdeclarativegeoroutemodel.cpp declarativemaps/qdeclarativegeoroutemodel_p.h
-        declarativemaps/qgeosimplify.cpp declarativemaps/qgeosimplify_p.h
+        quickmapitems/qgeomapitemgeometry.cpp quickmapitems/qgeomapitemgeometry_p.h
+        quickmapitems/qdeclarativegeomap_p.h quickmapitems/qdeclarativegeomap.cpp
+        quickmapitems/qdeclarativegeomapitembase_p.h
+        quickmapitems/qdeclarativegeomapitembase.cpp
+        quickmapitems/qdeclarativegeomapitemview_p.h
+        quickmapitems/qdeclarativegeomapitemview.cpp
+        quickmapitems/qgeosimplify.cpp quickmapitems/qgeosimplify_p.h
+        quickmapitems/qdeclarativegeomapitemutils.cpp quickmapitems/qdeclarativegeomapitemutils_p.h
+        quickmapitems/qdeclarativegeomapquickitem_p.h
+        quickmapitems/qdeclarativegeomapquickitem.cpp
+        quickmapitems/qdeclarativegeomapitemgroup_p.h
+        quickmapitems/qdeclarativegeomapitemgroup.cpp
+        quickmapitems/qdeclarativepolygonmapitem.cpp
+        quickmapitems/qdeclarativepolygonmapitem_p.h
+        quickmapitems/qdeclarativepolygonmapitem_p_p.h
+        quickmapitems/qdeclarativepolylinemapitem.cpp
+        quickmapitems/qdeclarativepolylinemapitem_p.h
+        quickmapitems/qdeclarativepolylinemapitem_p_p.h
+        quickmapitems/qdeclarativerectanglemapitem.cpp
+        quickmapitems/qdeclarativerectanglemapitem_p.h
+        quickmapitems/qdeclarativerectanglemapitem_p_p.h
+        quickmapitems/qdeclarativecirclemapitem.cpp quickmapitems/qdeclarativecirclemapitem_p.h
+        quickmapitems/qdeclarativecirclemapitem_p_p.h
+        quickmapitems/qdeclarativeroutemapitem.cpp quickmapitems/qdeclarativeroutemapitem_p.h
+        quickmapitems/qquickgeomapgesturearea_p.h quickmapitems/qquickgeomapgesturearea.cpp
+        quickmapitems/qdeclarativegeomapcopyrightsnotice_p.h
+        quickmapitems/qdeclarativegeomapcopyrightsnotice.cpp
+        quickmapitems/qdeclarativegeomapitemtransitionmanager_p.h
+        quickmapitems/qdeclarativegeomapitemtransitionmanager.cpp
         declarativemaps/qdeclarativegeoroutesegment.cpp
         declarativemaps/qdeclarativegeoroutesegment_p.h
         declarativeplaces/qdeclarativecategory.cpp
@@ -156,6 +155,7 @@ qt_internal_add_module(Location
         places
         declarativemaps
         declarativeplaces
+        quickmapitems
         ../3rdparty/earcut
     LIBRARIES
         Qt::CorePrivate
@@ -207,14 +207,14 @@ qt_internal_add_shaders(Location "declarative_location_shaders"
     PRECOMPILE
     OPTIMIZED
     PREFIX
-        "/location/declarativemaps"
+        "/location"
     FILES
-        "declarativemaps/shaders/polyline_linestrip.vert"
-        "declarativemaps/shaders/polyline_linestrip.frag"
-        "declarativemaps/shaders/polyline_extruded.vert"
-        "declarativemaps/shaders/polyline_extruded.frag"
-        "declarativemaps/shaders/polygon.vert"
-        "declarativemaps/shaders/polygon.frag"
+        "quickmapitems/shaders/polyline_linestrip.vert"
+        "quickmapitems/shaders/polyline_linestrip.frag"
+        "quickmapitems/shaders/polyline_extruded.vert"
+        "quickmapitems/shaders/polyline_extruded.frag"
+        "quickmapitems/shaders/polygon.vert"
+        "quickmapitems/shaders/polygon.frag"
 )
 
 qt_internal_add_docs(Location

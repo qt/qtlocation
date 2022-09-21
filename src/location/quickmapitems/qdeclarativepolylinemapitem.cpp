@@ -1501,8 +1501,8 @@ void MapPolylineNodeOpenGLLineStrip::update(const QColor &fillColor,
 
 MapPolylineShaderLineStrip::MapPolylineShaderLineStrip() : QSGMaterialShader(*new QSGMaterialShaderPrivate(this))
 {
-    setShaderFileName(VertexStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polyline_linestrip.vert.qsb"));
-    setShaderFileName(FragmentStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polyline_linestrip.frag.qsb"));
+    setShaderFileName(VertexStage, QLatin1String(":/location/quickmapitems/shaders/polyline_linestrip.vert.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String(":/location/quickmapitems/shaders/polyline_linestrip.frag.qsb"));
 }
 
 bool MapPolylineShaderLineStrip::updateUniformData(QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
@@ -1735,8 +1735,8 @@ MapPolylineShaderExtruded::MapPolylineShaderExtruded() : QSGMaterialShader(*new 
 {
     // Heavily adapted from https://github.com/mattdesl/webgl-lines/blob/master/projected/vert.glsl,
     // that is (c) Matt DesLauriers, and released under the MIT license.
-    setShaderFileName(VertexStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polyline_extruded.vert.qsb"));
-    setShaderFileName(FragmentStage, QLatin1String(":/location/declarativemaps/declarativemaps/shaders/polyline_extruded.frag.qsb"));
+    setShaderFileName(VertexStage, QLatin1String(":/location/quickmapitems/shaders/polyline_extruded.vert.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String(":/location/quickmapitems/shaders/polyline_extruded.frag.qsb"));
 }
 
 bool MapPolylineShaderExtruded::updateUniformData(QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
