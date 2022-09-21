@@ -41,6 +41,7 @@ qt_internal_add_module(Location
         maps/qgeomap_p.h maps/qgeomap_p_p.h maps/qgeomap.cpp
         maps/qgeomapparameter_p.h maps/qgeomapparameter.cpp
         maps/qgeoprojection_p.h maps/qgeoprojection.cpp
+        maps/qgeojson_p.h maps/qgeojson.cpp
         maps/qnavigationmanagerengine_p.h maps/qnavigationmanagerengine.cpp
         maps/qnavigationmanager_p.h maps/qnavigationmanager.cpp
         places/qplacemanager.h places/qplacemanager.cpp
@@ -150,7 +151,6 @@ qt_internal_add_module(Location
         declarativeplaces/qdeclarativesupplier_p.h
         declarativeplaces/qdeclarativesupportedcategoriesmodel.cpp
         declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h
-        labs/qgeojson_p.h labs/qgeojson.cpp
     INCLUDE_DIRECTORIES
         maps
         places
