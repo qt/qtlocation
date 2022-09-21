@@ -68,14 +68,12 @@ public:
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivate
 {
+    Q_DISABLE_COPY_MOVE(QDeclarativeCircleMapItemPrivate)
 public:
     static const int CircleSamples = 128; // ToDo: make this radius && ZL dependent?
 
-    QDeclarativeCircleMapItemPrivate(QDeclarativeCircleMapItem &circle) : m_circle(circle)
-    {
-
-    }
-    QDeclarativeCircleMapItemPrivate(QDeclarativeCircleMapItemPrivate &other) : m_circle(other.m_circle)
+    QDeclarativeCircleMapItemPrivate(QDeclarativeCircleMapItem &circle)
+        : m_circle(circle)
     {
     }
 
@@ -122,12 +120,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivateCPU: public QDec
 {
 public:
 
-    QDeclarativeCircleMapItemPrivateCPU(QDeclarativeCircleMapItem &circle) : QDeclarativeCircleMapItemPrivate(circle)
-    {
-    }
-
-    QDeclarativeCircleMapItemPrivateCPU(QDeclarativeCircleMapItemPrivate &other)
-    : QDeclarativeCircleMapItemPrivate(other)
+    QDeclarativeCircleMapItemPrivateCPU(QDeclarativeCircleMapItem &circle)
+        : QDeclarativeCircleMapItemPrivate(circle)
     {
     }
 

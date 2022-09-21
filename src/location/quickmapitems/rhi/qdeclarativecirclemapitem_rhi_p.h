@@ -63,12 +63,8 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivateOpenGL: public QDeclarativeCircleMapItemPrivate
 {
 public:
-    QDeclarativeCircleMapItemPrivateOpenGL(QDeclarativeCircleMapItem &circle) : QDeclarativeCircleMapItemPrivate(circle)
-    {
-    }
-
-    QDeclarativeCircleMapItemPrivateOpenGL(QDeclarativeCircleMapItemPrivate &other)
-    : QDeclarativeCircleMapItemPrivate(other)
+    QDeclarativeCircleMapItemPrivateOpenGL(QDeclarativeCircleMapItem &circle)
+        : QDeclarativeCircleMapItemPrivate(circle)
     {
     }
 

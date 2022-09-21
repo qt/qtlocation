@@ -63,12 +63,8 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItemPrivateOpenGL: public QDeclarativeRectangleMapItemPrivate
 {
 public:
-    QDeclarativeRectangleMapItemPrivateOpenGL(QDeclarativeRectangleMapItem &rect) : QDeclarativeRectangleMapItemPrivate(rect)
-    {
-    }
-
-    QDeclarativeRectangleMapItemPrivateOpenGL(QDeclarativeRectangleMapItemPrivate &other)
-    : QDeclarativeRectangleMapItemPrivate(other)
+    QDeclarativeRectangleMapItemPrivateOpenGL(QDeclarativeRectangleMapItem &rect)
+        : QDeclarativeRectangleMapItemPrivate(rect)
     {
     }
 

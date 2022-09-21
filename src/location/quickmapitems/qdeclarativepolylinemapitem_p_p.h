@@ -142,12 +142,10 @@ protected:
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivate
 {
+    Q_DISABLE_COPY_MOVE(QDeclarativePolylineMapItemPrivate)
 public:
-    QDeclarativePolylineMapItemPrivate(QDeclarativePolylineMapItem &poly) : m_poly(poly)
-    {
-
-    }
-    QDeclarativePolylineMapItemPrivate(QDeclarativePolylineMapItemPrivate &other) : m_poly(other.m_poly)
+    QDeclarativePolylineMapItemPrivate(QDeclarativePolylineMapItem &poly)
+        : m_poly(poly)
     {
     }
 
@@ -169,12 +167,8 @@ public:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateCPU: public QDeclarativePolylineMapItemPrivate
 {
 public:
-    QDeclarativePolylineMapItemPrivateCPU(QDeclarativePolylineMapItem &poly) : QDeclarativePolylineMapItemPrivate(poly)
-    {
-    }
-
-    QDeclarativePolylineMapItemPrivateCPU(QDeclarativePolylineMapItemPrivate &other)
-    : QDeclarativePolylineMapItemPrivate(other)
+    QDeclarativePolylineMapItemPrivateCPU(QDeclarativePolylineMapItem &poly)
+        : QDeclarativePolylineMapItemPrivate(poly)
     {
     }
 

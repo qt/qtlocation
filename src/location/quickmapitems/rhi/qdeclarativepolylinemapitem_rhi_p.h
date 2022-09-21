@@ -253,12 +253,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateOpenGLLineStri
 {
 public:
 
-    QDeclarativePolylineMapItemPrivateOpenGLLineStrip(QDeclarativePolylineMapItem &poly) : QDeclarativePolylineMapItemPrivate(poly)
-    {
-    }
-
-    QDeclarativePolylineMapItemPrivateOpenGLLineStrip(QDeclarativePolylineMapItemPrivate &other)
-    : QDeclarativePolylineMapItemPrivate(other)
+    QDeclarativePolylineMapItemPrivateOpenGLLineStrip(QDeclarativePolylineMapItem &poly)
+        : QDeclarativePolylineMapItemPrivate(poly)
     {
     }
 
@@ -312,12 +308,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateOpenGLExtruded
 public:
 
     QDeclarativePolylineMapItemPrivateOpenGLExtruded(QDeclarativePolylineMapItem &poly)
-    : QDeclarativePolylineMapItemPrivateOpenGLLineStrip(poly)
-    {
-    }
-
-    QDeclarativePolylineMapItemPrivateOpenGLExtruded(QDeclarativePolylineMapItemPrivate &other)
-    : QDeclarativePolylineMapItemPrivateOpenGLLineStrip(other)
+        : QDeclarativePolylineMapItemPrivateOpenGLLineStrip(poly)
     {
     }
 
