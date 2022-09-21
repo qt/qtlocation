@@ -367,19 +367,19 @@ template <> QPlaceManagerEngine *createEngine<QPlaceManagerEngine>(QGeoServicePr
  * mappingManager() etc methods */
 template <class Manager, class Engine>
 Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
-                                             QString *_errorString, Manager **_manager)
+                                             QString *_errorString)
 {
     // make local references just so this method is easier to read
     QGeoServiceProvider::Error &error = *_error;
     QString &errorString = *_errorString;
-    Manager *&manager = *_manager;
+    Manager *manager = nullptr;
 
-    if (!this->factory) {
-        this->filterParameterMap();
-        this->loadPlugin(this->parameterMap);
+    if (!factory) {
+        filterParameterMap();
+        loadPlugin(this->parameterMap);
     }
 
-    if (!this->factory) {
+    if (!factory) {
         error = this->error;
         errorString = this->errorString;
         return nullptr;
@@ -391,15 +391,14 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
 
         if (engine) {
             engine->setManagerName(
-                        this->metaData.value(QStringLiteral("Provider")).toString());
+                        metaData.value(QStringLiteral("Provider")).toString());
             engine->setManagerVersion(
-                        int(this->metaData.value(QStringLiteral("Version")).toDouble()));
+                        int(metaData.value(QStringLiteral("Version")).toDouble()));
             manager = new Manager(engine);
         } else if (error == QGeoServiceProvider::NoError) {
             error = QGeoServiceProvider::NotSupportedError;
-            errorString = QLatin1String("The service provider does not support the ");
-            errorString.append(QLatin1String(Manager::staticMetaObject.className()));
-            errorString.append(QLatin1String(" type."));
+            errorString = QLatin1String("The service provider does not support the %1 type.")
+                                      .arg(QLatin1String(Manager::staticMetaObject.className()));
         }
 
         if (error != QGeoServiceProvider::NoError) {
@@ -409,8 +408,8 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
             this->errorString = errorString;
         }
 
-        if (manager && this->localeSet)
-            manager->setLocale(this->locale);
+        if (manager && localeSet)
+            manager->setLocale(locale);
     }
 
     if (manager) {
@@ -444,12 +443,13 @@ Manager *QGeoServiceProviderPrivate::manager(QGeoServiceProvider::Error *_error,
 */
 QGeoCodingManager *QGeoServiceProvider::geocodingManager() const
 {
-    QGeoCodingManager *mgr = d_ptr->manager<QGeoCodingManager, QGeoCodingManagerEngine>(
-               &(d_ptr->geocodeError), &(d_ptr->geocodeErrorString),
-               &(d_ptr->geocodingManager));
-    if (!mgr)
-        qDebug() << d_ptr->error << ", " << d_ptr->errorString;
-    return mgr;
+    if (!d_ptr->geocodingManager) {
+        d_ptr->geocodingManager.reset(d_ptr->manager<QGeoCodingManager, QGeoCodingManagerEngine>(
+               &(d_ptr->geocodeError), &(d_ptr->geocodeErrorString)));
+        if (!d_ptr->geocodingManager)
+            qDebug() << d_ptr->error << ", " << d_ptr->errorString;
+    }
+    return d_ptr->geocodingManager.get();
 }
 
 /*!
@@ -476,12 +476,13 @@ QGeoCodingManager *QGeoServiceProvider::geocodingManager() const
 */
 QGeoMappingManager *QGeoServiceProvider::mappingManager() const
 {
-    QGeoMappingManager *mgr = d_ptr->manager<QGeoMappingManager, QGeoMappingManagerEngine>(
-               &(d_ptr->mappingError), &(d_ptr->mappingErrorString),
-               &(d_ptr->mappingManager));
-    if (!mgr)
-        qDebug() << d_ptr->error << ", " << d_ptr->errorString;
-    return mgr;
+    if (!d_ptr->mappingManager) {
+        d_ptr->mappingManager.reset(d_ptr->manager<QGeoMappingManager, QGeoMappingManagerEngine>(
+                &(d_ptr->mappingError), &(d_ptr->mappingErrorString)));
+        if (!d_ptr->mappingManager)
+            qDebug() << d_ptr->error << ", " << d_ptr->errorString;
+    }
+    return d_ptr->mappingManager.get();
 }
 
 /*!
@@ -506,12 +507,13 @@ QGeoMappingManager *QGeoServiceProvider::mappingManager() const
 */
 QGeoRoutingManager *QGeoServiceProvider::routingManager() const
 {
-    QGeoRoutingManager *mgr = d_ptr->manager<QGeoRoutingManager, QGeoRoutingManagerEngine>(
-               &(d_ptr->routingError), &(d_ptr->routingErrorString),
-               &(d_ptr->routingManager));
-    if (!mgr)
-        qDebug() << d_ptr->error << ", " << d_ptr->errorString;
-    return mgr;
+    if (!d_ptr->routingManager) {
+        d_ptr->routingManager.reset(d_ptr->manager<QGeoRoutingManager, QGeoRoutingManagerEngine>(
+                &(d_ptr->routingError), &(d_ptr->routingErrorString)));
+        if (!d_ptr->routingManager)
+            qDebug() << d_ptr->error << ", " << d_ptr->errorString;
+    }
+    return d_ptr->routingManager.get();
 }
 
 /*!
@@ -532,12 +534,13 @@ QGeoRoutingManager *QGeoServiceProvider::routingManager() const
 */
 QPlaceManager *QGeoServiceProvider::placeManager() const
 {
-    QPlaceManager *mgr = d_ptr->manager<QPlaceManager, QPlaceManagerEngine>(
-               &(d_ptr->placeError), &(d_ptr->placeErrorString),
-                &(d_ptr->placeManager));
-    if (!mgr)
-        qDebug() << d_ptr->error << ", " << d_ptr->errorString;
-    return mgr;
+    if (!d_ptr->placeManager) {
+        d_ptr->placeManager.reset(d_ptr->manager<QPlaceManager, QPlaceManagerEngine>(
+                &(d_ptr->placeError), &(d_ptr->placeErrorString)));
+        if (!d_ptr->placeManager)
+            qDebug() << d_ptr->error << ", " << d_ptr->errorString;
+    }
+    return d_ptr->placeManager.get();
 }
 
 /*!
@@ -732,43 +735,20 @@ void QGeoServiceProvider::setLocale(const QLocale &locale)
 *******************************************************************************/
 
 QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
-    : factory(nullptr),
-      experimental(false),
-      geocodingManager(nullptr),
-      routingManager(nullptr),
-      mappingManager(nullptr),
-      placeManager(nullptr),
-      geocodeError(QGeoServiceProvider::NoError),
-      routingError(QGeoServiceProvider::NoError),
-      mappingError(QGeoServiceProvider::NoError),
-      placeError(QGeoServiceProvider::NoError),
-      error(QGeoServiceProvider::NoError),
-      localeSet(false)
 {
     metaData.insert(QStringLiteral("index"), -1);
 }
 
 QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 {
-    delete geocodingManager;
-    delete routingManager;
-    delete mappingManager;
-    delete placeManager;
 }
 
 void QGeoServiceProviderPrivate::unload()
 {
-    delete geocodingManager;
-    geocodingManager = nullptr;
-
-    delete routingManager;
-    routingManager = nullptr;
-
-    delete mappingManager;
-    mappingManager = nullptr;
-
-    delete placeManager;
-    placeManager = nullptr;
+    geocodingManager.reset();
+    routingManager.reset();
+    mappingManager.reset();
+    placeManager.reset();
 
     factory = nullptr;
     error = QGeoServiceProvider::NoError;

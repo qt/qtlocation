@@ -81,28 +81,28 @@ public:
     /* helper templates for generating the feature and manager accessors */
     template <class Manager, class Engine>
     Manager *manager(QGeoServiceProvider::Error *error,
-                     QString *errorString, Manager **manager);
+                     QString *errorString);
     template <class Flags>
     Flags features(const char *enumName) const;
 
-    QGeoServiceProviderFactory *factory;
+    QGeoServiceProviderFactory *factory = nullptr;
     QCborMap metaData;
 
     QVariantMap parameterMap;
     QVariantMap cleanedParameterMap;
 
-    bool experimental;
+    bool experimental = false;
 
-    QGeoCodingManager *geocodingManager;
-    QGeoRoutingManager *routingManager;
-    QGeoMappingManager *mappingManager;
-    QPlaceManager *placeManager;
+    std::unique_ptr<QGeoCodingManager> geocodingManager;
+    std::unique_ptr<QGeoRoutingManager> routingManager;
+    std::unique_ptr<QGeoMappingManager> mappingManager;
+    std::unique_ptr<QPlaceManager> placeManager;
     QQmlEngine *qmlEngine = nullptr;
 
-    QGeoServiceProvider::Error geocodeError;
-    QGeoServiceProvider::Error routingError;
-    QGeoServiceProvider::Error mappingError;
-    QGeoServiceProvider::Error placeError;
+    QGeoServiceProvider::Error geocodeError = QGeoServiceProvider::NoError;
+    QGeoServiceProvider::Error routingError = QGeoServiceProvider::NoError;
+    QGeoServiceProvider::Error mappingError = QGeoServiceProvider::NoError;
+    QGeoServiceProvider::Error placeError = QGeoServiceProvider::NoError;
     QGeoServiceProvider::Error navigationError = QGeoServiceProvider::NoError;
 
     QString geocodeErrorString;
@@ -111,13 +111,13 @@ public:
     QString placeErrorString;
     QString navigationErrorString;
 
-    QGeoServiceProvider::Error error;
+    QGeoServiceProvider::Error error = QGeoServiceProvider::NoError;
     QString errorString;
 
     QString providerName;
 
     QLocale locale;
-    bool localeSet;
+    bool localeSet = false;
 
     static QMultiHash<QString, QCborMap> plugins(bool reload = false);
     static void loadPluginMetadata(QMultiHash<QString, QCborMap> &list);
