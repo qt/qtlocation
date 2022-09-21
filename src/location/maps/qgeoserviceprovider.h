@@ -52,12 +52,10 @@ class QGeoCodingManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;
 class QPlaceManager;
-class QNavigationManager;
 class QGeoCodingManagerEngine;
 class QGeoMappingManagerEngine;
 class QGeoRoutingManagerEngine;
 class QPlaceManagerEngine;
-class QNavigationManagerEngine;
 class QGeoServiceProviderPrivate;
 class QQmlEngine;
 
@@ -158,7 +156,6 @@ public:
     QGeoMappingManager *mappingManager() const;
     QGeoRoutingManager *routingManager() const;
     QPlaceManager *placeManager() const;
-    QNavigationManager *navigationManager() const;
 
     Error error() const;
     QString errorString() const;

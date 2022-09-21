@@ -42,8 +42,6 @@ qt_internal_add_module(Location
         maps/qgeomapparameter_p.h maps/qgeomapparameter.cpp
         maps/qgeoprojection_p.h maps/qgeoprojection.cpp
         maps/qgeojson_p.h maps/qgeojson.cpp
-        maps/qnavigationmanagerengine_p.h maps/qnavigationmanagerengine.cpp
-        maps/qnavigationmanager_p.h maps/qnavigationmanager.cpp
         places/qplacemanager.h places/qplacemanager.cpp
         places/qplacemanagerengine.h places/qplacemanagerengine_p.h places/qplacemanagerengine.cpp
         places/unsupportedreplies_p.h
@@ -75,7 +73,6 @@ qt_internal_add_module(Location
         declarativemaps/qdeclarativegeoserviceprovider.cpp
         declarativemaps/qdeclarativegeomapparameter_p.h
         declarativemaps/qdeclarativegeomapparameter.cpp
-        declarativemaps/qparameterizableobject_p.h declarativemaps/qparameterizableobject.cpp
         declarativemaps/error_messages.cpp declarativemaps/error_messages_p.h
         declarativemaps/qdeclarativegeocodemodel.cpp declarativemaps/qdeclarativegeocodemodel_p.h
         declarativemaps/qdeclarativegeoroute.cpp declarativemaps/qdeclarativegeoroute_p.h
@@ -153,13 +150,6 @@ qt_internal_add_module(Location
         QT_NO_FOREACH
     GENERATE_CPP_EXPORTS
     GENERATE_PRIVATE_CPP_EXPORTS
-)
-
-qt_internal_extend_target(Location CONDITION QT_FEATURE_location_labs_plugin
-    SOURCES
-        labs/qdeclarativenavigator.cpp labs/qdeclarativenavigator_p.h labs/qdeclarativenavigator_p_p.h
-    INCLUDE_DIRECTORIES
-        labs
 )
 
 qt_internal_add_shaders(Location "declarative_location_shaders"

@@ -97,7 +97,6 @@ public:
     QGeoRoutingManager *routingManager;
     QGeoMappingManager *mappingManager;
     QPlaceManager *placeManager;
-    QNavigationManager *navigationManager = nullptr;
     QQmlEngine *qmlEngine = nullptr;
 
     QGeoServiceProvider::Error geocodeError;

@@ -45,13 +45,11 @@
 #include "qgeomappingmanager_p.h"
 #include "qgeoroutingmanager.h"
 #include "qplacemanager.h"
-#include "qnavigationmanager_p.h"
 #include "qgeocodingmanagerengine.h"
 #include "qgeomappingmanagerengine_p.h"
 #include "qgeoroutingmanagerengine.h"
 #include "qplacemanagerengine.h"
 #include "qplacemanagerengine_p.h"
-#include "qnavigationmanagerengine_p.h"
 
 #include <QList>
 #include <QString>
@@ -364,10 +362,6 @@ template <> QPlaceManagerEngine *createEngine<QPlaceManagerEngine>(QGeoServicePr
 {
     return d_ptr->factory->createPlaceManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->placeError), &(d_ptr->placeErrorString));
 }
-template <> QNavigationManagerEngine *createEngine<QNavigationManagerEngine>(QGeoServiceProviderPrivate *d_ptr)
-{
-    return d_ptr->factory->createNavigationManagerEngine(d_ptr->cleanedParameterMap, &(d_ptr->navigationError), &(d_ptr->navigationErrorString));
-}
 
 /* Template for generating the code for each of the geocodingManager(),
  * mappingManager() etc methods */
@@ -541,22 +535,6 @@ QPlaceManager *QGeoServiceProvider::placeManager() const
     QPlaceManager *mgr = d_ptr->manager<QPlaceManager, QPlaceManagerEngine>(
                &(d_ptr->placeError), &(d_ptr->placeErrorString),
                 &(d_ptr->placeManager));
-    if (!mgr)
-        qDebug() << d_ptr->error << ", " << d_ptr->errorString;
-    return mgr;
-}
-
-/*!
-    Returns a new QNavigationManager made available by the service provider.
-
-    After this function has been called, error() and errorString() will
-    report any errors which occurred during the construction of the QNavigationManagerEngine.
-*/
-QNavigationManager *QGeoServiceProvider::navigationManager() const
-{
-    QNavigationManager * mgr = d_ptr->manager<QNavigationManager, QNavigationManagerEngine>(
-               &(d_ptr->navigationError), &(d_ptr->navigationErrorString),
-                &(d_ptr->navigationManager));
     if (!mgr)
         qDebug() << d_ptr->error << ", " << d_ptr->errorString;
     return mgr;
@@ -748,8 +726,6 @@ void QGeoServiceProvider::setLocale(const QLocale &locale)
         d_ptr->mappingManager->setLocale(locale);
     if (d_ptr->placeManager)
         d_ptr->placeManager->setLocale(locale);
-    if (d_ptr->navigationManager)
-        d_ptr->navigationManager->setLocale(locale);
 }
 
 /*******************************************************************************
@@ -778,7 +754,6 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
     delete routingManager;
     delete mappingManager;
     delete placeManager;
-    delete navigationManager;
 }
 
 void QGeoServiceProviderPrivate::unload()
@@ -794,9 +769,6 @@ void QGeoServiceProviderPrivate::unload()
 
     delete placeManager;
     placeManager = nullptr;
-
-    delete navigationManager;
-    navigationManager = nullptr;
 
     factory = nullptr;
     error = QGeoServiceProvider::NoError;
