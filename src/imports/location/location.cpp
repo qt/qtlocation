@@ -55,7 +55,6 @@
 #include <QtLocation/private/qdeclarativegeomapparameter_p.h>
 #include <QtLocation/private/qdeclarativegeomapcopyrightsnotice_p.h>
 #include <QtLocation/private/qdeclarativegeomapitemgroup_p.h>
-#include <QtLocation/private/qgeomapobject_p.h>
 
 //Place includes
 #include <QtLocation/private/qdeclarativecategory_p.h>
@@ -222,7 +221,6 @@ public:
 
             // Register the 5.11 types
             minor = 11;
-            qmlRegisterAnonymousType<QGeoMapObject>(uri, major);
             qmlRegisterType<QDeclarativeGeoMap, 11>(uri, major, minor, "Map");
             qmlRegisterUncreatableType<QDeclarativeGeoMapItemBase, 11>(uri, major, minor, "GeoMapItemBase",
                                         QStringLiteral("GeoMapItemBase is not intended instantiable by developer."));

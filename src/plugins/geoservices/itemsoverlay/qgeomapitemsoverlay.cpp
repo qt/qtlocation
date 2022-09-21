@@ -44,16 +44,6 @@
 #include <QtQuick/qsgrectanglenode.h>
 #include <QtQuick/qquickwindow.h>
 
-#ifdef LOCATIONLABS
-#include <QtLocation/private/qmappolylineobjectqsg_p_p.h>
-#include <QtLocation/private/qmappolygonobjectqsg_p_p.h>
-#include <QtLocation/private/qmapcircleobjectqsg_p_p.h>
-#include <QtLocation/private/qmaprouteobjectqsg_p_p.h>
-#include <QtLocation/private/qmapiconobjectqsg_p_p.h>
-#include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
-#include <QtLocation/private/qgeomapobjectqsgsupport_p.h>
-#endif
-
 QT_BEGIN_NAMESPACE
 
 class QGeoMapItemsOverlayPrivate : public QGeoMapPrivate
@@ -62,16 +52,6 @@ class QGeoMapItemsOverlayPrivate : public QGeoMapPrivate
 public:
     QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine, QGeoMapItemsOverlay *map);
     virtual ~QGeoMapItemsOverlayPrivate();
-
-#ifdef LOCATIONLABS
-    QGeoMapObjectPrivate *createMapObjectImplementation(QGeoMapObject *obj) override;
-    QList<QGeoMapObject *> mapObjects() const override;
-    void removeMapObject(QGeoMapObject *obj);
-    void updateMapObjects(QSGNode *root, QQuickWindow *window);
-    QList<QObject *>mapObjectsAt(const QGeoCoordinate &coordinate) const;
-
-    QGeoMapObjectQSGSupport m_qsgSupport;
-#endif
 
     void updateObjectsGeometry();
 
@@ -103,57 +83,6 @@ QGeoMap::Capabilities QGeoMapItemsOverlay::capabilities() const
                         | SupportsAnchoringCoordinate);
 }
 
-bool QGeoMapItemsOverlay::createMapObjectImplementation(QGeoMapObject *obj)
-{
-#ifndef LOCATIONLABS
-    Q_UNUSED(obj);
-    return false;
-#else
-    Q_D(QGeoMapItemsOverlay);
-    return d->m_qsgSupport.createMapObjectImplementation(obj, d);
-#endif
-}
-
-QSGNode *QGeoMapItemsOverlay::updateSceneGraph(QSGNode *node, QQuickWindow *window)
-{
-#ifndef LOCATIONLABS
-    Q_UNUSED(window);
-    return node;
-#else
-    Q_D(QGeoMapItemsOverlay);
-
-    QSGRectangleNode *mapRoot = static_cast<QSGRectangleNode *>(node);
-    if (!mapRoot)
-        mapRoot = window->createRectangleNode();
-
-    mapRoot->setRect(QRect(0, 0, viewportWidth(), viewportHeight()));
-    mapRoot->setColor(QColor(0,0,0,0));
-
-    d->updateMapObjects(mapRoot, window);
-    return mapRoot;
-#endif
-}
-
-void QGeoMapItemsOverlay::removeMapObject(QGeoMapObject *obj)
-{
-#ifndef LOCATIONLABS
-    Q_UNUSED(obj);
-#else
-    Q_D(QGeoMapItemsOverlay);
-    d->removeMapObject(obj);
-#endif
-}
-
-QList<QObject *> QGeoMapItemsOverlay::mapObjectsAt(const QGeoCoordinate &coordinate) const
-{
-#ifdef LOCATIONLABS
-    Q_D(const QGeoMapItemsOverlay);
-    return d->mapObjectsAt(coordinate);
-#else
-    return QGeoMap::mapObjectsAt(coordinate);
-#endif
-}
-
 void QGeoMapItemsOverlayPrivate::setVisibleArea(const QRectF &visibleArea)
 {
     Q_Q(QGeoMapItemsOverlay);
@@ -172,75 +101,23 @@ QRectF QGeoMapItemsOverlayPrivate::visibleArea() const
     return m_visibleArea;
 }
 
+QSGNode *QGeoMapItemsOverlay::updateSceneGraph(QSGNode *node, QQuickWindow *)
+{
+    return node;
+}
+
 QGeoMapItemsOverlayPrivate::QGeoMapItemsOverlayPrivate(QGeoMappingManagerEngineItemsOverlay *engine, QGeoMapItemsOverlay *map)
     : QGeoMapPrivate(engine, new QGeoProjectionWebMercator)
 {
-#ifndef LOCATIONLABS
     Q_UNUSED(map);
-#else
-    m_qsgSupport.m_map = map;
-#endif
 }
 
 QGeoMapItemsOverlayPrivate::~QGeoMapItemsOverlayPrivate()
 {
 }
 
-#ifdef LOCATIONLABS
-QGeoMapObjectPrivate *QGeoMapItemsOverlayPrivate::createMapObjectImplementation(QGeoMapObject *obj)
-{
-    return m_qsgSupport.createMapObjectImplementationPrivate(obj);
-}
-
-QList<QGeoMapObject *> QGeoMapItemsOverlayPrivate::mapObjects() const
-{
-    return m_qsgSupport.mapObjects();
-}
-
-void QGeoMapItemsOverlayPrivate::removeMapObject(QGeoMapObject *obj)
-{
-    m_qsgSupport.removeMapObject(obj);
-}
-
-void QGeoMapItemsOverlayPrivate::updateMapObjects(QSGNode *root, QQuickWindow *window)
-{
-    m_qsgSupport.updateMapObjects(root, window);
-}
-
-QList<QObject *> QGeoMapItemsOverlayPrivate::mapObjectsAt(const QGeoCoordinate &coordinate) const
-{
-    // ToDo: use a space partitioning strategy
-    QList<QObject *> res;
-    for (const auto o: mapObjects()) {
-        // explicitly handle lines
-        bool contains = false;
-        if (o->type() == QGeoMapObject::PolylineType ) {
-            QMapPolylineObject *mpo = static_cast<QMapPolylineObject *>(o);
-            qreal mpp = QLocationUtils::metersPerPixel(m_cameraData.zoomLevel(), coordinate);
-            QGeoPath path = o->geoShape();
-            path.setWidth(mpp * mpo->border()->width());
-            contains = path.contains(coordinate);
-        } else if (o->type() == QGeoMapObject::RouteType) {
-            qreal mpp = QLocationUtils::metersPerPixel(m_cameraData.zoomLevel(), coordinate);
-            QGeoPath path = o->geoShape();
-            path.setWidth(mpp * 4); // MapRouteObjectQSG has a hardcoded 4 pixels width;
-            contains = path.contains(coordinate);
-        } else {
-            contains = o->geoShape().contains(coordinate);
-        }
-
-        if (contains)
-            res.append(o);
-    }
-    return res;
-}
-#endif
-
 void QGeoMapItemsOverlayPrivate::updateObjectsGeometry()
 {
-#ifdef LOCATIONLABS
-    m_qsgSupport.updateObjectsGeometry();
-#endif
 }
 
 void QGeoMapItemsOverlayPrivate::changeViewportSize(const QSize &/*size*/)

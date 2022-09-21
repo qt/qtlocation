@@ -187,12 +187,6 @@ public:
     Q_INVOKABLE void clearMapParameters();
     QList<QObject *> mapParameters();
 
-    void addMapObject(QGeoMapObject *object); // Not invokable as currently meant to be used through a main MapObjectView
-    void removeMapObject(QGeoMapObject *object);
-    void clearMapObjects();
-    QList<QGeoMapObject *> mapObjects();
-
-
     Q_INVOKABLE QGeoCoordinate toCoordinate(const QPointF &position, bool clipToViewPort = true) const;
     Q_INVOKABLE QPointF fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort = true) const;
 
@@ -236,7 +230,6 @@ Q_SIGNALS:
     void copyrightsImageChanged(const QImage &copyrightsImage);
     void copyrightsChanged(const QString &copyrightsHtml);
     void mapReadyChanged(bool ready);
-    Q_REVISION(11) void mapObjectsChanged();
     void visibleAreaChanged();
     Q_REVISION(14) void visibleRegionChanged();
 
@@ -317,7 +310,6 @@ private:
     bool m_initialized = false;
     bool m_sgNodeHasChanged = false;
     QList<QDeclarativeGeoMapParameter *> m_mapParameters;
-    QList<QGeoMapObject*> m_pendingMapObjects; // Used only in the initialization phase
     QGeoCameraCapabilities m_cameraCapabilities;
     qreal m_userMinimumZoomLevel = Q_QNAN;
     qreal m_userMaximumZoomLevel = Q_QNAN;

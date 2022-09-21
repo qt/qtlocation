@@ -42,8 +42,6 @@
 #include "qgeocameracapabilities_p.h"
 #include "qgeomappingmanagerengine_p.h"
 #include "qdeclarativegeomapitembase_p.h"
-#include "qgeomapobject_p.h"
-#include "qgeomapobject_p_p.h"
 #include <QDebug>
 #include <QRectF>
 
@@ -56,10 +54,7 @@ QGeoMap::QGeoMap(QGeoMapPrivate &dd, QObject *parent)
 
 QGeoMap::~QGeoMap()
 {
-    Q_D(QGeoMap);
     clearParameters();
-    for (QGeoMapObject *p : d->mapObjects())
-        p->setMap(nullptr); // forces replacing pimpls with the default ones.
 }
 
 void QGeoMap::setViewportSize(const QSize& size)
@@ -288,31 +283,6 @@ void QGeoMap::clearMapItems()
     d->m_mapItems.clear();
 }
 
-/*!
-    Fills obj with a backend-specific pimpl.
-*/
-bool QGeoMap::createMapObjectImplementation(QGeoMapObject *obj)
-{
-    Q_D(QGeoMap);
-    QExplicitlySharedDataPointer<QGeoMapObjectPrivate> pimpl =
-            QExplicitlySharedDataPointer<QGeoMapObjectPrivate>(d->createMapObjectImplementation(obj));
-    if (pimpl.constData())
-        return obj->setImplementation(pimpl);
-    return false;
-}
-
-/*!
-    To be called in ~QGeoMapObjectPrivate overrides, if needed
-*/
-void QGeoMap::removeMapObject(QGeoMapObject * /*obj*/)
-{
-}
-
-QList<QObject *> QGeoMap::mapObjectsAt(const QGeoCoordinate &/*coordinate*/) const
-{
-    return QList<QObject *>();
-}
-
 void QGeoMap::setItemToWindowTransform(const QTransform &itemToWindowTransform)
 {
     Q_D(QGeoMap);
@@ -332,12 +302,6 @@ QRectF QGeoMap::visibleArea() const
 {
     Q_D(const QGeoMap);
     return d->visibleArea();
-}
-
-QList<QGeoMapObject *> QGeoMap::mapObjects() const
-{
-    Q_D(const QGeoMap);
-    return d->mapObjects();
 }
 
 QString QGeoMap::copyrightsStyleSheet() const
@@ -422,17 +386,6 @@ void QGeoMapPrivate::addMapItem(QDeclarativeGeoMapItemBase *item)
 void QGeoMapPrivate::removeMapItem(QDeclarativeGeoMapItemBase *item)
 {
     Q_UNUSED(item);
-}
-
-QGeoMapObjectPrivate *QGeoMapPrivate::createMapObjectImplementation(QGeoMapObject *obj)
-{
-    Q_UNUSED(obj);
-    return nullptr;
-}
-
-QList<QGeoMapObject *> QGeoMapPrivate::mapObjects() const
-{
-    return QList<QGeoMapObject *>();
 }
 
 double QGeoMapPrivate::mapWidth() const

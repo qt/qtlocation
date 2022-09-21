@@ -75,8 +75,6 @@ qt_internal_add_module(Location
         declarativemaps/qdeclarativegeoserviceprovider.cpp
         declarativemaps/qdeclarativegeomapparameter_p.h
         declarativemaps/qdeclarativegeomapparameter.cpp
-        declarativemaps/qgeomapobject_p.h declarativemaps/qgeomapobject_p_p.h
-        declarativemaps/qgeomapobject.cpp
         declarativemaps/qparameterizableobject_p.h declarativemaps/qparameterizableobject.cpp
         declarativemaps/error_messages.cpp declarativemaps/error_messages_p.h
         declarativemaps/qdeclarativegeocodemodel.cpp declarativemaps/qdeclarativegeocodemodel_p.h
@@ -160,20 +158,6 @@ qt_internal_add_module(Location
 qt_internal_extend_target(Location CONDITION QT_FEATURE_location_labs_plugin
     SOURCES
         labs/qdeclarativenavigator.cpp labs/qdeclarativenavigator_p.h labs/qdeclarativenavigator_p_p.h
-        labs/qgeotiledmaplabs.cpp labs/qgeotiledmaplabs_p.h
-        labs/qmapcircleobject.cpp labs/qmapcircleobject_p.h labs/qmapcircleobject_p_p.h
-        labs/qmapiconobject.cpp labs/qmapiconobject_p.h labs/qmapiconobject_p_p.h
-        labs/qmapobjectview.cpp labs/qmapobjectview_p.h labs/qmapobjectview_p_p.h
-        labs/qmappolygonobject.cpp labs/qmappolygonobject_p.h labs/qmappolygonobject_p_p.h
-        labs/qmappolylineobject.cpp labs/qmappolylineobject_p.h labs/qmappolylineobject_p_p.h
-        labs/qmaprouteobject.cpp labs/qmaprouteobject_p.h labs/qmaprouteobject_p_p.h
-        labs/qsg/qgeomapobjectqsgsupport.cpp labs/qsg/qgeomapobjectqsgsupport_p.h
-        labs/qsg/qmapcircleobjectqsg.cpp labs/qsg/qmapcircleobjectqsg_p_p.h
-        labs/qsg/qmapiconobjectqsg.cpp labs/qsg/qmapiconobjectqsg_p_p.h
-        labs/qsg/qmappolygonobjectqsg.cpp labs/qsg/qmappolygonobjectqsg_p_p.h
-        labs/qsg/qmappolylineobjectqsg.cpp labs/qsg/qmappolylineobjectqsg_p_p.h
-        labs/qsg/qmaprouteobjectqsg.cpp labs/qsg/qmaprouteobjectqsg_p_p.h
-        labs/qsg/qqsgmapobject.cpp labs/qsg/qqsgmapobject_p.h
     INCLUDE_DIRECTORIES
         labs
 )

@@ -25,9 +25,3 @@ qt_internal_add_plugin(QGeoServiceProviderFactoryOsmPlugin
     DEFINES
         QT_NO_FOREACH
 )
-
-qt_internal_extend_target(QGeoServiceProviderFactoryOsmPlugin
-    CONDITION QT_FEATURE_location_labs_plugin
-    DEFINES
-        LOCATIONLABS
-)

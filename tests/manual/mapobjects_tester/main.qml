@@ -74,52 +74,7 @@ Window {
             id: map
             rotation: win.rotation
             gesture.enabled: true
-            objectName: "map1"
-            anchors {
-                bottom: parent.bottom
-                top: parent.top
-                left: parent.left
-                right: parent.horizontalCenter
-            }
-
-            onCenterChanged:        syncMaps(map, map2, "center")
-            onTiltChanged:          syncMaps(map, map2, "tilt")
-            onBearingChanged:       syncMaps(map, map2, "bearing")
-            onZoomLevelChanged:     syncMaps(map, map2, "zoomLevel")
-            onFieldOfViewChanged:   syncMaps(map, map2, "fieldOfView")
-
-            opacity: 1.0
-            color: 'transparent'
-            plugin: osm
-            center: initialCenter
-            activeMapType: map.supportedMapTypes[2]
-            zoomLevel: initialZL
-            z : parent.z + 1
-            copyrightsVisible: false
-
-            Component.onCompleted: {
-                var o = movComponent.createObject(map1MainMOV)
-                map1MainMOV.addMapObject(o);
-            }
-            MapObjectView {
-                id: map1MainMOV
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: (mouse) => {
-                    mouse.accepted = false
-                    var crd = map.toCoordinate(Qt.point(mouse.x, mouse.y))
-                    var s = crd.toString(0)
-                    console.log("Clicked on ",s)
-                }
-            }
-        }
-        Map {
-            id: map2
-            rotation: win.rotation
-            gesture.enabled: true
-            objectName: "map2"
+            objectName: "map"
             anchors {
                 bottom: parent.bottom
                 top: parent.top
@@ -127,12 +82,6 @@ Window {
                 right: parent.right
             }
 
-            onCenterChanged:        syncMaps(map2, map, "center")
-            onTiltChanged:          syncMaps(map2, map, "tilt")
-            onBearingChanged:       syncMaps(map2, map, "bearing")
-            onZoomLevelChanged:     syncMaps(map2, map, "zoomLevel")
-            onFieldOfViewChanged:   syncMaps(map2, map, "fieldOfView")
-
             color: 'transparent'
             plugin: osm
             activeMapType: map.supportedMapTypes[2]
@@ -141,12 +90,12 @@ Window {
             copyrightsVisible: false
 
             Component.onCompleted: {
-                var o = migComponent.createObject(map2)
+                var o = migComponent.createObject(map)
                 o.glPolygons  = Qt.binding(function() {return switchPolygons2.checked})
                 o.glPolylines  = Qt.binding(function() {return switchPolylines2.currentText})
                 o.glCircles  = Qt.binding(function() {return switchCircles2.checked})
                 o.glRectangles  = Qt.binding(function() {return switchRectangles2.checked})
-                map2.addMapItemGroup(o);
+                map.addMapItemGroup(o);
             }
 
             C2.Switch {
@@ -399,114 +348,6 @@ Window {
                 color: "firebrick"
 //                layer.enabled: (backend == MapCircle.Software)
 //                layer.samples: 4
-            }
-        }
-    }
-
-    Component {
-        id: movComponent
-        MapObjectView {
-            id: polyGroup
-            MapPolylineObject {
-                id: tstPolyLine // to verify the polygon stays where it's supposed to
-                line.color: 'black'
-                objectName: parent.objectName + "black"
-                line.width: 1
-                path: [
-                    { latitude: 76.9965, longitude: -175.012 },
-                    { latitude: 26.9965, longitude: -175.012 }
-                ]
-            }
-
-            MapPolylineObject {
-                id: timeline
-                line.color: "red"
-                objectName: parent.objectName + "timeline"
-                line.width: 4
-                path: [
-                    { latitude: 90, longitude: 180 },
-                    { latitude: -90, longitude: -180 }
-                ]
-            }
-
-            MapPolygonObject {
-                id: poly1
-                color: "red"
-                objectName: parent.objectName + "red"
-                path: [
-                    { latitude: 55, longitude: 170 },
-                    { latitude: 66.9965, longitude: -175.012 },
-                    { latitude: 55, longitude: -160 },
-                    { latitude: 40, longitude: -165 },
-                    { latitude: 45, longitude: 178 }
-                ]
-            }
-
-            MapPolygonObject {
-                id: selfIntersectingPolygon
-                color: 'darkmagenta'
-                objectName: parent.objectName + "darkmagenta"
-                path: [
-                    { latitude: 19, longitude: 49 },
-                    { latitude: 18, longitude: 49 },
-                    { latitude: 18, longitude: 51 },
-                    { latitude: 20, longitude: 51 },
-                    { latitude: 20, longitude: 50 },
-                    { latitude: 18.5, longitude: 50 },
-                    { latitude: 18.5, longitude: 52 },
-                    { latitude: 19, longitude: 52 }
-                ]
-            }
-
-            MapPolygonObject {
-                id: poly2
-                color: "green"
-                border.color: "black"
-                border.width: 8
-                objectName: parent.objectName + "green"
-                path: [
-                    { latitude: -45, longitude: -170 },
-                    { latitude: -55, longitude: -155 },
-                    { latitude: -45, longitude: -130 },
-                    { latitude: -35, longitude: -155 }
-                ]
-            }
-
-            MapPolygonObject {
-                id: poly3
-                color: Qt.rgba(0, 191.0/255.0, 1, 0.3) //"deepskyblue"
-                objectName: parent.objectName + "deepskyblue"
-                path: [
-                    { latitude: 65, longitude: -20 },
-                    { latitude: 75, longitude: 140 },
-                    { latitude: 65, longitude: 80 },
-                    { latitude: 55, longitude: -30 }
-                ]
-            }
-
-            MapCircleObject {
-                center: QtPositioning.coordinate(52, 0)
-                radius: sliRadius.value
-                color: 'deepskyblue'
-                border.width: 6
-                border.color: 'firebrick'
-            }
-
-            MapPolylineObject {
-                id: longPolyline
-                line.color: "firebrick"
-                objectName: parent.objectName + "longPolyline"
-                line.width: 10
-                path: longPolyPath
-            }
-
-            MapCircleObject {
-                id: circle1
-                border.color: 'deepskyblue'
-                border.width: 26
-                center: QtPositioning.coordinate(17, 44);
-                radius: 200*1000
-                color: "firebrick"
             }
         }
     }

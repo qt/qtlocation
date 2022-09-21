@@ -7,7 +7,6 @@ qt_internal_add_qml_module(locationlabsplugin
     CLASS_NAME QtLocationLabsDeclarativeModule
     SOURCES
         locationlabs.cpp
-        locationlabssingleton_p.h locationlabssingleton.cpp
     LIBRARIES
         Qt::LocationPrivate
 )
