@@ -67,9 +67,6 @@ public:
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
 
-    virtual QNavigationManagerEngine *createNavigationManagerEngine(const QVariantMap &parameters,
-            QGeoServiceProvider::Error *error,
-            QString *errorString) const;
     virtual void setQmlEngine(QQmlEngine * engine);
 };
 
