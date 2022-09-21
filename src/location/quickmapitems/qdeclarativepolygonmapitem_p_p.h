@@ -103,12 +103,10 @@ private:
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItemPrivate
 {
+    Q_DISABLE_COPY_MOVE(QDeclarativePolygonMapItemPrivate)
 public:
-    QDeclarativePolygonMapItemPrivate(QDeclarativePolygonMapItem &polygon) : m_poly(polygon)
-    {
-
-    }
-    QDeclarativePolygonMapItemPrivate(QDeclarativePolygonMapItemPrivate &other) : m_poly(other.m_poly)
+    QDeclarativePolygonMapItemPrivate(QDeclarativePolygonMapItem &polygon)
+        : m_poly(polygon)
     {
     }
 
@@ -132,11 +130,6 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItemPrivateCPU: public QDe
 public:
     QDeclarativePolygonMapItemPrivateCPU(QDeclarativePolygonMapItem &polygon)
         : QDeclarativePolygonMapItemPrivate(polygon)
-    {
-    }
-
-    QDeclarativePolygonMapItemPrivateCPU(QDeclarativePolygonMapItemPrivate &other)
-        : QDeclarativePolygonMapItemPrivate(other)
     {
     }
 

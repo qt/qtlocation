@@ -167,12 +167,8 @@ public:
         }
     };
 
-    QDeclarativePolygonMapItemPrivateOpenGL(QDeclarativePolygonMapItem &polygon) : QDeclarativePolygonMapItemPrivate(polygon)
-    {
-    }
-
-    QDeclarativePolygonMapItemPrivateOpenGL(QDeclarativePolygonMapItemPrivate &other)
-        : QDeclarativePolygonMapItemPrivate(other)
+    QDeclarativePolygonMapItemPrivateOpenGL(QDeclarativePolygonMapItem &polygon)
+        : QDeclarativePolygonMapItemPrivate(polygon)
     {
     }
 

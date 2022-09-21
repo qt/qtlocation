@@ -61,12 +61,10 @@ QT_BEGIN_NAMESPACE
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItemPrivate
 {
+    Q_DISABLE_COPY_MOVE(QDeclarativeRectangleMapItemPrivate)
 public:
-    QDeclarativeRectangleMapItemPrivate(QDeclarativeRectangleMapItem &rect) : m_rect(rect)
-    {
-
-    }
-    QDeclarativeRectangleMapItemPrivate(QDeclarativeRectangleMapItemPrivate &other) : m_rect(other.m_rect)
+    QDeclarativeRectangleMapItemPrivate(QDeclarativeRectangleMapItem &rect)
+        : m_rect(rect)
     {
     }
 
@@ -87,12 +85,8 @@ public:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItemPrivateCPU: public QDeclarativeRectangleMapItemPrivate
 {
 public:
-    QDeclarativeRectangleMapItemPrivateCPU(QDeclarativeRectangleMapItem &rect) : QDeclarativeRectangleMapItemPrivate(rect)
-    {
-    }
-
-    QDeclarativeRectangleMapItemPrivateCPU(QDeclarativeRectangleMapItemPrivate &other)
-    : QDeclarativeRectangleMapItemPrivate(other)
+    QDeclarativeRectangleMapItemPrivateCPU(QDeclarativeRectangleMapItem &rect)
+        : QDeclarativeRectangleMapItemPrivate(rect)
     {
     }
 
