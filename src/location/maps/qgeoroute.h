@@ -46,6 +46,8 @@
 #include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
 
+#include "QtQml/qqml.h"
+
 QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
@@ -57,6 +59,7 @@ QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoRoutePrivate, Q_LOCATION_EX
 class Q_LOCATION_EXPORT QGeoRoute
 {
     Q_GADGET
+    QML_NAMED_ELEMENT(route)
 
     Q_PROPERTY(QGeoRectangle bounds READ bounds CONSTANT)
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)

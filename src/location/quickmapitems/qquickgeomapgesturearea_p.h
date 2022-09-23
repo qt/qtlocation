@@ -73,6 +73,9 @@ class QGeoMap;
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPinchEvent : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(MapPinchEvent)
+    QML_UNCREATABLE("(Map)PinchEvent is not intended instantiable by developer.")
+    QML_ADDED_IN_VERSION(5, 0)
 
     Q_PROPERTY(QPointF center READ center)
     Q_PROPERTY(qreal angle READ angle)
@@ -116,6 +119,9 @@ private:
 class Q_LOCATION_PRIVATE_EXPORT QQuickGeoMapGestureArea: public QQuickItem
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(MapGestureArea)
+    QML_UNCREATABLE("(Map)GestureArea is not intended instantiable by developer.")
+    QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(GeoMapGesture)
     Q_FLAGS(AcceptedGestures)
 
@@ -127,7 +133,7 @@ class Q_LOCATION_PRIVATE_EXPORT QQuickGeoMapGestureArea: public QQuickItem
     Q_PROPERTY(AcceptedGestures acceptedGestures READ acceptedGestures WRITE setAcceptedGestures NOTIFY acceptedGesturesChanged)
     Q_PROPERTY(qreal maximumZoomLevelChange READ maximumZoomLevelChange WRITE setMaximumZoomLevelChange NOTIFY maximumZoomLevelChangeChanged)
     Q_PROPERTY(qreal flickDeceleration READ flickDeceleration WRITE setFlickDeceleration NOTIFY flickDecelerationChanged)
-    Q_PROPERTY(bool preventStealing READ preventStealing WRITE setPreventStealing NOTIFY preventStealingChanged REVISION 1)
+    Q_PROPERTY(bool preventStealing READ preventStealing WRITE setPreventStealing NOTIFY preventStealingChanged REVISION(5, 1))
 
 public:
     QQuickGeoMapGestureArea(QDeclarativeGeoMap *map);

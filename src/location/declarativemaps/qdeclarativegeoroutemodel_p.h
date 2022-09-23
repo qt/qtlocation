@@ -75,6 +75,8 @@ class QDeclarativeGeoRouteQuery;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(RouteModel)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(Status)
     Q_ENUMS(RouteError)
 
@@ -193,6 +195,8 @@ private:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoWaypoint : public QGeoCoordinateObject, public QQmlParserStatus
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Waypoint)
+    QML_ADDED_IN_VERSION(5, 11)
 
     Q_PROPERTY(double latitude READ latitude WRITE setLatitude STORED false)
     Q_PROPERTY(double longitude READ longitude WRITE setLongitude STORED false)
@@ -276,6 +280,8 @@ protected:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(RouteQuery)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(TravelMode)
     Q_ENUMS(FeatureType)
     Q_ENUMS(FeatureWeight)
@@ -295,8 +301,8 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
     Q_PROPERTY(QVariantList waypoints READ waypoints WRITE setWaypoints NOTIFY waypointsChanged)
     Q_PROPERTY(QList<QGeoRectangle> excludedAreas READ excludedAreas WRITE setExcludedAreas NOTIFY excludedAreasChanged)
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
-    Q_PROPERTY(QVariantMap extraParameters READ extraParameters REVISION 11)
-    Q_PROPERTY(QDateTime departureTime READ departureTime WRITE setDepartureTime NOTIFY departureTimeChanged REVISION 13)
+    Q_PROPERTY(QVariantMap extraParameters READ extraParameters REVISION(5, 11))
+    Q_PROPERTY(QDateTime departureTime READ departureTime WRITE setDepartureTime NOTIFY departureTimeChanged REVISION(5, 13))
     Q_PROPERTY(QQmlListProperty<QObject> quickChildren READ declarativeChildren DESIGNABLE false)
     Q_CLASSINFO("DefaultProperty", "quickChildren")
     Q_INTERFACES(QQmlParserStatus)

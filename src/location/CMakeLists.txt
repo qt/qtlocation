@@ -69,6 +69,56 @@ qt_internal_add_module(Location
         places/qplaceratings.h places/qplaceratings_p.h places/qplaceratings.cpp
         places/qplacecontactdetail.h places/qplacecontactdetail_p.h places/qplacecontactdetail.cpp
         places/qplacecontent.h places/qplacecontent_p.h places/qplacecontent.cpp
+    INCLUDE_DIRECTORIES
+        maps
+        places
+        declarativemaps
+        declarativeplaces
+        quickmapitems
+        ../3rdparty/earcut
+    LIBRARIES
+        Qt::CorePrivate
+        Qt::Gui
+        Qt::QuickPrivate
+        Qt::PositioningPrivate
+        Qt::PositioningQuickPrivate
+        Qt::Qml
+        Qt::Quick
+    PUBLIC_LIBRARIES
+        Qt::Core
+        Qt::Positioning
+        Qt::PositioningQuick
+    PRIVATE_MODULE_INTERFACE
+        Qt::CorePrivate
+        Qt::QuickPrivate
+        Qt::PositioningPrivate
+        Qt::PositioningQuickPrivate
+    DEFINES
+        QT_NO_FOREACH
+    GENERATE_CPP_EXPORTS
+    GENERATE_PRIVATE_CPP_EXPORTS
+)
+
+qt_internal_add_qml_module(Location
+    URI QtLocation
+    VERSION ${PROJECT_VERSION}
+    PLUGIN_TARGET declarative_location
+    NO_PLUGIN_OPTIONAL
+    CLASS_NAME QtLocationDeclarativeModule
+    SOURCES
+        qlocation_quick.cpp
+        # value types
+        maps/qgeomaptype_p.h
+        maps/qgeomaneuver.h
+        maps/qgeoroute.h
+        maps/qgeoroutesegment.h
+        places/qplaceattribute.h
+        places/qplacecontactdetail.h
+        places/qplaceicon.h
+        places/qplaceratings.h
+        places/qplacesupplier.h
+        places/qplaceuser.h
+        # Element types
         declarativemaps/qdeclarativegeoserviceprovider_p.h
         declarativemaps/qdeclarativegeoserviceprovider.cpp
         declarativemaps/qdeclarativegeomapparameter_p.h
@@ -122,34 +172,8 @@ qt_internal_add_module(Location
         declarativeplaces/qdeclarativesearchsuggestionmodel_p.h
         declarativeplaces/qdeclarativesupportedcategoriesmodel.cpp
         declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h
-    INCLUDE_DIRECTORIES
-        maps
-        places
-        declarativemaps
-        declarativeplaces
-        quickmapitems
-        ../3rdparty/earcut
-    LIBRARIES
-        Qt::CorePrivate
-        Qt::Gui
-        Qt::QuickPrivate
-        Qt::PositioningPrivate
-        Qt::PositioningQuickPrivate
-        Qt::Qml
-    PUBLIC_LIBRARIES
-        Qt::Core
-        Qt::Positioning
-        Qt::Network
-        Qt::PositioningQuick
-    PRIVATE_MODULE_INTERFACE
-        Qt::CorePrivate
-        Qt::QuickPrivate
-        Qt::PositioningPrivate
-        Qt::PositioningQuickPrivate
     DEFINES
         QT_NO_FOREACH
-    GENERATE_CPP_EXPORTS
-    GENERATE_PRIVATE_CPP_EXPORTS
 )
 
 qt_internal_add_shaders(Location "declarative_location_shaders"

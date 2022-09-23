@@ -69,6 +69,9 @@ class QDeclarativeGeoMapCopyrightNoticePrivate;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapCopyrightNotice : public QQuickPaintedItem
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(MapCopyrightNotice)
+    QML_ADDED_IN_VERSION(5, 0)
+
     Q_PROPERTY(QDeclarativeGeoMap *mapSource READ mapSource WRITE setMapSource NOTIFY mapSourceChanged)
     Q_PROPERTY(QString styleSheet READ styleSheet WRITE setStyleSheet NOTIFY styleSheetChanged)
 

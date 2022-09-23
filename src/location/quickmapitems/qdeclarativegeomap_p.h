@@ -78,6 +78,8 @@ class QDeclarativeGeoMapParameter;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Map)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(QGeoServiceProvider::Error)
     Q_PROPERTY(QQuickGeoMapGestureArea *gesture READ gesture CONSTANT)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
@@ -106,7 +108,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(bool copyrightsVisible READ copyrightsVisible WRITE setCopyrightsVisible NOTIFY copyrightsVisibleChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(bool mapReady READ mapReady NOTIFY mapReadyChanged)
-    Q_PROPERTY(QRectF visibleArea READ visibleArea WRITE setVisibleArea NOTIFY visibleAreaChanged  REVISION 12)
+    Q_PROPERTY(QRectF visibleArea READ visibleArea WRITE setVisibleArea NOTIFY visibleAreaChanged  REVISION(5, 12))
     Q_INTERFACES(QQmlParserStatus)
 
 public:

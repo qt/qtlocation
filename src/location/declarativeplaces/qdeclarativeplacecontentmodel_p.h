@@ -150,6 +150,10 @@ private:
 
 class QDeclarativePlaceReviewModel : public QDeclarativePlaceContentModel
 {
+    Q_GADGET
+    QML_NAMED_ELEMENT(ReviewModel)
+    QML_ADDED_IN_VERSION(5, 0)
+
 public:
     explicit QDeclarativePlaceReviewModel(QObject *parent = nullptr)
         : QDeclarativePlaceContentModel(QPlaceContent::ReviewType, parent)
@@ -158,6 +162,9 @@ public:
 
 class QDeclarativePlaceEditorialModel : public QDeclarativePlaceContentModel
 {
+    Q_GADGET
+    QML_NAMED_ELEMENT(EditorialModel)
+    QML_ADDED_IN_VERSION(5, 0)
 public:
     explicit QDeclarativePlaceEditorialModel(QObject *parent = nullptr)
         : QDeclarativePlaceContentModel(QPlaceContent::EditorialType, parent)
@@ -166,6 +173,9 @@ public:
 
 class QDeclarativePlaceImageModel : public QDeclarativePlaceContentModel
 {
+    Q_GADGET
+    QML_NAMED_ELEMENT(ImageModel)
+    QML_ADDED_IN_VERSION(5, 0)
 public:
     explicit QDeclarativePlaceImageModel(QObject *parent = nullptr)
         : QDeclarativePlaceContentModel(QPlaceContent::ImageType, parent)

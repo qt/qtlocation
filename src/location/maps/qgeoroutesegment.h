@@ -44,6 +44,7 @@
 #include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
 #include <QtLocation/qlocationglobal.h>
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -55,6 +56,7 @@ QT_DECLARE_QESDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoRouteSegmentPrivate, Q_LOCA
 class Q_LOCATION_EXPORT QGeoRouteSegment
 {
     Q_GADGET
+    QML_VALUE_TYPE(routeSegment)
 
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)

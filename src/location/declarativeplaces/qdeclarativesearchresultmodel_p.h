@@ -64,6 +64,8 @@ class QDeclarativeGeoServiceProvider;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(PlaceSearchModel)
+    QML_ADDED_IN_VERSION(5, 0)
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
     Q_PROPERTY(QQmlListProperty<QDeclarativeCategory> categories READ categories NOTIFY categoriesChanged)
@@ -75,7 +77,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSearchResultModel : public QDeclarat
     Q_PROPERTY(QDeclarativeGeoServiceProvider *favoritesPlugin READ favoritesPlugin WRITE setFavoritesPlugin NOTIFY favoritesPluginChanged)
     Q_PROPERTY(QVariantMap favoritesMatchParameters READ favoritesMatchParameters WRITE setFavoritesMatchParameters NOTIFY favoritesMatchParametersChanged)
 
-    Q_PROPERTY(bool incremental MEMBER m_incremental NOTIFY incrementalChanged REVISION 12)
+    Q_PROPERTY(bool incremental MEMBER m_incremental NOTIFY incrementalChanged REVISION(5, 12))
 
     Q_ENUMS(SearchResultType RelevanceHint)
 

@@ -54,8 +54,9 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QSharedDataPointer>
+#include <QtCore/QVariantMap>
 #include <QtLocation/private/qlocationglobal_p.h>
-#include <QVariantMap>
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -66,6 +67,7 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoMapTypePrivate, Q_LOCATION_P
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapType
 {
     Q_GADGET
+    QML_VALUE_TYPE(mapType)
     Q_ENUMS(MapStyle)
 
     Q_PROPERTY(MapStyle style READ style CONSTANT)
@@ -75,6 +77,8 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMapType
     Q_PROPERTY(bool night READ night CONSTANT)
     Q_PROPERTY(QGeoCameraCapabilities cameraCapabilities READ cameraCapabilities CONSTANT)
     Q_PROPERTY(QVariantMap metadata READ metadata CONSTANT)
+
+    Q_MOC_INCLUDE(<QtLocation/private/qgeocameracapabilities_p.h>)
 public:
     enum MapStyle { // ### Qt6: change this to be a QFlags instead, or remove.
         NoMap = 0,
@@ -124,6 +128,13 @@ private:
     QSharedDataPointer<QGeoMapTypePrivate> d_ptr;
 
     bool isEqual(const QGeoMapType &other) const noexcept;
+};
+
+namespace QGeoMapTypeForeignNamespace
+{
+    Q_NAMESPACE
+    QML_FOREIGN_NAMESPACE(QGeoMapType)
+    QML_NAMED_ELEMENT(MapType)
 };
 
 QT_END_NAMESPACE

@@ -67,6 +67,8 @@ class QDeclarativeGeoRoute;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRouteMapItem : public QDeclarativePolylineMapItem
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(MapRoute)
+    QML_ADDED_IN_VERSION(5, 0)
 
     Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
 

@@ -61,6 +61,8 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapParameter : public QGeoMapParameter, public QQmlParserStatus
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(DynamicMapParameter)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_INTERFACES(QQmlParserStatus)
     // this type must not declare any additional properties
 

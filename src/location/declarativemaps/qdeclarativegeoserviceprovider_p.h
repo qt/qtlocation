@@ -67,9 +67,20 @@ QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoServiceProviderRequirements;
 
+// From QtPositioning, needs to be registered in the Location module as well.
+// Can probably just be a QVariantMap?
+class QDeclarativePluginParameterForeign
+{
+    Q_GADGET
+    QML_FOREIGN(QDeclarativePluginParameter)
+    QML_NAMED_ELEMENT(PluginParameter)
+};
+
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoServiceProvider : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Plugin)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(RoutingFeature)
     Q_ENUMS(GeocodingFeature)
     Q_ENUMS(MappingFeature)
@@ -220,6 +231,9 @@ private:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoServiceProviderRequirements : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(PluginRequirements)
+    QML_UNCREATABLE("PluginRequirements is not intended instantiable by developer.")
+    QML_ADDED_IN_VERSION(5, 0)
     Q_PROPERTY(QDeclarativeGeoServiceProvider::MappingFeatures mapping
                READ mappingRequirements WRITE setMappingRequirements
                NOTIFY mappingRequirementsChanged)

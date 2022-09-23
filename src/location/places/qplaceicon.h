@@ -45,6 +45,7 @@
 #include <QtCore/QMetaType>
 #include <QtCore/QSize>
 #include <QtCore/QSharedDataPointer>
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -57,6 +58,7 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceIconPrivate, Q_LOCATION_EX
 class Q_LOCATION_EXPORT QPlaceIcon
 {
     Q_GADGET
+    QML_VALUE_TYPE(icon)
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters)
     Q_PROPERTY(QPlaceManager *manager READ manager WRITE setManager)
 

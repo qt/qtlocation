@@ -62,12 +62,14 @@ class QDeclarativePolygonMapItemPrivate;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(MapPolygon)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(Backend)
 
     Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
-    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION 15)
+    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION(5, 15))
 
 public:
     enum Backend {

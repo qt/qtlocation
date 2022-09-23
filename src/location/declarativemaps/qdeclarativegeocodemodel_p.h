@@ -73,6 +73,7 @@ class QDeclarativeGeoLocation;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeocodeModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(GeocodeModel)
     Q_ENUMS(Status)
     Q_ENUMS(GeocodeError)
 

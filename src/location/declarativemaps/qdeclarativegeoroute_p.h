@@ -67,15 +67,15 @@ class QDeclarativeGeoRouteQuery;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRoute : public QObject
 {
     Q_OBJECT
-
+    QML_NAMED_ELEMENT(Route)
     Q_PROPERTY(QGeoRectangle bounds READ bounds CONSTANT)
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
     Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QList<QGeoRouteSegment> segments READ segments CONSTANT)
-    Q_PROPERTY(QDeclarativeGeoRouteQuery *routeQuery READ routeQuery REVISION 11)
-    Q_PROPERTY(QList<QDeclarativeGeoRoute *> legs READ legs CONSTANT REVISION 12)
-    Q_PROPERTY(QVariantMap extendedAttributes READ extendedAttributes CONSTANT REVISION 13)
+    Q_PROPERTY(QDeclarativeGeoRouteQuery *routeQuery READ routeQuery REVISION(5, 11))
+    Q_PROPERTY(QList<QDeclarativeGeoRoute *> legs READ legs CONSTANT REVISION(5, 12))
+    Q_PROPERTY(QVariantMap extendedAttributes READ extendedAttributes CONSTANT REVISION(5, 13))
     Q_PROPERTY(int legIndex READ legIndex CONSTANT)
     Q_PROPERTY(QDeclarativeGeoRoute *overallRoute READ overallRoute CONSTANT)
 

@@ -61,6 +61,9 @@ class QDeclarativeGeoMap;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemGroup : public QQuickItem
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(MapItemGroup)
+    QML_ADDED_IN_VERSION(5, 0)
+
 public:
     explicit QDeclarativeGeoMapItemGroup(QQuickItem *parent = nullptr);
     virtual ~QDeclarativeGeoMapItemGroup();

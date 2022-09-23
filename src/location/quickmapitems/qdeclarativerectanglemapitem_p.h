@@ -67,13 +67,15 @@ class QDeclarativeRectangleMapItemPrivate;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(MapRectangle)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(Backend)
 
     Q_PROPERTY(QGeoCoordinate topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
     Q_PROPERTY(QGeoCoordinate bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
-    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION 15)
+    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION(5, 15))
 
 public:
     enum Backend {

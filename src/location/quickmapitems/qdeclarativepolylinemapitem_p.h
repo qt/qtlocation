@@ -66,6 +66,8 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeMapLineProperties : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_ANONYMOUS
 
     Q_PROPERTY(qreal width READ width WRITE setWidth NOTIFY widthChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
@@ -92,11 +94,13 @@ class QDeclarativePolylineMapItemPrivate;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(MapPolyline)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(Backend)
 
     Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
-    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION 15)
+    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION(5, 15))
 
 public:
     enum Backend {

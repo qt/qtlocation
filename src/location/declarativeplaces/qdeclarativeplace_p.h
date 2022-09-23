@@ -74,7 +74,8 @@ class QDeclarativeContactDetails;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
-
+    QML_NAMED_ELEMENT(Place)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_ENUMS(Status Visibility)
 
     Q_PROPERTY(QPlace place READ place WRITE setPlace)

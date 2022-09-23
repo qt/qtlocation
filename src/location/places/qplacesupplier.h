@@ -43,6 +43,7 @@
 #include <QtLocation/qlocationglobal.h>
 #include <QtCore/QMetaType>
 #include <QtCore/QSharedDataPointer>
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -54,6 +55,7 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceSupplierPrivate, Q_LOCATIO
 class Q_LOCATION_EXPORT QPlaceSupplier
 {
     Q_GADGET
+    QML_VALUE_TYPE(supplier)
     Q_PROPERTY(QString name READ name WRITE setName)
     Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId)
     Q_PROPERTY(QUrl url READ url WRITE setUrl)

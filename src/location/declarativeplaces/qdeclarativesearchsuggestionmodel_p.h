@@ -64,6 +64,8 @@ class QGeoServiceProvider;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSearchSuggestionModel : public QDeclarativeSearchModelBase
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(PlaceSearchSuggestionModel)
+    QML_ADDED_IN_VERSION(5, 0)
 
     Q_PROPERTY(QString searchTerm READ searchTerm WRITE setSearchTerm NOTIFY searchTermChanged)
     Q_PROPERTY(QStringList suggestions READ suggestions NOTIFY suggestionsChanged)

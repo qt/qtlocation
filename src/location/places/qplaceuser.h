@@ -43,6 +43,7 @@
 #include <QtCore/QMetaType>
 #include <QtCore/QSharedDataPointer>
 #include <QtLocation/qlocationglobal.h>
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -52,6 +53,7 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceUserPrivate, Q_LOCATION_EX
 class Q_LOCATION_EXPORT QPlaceUser
 {
     Q_GADGET
+    QML_VALUE_TYPE(user)
     Q_PROPERTY(QString userId READ userId WRITE setUserId)
     Q_PROPERTY(QString name READ name WRITE setName)
 

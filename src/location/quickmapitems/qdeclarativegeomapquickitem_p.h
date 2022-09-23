@@ -76,6 +76,8 @@ public:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapQuickItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(MapQuickItem)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_PROPERTY(QGeoCoordinate coordinate READ coordinate WRITE setCoordinate NOTIFY coordinateChanged)
     Q_PROPERTY(QPointF anchorPoint READ anchorPoint WRITE setAnchorPoint NOTIFY anchorPointChanged)
     Q_PROPERTY(qreal zoomLevel READ zoomLevel WRITE setZoomLevel NOTIFY zoomLevelChanged)

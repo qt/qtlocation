@@ -573,7 +573,7 @@ Item {
         coordinate: QtPositioning.coordinate(71, 71)
         bearing: 43
 
-        MapParameter {
+        DynamicMapParameter {
             id: param1
             type: "user_distance"
             property real distance: 10
@@ -854,7 +854,7 @@ Item {
             compare(model.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
 
             // Extra parameter
-            var param = Qt.createQmlObject ('import QtLocation 5.9; MapParameter { type : "test-traveltime"; property var requestedTime : 42}', root)
+            var param = Qt.createQmlObject ('import QtLocation 5.9; DynamicMapParameter { type : "test-traveltime"; property var requestedTime : 42}', root)
             var initialParams = cloneArray(filledRouteQuery.quickChildren)
             var modifiedParams = cloneArray(initialParams)
             modifiedParams.push(param)
@@ -877,7 +877,7 @@ Item {
                 compare(model.get(0).travelTime,  123456)
             else
                 compare(model.get(0).travelTime, 0)
-            var secondParam = Qt.createQmlObject ('import QtLocation 5.9; MapParameter { type : "foo"; property var bar : 42}', root)
+            var secondParam = Qt.createQmlObject ('import QtLocation 5.9; DynamicMapParameter { type : "foo"; property var bar : 42}', root)
             modifiedParams.push(secondParam)
             param.requestedTime = 44
             filledRouteQuery.quickChildren = modifiedParams

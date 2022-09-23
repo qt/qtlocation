@@ -131,7 +131,7 @@ Item {
         height: 200
     }
 
-    MapParameter {
+    DynamicMapParameter {
         id: testParameter
         type: "cameraCenter_test"
         property var center: QtPositioning.coordinate(-33.0, -47.0)

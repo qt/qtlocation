@@ -43,6 +43,7 @@
 #include <QtCore/QObject>
 #include <QtCore/qshareddata.h>
 #include <QtLocation/qlocationglobal.h>
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -54,6 +55,7 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoManeuverPrivate, Q_LOCATION_
 class Q_LOCATION_EXPORT QGeoManeuver
 {
     Q_GADGET
+    QML_VALUE_TYPE(routeManeuver)
     Q_ENUMS(InstructionDirection)
 
     Q_PROPERTY(bool valid READ isValid CONSTANT)
@@ -126,6 +128,13 @@ private:
 };
 
 Q_DECLARE_SHARED(QGeoManeuver)
+
+namespace QGeoManeuverForeignNamespace
+{
+    Q_NAMESPACE
+    QML_FOREIGN_NAMESPACE(QGeoManeuver)
+    QML_NAMED_ELEMENT(RouteManeuver)
+}
 
 QT_END_NAMESPACE
 

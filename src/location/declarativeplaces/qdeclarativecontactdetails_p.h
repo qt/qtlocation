@@ -60,6 +60,11 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeContactDetails : public QQmlPropertyMap
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(ContactDetails)
+    QML_ADDED_IN_VERSION(5, 0)
+    QML_UNCREATABLE("ContactDetails instances cannot be instantiated. "
+                    "Only Place types have ContactDetails and they cannot "
+                    "be re-assigned (but can be modified).")
 
 public:
     explicit QDeclarativeContactDetails(QObject *parent = nullptr);

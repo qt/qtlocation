@@ -69,6 +69,8 @@ class QPlaceManager;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCategory : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Category)
+    QML_ADDED_IN_VERSION(5, 0)
 
     Q_ENUMS(Status Visibility)
 

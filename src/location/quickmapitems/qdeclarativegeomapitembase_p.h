@@ -80,10 +80,13 @@ struct Q_LOCATION_PRIVATE_EXPORT QGeoMapViewportChangeEvent
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(GeoMapItemBase)
+    QML_ADDED_IN_VERSION(5, 0)
+    QML_UNCREATABLE("GeoMapItemBase is not intended instantiable by developer.")
 
     Q_PROPERTY(QGeoShape geoShape READ geoShape WRITE setGeoShape STORED false )
-    Q_PROPERTY(bool autoFadeIn READ autoFadeIn WRITE setAutoFadeIn REVISION 14)
-    Q_PROPERTY(int lodThreshold READ lodThreshold WRITE setLodThreshold NOTIFY lodThresholdChanged REVISION 15)
+    Q_PROPERTY(bool autoFadeIn READ autoFadeIn WRITE setAutoFadeIn REVISION(5, 14))
+    Q_PROPERTY(int lodThreshold READ lodThreshold WRITE setLodThreshold NOTIFY lodThresholdChanged REVISION(5, 15))
 
 public:
     explicit QDeclarativeGeoMapItemBase(QQuickItem *parent = nullptr);
@@ -107,13 +110,12 @@ public:
     QSGNode *updatePaintNode(QSGNode *, UpdatePaintNodeData *) override;
     virtual QSGNode *updateMapItemPaintNode(QSGNode *, UpdatePaintNodeData *);
 
-    QGeoMap::ItemType itemType() const;
+    inline QGeoMap::ItemType itemType() const { return m_itemType; }
     qreal mapItemOpacity() const;
 
     void setParentGroup(QDeclarativeGeoMapItemGroup &parentGroup);
 
     template <typename T = QObject>
-
     QList<T*> quickChildren() const
     {
         QList<T*> res;

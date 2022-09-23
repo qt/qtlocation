@@ -80,14 +80,15 @@ class QDeclarativeGeoMapItemGroup;
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemView : public QDeclarativeGeoMapItemGroup
 {
     Q_OBJECT
-
+    QML_NAMED_ELEMENT(MapItemView)
+    QML_ADDED_IN_VERSION(5, 0)
     Q_PROPERTY(QVariant model READ model WRITE setModel NOTIFY modelChanged)
     Q_PROPERTY(QQmlComponent *delegate READ delegate WRITE setDelegate NOTIFY delegateChanged)
     Q_PROPERTY(bool autoFitViewport READ autoFitViewport WRITE setAutoFitViewport NOTIFY autoFitViewportChanged)
-    Q_PROPERTY(QQuickTransition *add MEMBER m_enter REVISION 12)
-    Q_PROPERTY(QQuickTransition *remove MEMBER m_exit REVISION 12)
-    Q_PROPERTY(QList<QQuickItem *> mapItems READ mapItems REVISION 12)
-    Q_PROPERTY(bool incubateDelegates READ incubateDelegates WRITE setIncubateDelegates NOTIFY incubateDelegatesChanged REVISION 12)
+    Q_PROPERTY(QQuickTransition *add MEMBER m_enter REVISION(5, 12))
+    Q_PROPERTY(QQuickTransition *remove MEMBER m_exit REVISION(5, 12))
+    Q_PROPERTY(QList<QQuickItem *> mapItems READ mapItems REVISION(5, 12))
+    Q_PROPERTY(bool incubateDelegates READ incubateDelegates WRITE setIncubateDelegates NOTIFY incubateDelegatesChanged REVISION(5, 12))
 
 public:
     explicit QDeclarativeGeoMapItemView(QQuickItem *parent = nullptr);

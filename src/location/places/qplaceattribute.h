@@ -45,6 +45,7 @@
 #include <QtCore/QSharedDataPointer>
 
 #include <QtLocation/qlocationglobal.h>
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -54,6 +55,7 @@ QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QPlaceAttributePrivate, Q_LOCATI
 class Q_LOCATION_EXPORT QPlaceAttribute
 {
     Q_GADGET
+    QML_VALUE_TYPE(placeAttribute)
     Q_PROPERTY(QString label READ label WRITE setLabel)
     Q_PROPERTY(QString text READ text WRITE setText)
 
