@@ -74,6 +74,37 @@ QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoRoutePrivate)
 */
 
 /*!
+    \qmlvaluetype route
+    \instantiates QDeclarativeGeoRoute
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-routing
+    \since QtLocation 5.5
+
+    \brief The route type represents one geographical route.
+
+    A route type contains high level information about a route, such
+    as the length the route, the estimated travel time for the route,
+    and enough information to render a basic image of the route on a map.
+
+    The QGeoRoute object also contains a list of \l routeSegment objects which
+    describe subsections of the route in greater detail.
+
+    The primary means of acquiring route objects is \l RouteModel.
+
+    \section1 Example
+
+    This example shows how to display a route's maneuvers in a ListView:
+
+    \snippet declarative/routing.qml QtQuick import
+    \snippet declarative/maps.qml QtLocation import
+    \codeline
+    \snippet declarative/routing.qml Route Maneuver List1
+    \snippet declarative/routing.qml Route Maneuver List2
+    \snippet declarative/routing.qml Route Maneuver List3
+
+*/
+
+/*!
     Constructs a route object.
 */
 QGeoRoute::QGeoRoute()
@@ -136,58 +167,54 @@ bool QGeoRoute::isEqual(const QGeoRoute &other) const noexcept
 
 
 /*!
-    Sets the identifier of this route to \a id.
+    \property QGeoRoute::routeId
+    \brief the identifier of this route
 
     Service providers which support the updating of routes commonly assign
-    identifiers to routes.  If this route came from such a service provider changing
-    the identifier will probably cause route updates to stop working.
+    identifiers to routes. If this route came from such a service provider,
+    then changing the identifier will probably cause route updates to stop
+    working.
 */
 void QGeoRoute::setRouteId(const QString &id)
 {
     d_ptr->setId(id);
 }
 
-/*!
-    Returns the identifier of this route.
-
-    Service providers which support the updating of routes commonly assign
-    identifiers to routes.  If this route did not come from such a service provider
-    the function will return an empty string.
-*/
 QString QGeoRoute::routeId() const
 {
     return d_ptr->id();
 }
 
 /*!
-    Sets the route request which describes the criteria used in the
-    calculcation of this route to \a request.
+    \property QGeoRoute::request
+    \brief the route request which describes the criteria used in the
+           calculcation of this route
 */
 void QGeoRoute::setRequest(const QGeoRouteRequest &request)
 {
     d_ptr->setRequest(request);
 }
 
-/*!
-    Returns the route request which describes the criteria used in
-    the calculation of this route.
-*/
 QGeoRouteRequest QGeoRoute::request() const
 {
     return d_ptr->request();
 }
 
 /*!
-    Sets the bounding box which encompasses the entire route to \a bounds.
+    \qmlproperty georectangle QtLocation::route::bounds
+
+    Read-only property which holds a bounding box which encompasses the entire route.
+*/
+
+/*!
+    \property QGeoRoute::bounds
+    \brief the bounding box which encompasses the entire route
 */
 void QGeoRoute::setBounds(const QGeoRectangle &bounds)
 {
     d_ptr->setBounds(bounds);
 }
 
-/*!
-    Returns a bounding box which encompasses the entire route.
-*/
 QGeoRectangle QGeoRoute::bounds() const
 {
     return d_ptr->bounds();
@@ -216,34 +243,82 @@ QGeoRouteSegment QGeoRoute::firstRouteSegment() const
 }
 
 /*!
-    Sets the estimated amount of time it will take to traverse this route,
-    in seconds, to \a secs.
+    \qmlmethod int QtLocation::route::segmentsCount()
+
+    Returns the number of segments in the route
+
+    \sa routeSegment
+
+    \since 5.11
+*/
+
+/*!
+    \property QGeoRoute::segmentsCount
+    \brief the number of segments in the route
+*/
+qsizetype QGeoRoute::segmentsCount() const
+{
+    return d_ptr->segmentsCount();
+}
+
+/*!
+    \qmlproperty list<routeSegment> QtLocation::Route::segments
+
+    Read-only property which holds the list of \l routeSegment objects of this route.
+
+    To access individual segments you can use standard list accessors: 'segments.length'
+    indicates the number of objects and 'segments[index starting from zero]' gives
+    the actual objects.
+
+    \sa routeSegment
+*/
+
+/*!
+    \property QGeoRoute::segments
+    \brief the list of QGeoRouteSegment objects of this route
+*/
+QList<QGeoRouteSegment> QGeoRoute::segments() const
+{
+    return d_ptr->segments();
+}
+
+/*!
+    \qmlproperty int QtLocation::route::travelTime
+
+    Read-only property which holds the estimated amount of time it will take to
+    traverse this route, in seconds.
+*/
+
+/*!
+    \property QGeoRoute::traveltime
+    \brief the estimated amount of time it will take to traverse this route,
+           in seconds
 */
 void QGeoRoute::setTravelTime(int secs)
 {
     d_ptr->setTravelTime(secs);
 }
 
-/*!
-    Returns the estimated amount of time it will take to traverse this route,
-    in seconds.
-*/
 int QGeoRoute::travelTime() const
 {
     return d_ptr->travelTime();
 }
 
 /*!
-    Sets the distance covered by this route, in meters, to \a distance.
+    \qmlproperty real QtLocation::route::distance
+
+    Read-only property which holds distance covered by this route, in meters.
+*/
+
+/*!
+    \property QGeoRoute::distance
+    \brief the distance covered by this route, in meters
 */
 void QGeoRoute::setDistance(qreal distance)
 {
     d_ptr->setDistance(distance);
 }
 
-/*!
-    Returns the distance covered by this route, in meters.
-*/
 qreal QGeoRoute::distance() const
 {
     return d_ptr->distance();
@@ -270,9 +345,24 @@ QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
 }
 
 /*!
-    Sets the geometric shape of the route to \a path.
+    \qmlproperty list<coordinate> QtLocation::route::path
 
-    The coordinates in \a path should be listed in the order in which they
+    Read-only property which holds the geographical coordinates of this route.
+    Coordinates are listed in the order in which they would be traversed by someone
+    traveling along this segment of the route.
+
+    To access individual segments you can use standard list accessors: 'path.length'
+    indicates the number of objects and 'path[index starting from zero]' gives
+    the actual object.
+
+    \sa QtPositioning::coordinate
+*/
+
+/*!
+    \property QGeoRoute::path
+    \brief the geometric shape of the route
+
+    The coordinates should be listed in the order in which they
     would be traversed by someone traveling along this segment of the route.
 */
 void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
@@ -280,19 +370,26 @@ void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
     d_ptr->setPath(path);
 }
 
-/*!
-    Returns the geometric shape of the route.
 
-    The coordinates should be listed in the order in which they
-    would be traversed by someone traveling along this segment of the route.
-*/
 QList<QGeoCoordinate> QGeoRoute::path() const
 {
     return d_ptr->path();
 }
 
 /*!
-    Sets the route \a legs for a multi-waypoint route.
+    \qmlproperty list<route> QtLocation::route::legs
+
+    Returns the route legs associated with this route.
+    Route legs are the sub-routes between each two adjacent waypoints.
+    The result may be empty, if this level of detail is not supported by the
+    backend.
+
+    \since QtLocation 5.12
+*/
+
+/*!
+    \property QGeoRoute::routeLegs
+    \brief the route \a legs for a multi-waypoint route
 
     \sa QGeoRouteLeg
     \since 5.12
@@ -302,19 +399,31 @@ void QGeoRoute::setRouteLegs(const QList<QGeoRoute> &legs)
     d_ptr->setRouteLegs(legs);
 }
 
-/*!
-    Returns the legs for the route.
-
-    \sa QGeoRouteLeg
-    \since 5.12
-*/
 QList<QGeoRoute> QGeoRoute::routeLegs() const
 {
     return d_ptr->routeLegs();
 }
 
+
 /*!
-    Sets the extended attributes \a extendedAttributes associated with this route.
+    \qmlproperty Object route::extendedAttributes
+
+    This property holds the extended attributes of the route and is a map.
+    These attributes are plugin specific, and can be empty.
+
+    Consult the \l {Qt Location#Plugin References and Parameters}{plugin documentation}
+    for what attributes are supported and how they should be used.
+
+    Note, due to limitations of the QQmlPropertyMap, it is not possible
+    to declaratively specify the attributes in QML, assignment of attributes keys
+    and values can only be accomplished by JavaScript.
+
+    \since QtLocation 5.13
+*/
+
+/*!
+    \property QGeoRoute::extendedAttributes
+    \brief the extended attributes associated with this route
 
     \since 5.13
 */
@@ -323,44 +432,56 @@ void QGeoRoute::setExtendedAttributes(const QVariantMap &extendedAttributes)
     d_ptr->setExtendedAttributes(extendedAttributes);
 }
 
-/*!
-    Returns the extended attributes associated with this route.
-
-    \since 5.13
-*/
 QVariantMap QGeoRoute::extendedAttributes() const
 {
     return d_ptr->extendedAttributes();
 }
 
 /*!
-    Sets the route leg index to \a idx.
+    \qmlproperty int QtLocation::route::legIndex
+
+    Read-only property which holds the index of the leg within the containing route's
+    list of QtLocation::route::legs. The index is -1 if this route is not a leg within
+    an overall route.
+
+    \sa overallRoute
+*/
+
+/*!
+    \property QGeoRoute::legIndex
+    \brief the leg index of this route
+
+    The index of the leg inside the containing QGeoRoute::routeLegs list
+    can be used to find the next legs.
 */
 void QGeoRoute::setLegIndex(int idx)
 {
     d()->setLegIndex(idx);
 }
 
-/*!
-    Returns the index of this route leg inside the containing QGeoRoute::routeLegs list.
-    Can be used to find the next legs.
-*/
 int QGeoRoute::legIndex() const
 {
     return const_d()->legIndex();
 }
 
 /*!
-    Sets the \a route that contains this route leg.
+    \qmlproperty Route QtLocation::route::overallRoute
+
+    Read-only property which holds the route that contains this leg.
+*/
+
+/*!
+    \property QGeoRoute::overallRoute
+    \brief the route that contains this route leg
+
+    This this route is not a leg within an overall route, then this property
+    holds an empty route.
 */
 void QGeoRoute::setOverallRoute(const QGeoRoute &route)
 {
     d()->setContainingRoute(route);
 }
 
-/*!
-    Returns the route that contains this route leg.
-*/
 QGeoRoute QGeoRoute::overallRoute() const
 {
     return const_d()->containingRoute();

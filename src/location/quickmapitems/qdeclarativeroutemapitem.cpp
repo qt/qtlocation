@@ -40,7 +40,6 @@
 
 #include "qdeclarativeroutemapitem_p.h"
 #include "qdeclarativepolylinemapitem_p.h"
-#include "qdeclarativegeoroute_p.h"
 
 #include <QtQml/QQmlInfo>
 #include <QtGui/QPainter>
@@ -111,30 +110,26 @@ QDeclarativeRouteMapItem::~QDeclarativeRouteMapItem()
     This property holds the route to be drawn which can be used
     to represent one geographical route.
 */
-QDeclarativeGeoRoute *QDeclarativeRouteMapItem::route() const
+QGeoRoute QDeclarativeRouteMapItem::route() const
 {
     return route_;
 }
 
-void QDeclarativeRouteMapItem::setRoute(QDeclarativeGeoRoute *route)
+void QDeclarativeRouteMapItem::setRoute(const QGeoRoute &route)
 {
     if (route_ == route)
         return;
 
     route_ = route;
 
-    connect(route_, &QDeclarativeGeoRoute::pathChanged,
-            this, &QDeclarativeRouteMapItem::updateRoutePath);
-
-    if (route_)
-        setPathFromGeoList(route_->routePath());
+    setPathFromGeoList(route_.path());
 
     emit routeChanged(route_);
 }
 
 void QDeclarativeRouteMapItem::updateRoutePath()
 {
-    setPathFromGeoList(route_->routePath());
+    setPathFromGeoList(route_.path());
 }
 
 /*!

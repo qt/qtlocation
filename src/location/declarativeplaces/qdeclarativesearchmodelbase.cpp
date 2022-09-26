@@ -50,7 +50,6 @@
 #include <QtLocation/QPlaceSearchReply>
 #include <QtPositioning/QGeoCircle>
 #include <QtPositioning/QGeoPolygon>
-#include <QtLocation/private/qdeclarativegeoroute_p.h>
 #include <QtLocation/private/qplacesearchrequest_p.h>
 
 QT_BEGIN_NAMESPACE
@@ -108,17 +107,17 @@ QVariant QDeclarativeSearchModelBase::searchArea() const
 void QDeclarativeSearchModelBase::setSearchArea(const QVariant &searchArea)
 {
     QGeoShape s;
-    QDeclarativeGeoRoute *route = nullptr;
+    QGeoRoute route;
     bool routeSearchArea = false;
-    if (searchArea.userType() == qMetaTypeId<QGeoRectangle>())
+    if (searchArea.userType() == qMetaTypeId<QGeoRectangle>()) {
         s = searchArea.value<QGeoRectangle>();
-    else if (searchArea.userType() == qMetaTypeId<QGeoCircle>())
+    } else if (searchArea.userType() == qMetaTypeId<QGeoCircle>()) {
         s = searchArea.value<QGeoCircle>();
-    else if (searchArea.userType() == qMetaTypeId<QGeoShape>())
+    } else if (searchArea.userType() == qMetaTypeId<QGeoShape>()) {
         s = searchArea.value<QGeoShape>();
-    else if (searchArea.typeId() == qMetaTypeId<QObject *>()) {
-        route = searchArea.value<QDeclarativeGeoRoute *>();
-        if (!route)
+    } else if (searchArea.typeId() == qMetaTypeId<QGeoRoute>()) {
+        route = searchArea.value<QGeoRoute>();
+        if (route == QGeoRoute())
             return;
         routeSearchArea = true;
     }
@@ -131,11 +130,12 @@ void QDeclarativeSearchModelBase::setSearchArea(const QVariant &searchArea)
         rp->routeSearchArea = QGeoRoute();
 
     if (m_request.searchArea() == s
-            && (!route || rp->routeSearchArea == route->route()))
+        && (route == QGeoRoute() || rp->routeSearchArea == route)) {
         return;
+    }
 
     if (routeSearchArea)
-        rp->routeSearchArea = route->route();
+        rp->routeSearchArea = route;
     else
         m_request.setSearchArea(s);
     emit searchAreaChanged();

@@ -124,7 +124,6 @@ qt_internal_add_qml_module(Location
         declarativemaps/qdeclarativegeomapparameter.cpp
         declarativemaps/error_messages.cpp declarativemaps/error_messages_p.h
         declarativemaps/qdeclarativegeocodemodel.cpp declarativemaps/qdeclarativegeocodemodel_p.h
-        declarativemaps/qdeclarativegeoroute.cpp declarativemaps/qdeclarativegeoroute_p.h
         declarativemaps/qdeclarativegeoroutemodel.cpp declarativemaps/qdeclarativegeoroutemodel_p.h
         quickmapitems/qgeomapitemgeometry.cpp quickmapitems/qgeomapitemgeometry_p.h
         quickmapitems/qdeclarativegeomap_p.h quickmapitems/qdeclarativegeomap.cpp

@@ -75,7 +75,7 @@ Item {
     property variant unitBox: QtPositioning.rectangle(tl, br)
     property routeSegment emptySegment
 
-    Route {id: emptyRoute}
+    property route emptyRoute
     TestCase {
         name: "RouteManeuver RouteSegment and MapRoute"
 
@@ -502,7 +502,7 @@ Item {
             compare(errorSpy.count, 1)
             errorSpy.clear()
             var data = errorModel.get(-1)
-            compare(data, null)
+            compare(data, emptyRoute)
         }
     }
 
@@ -759,11 +759,10 @@ Item {
             compare (routeQuery.waypoints.length, 5)
             compare (routeModel.get(0).path.length, 5)
             compare (routeModel.get(0).path[0].latitude, routeQuery.waypoints[0].latitude)
-            // test Route.equals
+            // test comparison
             var route1 = routeModel.get(0)
             var route2 = routeModelEquals.get(0)
-            verify(route1 !== route2)
-            verify(route1.equals(route2))
+            verify(route1 === route2)
             // check reset() functionality
             routeModel.reset()
             tryCompare (testRoutesSpy, "count", 2) // 5 sec

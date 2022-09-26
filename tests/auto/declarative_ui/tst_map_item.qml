@@ -66,13 +66,13 @@ Item {
     property variant someCoordinate1: QtPositioning.coordinate(15, 15)
     property variant someCoordinate2: QtPositioning.coordinate(16, 16)
 
-    Route { id: someRoute;
+    property route someRoute: ({
         path: [
             { latitude: 22, longitude: 15 },
             { latitude: 21, longitude: 16 },
             { latitude: 23, longitude: 17 }
         ]
-    }
+    })
     Item { id: someItem }
 
     ItemGroup {
@@ -202,13 +202,13 @@ Item {
             id: preMapRoute
             line.color: 'yellow'
             // don't try this at home - route is not user instantiable
-            route: Route {
+            route: ({
                 path: [
                     { latitude: 25, longitude: 14 },
                     { latitude: 20, longitude: 18 },
                     { latitude: 15, longitude: 15 }
                 ]
-            }
+            })
             SignalSpy {id: preMapRouteRouteChanged; target: parent; signalName: "routeChanged"}
             SignalSpy {id: preMapRouteLineWidthChanged; target: parent.line; signalName: "widthChanged"}
             SignalSpy {id: preMapRouteLineColorChanged; target: parent.line; signalName: "colorChanged"}

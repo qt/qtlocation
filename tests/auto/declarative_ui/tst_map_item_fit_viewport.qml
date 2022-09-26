@@ -202,13 +202,13 @@ Item {
             id: preMapRoute
             line.color: 'yellow'
             // don't try this at home - route is not user instantiable
-            route: Route {
+            route: ({
                 path: [
                     { latitude: 25, longitude: 14 },
                     { latitude: 20, longitude: 18 },
                     { latitude: 15, longitude: 15 }
                 ]
-            }
+            })
             SignalSpy {id: preMapRouteRouteChanged; target: parent; signalName: "routeChanged"}
             SignalSpy {id: preMapRouteLineWidthChanged; target: parent.line; signalName: "widthChanged"}
             SignalSpy {id: preMapRouteLineColorChanged; target: parent.line; signalName: "colorChanged"}

@@ -118,7 +118,6 @@ public:
     };
 
     explicit QDeclarativeGeoRouteModel(QObject *parent = nullptr);
-    ~QDeclarativeGeoRouteModel();
 
     // From QQmlParserStatus
     void classBegin() override {}
@@ -146,7 +145,7 @@ public:
     RouteError error() const;
 
     int count() const;
-    Q_INVOKABLE QDeclarativeGeoRoute *get(int index);
+    Q_INVOKABLE QGeoRoute get(int index);
     Q_INVOKABLE void reset();
     Q_INVOKABLE void cancel();
 
@@ -181,7 +180,7 @@ private:
     QDeclarativeGeoServiceProvider *plugin_ = nullptr;
     QDeclarativeGeoRouteQuery *routeQuery_ = nullptr;
 
-    QList<QDeclarativeGeoRoute *> routes_;
+    QList<QGeoRoute> routes_;
     bool autoUpdate_ = false;
     Status status_ = QDeclarativeGeoRouteModel::Null;
     QString errorString_;

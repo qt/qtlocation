@@ -38,7 +38,6 @@
 ****************************************************************************/
 
 #include "qdeclarativegeoroutemodel_p.h"
-#include "qdeclarativegeoroute_p.h"
 #include "error_messages_p.h"
 
 #include <QtCore/QCoreApplication>
@@ -175,14 +174,6 @@ QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
 {
 }
 
-QDeclarativeGeoRouteModel::~QDeclarativeGeoRouteModel()
-{
-    if (!routes_.empty()) {
-        qDeleteAll(routes_);
-        routes_.clear();
-    }
-}
-
 /*!
     \qmlproperty int QtLocation::RouteModel::count
 
@@ -208,7 +199,6 @@ void QDeclarativeGeoRouteModel::reset()
 {
     if (!routes_.isEmpty()) {
         beginResetModel();
-        qDeleteAll(routes_);
         routes_.clear();
         emit countChanged();
         emit routesChanged();
@@ -234,21 +224,21 @@ void QDeclarativeGeoRouteModel::cancel()
 }
 
 /*!
-    \qmlmethod Route QtLocation::RouteModel::get(int index)
+    \qmlmethod route QtLocation::RouteModel::get(int index)
 
-    Returns the Route at the specified \a index. Use the \l count
+    Returns the route at the specified \a index. Use the \l count
     property to check the amount of routes available. The routes
     are indexed from zero, so the accessible range is 0...(count - 1).
 
-    If you access out of bounds, a zero (null object) is returned and
+    If you access out of bounds, an empty route is returned and
     a warning is issued.
 */
 
-QDeclarativeGeoRoute *QDeclarativeGeoRouteModel::get(int index)
+QGeoRoute QDeclarativeGeoRouteModel::get(int index)
 {
     if (index < 0 || index >= routes_.count()) {
         qmlWarning(this) << QStringLiteral("Index '%1' out of range").arg(index);
-        return nullptr;
+        return QGeoRoute();
     }
     return routes_.at(index);
 }
@@ -288,10 +278,8 @@ QVariant QDeclarativeGeoRouteModel::data(const QModelIndex &index, int role) con
         return QVariant();
     }
 
-    if (role == RouteRole) {
-        QObject *route = routes_.at(index.row());
-        return QVariant::fromValue(route);
-    }
+    if (role == RouteRole)
+        return QVariant::fromValue(routes_.at(index.row()));
     return QVariant();
 }
 
@@ -663,16 +651,8 @@ void QDeclarativeGeoRouteModel::routingFinished(QGeoRouteReply *reply)
         return;
 
     beginResetModel();
-    int oldCount = routes_.count();
-    qDeleteAll(routes_);
-    // Convert routes to declarative
-    routes_.clear();
-    const auto routes = reply->routes();
-    for (const auto &route : routes) {
-        QDeclarativeGeoRoute *declroute = new QDeclarativeGeoRoute(route, this);
-        QQmlEngine::setContextForObject(declroute, QQmlEngine::contextForObject(this));
-        routes_.append(declroute);
-    }
+    const int oldCount = routes_.count();
+    routes_ = reply->routes();
     endResetModel();
 
     setError(NoError, QString());

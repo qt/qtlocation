@@ -62,13 +62,17 @@ class Q_LOCATION_EXPORT QGeoRoute
     QML_VALUE_TYPE(route)
     QML_STRUCTURED_VALUE
 
+    Q_PROPERTY(QString routeId READ routeId CONSTANT)
     Q_PROPERTY(QGeoRectangle bounds READ bounds CONSTANT)
     Q_PROPERTY(int travelTime READ travelTime CONSTANT)
     Q_PROPERTY(qreal distance READ distance CONSTANT)
+    Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath)
     Q_PROPERTY(QList<QGeoRoute> routeLegs READ routeLegs CONSTANT)
     Q_PROPERTY(QVariantMap extendedAttributes READ extendedAttributes CONSTANT)
     Q_PROPERTY(int legIndex READ legIndex CONSTANT)
     Q_PROPERTY(QGeoRoute overallRoute READ overallRoute CONSTANT)
+    Q_PROPERTY(qsizetype segmentsCount READ segmentsCount CONSTANT)
+    Q_PROPERTY(QList<QGeoRouteSegment> segments READ segments CONSTANT)
 
 public:
     QGeoRoute();
@@ -97,6 +101,8 @@ public:
 
     void setFirstRouteSegment(const QGeoRouteSegment &routeSegment);
     QGeoRouteSegment firstRouteSegment() const;
+    qsizetype segmentsCount() const;
+    QList<QGeoRouteSegment> segments() const;
 
     void setTravelTime(int secs);
     int travelTime() const;

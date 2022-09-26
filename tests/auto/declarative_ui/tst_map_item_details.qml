@@ -183,12 +183,12 @@ Item {
     MapRoute {
         id: extMapRouteDateline
         line.color: 'yellow'
-        route: Route {
+        route: ({
             path: [
                 { latitude: 25, longitude: 175 },
                 { latitude: 20, longitude: -175 }
             ]
-        }
+        })
     }
 
     MapRectangle {
@@ -270,12 +270,12 @@ Item {
     MapRoute {
         id: extMapRouteEdge
         line.color: 'yellow'
-        route: Route {
+        route: ({
             path: [
                 { latitude: 25, longitude: -15 },
                 { latitude: 20, longitude: -5 }
             ]
-        }
+        })
     }
 
     Map {

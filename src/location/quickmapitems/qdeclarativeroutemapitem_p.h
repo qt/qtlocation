@@ -55,14 +55,11 @@
 #include <QtLocation/private/qdeclarativegeomapitembase_p.h>
 #include <QtLocation/private/qdeclarativegeomap_p.h>
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
+#include <QtLocation/QGeoRoute>
 #include <QPen>
 #include <QBrush>
 
-Q_MOC_INCLUDE(<QtLocation/private/qdeclarativegeoroute_p.h>)
-
 QT_BEGIN_NAMESPACE
-
-class QDeclarativeGeoRoute;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRouteMapItem : public QDeclarativePolylineMapItem
 {
@@ -70,17 +67,17 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRouteMapItem : public QDeclarativePo
     QML_NAMED_ELEMENT(MapRoute)
     QML_ADDED_IN_VERSION(5, 0)
 
-    Q_PROPERTY(QDeclarativeGeoRoute *route READ route WRITE setRoute NOTIFY routeChanged)
+    Q_PROPERTY(QGeoRoute route READ route WRITE setRoute NOTIFY routeChanged)
 
 public:
     explicit QDeclarativeRouteMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativeRouteMapItem();
 
-    QDeclarativeGeoRoute *route() const;
-    void setRoute(QDeclarativeGeoRoute *route);
+    QGeoRoute route() const;
+    void setRoute(const QGeoRoute &route);
 
 Q_SIGNALS:
-    void routeChanged(const QDeclarativeGeoRoute *route);
+    void routeChanged(const QGeoRoute &route);
 
 private slots:
     void updateRoutePath();
@@ -89,7 +86,7 @@ protected:
     void setPath(const QList<QGeoCoordinate> &value) override;
 
 private:
-    QDeclarativeGeoRoute *route_ = nullptr;
+    QGeoRoute route_;
 };
 
 QT_END_NAMESPACE
