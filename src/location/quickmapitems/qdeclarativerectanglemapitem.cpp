@@ -161,6 +161,7 @@ QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
 }
 
 /*!
+    \internal
     \qmlproperty MapRectangle.Backend QtLocation::MapRectangle::backend
 
     This property holds which backend is in use to render the map item.

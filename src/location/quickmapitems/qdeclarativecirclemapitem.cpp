@@ -498,6 +498,7 @@ void QDeclarativeCircleMapItem::setGeoShape(const QGeoShape &shape)
 }
 
 /*!
+    \internal
     \qmlproperty MapCircle.Backend QtLocation::MapCircle::backend
 
     This property holds which backend is in use to render the map item.
