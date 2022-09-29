@@ -3,7 +3,7 @@ dependencies:
     ref: 84ae970c6da25e3a0cdee3a477ec8c6f9510778f
     required: true
   ../qtpositioning:
-    ref: 05eff25b1e4a413d7b167b8327973ea266867c78
+    ref: 68e687953d0483472e57a43eaa74aca4cdaa42ce
     required: true
   ../qtdeclarative:
     ref: 1df17b067c1412823066955d67895a9a5e63af99
