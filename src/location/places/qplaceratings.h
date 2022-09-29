@@ -54,6 +54,8 @@ class Q_LOCATION_EXPORT QPlaceRatings
 {
     Q_GADGET
     QML_VALUE_TYPE(ratings)
+    QML_STRUCTURED_VALUE
+
     Q_PROPERTY(qreal average READ average WRITE setAverage)
     Q_PROPERTY(qreal maximum READ maximum WRITE setMaximum)
     Q_PROPERTY(int count READ count WRITE setCount)

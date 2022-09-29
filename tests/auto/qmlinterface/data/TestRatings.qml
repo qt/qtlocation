@@ -30,10 +30,9 @@ import QtLocation
 import QtQuick
 
 Item {
-    property ratings ratings
-    ratings {
-        average: 3.5
-        maximum: 5.0
+    property ratings ratings: ({
+        average: 3.5,
+        maximum: 5.0,
         count: 10
-    }
+    })
 }

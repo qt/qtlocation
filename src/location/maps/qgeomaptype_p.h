@@ -68,6 +68,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMapType
 {
     Q_GADGET
     QML_VALUE_TYPE(mapType)
+    QML_STRUCTURED_VALUE
     Q_ENUMS(MapStyle)
 
     Q_PROPERTY(MapStyle style READ style CONSTANT)

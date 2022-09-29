@@ -106,7 +106,6 @@ qt_internal_add_qml_module(Location
     NO_PLUGIN_OPTIONAL
     CLASS_NAME QtLocationDeclarativeModule
     SOURCES
-        qlocation_quick.cpp
         # value types
         maps/qgeomaptype_p.h
         maps/qgeomaneuver.h

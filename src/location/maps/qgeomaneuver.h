@@ -56,6 +56,7 @@ class Q_LOCATION_EXPORT QGeoManeuver
 {
     Q_GADGET
     QML_VALUE_TYPE(routeManeuver)
+    QML_STRUCTURED_VALUE
     Q_ENUMS(InstructionDirection)
 
     Q_PROPERTY(bool valid READ isValid CONSTANT)

@@ -59,6 +59,8 @@ class Q_LOCATION_EXPORT QPlaceIcon
 {
     Q_GADGET
     QML_VALUE_TYPE(icon)
+    QML_STRUCTURED_VALUE
+
     Q_PROPERTY(QVariantMap parameters READ parameters WRITE setParameters)
     Q_PROPERTY(QPlaceManager *manager READ manager WRITE setManager)
 

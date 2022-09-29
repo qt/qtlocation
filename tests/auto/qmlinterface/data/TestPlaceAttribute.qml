@@ -30,9 +30,8 @@ import QtLocation
 import QtQuick
 
 Item {
-    property placeAttribute attribute
-    attribute {
-        label: "Test Attribute"
+    property placeAttribute attribute: ({
+        label: "Test Attribute",
         text: "Test attribute text"
-    }
+    })
 }

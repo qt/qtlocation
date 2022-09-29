@@ -56,6 +56,7 @@ class Q_LOCATION_EXPORT QPlaceAttribute
 {
     Q_GADGET
     QML_VALUE_TYPE(placeAttribute)
+    QML_STRUCTURED_VALUE
     Q_PROPERTY(QString label READ label WRITE setLabel)
     Q_PROPERTY(QString text READ text WRITE setText)
 

@@ -56,6 +56,7 @@ class Q_LOCATION_EXPORT QPlaceContactDetail
 {
     Q_GADGET
     QML_VALUE_TYPE(contactDetail)
+    QML_STRUCTURED_VALUE
     Q_PROPERTY(QString label READ label WRITE setLabel)
     Q_PROPERTY(QString value READ value WRITE setValue)
 

@@ -30,9 +30,8 @@ import QtLocation
 import QtQuick
 
 Item {
-    property contactDetail contactDetail
-    contactDetail {
-        label: "Test Contact Detail"
+    property contactDetail contactDetail: ({
+        label: "Test Contact Detail",
         value: "Test contact detail value"
-    }
+    })
 }

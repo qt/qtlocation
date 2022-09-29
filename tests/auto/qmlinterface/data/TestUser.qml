@@ -30,9 +30,8 @@ import QtQuick
 import QtLocation
 
 Item {
-    property user user
-    user {
-        name: "Test User"
+    property user user: ({
+        name: "Test User",
         userId: "test-user-id"
-    }
+    })
 }

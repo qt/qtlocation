@@ -56,6 +56,8 @@ class Q_LOCATION_EXPORT QPlaceSupplier
 {
     Q_GADGET
     QML_VALUE_TYPE(supplier)
+    QML_STRUCTURED_VALUE
+
     Q_PROPERTY(QString name READ name WRITE setName)
     Q_PROPERTY(QString supplierId READ supplierId WRITE setSupplierId)
     Q_PROPERTY(QUrl url READ url WRITE setUrl)

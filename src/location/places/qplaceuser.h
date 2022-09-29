@@ -54,6 +54,8 @@ class Q_LOCATION_EXPORT QPlaceUser
 {
     Q_GADGET
     QML_VALUE_TYPE(user)
+    QML_STRUCTURED_VALUE
+
     Q_PROPERTY(QString userId READ userId WRITE setUserId)
     Q_PROPERTY(QString name READ name WRITE setName)
 
