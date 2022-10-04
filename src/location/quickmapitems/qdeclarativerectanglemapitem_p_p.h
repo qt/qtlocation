@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2020 Paolo Angelelli <paolo.angelelli@gmail.com>
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -129,89 +129,9 @@ public:
         m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
         markSourceDirtyAndUpdate();
     }
-    void updatePolish() override
-    {
-        if (!m_rect.topLeft().isValid() || !m_rect.bottomRight().isValid()) {
-            m_geometry.clear();
-            m_borderGeometry.clear();
-            m_rect.setWidth(0);
-            m_rect.setHeight(0);
-            return;
-        }
-
-        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_rect.map()->geoProjection());
-
-        QScopedValueRollback<bool> rollback(m_rect.m_updatingGeometry);
-        m_rect.m_updatingGeometry = true;
-
-        const QList<QGeoCoordinate> perimeter = path(m_rect.m_rectangle);
-        const QList<QDoubleVector2D> pathMercator_ = pathMercator(perimeter);
-        m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-        m_geometry.updateSourcePoints(*m_rect.map(), pathMercator_);
-        m_geometry.updateScreenPoints(*m_rect.map(), m_rect.m_border.width());
-
-        QList<QGeoMapItemGeometry *> geoms;
-        geoms << &m_geometry;
-        m_borderGeometry.clear();
-
-        if (m_rect.m_border.color().alpha() != 0 && m_rect.m_border.width() > 0) {
-            QList<QDoubleVector2D> closedPath = pathMercator_;
-            closedPath << closedPath.first();
-
-            m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-            const QGeoCoordinate &geometryOrigin = m_geometry.origin();
-
-            m_borderGeometry.srcPoints_.clear();
-            m_borderGeometry.srcPointTypes_.clear();
-
-            QDoubleVector2D borderLeftBoundWrapped;
-            QList<QList<QDoubleVector2D > > clippedPaths = m_borderGeometry.clipPath(*m_rect.map(), closedPath, borderLeftBoundWrapped);
-            if (clippedPaths.size()) {
-                borderLeftBoundWrapped = p.geoToWrappedMapProjection(geometryOrigin);
-                m_borderGeometry.pathToScreen(*m_rect.map(), clippedPaths, borderLeftBoundWrapped);
-                m_borderGeometry.updateScreenPoints(*m_rect.map(), m_rect.m_border.width());
-
-                geoms << &m_borderGeometry;
-            } else {
-                m_borderGeometry.clear();
-            }
-        }
-
-        QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
-        m_rect.setWidth(combined.width()  + 2 * m_rect.m_border.width()); // ToDo: fix this! 2 is incorrect
-        m_rect.setHeight(combined.height()  + 2 * m_rect.m_border.width());
-
-        m_rect.setPositionOnMap(m_geometry.origin(), m_geometry.firstPointOffset());
-    }
-
-    QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override
-    {
-        Q_UNUSED(data);
-        if (!m_node || !oldNode) {
-            m_node = new MapPolygonNode();
-            if (oldNode) {
-                delete oldNode;
-                oldNode = nullptr;
-            }
-        } else {
-            m_node = static_cast<MapPolygonNode *>(oldNode);
-        }
-
-        //TODO: update only material
-        if (m_geometry.isScreenDirty() || m_borderGeometry.isScreenDirty() || m_rect.m_dirtyMaterial) {
-            m_node->update(m_rect.m_color, m_rect.m_border.color(), &m_geometry, &m_borderGeometry);
-            m_geometry.setPreserveGeometry(false);
-            m_borderGeometry.setPreserveGeometry(false);
-            m_geometry.markClean();
-            m_borderGeometry.markClean();
-            m_rect.m_dirtyMaterial = false;
-        }
-        return m_node;
-    }
-    bool contains(const QPointF &point) const override
-    {
-        return (m_geometry.contains(point) || m_borderGeometry.contains(point));
-    }
+    void updatePolish() override;
+    QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override;
+    bool contains(const QPointF &point) const override;
 
     static QList<QGeoCoordinate> path(const QGeoRectangle &rect)
     {

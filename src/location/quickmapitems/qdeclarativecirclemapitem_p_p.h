@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2020 Paolo Angelelli <paolo.angelelli@gmail.com>
-** Copyright (C) 2020 The Qt Company Ltd.
+** Copyright (C) 2022 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtLocation module of the Qt Toolkit.
@@ -163,115 +163,9 @@ public:
     {
         markSourceDirtyAndUpdate();
     }
-    void updatePolish() override
-    {
-        if (!m_circle.m_circle.isValid()) {
-            m_geometry.clear();
-            m_borderGeometry.clear();
-            m_circle.setWidth(0);
-            m_circle.setHeight(0);
-            return;
-        }
-
-        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_circle.map()->geoProjection());
-        QScopedValueRollback<bool> rollback(m_circle.m_updatingGeometry);
-        m_circle.m_updatingGeometry = true;
-
-        QList<QDoubleVector2D> circlePath = m_circlePath;
-
-        int pathCount = circlePath.size();
-        bool preserve = preserveCircleGeometry(circlePath, m_circle.m_circle.center(), m_circle.m_circle.radius(), p);
-        // using leftBound_ instead of the analytically calculated circle_.boundingGeoRectangle().topLeft());
-        // to fix QTBUG-62154
-        m_geometry.setPreserveGeometry(true, m_leftBound); // to set the geoLeftBound_
-        m_geometry.setPreserveGeometry(preserve, m_leftBound);
-
-        bool invertedCircle = false;
-        if (crossEarthPole(m_circle.m_circle.center(), m_circle.m_circle.radius()) && circlePath.size() == pathCount) {
-            m_geometry.updateScreenPointsInvert(circlePath, *m_circle.map()); // invert fill area for really huge circles
-            invertedCircle = true;
-        } else {
-            m_geometry.updateSourcePoints(*m_circle.map(), circlePath);
-            m_geometry.updateScreenPoints(*m_circle.map(), m_circle.m_border.width());
-        }
-
-        m_borderGeometry.clear();
-        QList<QGeoMapItemGeometry *> geoms;
-        geoms << &m_geometry;
-
-        if (m_circle.m_border.color() != Qt::transparent && m_circle.m_border.width() > 0) {
-            QList<QDoubleVector2D> closedPath = circlePath;
-            closedPath << closedPath.first();
-
-            if (invertedCircle) {
-                closedPath = m_circlePath;
-                closedPath << closedPath.first();
-                std::reverse(closedPath.begin(), closedPath.end());
-            }
-
-            m_borderGeometry.setPreserveGeometry(true, m_leftBound);
-            m_borderGeometry.setPreserveGeometry(preserve, m_leftBound);
-
-            // Use srcOrigin_ from fill geometry after clipping to ensure that translateToCommonOrigin won't fail.
-            const QGeoCoordinate &geometryOrigin = m_geometry.origin();
-
-            m_borderGeometry.srcPoints_.clear();
-            m_borderGeometry.srcPointTypes_.clear();
-
-            QDoubleVector2D borderLeftBoundWrapped;
-            QList<QList<QDoubleVector2D > > clippedPaths = m_borderGeometry.clipPath(*m_circle.map(), closedPath, borderLeftBoundWrapped);
-            if (clippedPaths.size()) {
-                borderLeftBoundWrapped = p.geoToWrappedMapProjection(geometryOrigin);
-                m_borderGeometry.pathToScreen(*m_circle.map(), clippedPaths, borderLeftBoundWrapped);
-                m_borderGeometry.updateScreenPoints(*m_circle.map(), m_circle.m_border.width());
-                geoms << &m_borderGeometry;
-            } else {
-                m_borderGeometry.clear();
-            }
-        }
-
-        QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
-
-        if (invertedCircle || !preserve) {
-            m_circle.setWidth(combined.width());
-            m_circle.setHeight(combined.height());
-        } else {
-            m_circle.setWidth(combined.width() + 2 * m_circle.m_border.width()); // ToDo: Fix this!
-            m_circle.setHeight(combined.height() + 2 * m_circle.m_border.width());
-        }
-
-        // No offsetting here, even in normal case, because first point offset is already translated
-        m_circle.setPositionOnMap(m_geometry.origin(), m_geometry.firstPointOffset());
-    }
-
-    QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override
-    {
-        Q_UNUSED(data);
-        if (!m_node || !oldNode) { // Apparently the QSG might delete the nodes if they become invisible
-            m_node = new MapPolygonNode();
-            if (oldNode) {
-                delete oldNode;
-                oldNode = nullptr;
-            }
-        } else {
-            m_node = static_cast<MapPolygonNode *>(oldNode);
-        }
-
-        //TODO: update only material
-        if (m_geometry.isScreenDirty() || m_borderGeometry.isScreenDirty() || m_circle.m_dirtyMaterial) {
-            m_node->update(m_circle.m_color, m_circle.m_border.color(), &m_geometry, &m_borderGeometry);
-            m_geometry.setPreserveGeometry(false);
-            m_borderGeometry.setPreserveGeometry(false);
-            m_geometry.markClean();
-            m_borderGeometry.markClean();
-            m_circle.m_dirtyMaterial = false;
-        }
-        return m_node;
-    }
-    bool contains(const QPointF &point) const override
-    {
-        return (m_geometry.contains(point) || m_borderGeometry.contains(point));
-    }
+    void updatePolish() override;
+    QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override;
+    bool contains(const QPointF &point) const override;
 
     QGeoMapCircleGeometry m_geometry;
     QGeoMapPolylineGeometry m_borderGeometry;
