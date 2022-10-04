@@ -38,8 +38,8 @@
 **
 ****************************************************************************/
 
-#ifndef QDECLARATIVERECTANGLEMAPITEM_P_P_H
-#define QDECLARATIVERECTANGLEMAPITEM_P_P_H
+#ifndef QDECLARATIVECIRCLEMAPITEM_RHI_P_H
+#define QDECLARATIVECIRCLEMAPITEM_RHI_P_H
 
 //
 //  W A R N I N G
@@ -53,61 +53,51 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qdeclarativecirclemapitem_p_p.h>
 #include <QtLocation/private/qdeclarativepolygonmapitem_p_p.h>
-#include <QtLocation/private/qdeclarativerectanglemapitem_p.h>
-#include <QtPositioning/private/qwebmercator_p.h>
+
+#include "qdeclarativepolygonmapitem_rhi_p.h"
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItemPrivate
+class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivateOpenGL: public QDeclarativeCircleMapItemPrivate
 {
 public:
-    QDeclarativeRectangleMapItemPrivate(QDeclarativeRectangleMapItem &rect) : m_rect(rect)
-    {
-
-    }
-    QDeclarativeRectangleMapItemPrivate(QDeclarativeRectangleMapItemPrivate &other) : m_rect(other.m_rect)
+    QDeclarativeCircleMapItemPrivateOpenGL(QDeclarativeCircleMapItem &circle) : QDeclarativeCircleMapItemPrivate(circle)
     {
     }
 
-    virtual ~QDeclarativeRectangleMapItemPrivate();
-    virtual void onLinePropertiesChanged() = 0;
-    virtual void markSourceDirtyAndUpdate() = 0;
-    virtual void onMapSet() = 0;
-    virtual void onGeoGeometryChanged() = 0;
-    virtual void onItemGeometryChanged() = 0;
-    virtual void updatePolish() = 0;
-    virtual void afterViewportChanged() = 0;
-    virtual QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) = 0;
-    virtual bool contains(const QPointF &point) const = 0;
-
-    QDeclarativeRectangleMapItem &m_rect;
-};
-
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItemPrivateCPU: public QDeclarativeRectangleMapItemPrivate
-{
-public:
-    QDeclarativeRectangleMapItemPrivateCPU(QDeclarativeRectangleMapItem &rect) : QDeclarativeRectangleMapItemPrivate(rect)
+    QDeclarativeCircleMapItemPrivateOpenGL(QDeclarativeCircleMapItemPrivate &other)
+    : QDeclarativeCircleMapItemPrivate(other)
     {
     }
 
-    QDeclarativeRectangleMapItemPrivateCPU(QDeclarativeRectangleMapItemPrivate &other)
-    : QDeclarativeRectangleMapItemPrivate(other)
-    {
-    }
-
-    ~QDeclarativeRectangleMapItemPrivateCPU() override;
+    ~QDeclarativeCircleMapItemPrivateOpenGL() override;
 
     void onLinePropertiesChanged() override
     {
-        // mark dirty just in case we're a width change
-        markSourceDirtyAndUpdate();
+        m_circle.m_dirtyMaterial = true;
+        afterViewportChanged();
+    }
+    void markScreenDirtyAndUpdate()
+    {
+        // preserveGeometry is cleared in updateMapItemPaintNode
+        m_geometry.markScreenDirty();
+        m_borderGeometry.markScreenDirty();
+        m_circle.polishAndUpdate();
     }
     void markSourceDirtyAndUpdate() override
     {
+        updateCirclePath();
+        preserveGeometry();
         m_geometry.markSourceDirty();
         m_borderGeometry.markSourceDirty();
-        m_rect.polishAndUpdate();
+        m_circle.polishAndUpdate();
+    }
+    void preserveGeometry()
+    {
+        m_geometry.setPreserveGeometry(true, m_leftBound);
+        m_borderGeometry.setPreserveGeometry(true, m_leftBound);
     }
     void onMapSet() override
     {
@@ -115,30 +105,29 @@ public:
     }
     void onGeoGeometryChanged() override
     {
+
         markSourceDirtyAndUpdate();
     }
     void onItemGeometryChanged() override
     {
-        m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-        m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-        markSourceDirtyAndUpdate();
+        onGeoGeometryChanged();
     }
     void afterViewportChanged() override
     {
-        m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-        m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-        markSourceDirtyAndUpdate();
+        preserveGeometry();
+        markScreenDirtyAndUpdate();
     }
     void updatePolish() override;
     QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override;
     bool contains(const QPointF &point) const override;
 
-    QGeoMapPolygonGeometry m_geometry;
-    QGeoMapPolylineGeometry m_borderGeometry;
-    MapPolygonNode *m_node = nullptr;
+    QGeoMapPolygonGeometryOpenGL m_geometry;
+    QGeoMapPolylineGeometryOpenGL m_borderGeometry;
+    QDeclarativePolygonMapItemPrivateOpenGL::RootNode *m_rootNode = nullptr;
+    MapPolygonNodeGL *m_node = nullptr;
+    MapPolylineNodeOpenGLExtruded *m_polylinenode = nullptr;
 };
 
 QT_END_NAMESPACE
 
-#endif // QDECLARATIVERECTANGLEMAPITEM_P_P_H
-
+#endif // QDECLARATIVECIRCLEMAPITEM_RHI_P_H
