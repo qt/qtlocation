@@ -621,7 +621,7 @@ void QGeoMapPolygonGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const 
 {
     if (!sourceDirty_)
         return;
-    const QList<QGeoCoordinate> perimeter = QDeclarativeRectangleMapItemPrivateCPU::path(rect);
+    const QList<QGeoCoordinate> perimeter = QGeoMapItemGeometry::path(rect);
     updateSourcePoints(map, perimeter);
 }
 

@@ -891,8 +891,8 @@ void QGeoMapPolylineGeometryOpenGL::updateSourcePoints(const QGeoProjectionWebMe
 
 void QGeoMapPolylineGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const QGeoRectangle &rect)
 {
-    const QGeoPath path(QDeclarativeRectangleMapItemPrivateCPU::perimeter(rect));
-    updateSourcePoints(map, path);
+    const QList<QGeoCoordinate> perimeter = QGeoMapItemGeometry::perimeter(rect);
+    updateSourcePoints(map, QGeoPath(perimeter));
 }
 
 void QGeoMapPolylineGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const QGeoCircle &circle)

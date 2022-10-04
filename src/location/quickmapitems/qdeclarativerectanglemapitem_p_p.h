@@ -133,35 +133,6 @@ public:
     QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override;
     bool contains(const QPointF &point) const override;
 
-    static QList<QGeoCoordinate> path(const QGeoRectangle &rect)
-    {
-        QList<QGeoCoordinate> res;
-        res << rect.topLeft();
-        res << QGeoCoordinate(rect.topLeft().latitude(), rect.bottomRight().longitude());
-        res << rect.bottomRight();
-        res << QGeoCoordinate(rect.bottomRight().latitude(), rect.topLeft().longitude());
-        return res;
-    }
-
-    static QList<QGeoCoordinate> perimeter(const QGeoRectangle &rect)
-    {
-        QList<QGeoCoordinate> res;
-        res << rect.topLeft();
-        res << QGeoCoordinate(rect.topLeft().latitude(), rect.bottomRight().longitude());
-        res << rect.bottomRight();
-        res << QGeoCoordinate(rect.bottomRight().latitude(), rect.topLeft().longitude());
-        res << res.first();
-        return res;
-    }
-
-    static QList<QDoubleVector2D> pathMercator(const QList<QGeoCoordinate> &p)
-    {
-        QList<QDoubleVector2D> res;
-        for (const auto &c: p)
-            res << QWebMercator::coordToMercator(c);
-        return res;
-    }
-
     QGeoMapPolygonGeometry m_geometry;
     QGeoMapPolylineGeometry m_borderGeometry;
     MapPolygonNode *m_node = nullptr;
