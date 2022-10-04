@@ -52,10 +52,10 @@
 // We mean it.
 //
 
-#include <QList>
+#include <QtCore/QList>
 #include <QtCore/QScopedValueRollback>
 #include <QtGui/QMatrix4x4>
-#include <QColor>
+#include <QtGui/QColor>
 
 #include <QSGGeometryNode>
 #include <QSGFlatColorMaterial>
@@ -342,93 +342,9 @@ public:
     {
         onGeoGeometryChanged();
     }
-    void updatePolish() override
-    {
-        if (m_poly.m_geopoly.perimeter().length() == 0) { // Possibly cleared
-            m_geometry.clear();
-            m_borderGeometry.clear();
-            m_poly.setWidth(0);
-            m_poly.setHeight(0);
-            return;
-        }
-        const QGeoMap *map = m_poly.map();
-        const qreal borderWidth = m_poly.m_border.width();
-        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map->geoProjection());
-        QScopedValueRollback<bool> rollback(m_poly.m_updatingGeometry);
-        m_poly.m_updatingGeometry = true;
-
-        m_geometry.updateSourcePoints(*map, m_geopathProjected);
-        m_geometry.updateScreenPoints(*map, borderWidth);
-
-        QList<QGeoMapItemGeometry *> geoms;
-        geoms << &m_geometry;
-        m_borderGeometry.clear();
-
-        if (m_poly.m_border.color().alpha() != 0 && borderWidth > 0) {
-            QList<QDoubleVector2D> closedPath = m_geopathProjected;
-            closedPath << closedPath.first();
-
-            m_borderGeometry.setPreserveGeometry(true, m_poly.m_geopoly.boundingGeoRectangle().topLeft());
-
-            const QGeoCoordinate &geometryOrigin = m_geometry.origin();
-
-            m_borderGeometry.srcPoints_.clear();
-            m_borderGeometry.srcPointTypes_.clear();
-
-            QDoubleVector2D borderLeftBoundWrapped;
-            QList<QList<QDoubleVector2D > > clippedPaths = m_borderGeometry.clipPath(*map, closedPath, borderLeftBoundWrapped);
-            if (clippedPaths.size()) {
-                borderLeftBoundWrapped = p.geoToWrappedMapProjection(geometryOrigin);
-                m_borderGeometry.pathToScreen(*map, clippedPaths, borderLeftBoundWrapped);
-                m_borderGeometry.updateScreenPoints(*map, borderWidth);
-
-                geoms <<  &m_borderGeometry;
-            } else {
-                m_borderGeometry.clear();
-            }
-        }
-
-        QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
-        m_poly.setWidth(combined.width() + 2 * borderWidth);
-        m_poly.setHeight(combined.height() + 2 * borderWidth);
-
-        m_poly.setPositionOnMap(m_geometry.origin(), -1 * m_geometry.sourceBoundingBox().topLeft()
-                                                + QPointF(borderWidth, borderWidth));
-    }
-    QSGNode *updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override
-    {
-        Q_UNUSED(data);
-        if (!m_node || !oldNode) {
-            m_node = new MapPolygonNode();
-            if (oldNode) {
-                delete oldNode;
-                oldNode = nullptr;
-            }
-        } else {
-            m_node = static_cast<MapPolygonNode *>(oldNode);
-        }
-
-        //TODO: update only material
-        if (m_geometry.isScreenDirty()
-                || m_borderGeometry.isScreenDirty()
-                || m_poly.m_dirtyMaterial
-                || !oldNode) {
-            m_node->update(m_poly.m_color,
-                         m_poly.m_border.color(),
-                         &m_geometry,
-                         &m_borderGeometry);
-            m_geometry.setPreserveGeometry(false);
-            m_borderGeometry.setPreserveGeometry(false);
-            m_geometry.markClean();
-            m_borderGeometry.markClean();
-            m_poly.m_dirtyMaterial = false;
-        }
-        return m_node;
-    }
-    bool contains(const QPointF &point) const override
-    {
-        return (m_geometry.contains(point) || m_borderGeometry.contains(point));
-    }
+    void updatePolish() override;
+    QSGNode *updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override;
+    bool contains(const QPointF &point) const override;
 
     QList<QDoubleVector2D> m_geopathProjected;
     QGeoMapPolygonGeometry m_geometry;

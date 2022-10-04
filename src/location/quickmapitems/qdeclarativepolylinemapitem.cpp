@@ -742,6 +742,87 @@ bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
     return false;
 }
 
+/*
+ * QDeclarativePolygonMapItem Private Implementations
+ */
+
+QDeclarativePolylineMapItemPrivate::~QDeclarativePolylineMapItemPrivate() {}
+
+QDeclarativePolylineMapItemPrivateCPU::~QDeclarativePolylineMapItemPrivateCPU() {}
+
+
+void QDeclarativePolylineMapItemPrivateCPU::regenerateCache()
+{
+    if (!m_poly.map() || m_poly.map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
+        return;
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
+    m_geopathProjected.clear();
+    m_geopathProjected.reserve(m_poly.m_geopath.size());
+    for (const QGeoCoordinate &c : m_poly.m_geopath.path())
+        m_geopathProjected << p.geoToMapProjection(c);
+}
+
+void QDeclarativePolylineMapItemPrivateCPU::updateCache()
+{
+    if (!m_poly.map() || m_poly.map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
+        return;
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
+    m_geopathProjected << p.geoToMapProjection(m_poly.m_geopath.path().last());
+}
+
+void QDeclarativePolylineMapItemPrivateCPU::updatePolish()
+{
+    if (m_poly.m_geopath.path().length() < 2) { // Possibly cleared
+        m_geometry.clear();
+        m_poly.setWidth(0);
+        m_poly.setHeight(0);
+        return;
+    }
+    QScopedValueRollback<bool> rollback(m_poly.m_updatingGeometry);
+    m_poly.m_updatingGeometry = true;
+
+    const QGeoMap *map = m_poly.map();
+    const qreal borderWidth = m_poly.m_line.width();
+
+    m_geometry.updateSourcePoints(*map, m_geopathProjected, m_poly.m_geopath.boundingGeoRectangle().topLeft());
+    m_geometry.updateScreenPoints(*map, borderWidth);
+
+    m_poly.setWidth(m_geometry.sourceBoundingBox().width() + borderWidth);
+    m_poly.setHeight(m_geometry.sourceBoundingBox().height() + borderWidth);
+
+    // it has to be shifted so that the center of the line is on the correct geocoord
+    m_poly.setPositionOnMap(m_geometry.origin(), -1 * m_geometry.sourceBoundingBox().topLeft()
+                            + QPointF(borderWidth, borderWidth) * 0.5 );
+}
+
+QSGNode *QDeclarativePolylineMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *oldNode,
+                                                        QQuickItem::UpdatePaintNodeData * /*data*/)
+{
+    if (!m_node || !oldNode) {
+        m_node = new MapPolylineNode();
+        if (oldNode) {
+            delete oldNode;
+            oldNode = nullptr;
+        }
+    } else {
+        m_node = static_cast<MapPolylineNode *>(oldNode);
+    }
+
+    //TODO: update only material
+    if (m_geometry.isScreenDirty() || m_poly.m_dirtyMaterial || !oldNode) {
+        m_node->update(m_poly.m_line.color(), &m_geometry);
+        m_geometry.setPreserveGeometry(false);
+        m_geometry.markClean();
+        m_poly.m_dirtyMaterial = false;
+    }
+    return m_node;
+}
+bool QDeclarativePolylineMapItemPrivateCPU::contains(const QPointF &point) const
+{
+    return m_geometry.contains(point);
+}
+
+
 void QGeoMapPolylineGeometryOpenGL::updateSourcePoints(const QGeoMap &map, const QGeoPolygon &poly)
 {
     if (!sourceDirty_)
@@ -895,13 +976,6 @@ void QGeoMapPolylineGeometryOpenGL::updateQuickGeometry(const QGeoProjectionWebM
     sourceBounds_.setHeight(brect.height() + strokeWidth);
 }
 
-/*
- * QDeclarativePolygonMapItem Private Implementations
- */
-
-QDeclarativePolylineMapItemPrivate::~QDeclarativePolylineMapItemPrivate() {}
-
-QDeclarativePolylineMapItemPrivateCPU::~QDeclarativePolylineMapItemPrivateCPU() {}
 
 QDeclarativePolylineMapItemPrivateOpenGLLineStrip::~QDeclarativePolylineMapItemPrivateOpenGLLineStrip() {}
 
