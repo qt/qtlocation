@@ -124,26 +124,4 @@ QRectF QGeoMapItemGeometry::translateToCommonOrigin(const QList<QGeoMapItemGeome
     return brects.boundingRect();
 }
 
-/*!
-    \internal
-*/
-double QGeoMapItemGeometry::geoDistanceToScreenWidth(const QGeoMap &map,
-                                                     const QGeoCoordinate &fromCoord,
-                                                     const QGeoCoordinate &toCoord)
-{
-    // Do not wrap around half the globe
-    Q_ASSERT(!qFuzzyCompare(fromCoord.longitude(), toCoord.longitude()));
-
-    QGeoCoordinate mapMid = map.geoProjection().itemPositionToCoordinate(QDoubleVector2D(map.viewportWidth()/2.0, 0));
-    double halfGeoDist = toCoord.longitude() - fromCoord.longitude();
-    if (toCoord.longitude() < fromCoord.longitude())
-        halfGeoDist += 360;
-    halfGeoDist /= 2.0;
-    QGeoCoordinate geoDelta =  QGeoCoordinate(0,
-                    QLocationUtils::wrapLong(mapMid.longitude() + halfGeoDist));
-    QDoubleVector2D halfScreenDist = map.geoProjection().coordinateToItemPosition(geoDelta, false)
-                                - QDoubleVector2D(map.viewportWidth()/2.0, 0);
-    return halfScreenDist.x() * 2.0;
-}
-
 QT_END_NAMESPACE

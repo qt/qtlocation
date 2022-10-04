@@ -52,12 +52,16 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qdeclarativegeomapitemutils_p.h>
+#include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtPositioning/private/qwebmercator_p.h>
 
 #include <QPainterPath>
 #include <QPointF>
 #include <QRectF>
 #include <QList>
 #include <QGeoCoordinate>
+#include <QGeoRectangle>
 #include <QVector2D>
 #include <QList>
 
@@ -69,6 +73,31 @@ class QGeoMap;
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapItemGeometry
 {
 public:
+    static QList<QGeoCoordinate> path(const QGeoRectangle &rect)
+    {
+        QList<QGeoCoordinate> res;
+        res << rect.topLeft();
+        res << QGeoCoordinate(rect.topLeft().latitude(), rect.bottomRight().longitude());
+        res << rect.bottomRight();
+        res << QGeoCoordinate(rect.bottomRight().latitude(), rect.topLeft().longitude());
+        return res;
+    }
+
+    static QList<QGeoCoordinate> perimeter(const QGeoRectangle &rect)
+    {
+        QList<QGeoCoordinate> res = path(rect);
+        res.append(res.first());
+        return res;
+    }
+
+    static QList<QDoubleVector2D> pathMercator(const QList<QGeoCoordinate> &p)
+    {
+        QList<QDoubleVector2D> res;
+        for (const auto &c: p)
+            res << QWebMercator::coordToMercator(c);
+        return res;
+    }
+
     QGeoMapItemGeometry();
     virtual ~QGeoMapItemGeometry();
 
@@ -127,10 +156,6 @@ public:
                           screenVertices_.clear(); screenIndices_.clear(); }
 
     void allocateAndFill(QSGGeometry *geom) const;
-
-    double geoDistanceToScreenWidth(const QGeoMap &map,
-                                           const QGeoCoordinate &fromCoord,
-                                           const QGeoCoordinate &toCoord);
 
     static QRectF translateToCommonOrigin(const QList<QGeoMapItemGeometry *> &geoms);
 

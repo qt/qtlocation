@@ -420,8 +420,8 @@ void QDeclarativeRectangleMapItemPrivateCPU::updatePolish()
     QScopedValueRollback<bool> rollback(m_rect.m_updatingGeometry);
     m_rect.m_updatingGeometry = true;
 
-    const QList<QGeoCoordinate> perimeter = path(m_rect.m_rectangle);
-    const QList<QDoubleVector2D> pathMercator_ = pathMercator(perimeter);
+    const QList<QGeoCoordinate> perimeter = QGeoMapItemGeometry::path(m_rect.m_rectangle);
+    const QList<QDoubleVector2D> pathMercator_ = QGeoMapItemGeometry::pathMercator(perimeter);
     m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
     m_geometry.updateSourcePoints(*m_rect.map(), pathMercator_);
     m_geometry.updateScreenPoints(*m_rect.map(), m_rect.m_border.width());
