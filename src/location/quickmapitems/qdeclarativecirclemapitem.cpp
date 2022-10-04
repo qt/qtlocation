@@ -38,12 +38,11 @@
 ****************************************************************************/
 
 #include "qdeclarativecirclemapitem_p.h"
-#include "qdeclarativepolygonmapitem_p.h"
 #include "qdeclarativecirclemapitem_p_p.h"
+#include "rhi/qdeclarativecirclemapitem_rhi_p.h"
 
 #include <QtCore/QScopedValueRollback>
 #include <QPen>
-#include <QPainter>
 #include <qgeocircle.h>
 
 #include <QtGui/private/qtriangulator_p.h>
@@ -560,8 +559,6 @@ void QDeclarativeCircleMapItem::geometryChange(const QRectF &newGeometry, const 
 QDeclarativeCircleMapItemPrivate::~QDeclarativeCircleMapItemPrivate() {}
 
 QDeclarativeCircleMapItemPrivateCPU::~QDeclarativeCircleMapItemPrivateCPU() {}
-
-QDeclarativeCircleMapItemPrivateOpenGL::~QDeclarativeCircleMapItemPrivateOpenGL() {}
 
 bool QDeclarativeCircleMapItemPrivate::preserveCircleGeometry (QList<QDoubleVector2D> &path,
                                     const QGeoCoordinate &center, qreal distance, const QGeoProjectionWebMercator &p)

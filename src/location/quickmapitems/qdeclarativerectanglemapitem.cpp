@@ -39,6 +39,7 @@
 
 #include "qdeclarativerectanglemapitem_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
+#include "rhi/qdeclarativerectanglemapitem_rhi_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
 
 #include <QtCore/QScopedValueRollback>
@@ -490,7 +491,5 @@ bool QDeclarativeRectangleMapItemPrivateCPU::contains(const QPointF &point) cons
 {
     return (m_geometry.contains(point) || m_borderGeometry.contains(point));
 }
-
-QDeclarativeRectangleMapItemPrivateOpenGL::~QDeclarativeRectangleMapItemPrivateOpenGL() {}
 
 QT_END_NAMESPACE

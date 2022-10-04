@@ -82,13 +82,13 @@ qt_internal_add_module(Location
         declarativemaps/qdeclarativegeocodemodel.cpp declarativemaps/qdeclarativegeocodemodel_p.h
         declarativemaps/qdeclarativegeoroute.cpp declarativemaps/qdeclarativegeoroute_p.h
         declarativemaps/qdeclarativegeoroutemodel.cpp declarativemaps/qdeclarativegeoroutemodel_p.h
+        declarativemaps/qdeclarativegeoroutesegment.cpp declarativemaps/qdeclarativegeoroutesegment_p.h
         quickmapitems/qgeomapitemgeometry.cpp quickmapitems/qgeomapitemgeometry_p.h
         quickmapitems/qdeclarativegeomap_p.h quickmapitems/qdeclarativegeomap.cpp
         quickmapitems/qdeclarativegeomapitembase_p.h
         quickmapitems/qdeclarativegeomapitembase.cpp
         quickmapitems/qdeclarativegeomapitemview_p.h
         quickmapitems/qdeclarativegeomapitemview.cpp
-        quickmapitems/qgeosimplify.cpp quickmapitems/qgeosimplify_p.h
         quickmapitems/qdeclarativegeomapitemutils.cpp quickmapitems/qdeclarativegeomapitemutils_p.h
         quickmapitems/qdeclarativegeomapquickitem_p.h
         quickmapitems/qdeclarativegeomapquickitem.cpp
@@ -111,8 +111,16 @@ qt_internal_add_module(Location
         quickmapitems/qdeclarativegeomapcopyrightsnotice.cpp
         quickmapitems/qdeclarativegeomapitemtransitionmanager_p.h
         quickmapitems/qdeclarativegeomapitemtransitionmanager.cpp
-        declarativemaps/qdeclarativegeoroutesegment.cpp
-        declarativemaps/qdeclarativegeoroutesegment_p.h
+        quickmapitems/rhi/qdeclarativepolygonmapitem_rhi_p.h
+        quickmapitems/rhi/qdeclarativepolygonmapitem_rhi.cpp
+        quickmapitems/rhi/qdeclarativepolylinemapitem_rhi_p.h
+        quickmapitems/rhi/qdeclarativepolylinemapitem_rhi.cpp
+        quickmapitems/rhi/qdeclarativerectanglemapitem_rhi_p.h
+        quickmapitems/rhi/qdeclarativerectanglemapitem_rhi.cpp
+        quickmapitems/rhi/qdeclarativecirclemapitem_rhi_p.h
+        quickmapitems/rhi/qdeclarativecirclemapitem_rhi.cpp
+        quickmapitems/rhi/qgeomapitemgeometry_rhi_p.h quickmapitems/rhi/qgeomapitemgeometry_rhi.cpp
+        quickmapitems/rhi/qgeosimplify.cpp quickmapitems/rhi/qgeosimplify_p.h
         declarativeplaces/qdeclarativecategory.cpp
         declarativeplaces/qdeclarativecategory_p.h
         declarativeplaces/qdeclarativecontactdetail.cpp
@@ -183,12 +191,12 @@ qt_internal_add_shaders(Location "declarative_location_shaders"
     PREFIX
         "/location"
     FILES
-        "quickmapitems/shaders/polyline_linestrip.vert"
-        "quickmapitems/shaders/polyline_linestrip.frag"
-        "quickmapitems/shaders/polyline_extruded.vert"
-        "quickmapitems/shaders/polyline_extruded.frag"
-        "quickmapitems/shaders/polygon.vert"
-        "quickmapitems/shaders/polygon.frag"
+        "quickmapitems/rhi/shaders/polyline_linestrip.vert"
+        "quickmapitems/rhi/shaders/polyline_linestrip.frag"
+        "quickmapitems/rhi/shaders/polyline_extruded.vert"
+        "quickmapitems/rhi/shaders/polyline_extruded.frag"
+        "quickmapitems/rhi/shaders/polygon.vert"
+        "quickmapitems/rhi/shaders/polygon.frag"
 )
 
 qt_internal_add_docs(Location
