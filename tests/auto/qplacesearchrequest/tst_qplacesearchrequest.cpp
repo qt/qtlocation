@@ -138,18 +138,18 @@ void tst_QPlaceSearchRequest::boundingBoxTest()
 void tst_QPlaceSearchRequest::searchAreaTest()
 {
     //test assignment of new search area over an old search area
-    QPlaceSearchRequest *query = new QPlaceSearchRequest;
+    QPlaceSearchRequest query;
     QGeoCircle circle;
     circle.setCenter(QGeoCoordinate(30,20));
     circle.setRadius(500.0);
-    query->setSearchArea(circle);
+    query.setSearchArea(circle);
 
-    QVERIFY(query->searchArea() == circle);
+    QVERIFY(query.searchArea() == circle);
     QGeoRectangle box;
     box.setTopLeft(QGeoCoordinate(30,20));
     box.setBottomRight(QGeoCoordinate(10,50));
-    query->setSearchArea(box);
-    QVERIFY2(query->searchArea() == box, "New search area not assigned");
+    query.setSearchArea(box);
+    QVERIFY2(query.searchArea() == box, "New search area not assigned");
 }
 
 void tst_QPlaceSearchRequest::visibilityScopeTest()
