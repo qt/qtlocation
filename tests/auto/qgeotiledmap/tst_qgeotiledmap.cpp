@@ -73,6 +73,7 @@ private Q_SLOTS:
     void fetchTiles_data();
 
 private:
+    std::unique_ptr<QGeoServiceProvider> m_provider;
     std::unique_ptr<QGeoTiledMapTest> m_map;
     std::unique_ptr<FetchTileCounter> m_tilesCounter;
     QGeoTileFetcherTest *m_fetcher;
@@ -104,10 +105,11 @@ void tst_QGeoTiledMap::initTestCase()
       parameters["tileSize"] = 256;
       parameters["maxZoomLevel"] = 8;
       parameters["finishRequestImmediately"] = true;
-      QGeoServiceProvider *provider = new QGeoServiceProvider("qmlgeo.test.plugin",parameters);
-      provider->setAllowExperimental(true);
-      QGeoMappingManager *mappingManager = provider->mappingManager();
-      QVERIFY2(provider->error() == QGeoServiceProvider::NoError, "Could not load plugin: " + provider->errorString().toLatin1());
+      m_provider = std::make_unique<QGeoServiceProvider>("qmlgeo.test.plugin", parameters);
+      m_provider->setAllowExperimental(true);
+      QGeoMappingManager *mappingManager = m_provider->mappingManager();
+      QVERIFY2(m_provider->error() == QGeoServiceProvider::NoError,
+               "Could not load plugin: " + m_provider->errorString().toLatin1());
       m_map.reset(static_cast<QGeoTiledMapTest*>(mappingManager->createMap(this)));
       QVERIFY(m_map);
       m_map->setViewportSize(QSize(256, 256));
