@@ -7,3 +7,4 @@ dependencies: [
       "../../qt/qtdeclarative",
       "../../qt/qtpositioning"
     ]
+
