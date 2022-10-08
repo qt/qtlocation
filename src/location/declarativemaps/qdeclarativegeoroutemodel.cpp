@@ -1283,22 +1283,6 @@ QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest() const
     return request_;
 }
 
-
-/*!
-    \qmlproperty VariantMap RouteQuery::extraParameters
-    \readonly
-
-    The route query extra parameters. This property is read only. If the query is
-    defined by the user, these can be set by using MapParameters.
-    If the route query comes from the engine via signals, the query is intended to be read-only.
-
-    \since 5.11
-*/
-QVariantMap QDeclarativeGeoRouteQuery::extraParameters() const
-{
-    return routeRequest().extraParameters();
-}
-
 void QDeclarativeGeoRouteQuery::excludedAreaCoordinateChanged()
 {
     if (!m_excludedAreaCoordinateChanged) {

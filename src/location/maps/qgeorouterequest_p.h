@@ -76,7 +76,6 @@ public:
     QGeoRouteRequest::SegmentDetail segmentDetail = QGeoRouteRequest::BasicSegmentData;
     QGeoRouteRequest::ManeuverDetail maneuverDetail = QGeoRouteRequest::BasicManeuvers;
     QDateTime departureTime;
-    QVariantMap extraParameters;
 };
 
 QT_END_NAMESPACE
