@@ -66,8 +66,6 @@ private Q_SLOTS:
     void maneuverDetail_data();
     void featureWeight();
     void featureWeight_data();
-    void extraParameters();
-    void extraParameters_data();
     void departureTime();
     void departureTime_data();
     //End Unit Test for QGeoRouteRequest

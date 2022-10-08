@@ -479,27 +479,6 @@ QDateTime QGeoRouteRequest::departureTime() const
     return d_ptr->departureTime;
 }
 
-/*!
-    Sets the extra parameters \a extraParameters for the route request.
-    The format of the extra parameters is plugin specific, and documented per plugin.
-
-    \since 5.11
-*/
-void QGeoRouteRequest::setExtraParameters(const QVariantMap &extraParameters)
-{
-    d_ptr->extraParameters = extraParameters;
-}
-
-/*!
-    Returns the extra parameters set for this route request.
-
-    \since 5.11
-*/
-QVariantMap QGeoRouteRequest::extraParameters() const
-{
-    return d_ptr->extraParameters;
-}
-
 /*******************************************************************************
 *******************************************************************************/
 
@@ -512,8 +491,7 @@ bool QGeoRouteRequestPrivate::operator==(const QGeoRouteRequestPrivate &other) c
             && (featureWeights == other.featureWeights)
             && (routeOptimization == other.routeOptimization)
             && (segmentDetail == other.segmentDetail)
-            && (maneuverDetail == other.maneuverDetail)
-            && (extraParameters ==  other.extraParameters));
+            && (maneuverDetail == other.maneuverDetail));
 }
 
 QT_END_NAMESPACE

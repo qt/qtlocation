@@ -166,9 +166,6 @@ public:
     void setDepartureTime(const QDateTime &departureTime);
     QDateTime departureTime() const;
 
-    void setExtraParameters(const QVariantMap &extraParameters);
-    QVariantMap extraParameters() const;
-
 private:
     QExplicitlySharedDataPointer<QGeoRouteRequestPrivate> d_ptr;
 

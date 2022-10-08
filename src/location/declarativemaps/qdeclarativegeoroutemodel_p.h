@@ -211,7 +211,6 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
     Q_PROPERTY(QList<QGeoCoordinate> waypoints READ waypoints WRITE setWaypoints NOTIFY waypointsChanged)
     Q_PROPERTY(QList<QGeoRectangle> excludedAreas READ excludedAreas WRITE setExcludedAreas NOTIFY excludedAreasChanged)
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
-    Q_PROPERTY(QVariantMap extraParameters READ extraParameters REVISION(5, 11))
     Q_PROPERTY(QDateTime departureTime READ departureTime WRITE setDepartureTime NOTIFY departureTimeChanged REVISION(5, 13))
     Q_INTERFACES(QQmlParserStatus)
 
@@ -226,7 +225,6 @@ public:
     void componentComplete() override;
 
     QGeoRouteRequest routeRequest() const;
-    QVariantMap extraParameters() const;
 
     enum TravelMode {
         CarTravel = QGeoRouteRequest::CarTravel,
@@ -337,7 +335,6 @@ Q_SIGNALS:
     void segmentDetailChanged();
 
     void queryDetailsChanged();
-    Q_REVISION(11) void extraParametersChanged();
     void departureTimeChanged();
 
 private Q_SLOTS:
