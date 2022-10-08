@@ -226,7 +226,6 @@ QStringList QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGe
         baseRequest += m_token;
     }
 
-    const QList<QVariantMap> metadata = request.waypointsMetadata();
     const QList<QGeoCoordinate> waypoints = request.waypoints();
     int numWaypoints = waypoints.size();
     if (numWaypoints < 2)
@@ -241,13 +240,6 @@ QStringList QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGe
         baseRequest += ',';
         baseRequest += trimDouble(c.longitude());
         baseRequest += QStringLiteral(";;"); // ;<TransitRadius>;<UserLabel>
-        if (metadata.size() > i) {
-            const QVariantMap &meta = metadata.at(i);
-            if (meta.contains(QStringLiteral("bearing"))) {
-                qreal bearing = meta.value(QStringLiteral("bearing")).toDouble();
-                baseRequest += ';' + QString::number(int(bearing));
-            }
-        }
     }
 
     QGeoRouteRequest::RouteOptimizations optimization = request.routeOptimization();

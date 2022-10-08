@@ -48,7 +48,6 @@
 #include <QtCore/QVariant>
 #include <QtCore/QRectF>
 #include <QtLocation/private/qgeomap_p_p.h>
-#include <QtLocation/private/qgeomapparameter_p.h>
 
 class QMapboxGL;
 class QMapboxGLStyleChange;
@@ -63,9 +62,6 @@ public:
     ~QGeoMapMapboxGLPrivate();
 
     QSGNode *updateSceneGraph(QSGNode *oldNode, QQuickWindow *window);
-
-    void addParameter(QGeoMapParameter *param) override;
-    void removeParameter(QGeoMapParameter *param) override;
 
     QGeoMap::ItemTypes supportedMapItemTypes() const override;
     void addMapItem(QDeclarativeGeoMapItemBase *item) override;

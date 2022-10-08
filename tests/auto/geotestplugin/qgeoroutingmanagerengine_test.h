@@ -151,15 +151,6 @@ public:
             if (alternateGeoRouteImplementation_)
                 route.setTravelTime(123456);
 
-            const QList<QVariantMap> metadata = request.waypointsMetadata();
-            for (const auto &meta: metadata) {
-                if (meta.contains("extra")) {
-                    QVariantMap extra = meta.value("extra").toMap();
-                    if (extra.contains("user_distance"))
-                        route.setDistance(meta.value("extra").toMap().value("user_distance").toMap().value("distance").toDouble());
-                }
-            }
-
             if (request.departureTime().isValid()) {
                 QVariantMap extendedAttributes = route.extendedAttributes();
                 extendedAttributes["tst_departureTime"] = request.departureTime();

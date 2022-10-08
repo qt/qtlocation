@@ -50,9 +50,6 @@ public:
                      const QGeoTiledMapTestOptions &options,
                      QObject *parent = nullptr);
 
-protected slots:
-    void onCameraCenter_testChanged(QGeoMapParameter *param, const QMetaProperty &property);
-
 public:
     using QGeoTiledMap::setCameraData;
     QGeoTiledMappingManagerEngine *m_engine;

@@ -203,9 +203,6 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoWaypoint : public QGeoCoordinateO
     Q_PROPERTY(bool isValid READ isValid STORED false)
 
     Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
-    Q_PROPERTY(QVariantMap metadata READ metadata)
-    Q_PROPERTY(QQmlListProperty<QObject> quickChildren READ declarativeChildren DESIGNABLE false)
-    Q_CLASSINFO("DefaultProperty", "quickChildren")
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -228,49 +225,20 @@ public:
     qreal bearing() const;
     void setBearing(qreal bearing);
 
-    template <typename T = QObject>
-    QList<T*> quickChildren() const
-    {
-        QList<T*> res;
-        for (auto kid : qAsConst(m_children)) {
-            auto val = qobject_cast<T*>(kid);
-            if (val)
-                res.push_back(val);
-        }
-        return res;
-    }
-
-    QVariantMap metadata();
-    void setMetadata(const QVariantMap &meta);
-
 Q_SIGNALS:
     void completed();
     void waypointDetailsChanged();
     void bearingChanged();
-    void extraParametersChanged();
-
-private Q_SLOTS:
-    void extraParameterChanged();
 
 protected:
     // From QQmlParserStatus
     void classBegin() override {}
     void componentComplete() override { m_complete = true; emit completed(); }
 
-    // For quickChildren
-    static void append(QQmlListProperty<QObject> *p, QObject *v);
-    static qsizetype count(QQmlListProperty<QObject> *p);
-    static QObject *at(QQmlListProperty<QObject> *p, qsizetype idx);
-    static void clear(QQmlListProperty<QObject> *p);
-    QQmlListProperty<QObject> declarativeChildren();
-    QList<QObject*> m_children;
-
     // other data members
-    bool m_metadataChanged = false;
     bool m_complete = false;
 
     qreal m_bearing = Q_QNAN;
-    QVariantMap m_metadata;
 };
 
 
@@ -302,8 +270,6 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
     Q_PROPERTY(QVariantMap extraParameters READ extraParameters REVISION(5, 11))
     Q_PROPERTY(QDateTime departureTime READ departureTime WRITE setDepartureTime NOTIFY departureTimeChanged REVISION(5, 13))
-    Q_PROPERTY(QQmlListProperty<QObject> quickChildren READ declarativeChildren DESIGNABLE false)
-    Q_CLASSINFO("DefaultProperty", "quickChildren")
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -417,18 +383,6 @@ public:
     void setDepartureTime(const QDateTime &departureTime);
     QDateTime departureTime() const;
 
-    template <typename T = QObject>
-    QList<T*> quickChildren() const
-    {
-        QList<T*> res;
-        for (auto kid : qAsConst(m_children)) {
-            auto val = qobject_cast<T*>(kid);
-            if (val)
-                res.push_back(val);
-        }
-        return res;
-    }
-
 Q_SIGNALS:
     void numberAlternativeRoutesChanged();
     void travelModesChanged();
@@ -447,17 +401,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void excludedAreaCoordinateChanged();
-    void extraParameterChanged();
     void waypointChanged();
-
-protected:
-    static void append(QQmlListProperty<QObject> *p, QObject *v);
-    static qsizetype count(QQmlListProperty<QObject> *p);
-    static QObject *at(QQmlListProperty<QObject> *p, qsizetype idx);
-    static void clear(QQmlListProperty<QObject> *p);
-
-    QQmlListProperty<QObject> declarativeChildren();
-    QList<QObject*> m_children;
 
 private:
     Q_INVOKABLE void doCoordinateChanged();
@@ -465,7 +409,6 @@ private:
     mutable QGeoRouteRequest request_;
     bool complete_ = false;
     bool m_excludedAreaCoordinateChanged = false;
-    mutable bool m_extraParametersChanged = false;
     mutable bool m_waypointsChanged = false;
     QList<QDeclarativeGeoWaypoint *> m_waypoints;
 };

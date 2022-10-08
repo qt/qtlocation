@@ -51,7 +51,6 @@
 #include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 #include <QtLocation/private/qdeclarativerectanglemapitem_p.h>
-#include <QtLocation/private/qgeomapparameter_p.h>
 
 #include <QMapboxGL>
 
@@ -60,9 +59,7 @@ class QMapboxGLStyleChange
 public:
     virtual ~QMapboxGLStyleChange() = default;
 
-    static QList<QSharedPointer<QMapboxGLStyleChange>> addMapParameter(QGeoMapParameter *);
     static QList<QSharedPointer<QMapboxGLStyleChange>> addMapItem(QDeclarativeGeoMapItemBase *, const QString &before);
-    static QList<QSharedPointer<QMapboxGLStyleChange>> removeMapParameter(QGeoMapParameter *);
     static QList<QSharedPointer<QMapboxGLStyleChange>> removeMapItem(QDeclarativeGeoMapItemBase *);
 
     virtual void apply(QMapboxGL *map) = 0;
@@ -71,7 +68,6 @@ public:
 class QMapboxGLStyleSetLayoutProperty : public QMapboxGLStyleChange
 {
 public:
-    static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapParameter(QGeoMapParameter *);
     static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativeGeoMapItemBase *);
 
     void apply(QMapboxGL *map) override;
@@ -90,7 +86,6 @@ private:
 class QMapboxGLStyleSetPaintProperty : public QMapboxGLStyleChange
 {
 public:
-    static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapParameter(QGeoMapParameter *);
     static QList<QSharedPointer<QMapboxGLStyleChange>> fromMapItem(QDeclarativeGeoMapItemBase *);
 
     void apply(QMapboxGL *map) override;
@@ -112,7 +107,6 @@ private:
 class QMapboxGLStyleAddLayer : public QMapboxGLStyleChange
 {
 public:
-    static QSharedPointer<QMapboxGLStyleChange> fromMapParameter(QGeoMapParameter *);
     static QSharedPointer<QMapboxGLStyleChange> fromFeature(const QMapbox::Feature &feature, const QString &before);
 
     void apply(QMapboxGL *map) override;
@@ -140,7 +134,6 @@ private:
 class QMapboxGLStyleAddSource : public QMapboxGLStyleChange
 {
 public:
-    static QSharedPointer<QMapboxGLStyleChange> fromMapParameter(QGeoMapParameter *);
     static QSharedPointer<QMapboxGLStyleChange> fromFeature(const QMapbox::Feature &feature);
     static QSharedPointer<QMapboxGLStyleChange> fromMapItem(QDeclarativeGeoMapItemBase *);
 
@@ -169,8 +162,6 @@ private:
 class QMapboxGLStyleSetFilter : public QMapboxGLStyleChange
 {
 public:
-    static QSharedPointer<QMapboxGLStyleChange> fromMapParameter(QGeoMapParameter *);
-
     void apply(QMapboxGL *map) override;
 
 private:
@@ -183,8 +174,6 @@ private:
 class QMapboxGLStyleAddImage : public QMapboxGLStyleChange
 {
 public:
-    static QSharedPointer<QMapboxGLStyleChange> fromMapParameter(QGeoMapParameter *);
-
     void apply(QMapboxGL *map) override;
 
 private:

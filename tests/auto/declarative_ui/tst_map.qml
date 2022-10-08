@@ -131,12 +131,6 @@ Item {
         height: 200
     }
 
-    DynamicMapParameter {
-        id: testParameter
-        type: "cameraCenter_test"
-        property var center: QtPositioning.coordinate(-33.0, -47.0)
-    }
-
     Map {
         id: mapVisibleArea
         width: 256; height: 256;
@@ -229,54 +223,6 @@ Item {
             verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible1))
             verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible2))
             verify(mapVisibleRegion.visibleRegion.contains(coordinateVisible3))
-        }
-
-        function test_map_parameters()
-        {
-            // coordinate is set at map element declaration
-            var center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
-            fuzzyCompare(center.latitude, 10, 0.1)
-            fuzzyCompare(center.longitude, 11, 0.1)
-
-            compare(mapPar.mapParameters.length, 0)
-
-            mapPar.addMapParameter(testParameter)
-
-            compare(mapPar.mapParameters.length, 1)
-
-            // Using toCoordinate, below, to verify the actual value of the center, and not what is in the map.center property
-            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
-            fuzzyCompare(center.latitude, -33, 0.1)
-            fuzzyCompare(center.longitude, -47, 0.1)
-
-            mapPar.addMapParameter(testParameter)
-            compare(mapPar.mapParameters.length, 1)
-
-            mapPar.removeMapParameter(testParameter)
-            compare(mapPar.mapParameters.length, 0)
-
-            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
-            fuzzyCompare(center.latitude, -33, 0.1)
-            fuzzyCompare(center.longitude, -47, 0.1)
-
-            testParameter.center = mapPar.center  // map.center has been affected as the Declarative Map has received the QGeoMap::cameraDataChanged signal
-            mapPar.addMapParameter(testParameter)
-            compare(mapPar.mapParameters.length, 1)
-
-            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
-            fuzzyCompare(center.latitude, -33, 0.1)
-            fuzzyCompare(center.longitude, -47, 0.1)
-
-            testParameter.center = QtPositioning.coordinate(-30.0, -40.0)
-
-            center = mapPar.toCoordinate(Qt.point((mapPar.width - 1) / 2.0, (mapPar.height - 1) / 2.0))
-            fuzzyCompare(center.latitude, -30, 0.1)
-            fuzzyCompare(center.longitude, -40, 0.1)
-            fuzzyCompare(mapPar.center.latitude, -30, 0.1)
-            fuzzyCompare(mapPar.center.longitude, -40, 0.1)
-
-            mapPar.removeMapParameter(testParameter)
-            compare(mapPar.mapParameters.length, 0)
         }
 
         function test_map_clamp()

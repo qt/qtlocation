@@ -67,7 +67,6 @@ QT_BEGIN_NAMESPACE
 class QGeoMappingManagerEngine;
 class QGeoMap;
 class QGeoMapController;
-class QGeoMapParameter;
 class QDeclarativeGeoMapItemBase;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
@@ -85,9 +84,6 @@ public:
 
 protected:
     /* Hooks into the actual map implementations */
-    virtual void addParameter(QGeoMapParameter *param);
-    virtual void removeParameter(QGeoMapParameter *param);
-
     virtual QGeoMap::ItemTypes supportedMapItemTypes() const;
     virtual void addMapItem(QDeclarativeGeoMapItemBase *item);
     virtual void removeMapItem(QDeclarativeGeoMapItemBase *item);
@@ -119,7 +115,6 @@ protected:
     QPointer<QGeoMappingManagerEngine> m_engine;
     QGeoCameraData m_cameraData;
     QGeoMapType m_activeMapType;
-    QList<QGeoMapParameter *> m_mapParameters;
     QList<QDeclarativeGeoMapItemBase *> m_mapItems;
     QGeoCameraCapabilities m_cameraCapabilities;
     bool m_copyrightVisible = true;

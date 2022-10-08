@@ -572,12 +572,6 @@ Item {
         id: waypoint2
         coordinate: QtPositioning.coordinate(71, 71)
         bearing: 43
-
-        DynamicMapParameter {
-            id: param1
-            type: "user_distance"
-            property real distance: 10
-        }
     }
 
     RouteQuery {id: routeQuery}
@@ -852,95 +846,50 @@ Item {
             tryCompare (spy, "count", 4)
             compare(model.get(0).path[0].latitude, fcoordinate1.latitude + 1) // new value should be echoed
 
-            // Extra parameter
-            var param = Qt.createQmlObject ('import QtLocation 5.9; DynamicMapParameter { type : "test-traveltime"; property var requestedTime : 42}', root)
-            var initialParams = cloneArray(filledRouteQuery.quickChildren)
-            var modifiedParams = cloneArray(initialParams)
-            modifiedParams.push(param)
-
-            filledRouteQuery.quickChildren = modifiedParams
-            tryCompare (spy, "count", 5)
-            if (label === "routeModelAutomaticAltImpl")
-                compare(model.get(0).travelTime,  123456)
-            else
-                compare(model.get(0).travelTime, 42)
-            param.requestedTime = 43
-            tryCompare (spy, "count", 6)
-            if (label === "routeModelAutomaticAltImpl")
-                compare(model.get(0).travelTime,  123456)
-            else
-                compare(model.get(0).travelTime, 43)
-            filledRouteQuery.quickChildren = initialParams
-            tryCompare (spy, "count", 7)
-            if (label === "routeModelAutomaticAltImpl")
-                compare(model.get(0).travelTime,  123456)
-            else
-                compare(model.get(0).travelTime, 0)
-            var secondParam = Qt.createQmlObject ('import QtLocation 5.9; DynamicMapParameter { type : "foo"; property var bar : 42}', root)
-            modifiedParams.push(secondParam)
-            param.requestedTime = 44
-            filledRouteQuery.quickChildren = modifiedParams
-            tryCompare (spy, "count", 8)
-            if (label === "routeModelAutomaticAltImpl")
-                compare(model.get(0).travelTime,  123456)
-            else
-                compare(model.get(0).travelTime, 44)
-            filledRouteQuery.quickChildren = initialParams
-            tryCompare (spy, "count", 9)
-            if (label === "routeModelAutomaticAltImpl")
-                compare(model.get(0).travelTime,  123456)
-            else
-                compare(model.get(0).travelTime, 0)
-
             /* Test waypoints */
             // Verify that bearing is NaN for coordinates
             verify(isNaN(filledRouteQuery.waypointObjects()[0].bearing))
             var numWaypoints = filledRouteQuery.waypoints.length
             // Add a waypoint with bearing
             filledRouteQuery.addWaypoint(waypoint1)
-            tryCompare (spy, "count", 10)
+            tryCompare (spy, "count", 5)
             compare(filledRouteQuery.waypointObjects()[numWaypoints].bearing, 42)
             // testing Waypoint to coordinate conversion
             compare(filledRouteQuery.waypoints[numWaypoints], filledRouteQuery.waypointObjects()[numWaypoints].coordinate)
             waypoint1.latitude += 0.1
             compare(model.get(0).distance, 0)
-            tryCompare (spy, "count", 11)
+            tryCompare (spy, "count", 6)
             numWaypoints++;
-            filledRouteQuery.addWaypoint(waypoint2) // waypoint2 contains a MapParameter with  user_distance
+            filledRouteQuery.addWaypoint(waypoint2)
             numWaypoints++;
-            tryCompare (spy, "count", 12)
+            tryCompare (spy, "count", 7)
             compare(filledRouteQuery.waypointObjects()[numWaypoints-1].bearing, 43)
-            compare(model.get(0).distance, 10)
+            compare(model.get(0).distance, 0)
             waypoint1.latitude += 0.1
-            tryCompare (spy, "count", 13)
+            tryCompare (spy, "count", 8)
             waypoint2.latitude += 0.1
-            tryCompare (spy, "count", 14)
+            tryCompare (spy, "count", 9)
             filledRouteQuery.removeWaypoint(waypoint1)
-            tryCompare (spy, "count", 15)
+            tryCompare (spy, "count", 10)
             waypoint2.latitude += 0.1
-            tryCompare (spy, "count", 16)
+            tryCompare (spy, "count", 11)
             waypoint1.latitude += 0.1
-            tryCompare (spy, "count", 16) // No effect, now disconnected
+            tryCompare (spy, "count", 11) // No effect, now disconnected
             // test with other props
             waypoint2.longitude += 0.1
-            tryCompare (spy, "count", 17)
+            tryCompare (spy, "count", 12)
             waypoint2.altitude = 42
-            tryCompare (spy, "count", 18)
+            tryCompare (spy, "count", 13)
             waypoint2.bearing += 1
-            tryCompare (spy, "count", 19)
+            tryCompare (spy, "count", 14)
             compare(waypoint2.longitude, 71.1)
             compare(waypoint2.altitude, 42)
             compare(waypoint2.bearing, 44)
-            // test with map parameters
-            param1.distance = 42
-            tryCompare (spy, "count", 20)
-            compare(model.get(0).distance, 42)
-
 
             // Change query
             model.query = filledRouteQuery2
             filledRouteQuery2.numberAlternativeRoutes = 3
-            tryCompare (spy, "count", 21)
+            tryCompare (spy, "count", 15)
             compare (model.get(0).path.length, 3)
 
             // Verify that the old query is disconnected internally ie. does not trigger update
@@ -952,7 +901,7 @@ Item {
                 { latitude: 67, longitude: 68 }
             ];
             wait(800) // wait to hope no further updates comes through
-            compare (spy.count, 21)
+            compare (spy.count, 15)
             compare(model.get(0).path.length, 3);
 
             // departure time
@@ -961,11 +910,11 @@ Item {
             var validDate = new Date("2011-02-07T11:05:00");
 
             filledRouteQuery2.departureTime = validDate
-            tryCompare(spy, "count", 22)
+            tryCompare(spy, "count", 16)
             compare(model.get(0).extendedAttributes["tst_departureTime"], validDate)
 
             filledRouteQuery2.departureTime = invalidDate
-            tryCompare (spy, "count", 23)
+            tryCompare (spy, "count", 17)
             verify(!model.get(0).extendedAttributes["tst_departureTime"])
 
             // ReSetting
@@ -978,7 +927,6 @@ Item {
             waypoint2.bearing = 42
             waypoint2.coordinate = QtPositioning.coordinate(71, 71)
             waypoint2.bearing = 43
-            param1.distance = 10
         }
 
 

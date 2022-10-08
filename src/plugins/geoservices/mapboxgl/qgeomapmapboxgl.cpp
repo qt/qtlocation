@@ -52,7 +52,6 @@
 #include <QtLocation/private/qdeclarativepolygonmapitem_p.h>
 #include <QtLocation/private/qdeclarativepolylinemapitem_p.h>
 #include <QtLocation/private/qdeclarativerectanglemapitem_p.h>
-#include <QtLocation/private/qgeomapparameter_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
 #include <QtQuick/QQuickWindow>
 #include <QtQuick/QSGImageNode>
@@ -175,31 +174,6 @@ QSGNode *QGeoMapMapboxGLPrivate::updateSceneGraph(QSGNode *node, QQuickWindow *w
     m_syncState = NoSync;
 
     return node;
-}
-
-void QGeoMapMapboxGLPrivate::addParameter(QGeoMapParameter *param)
-{
-    Q_Q(QGeoMapMapboxGL);
-
-    QObject::connect(param, &QGeoMapParameter::propertyUpdated, q,
-        &QGeoMapMapboxGL::onParameterPropertyUpdated);
-
-    if (m_styleLoaded) {
-        m_styleChanges << QMapboxGLStyleChange::addMapParameter(param);
-        emit q->sgNodeChanged();
-    }
-}
-
-void QGeoMapMapboxGLPrivate::removeParameter(QGeoMapParameter *param)
-{
-    Q_Q(QGeoMapMapboxGL);
-
-    q->disconnect(param);
-
-    if (m_styleLoaded) {
-        m_styleChanges << QMapboxGLStyleChange::removeMapParameter(param);
-        emit q->sgNodeChanged();
-    }
 }
 
 QGeoMap::ItemTypes QGeoMapMapboxGLPrivate::supportedMapItemTypes() const
@@ -447,9 +421,6 @@ void QGeoMapMapboxGL::onMapChanged(QMapboxGL::MapChange change)
 
         for (QDeclarativeGeoMapItemBase *item : d->m_mapItems)
             d->m_styleChanges << QMapboxGLStyleChange::addMapItem(item, d->m_mapItemsBefore);
-
-        for (QGeoMapParameter *param : d->m_mapParameters)
-            d->m_styleChanges << QMapboxGLStyleChange::addMapParameter(param);
     }
 }
 
@@ -486,15 +457,6 @@ void QGeoMapMapboxGL::onMapItemGeometryChanged()
 
     QDeclarativeGeoMapItemBase *item = static_cast<QDeclarativeGeoMapItemBase *>(sender());
     d->m_styleChanges << QMapboxGLStyleAddSource::fromMapItem(item);
-
-    emit sgNodeChanged();
-}
-
-void QGeoMapMapboxGL::onParameterPropertyUpdated(QGeoMapParameter *param)
-{
-    Q_D(QGeoMapMapboxGL);
-
-    d->m_styleChanges.append(QMapboxGLStyleChange::addMapParameter(param));
 
     emit sgNodeChanged();
 }

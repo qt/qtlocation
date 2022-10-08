@@ -54,7 +54,6 @@ QGeoMap::QGeoMap(QGeoMapPrivate &dd, QObject *parent)
 
 QGeoMap::~QGeoMap()
 {
-    clearParameters();
 }
 
 void QGeoMap::setViewportSize(const QSize& size)
@@ -225,32 +224,6 @@ void QGeoMap::clearData()
 
 }
 
-void QGeoMap::addParameter(QGeoMapParameter *param)
-{
-    Q_D(QGeoMap);
-    if (param && !d->m_mapParameters.contains(param)) {
-        d->m_mapParameters.append(param);
-        d->addParameter(param);
-    }
-}
-
-void QGeoMap::removeParameter(QGeoMapParameter *param)
-{
-    Q_D(QGeoMap);
-    if (param && d->m_mapParameters.contains(param)) {
-        d->removeParameter(param);
-        d->m_mapParameters.removeOne(param);
-    }
-}
-
-void QGeoMap::clearParameters()
-{
-    Q_D(QGeoMap);
-    for (QGeoMapParameter *p : qAsConst(d->m_mapParameters))
-        d->removeParameter(p);
-    d->m_mapParameters.clear();
-}
-
 QGeoMap::ItemTypes QGeoMap::supportedMapItemTypes() const
 {
     Q_D(const QGeoMap);
@@ -361,16 +334,6 @@ const QGeoCameraCapabilities &QGeoMapPrivate::cameraCapabilities() const
 const QGeoMapPrivate *QGeoMapPrivate::get(const QGeoMap &map)
 {
     return map.d_func();
-}
-
-void QGeoMapPrivate::addParameter(QGeoMapParameter *param)
-{
-    Q_UNUSED(param);
-}
-
-void QGeoMapPrivate::removeParameter(QGeoMapParameter *param)
-{
-    Q_UNUSED(param);
 }
 
 QGeoMap::ItemTypes QGeoMapPrivate::supportedMapItemTypes() const

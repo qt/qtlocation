@@ -67,7 +67,6 @@ public:
     bool operator==(const QGeoRouteRequestPrivate &other) const;
 
     QList<QGeoCoordinate> waypoints;
-    QList<QVariantMap> waypointMetadata;
     QList<QGeoRectangle> excludeAreas;
     int numberAlternativeRoutes = 0;
     QGeoRouteRequest::TravelModes travelModes = QGeoRouteRequest::CarTravel;

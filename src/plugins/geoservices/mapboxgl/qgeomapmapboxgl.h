@@ -43,7 +43,6 @@
 
 #include "qgeomappingmanagerenginemapboxgl.h"
 #include <QtLocation/private/qgeomap_p.h>
-#include <QtLocation/private/qgeomapparameter_p.h>
 
 class QGeoMapMapboxGLPrivate;
 
@@ -71,9 +70,6 @@ private Q_SLOTS:
     void onMapItemSubPropertyChanged();
     void onMapItemUnsupportedPropertyChanged();
     void onMapItemGeometryChanged();
-
-    // QGeoMapParameter
-    void onParameterPropertyUpdated(QGeoMapParameter *param, const char *propertyName);
 
 public Q_SLOTS:
     void copyrightsChanged(const QString &copyrightsHtml);

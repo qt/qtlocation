@@ -68,7 +68,6 @@ class QGeoShape;
 class QGeoRectangle;
 class QSGNode;
 class QQuickWindow;
-class QGeoMapParameter;
 class QDeclarativeGeoMapItemBase;
 class QDeclarativeGeoMap;
 
@@ -132,10 +131,6 @@ public:
 
     virtual void prefetchData();
     virtual void clearData();
-
-    void addParameter(QGeoMapParameter *param);
-    void removeParameter(QGeoMapParameter *param);
-    void clearParameters();
 
     ItemTypes supportedMapItemTypes() const;
 

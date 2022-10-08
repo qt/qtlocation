@@ -39,7 +39,6 @@ qt_internal_add_module(Location
         maps/qgeomappingmanagerengine.cpp
         maps/qgeomaptype_p.h maps/qgeomaptype_p_p.h maps/qgeomaptype.cpp
         maps/qgeomap_p.h maps/qgeomap_p_p.h maps/qgeomap.cpp
-        maps/qgeomapparameter_p.h maps/qgeomapparameter.cpp
         maps/qgeoprojection_p.h maps/qgeoprojection.cpp
         maps/qgeojson_p.h maps/qgeojson.cpp
         places/qplacemanager.h places/qplacemanager.cpp
@@ -120,8 +119,6 @@ qt_internal_add_qml_module(Location
         # Element types
         declarativemaps/qdeclarativegeoserviceprovider_p.h
         declarativemaps/qdeclarativegeoserviceprovider.cpp
-        declarativemaps/qdeclarativegeomapparameter_p.h
-        declarativemaps/qdeclarativegeomapparameter.cpp
         declarativemaps/error_messages.cpp declarativemaps/error_messages_p.h
         declarativemaps/qdeclarativegeocodemodel.cpp declarativemaps/qdeclarativegeocodemodel_p.h
         declarativemaps/qdeclarativegeoroutemodel.cpp declarativemaps/qdeclarativegeoroutemodel_p.h

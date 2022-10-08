@@ -1028,25 +1028,12 @@ QUrl QGeoRouteParserOsrmV5Private::requestUrl(const QGeoRouteRequest &request, c
 {
     QString routingUrl = prefix;
     int notFirst = 0;
-    QString bearings;
-    const QList<QVariantMap> metadata = request.waypointsMetadata();
     const QList<QGeoCoordinate> waypoints = request.waypoints();
     for (qsizetype i = 0; i < waypoints.size(); i++) {
         const QGeoCoordinate &c = waypoints.at(i);
-        if (notFirst) {
+        if (notFirst)
             routingUrl.append(QLatin1Char(';'));
-            bearings.append(QLatin1Char(';'));
-        }
         routingUrl.append(QString::number(c.longitude(), 'f', 7)).append(QLatin1Char(',')).append(QString::number(c.latitude(), 'f', 7));
-        if (metadata.size() > i) {
-            const QVariantMap &meta = metadata.at(i);
-            if (meta.contains(QLatin1String("bearing"))) {
-                qreal bearing = meta.value(QLatin1String("bearing")).toDouble();
-                bearings.append(QString::number(int(bearing))).append(QLatin1Char(',')).append(QLatin1String("90")); // 90 is the angle of maneuver allowed.
-            } else {
-                bearings.append(QLatin1String("0,180")); // 180 here means anywhere
-            }
-        }
         ++notFirst;
     }
 
@@ -1056,7 +1043,6 @@ QUrl QGeoRouteParserOsrmV5Private::requestUrl(const QGeoRouteRequest &request, c
     query.addQueryItem(QLatin1String("steps"), QLatin1String("true"));
     query.addQueryItem(QLatin1String("geometries"), QLatin1String("polyline6"));
     query.addQueryItem(QLatin1String("alternatives"), QLatin1String("true"));
-    query.addQueryItem(QLatin1String("bearings"), bearings);
     if (m_extension)
         m_extension->updateQuery(query);
     url.setQuery(query);

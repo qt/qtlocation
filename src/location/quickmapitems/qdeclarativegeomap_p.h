@@ -73,7 +73,6 @@ class QQuickWindow;
 class QDeclarativeGeoServiceProvider;
 class QGeoMapType;
 class QDeclarativeGeoMapCopyrightNotice;
-class QDeclarativeGeoMapParameter;
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
 {
@@ -101,7 +100,6 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
     Q_PROPERTY(QList<QGeoMapType> supportedMapTypes READ supportedMapTypes NOTIFY supportedMapTypesChanged)
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(QList<QObject *> mapItems READ mapItems NOTIFY mapItemsChanged)
-    Q_PROPERTY(QList<QObject *> mapParameters READ mapParameters)
     Q_PROPERTY(QGeoServiceProvider::Error error READ error NOTIFY errorChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY errorChanged)
     Q_PROPERTY(QGeoShape visibleRegion READ visibleRegion WRITE setVisibleRegion NOTIFY visibleRegionChanged)
@@ -183,11 +181,6 @@ public:
 
     Q_INVOKABLE void clearMapItems();
     QList<QObject *> mapItems();
-
-    Q_INVOKABLE void addMapParameter(QDeclarativeGeoMapParameter *parameter);
-    Q_INVOKABLE void removeMapParameter(QDeclarativeGeoMapParameter *parameter);
-    Q_INVOKABLE void clearMapParameters();
-    QList<QObject *> mapParameters();
 
     Q_INVOKABLE QGeoCoordinate toCoordinate(const QPointF &position, bool clipToViewPort = true) const;
     Q_INVOKABLE QPointF fromCoordinate(const QGeoCoordinate &coordinate, bool clipToViewPort = true) const;
@@ -280,7 +273,6 @@ private Q_SLOTS:
 private:
     void setupMapView(QDeclarativeGeoMapItemView *view);
     void populateMap();
-    void populateParameters();
     void fitViewportToMapItemsRefine(const QList<QPointer<QDeclarativeGeoMapItemBase> > &mapItems, bool refine, bool onlyVisible);
     bool isInteractive() const;
     void attachCopyrightNotice(bool initialVisibility);
@@ -311,7 +303,6 @@ private:
     double m_minimumViewportLatitude = 0.0;
     bool m_initialized = false;
     bool m_sgNodeHasChanged = false;
-    QList<QDeclarativeGeoMapParameter *> m_mapParameters;
     QGeoCameraCapabilities m_cameraCapabilities;
     qreal m_userMinimumZoomLevel = Q_QNAN;
     qreal m_userMaximumZoomLevel = Q_QNAN;
