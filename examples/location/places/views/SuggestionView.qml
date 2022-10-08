@@ -61,7 +61,7 @@ ListView {
 //! [PlaceSearchSuggestionModel view 2]
     model: suggestionModel
     delegate: Item {
-        width. ListView.view.width
+        width: ListView.view.width
         height: label.height * 1.5
         Label {
             id: label
