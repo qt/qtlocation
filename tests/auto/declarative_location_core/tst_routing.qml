@@ -273,6 +273,7 @@ Item {
             compare(emptyQuery.waypoints[2], coordinate1)
             compare(emptyQuery.waypoints[3], coordinate2)
             emptyQuery.removeWaypoint(coordinate1) // remove one from the middle, check that one added last is removed
+            compare(emptyQuery.waypoints.length, 3)
             compare(emptyQuery.waypoints[0], coordinate1)
             compare(emptyQuery.waypoints[1], coordinate2)
             compare(emptyQuery.waypoints[2], coordinate2)
@@ -562,17 +563,8 @@ Item {
     property variant f2coordinate2: QtPositioning.coordinate(61, 62)
     property variant f2coordinate3: QtPositioning.coordinate(63, 64)
 
-    Waypoint {
-        id: waypoint1
-        coordinate: QtPositioning.coordinate(70, 70)
-        bearing: 42
-    }
-
-    Waypoint {
-        id: waypoint2
-        coordinate: QtPositioning.coordinate(71, 71)
-        bearing: 43
-    }
+    property geoCoordinate waypoint1: QtPositioning.coordinate(70, 70)
+    property geoCoordinate waypoint2: QtPositioning.coordinate(71, 71)
 
     RouteQuery {id: routeQuery}
     property var routeQueryDefaultWaypoints: [
@@ -848,48 +840,31 @@ Item {
 
             /* Test waypoints */
             // Verify that bearing is NaN for coordinates
-            verify(isNaN(filledRouteQuery.waypointObjects()[0].bearing))
+            verify(isNaN(filledRouteQuery.waypoints[0].bearing))
             var numWaypoints = filledRouteQuery.waypoints.length
             // Add a waypoint with bearing
             filledRouteQuery.addWaypoint(waypoint1)
             tryCompare (spy, "count", 5)
-            compare(filledRouteQuery.waypointObjects()[numWaypoints].bearing, 42)
+//            compare(filledRouteQuery.waypoints[numWaypoints].bearing, 42)
             // testing Waypoint to coordinate conversion
-            compare(filledRouteQuery.waypoints[numWaypoints], filledRouteQuery.waypointObjects()[numWaypoints].coordinate)
+//            compare(filledRouteQuery.waypoints[numWaypoints], filledRouteQuery.waypoints[numWaypoints].coordinate)
             waypoint1.latitude += 0.1
             compare(model.get(0).distance, 0)
-            tryCompare (spy, "count", 6)
+            tryCompare (spy, "count", 5)
             numWaypoints++;
             filledRouteQuery.addWaypoint(waypoint2)
             numWaypoints++;
-            tryCompare (spy, "count", 7)
-            compare(filledRouteQuery.waypointObjects()[numWaypoints-1].bearing, 43)
+            tryCompare (spy, "count", 6)
+//            compare(filledRouteQuery.waypointObjects()[numWaypoints-1].bearing, 43)
             compare(model.get(0).distance, 0)
-            waypoint1.latitude += 0.1
-            tryCompare (spy, "count", 8)
-            waypoint2.latitude += 0.1
-            tryCompare (spy, "count", 9)
+            // remove non-existent waypoint
             filledRouteQuery.removeWaypoint(waypoint1)
-            tryCompare (spy, "count", 10)
-            waypoint2.latitude += 0.1
-            tryCompare (spy, "count", 11)
-            waypoint1.latitude += 0.1
-            tryCompare (spy, "count", 11) // No effect, now disconnected
-            // test with other props
-            waypoint2.longitude += 0.1
-            tryCompare (spy, "count", 12)
-            waypoint2.altitude = 42
-            tryCompare (spy, "count", 13)
-            waypoint2.bearing += 1
-            tryCompare (spy, "count", 14)
-            compare(waypoint2.longitude, 71.1)
-            compare(waypoint2.altitude, 42)
-            compare(waypoint2.bearing, 44)
+            tryCompare (spy, "count", 6)
 
             // Change query
             model.query = filledRouteQuery2
             filledRouteQuery2.numberAlternativeRoutes = 3
-            tryCompare (spy, "count", 15)
+            tryCompare (spy, "count", 7)
             compare (model.get(0).path.length, 3)
 
             // Verify that the old query is disconnected internally ie. does not trigger update
@@ -901,7 +876,7 @@ Item {
                 { latitude: 67, longitude: 68 }
             ];
             wait(800) // wait to hope no further updates comes through
-            compare (spy.count, 15)
+            compare (spy.count, 7)
             compare(model.get(0).path.length, 3);
 
             // departure time
@@ -910,11 +885,11 @@ Item {
             var validDate = new Date("2011-02-07T11:05:00");
 
             filledRouteQuery2.departureTime = validDate
-            tryCompare(spy, "count", 16)
+            tryCompare(spy, "count", 8)
             compare(model.get(0).extendedAttributes["tst_departureTime"], validDate)
 
             filledRouteQuery2.departureTime = invalidDate
-            tryCompare (spy, "count", 17)
+            tryCompare (spy, "count", 9)
             verify(!model.get(0).extendedAttributes["tst_departureTime"])
 
             // ReSetting

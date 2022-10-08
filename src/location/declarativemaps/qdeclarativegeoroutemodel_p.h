@@ -187,63 +187,6 @@ private:
     RouteError error_ = QDeclarativeGeoRouteModel::NoError;
 };
 
-
-
-// purpose of this class is to be convertible to a QGeoCoordinate (through QGeoWaypoint), but also
-// to behave like it, so that in QML source compatibility would be preserved. This is, however, not possible to achieve at the present.
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoWaypoint : public QGeoCoordinateObject, public QQmlParserStatus
-{
-    Q_OBJECT
-    QML_NAMED_ELEMENT(Waypoint)
-    QML_ADDED_IN_VERSION(5, 11)
-
-    Q_PROPERTY(double latitude READ latitude WRITE setLatitude STORED false)
-    Q_PROPERTY(double longitude READ longitude WRITE setLongitude STORED false)
-    Q_PROPERTY(double altitude READ altitude WRITE setAltitude STORED false)
-    Q_PROPERTY(bool isValid READ isValid STORED false)
-
-    Q_PROPERTY(qreal bearing READ bearing WRITE setBearing NOTIFY bearingChanged)
-    Q_INTERFACES(QQmlParserStatus)
-
-public:
-    QDeclarativeGeoWaypoint(QObject *parent = nullptr);
-    virtual ~QDeclarativeGeoWaypoint();
-
-    bool operator==(const QDeclarativeGeoWaypoint &other) const;
-
-    qreal latitude() const;
-    void setLatitude(qreal latitude);
-
-    qreal longitude() const;
-    void setLongitude(qreal longitude);
-
-    qreal altitude() const;
-    void setAltitude(qreal altitude);
-
-    bool isValid() const;
-
-    qreal bearing() const;
-    void setBearing(qreal bearing);
-
-Q_SIGNALS:
-    void completed();
-    void waypointDetailsChanged();
-    void bearingChanged();
-
-protected:
-    // From QQmlParserStatus
-    void classBegin() override {}
-    void componentComplete() override { m_complete = true; emit completed(); }
-
-    // other data members
-    bool m_complete = false;
-
-    qreal m_bearing = Q_QNAN;
-};
-
-
-
-
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
@@ -265,7 +208,7 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, publ
     Q_PROPERTY(RouteOptimizations routeOptimizations READ routeOptimizations WRITE setRouteOptimizations NOTIFY routeOptimizationsChanged)
     Q_PROPERTY(SegmentDetail segmentDetail READ segmentDetail WRITE setSegmentDetail NOTIFY segmentDetailChanged)
     Q_PROPERTY(ManeuverDetail maneuverDetail READ maneuverDetail WRITE setManeuverDetail NOTIFY maneuverDetailChanged)
-    Q_PROPERTY(QVariantList waypoints READ waypoints WRITE setWaypoints NOTIFY waypointsChanged)
+    Q_PROPERTY(QList<QGeoCoordinate> waypoints READ waypoints WRITE setWaypoints NOTIFY waypointsChanged)
     Q_PROPERTY(QList<QGeoRectangle> excludedAreas READ excludedAreas WRITE setExcludedAreas NOTIFY excludedAreasChanged)
     Q_PROPERTY(QList<int> featureTypes READ featureTypes NOTIFY featureTypesChanged)
     Q_PROPERTY(QVariantMap extraParameters READ extraParameters REVISION(5, 11))
@@ -344,17 +287,15 @@ public:
     QList<int> featureTypes() const;
 
 
-    QVariantList waypoints() const;
-    Q_INVOKABLE QVariantList waypointObjects() const;
-    void setWaypoints(const QVariantList &value);
+    QList<QGeoCoordinate> waypoints() const;
+    void setWaypoints(const QList<QGeoCoordinate> &value);
 
     QList<QGeoRectangle> excludedAreas() const;
     void setExcludedAreas(const QList<QGeoRectangle> &value);
 
-    Q_INVOKABLE void addWaypoint(const QVariant &w);
-    Q_INVOKABLE void removeWaypoint(const QVariant &waypoint);
+    Q_INVOKABLE void addWaypoint(const QGeoCoordinate &w);
+    Q_INVOKABLE void removeWaypoint(const QGeoCoordinate &waypoint);
     Q_INVOKABLE void clearWaypoints();
-    void flushWaypoints(QList<QDeclarativeGeoWaypoint *> &waypoints);
 
     Q_INVOKABLE void addExcludedArea(const QGeoRectangle &area);
     Q_INVOKABLE void removeExcludedArea(const QGeoRectangle &area);
@@ -410,11 +351,9 @@ private:
     bool complete_ = false;
     bool m_excludedAreaCoordinateChanged = false;
     mutable bool m_waypointsChanged = false;
-    QList<QDeclarativeGeoWaypoint *> m_waypoints;
+    QList<QGeoCoordinate> m_waypoints;
 };
 
 QT_END_NAMESPACE
-
-Q_DECLARE_METATYPE(QDeclarativeGeoWaypoint*)
 
 #endif
