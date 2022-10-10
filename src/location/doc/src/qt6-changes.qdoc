@@ -53,6 +53,9 @@
             are now value types \l route, \l routeSegment, and \l mapType.
             They can no longer be instantiated from QML, and their properties
             can not be bound to.
+        \li The \c QGeoRouteLeg class and the QML equivalent, \c RouteLeg, have
+            been merged into \l QGeoRoute (and the \l route type). A route can
+            be an aggregate of several routes.
     \endlist
 
     \section2 Places
@@ -74,7 +77,10 @@
             can not be bound to.
     \endlist
 
-    \section1 Other API changes
+    \section2 Experimental APIs
+
+    Functionality that had "labs" status has been removed. This includes the
+    experimental framework for turn-by-turn navigation, MapObjects
 
     \section2 Maps
 
