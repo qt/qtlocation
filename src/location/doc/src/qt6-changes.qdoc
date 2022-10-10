@@ -82,9 +82,12 @@
     Functionality that had "labs" status has been removed. This includes the
     experimental framework for turn-by-turn navigation, MapObjects
 
-    \section2 Maps
+    \section2 Backend Provider API
 
-    \section2 Places
+    The backend provider API is no longer subject to binary and source
+    compatibility guarantees.
+
+    \section1 Other API changes
 
     This section contains API improvements that do not break source
     compatibility. However they might have an impact on the application logic,

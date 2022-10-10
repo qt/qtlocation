@@ -57,9 +57,14 @@ QT_BEGIN_NAMESPACE
     convenience methods to implementers of QGeoServiceProvider plugins who want
     to provide support for geocoding operations.
 
-    In the default implementation, supportsGeocoding() and supportsReverseGeocoding() returns false while
-    geocode() and reverseGeocode()
-    cause QGeoCodeReply::UnsupportedOptionError to occur.
+    \note There are no source or binary compatibility guarantees for the
+    backend classes. The API is only guaranteed to work with the Qt version it
+    was developed against. API changes will however only be made in minor
+    releases. (6.6, 6.7, and so on.)
+
+    In the default implementation, supportsGeocoding() and
+    supportsReverseGeocoding() returns false while geocode() and
+    reverseGeocode() cause QGeoCodeReply::UnsupportedOptionError to occur.
 
     If the service provider supports geocoding the subclass should provide an
     implementation of geocode() and call setSupportsGeocoding(true) at
