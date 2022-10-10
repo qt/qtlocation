@@ -52,6 +52,11 @@ QT_BEGIN_NAMESPACE
     convenience methods to implementers of QGeoServiceProvider plugins who want
     to provide access to geographic routing information.
 
+    \note There are no source or binary compatibility guarantees for the
+    backend classes. The API is only guaranteed to work with the Qt version it
+    was developed against. API changes will however only be made in minor
+    releases. (6.6, 6.7, and so on.)
+
     Subclasses of QGeoRoutingManagerEngine need to provide an implementation of
     calculateRoute().
 

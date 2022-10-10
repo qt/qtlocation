@@ -65,6 +65,11 @@ QT_BEGIN_NAMESPACE
     implementers of QGeoServiceProvider plugins who want to provide access to place
     functionality.
 
+    \note There are no source or binary compatibility guarantees for the
+    backend classes. The API is only guaranteed to work with the Qt version it
+    was developed against. API changes will however only be made in minor
+    releases. (6.6, 6.7, and so on.)
+
     Application developers need not concern themselves with the QPlaceManagerEngine.
     Backend implementers however will need to derive from QPlaceManagerEngine and provide
     implementations for the abstract virtual functions.

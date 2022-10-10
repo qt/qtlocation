@@ -51,6 +51,11 @@ QT_BEGIN_NAMESPACE
     \brief The QGeoServiceProviderFactory class is a factory class used as the
     plugin interface for services related to geographical information.
 
+    \note There are no source or binary compatibility guarantees for the
+    backend classes. The API is only guaranteed to work with the Qt version it
+    was developed against. API changes will however only be made in minor
+    releases. (6.6, 6.7, and so on.)
+
     Implementers must provide a unique combination of providerName() and
     providerVersion() per plugin.
 

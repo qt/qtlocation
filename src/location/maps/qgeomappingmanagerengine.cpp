@@ -55,6 +55,11 @@ QT_BEGIN_NAMESPACE
 
     \brief Provides support functionality for map display with QGeoServiceProvider.
 
+    \note There are no source or binary compatibility guarantees for the
+    backend classes. The API is only guaranteed to work with the Qt version it
+    was developed against. API changes will however only be made in minor
+    releases. (6.6, 6.7, and so on.)
+
     The QGeoMappingManagerEngine class provides an interface and convenience
     methods to implementors of QGeoServiceProvider plugins who want to
     provide support for displaying and interacting with maps.
