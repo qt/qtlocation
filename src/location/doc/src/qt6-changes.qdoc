@@ -49,10 +49,14 @@
         \li The \c {MapRectangle::backend}, \c {MapCircle::backend},
             \c {MapPolyline::backend}, and \c {MapPolygon::backend} properties
             have been removed.
-        \li The former QML element types \c Route, \c RouteSegment, and \c MapType
-            are now value types \l route, \l routeSegment, and \l mapType.
-            They can no longer be instantiated from QML, and their properties
-            can not be bound to.
+        \li The former Routing-related QML element types \c Route, \c RouteSegment,
+            and \c RouteManeuver are now value types \l route, \l routeSegment, and
+            \l routeManeuver. They can no longer be instantiated as items in QML,
+            and their properties can not be bound to.
+        \li The former Mapping-related QML element types \c MapType and
+            \c CameraCapabilities are now value types \l mapType and
+            \l cameraCapabilities. They can no longer be instantiated as items in
+            QML, and their properties can not be bound to.
         \li The \c QGeoRouteLeg class and the QML equivalent, \c RouteLeg, have
             been merged into \l QGeoRoute (and the \l route type). A route can
             be an aggregate of several routes.
@@ -73,14 +77,15 @@
             \c PlaceContactDetail are now value types \l placeUser,
             \l placeRatings, \l placeAttribute, \l placeIcon,
             \l placeSupplier, and \l placeContactDetail.
-            They can no longer be instantiated from QML, and their properties
-            can not be bound to.
+            They can no longer be instantiated as items from QML, and
+            their properties can not be bound to.
     \endlist
 
     \section2 Experimental APIs
 
     Functionality that had "labs" status has been removed. This includes the
-    experimental framework for turn-by-turn navigation, MapObjects
+    experimental framework for turn-by-turn navigation, as well as the
+    MapObjects abstraction.
 
     \section2 Backend Provider API
 
