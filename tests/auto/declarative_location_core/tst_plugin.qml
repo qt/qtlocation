@@ -33,7 +33,7 @@ import QtLocation
 Item {
 
     Plugin { id: unattachedPlugin }
-    Plugin { id: herePlugin; name: "here"}
+    Plugin { id: osmPlugin; name: "osm"}
     Plugin { id: invalidPlugin; name: "invalid"; allowExperimental: true }
     Plugin { id: testPlugin;
             name: "qmlgeo.test.plugin"
@@ -79,11 +79,11 @@ Item {
                 verify(testPlugin.supportsRouting())
             }
 
-            if (invalidPlugin.availableServiceProviders.indexOf('here')) {
-                verify(herePlugin.isAttached)
-                verify(herePlugin.supportsMapping(Plugin.OnlineMappingFeature))
-                verify(herePlugin.supportsGeocoding(Plugin.OnlineGeocodingFeature))
-                verify(herePlugin.supportsRouting(Plugin.OnlineRoutingFeature))
+            if (invalidPlugin.availableServiceProviders.indexOf('osm') > -1) {
+                verify(osmPlugin.isAttached)
+                verify(osmPlugin.supportsMapping(Plugin.OnlineMappingFeature))
+                verify(osmPlugin.supportsGeocoding(Plugin.OnlineGeocodingFeature))
+                verify(osmPlugin.supportsRouting(Plugin.OnlineRoutingFeature))
             }
 
             verify(!unattachedPlugin.isAttached)
@@ -92,7 +92,8 @@ Item {
             invalidAttachedSpy.clear()
             compare(invalidAttachedSpy.count, 0)
             invalidPlugin.name = 'qmlgeo.test.plugin'
-            tryCompare(invalidAttachedSpy, 'count', 1)
+            let expectedAttachedSpy = 1
+            tryCompare(invalidAttachedSpy, 'count', expectedAttachedSpy)
             verify(invalidPlugin.isAttached)
 
             verify(invalidPlugin.supportsMapping())
@@ -100,14 +101,16 @@ Item {
             verify(invalidPlugin.supportsRouting())
             verify(invalidPlugin.supportsPlaces())
 
-            invalidPlugin.name = 'here'
-            compare(invalidAttachedSpy.count, 2)
-            verify(invalidPlugin.supportsMapping(Plugin.OnlineMappingFeature))
-            verify(invalidPlugin.supportsGeocoding(Plugin.OnlineGeocodingFeature))
-            verify(invalidPlugin.supportsRouting(Plugin.OnlineRoutingFeature))
+            if (invalidPlugin.availableServiceProviders.indexOf('osm') > -1) {
+                invalidPlugin.name = 'osm'
+                compare(invalidAttachedSpy.count, ++expectedAttachedSpy)
+                verify(invalidPlugin.supportsMapping(Plugin.OnlineMappingFeature))
+                verify(invalidPlugin.supportsGeocoding(Plugin.OnlineGeocodingFeature))
+                verify(invalidPlugin.supportsRouting(Plugin.OnlineRoutingFeature))
+            }
 
             invalidPlugin.name = ''
-            compare(invalidAttachedSpy.count, 2)
+            compare(invalidAttachedSpy.count, expectedAttachedSpy)
             verify(!invalidPlugin.supportsMapping())
             verify(!invalidPlugin.supportsGeocoding())
             verify(!invalidPlugin.supportsRouting())
@@ -132,19 +135,19 @@ Item {
         }
 
         function test_locale() {
-            compare(herePlugin.locales, [Qt.locale().name]);
+            compare(osmPlugin.locales, [Qt.locale().name]);
 
             //try assignment of a single locale
-            herePlugin.locales = "fr_FR";
-            compare(herePlugin.locales, ["fr_FR"]);
+            osmPlugin.locales = "fr_FR";
+            compare(osmPlugin.locales, ["fr_FR"]);
 
             //try assignment of multiple locales
-            herePlugin.locales = ["fr_FR","en_US"];
-            compare(herePlugin.locales, ["fr_FR","en_US"]);
+            osmPlugin.locales = ["fr_FR","en_US"];
+            compare(osmPlugin.locales, ["fr_FR","en_US"]);
 
             //check that assignment of empty locale list defaults to system locale
-            herePlugin.locales = [];
-            compare(herePlugin.locales, [Qt.locale().name]);
+            osmPlugin.locales = [];
+            compare(osmPlugin.locales, [Qt.locale().name]);
         }
     }
 }
