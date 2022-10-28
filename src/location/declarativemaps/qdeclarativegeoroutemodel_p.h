@@ -316,8 +316,8 @@ public:
     void classBegin() override {}
     void componentComplete() override;
 
-    QGeoRouteRequest routeRequest();
-    QVariantMap extraParameters();
+    QGeoRouteRequest routeRequest() const;
+    QVariantMap extraParameters() const;
 
     enum TravelMode {
         CarTravel = QGeoRouteRequest::CarTravel,
@@ -375,7 +375,7 @@ public:
     int numberAlternativeRoutes() const;
 
     //QList<FeatureType> featureTypes();
-    QList<int> featureTypes();
+    QList<int> featureTypes() const;
 
 
     QVariantList waypoints() const;
@@ -462,11 +462,11 @@ protected:
 private:
     Q_INVOKABLE void doCoordinateChanged();
 
-    QGeoRouteRequest request_;
+    mutable QGeoRouteRequest request_;
     bool complete_ = false;
     bool m_excludedAreaCoordinateChanged = false;
-    bool m_extraParametersChanged = false;
-    bool m_waypointsChanged = false;
+    mutable bool m_extraParametersChanged = false;
+    mutable bool m_waypointsChanged = false;
     QList<QDeclarativeGeoWaypoint *> m_waypoints;
 };
 

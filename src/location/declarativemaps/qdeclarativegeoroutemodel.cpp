@@ -783,7 +783,7 @@ void QDeclarativeGeoRouteQuery::componentComplete()
     \sa setFeatureWeight, featureWeight
 */
 
-QList<int> QDeclarativeGeoRouteQuery::featureTypes()
+QList<int> QDeclarativeGeoRouteQuery::featureTypes() const
 {
     QList<int> list;
 
@@ -1454,7 +1454,7 @@ void QDeclarativeGeoRouteQuery::setRouteOptimizations(QDeclarativeGeoRouteQuery:
 /*!
     \internal
 */
-QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest()
+QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest() const
 {
     if (m_extraParametersChanged) {
         m_extraParametersChanged = false;
@@ -1485,7 +1485,7 @@ QGeoRouteRequest QDeclarativeGeoRouteQuery::routeRequest()
 
     \since 5.11
 */
-QVariantMap QDeclarativeGeoRouteQuery::extraParameters()
+QVariantMap QDeclarativeGeoRouteQuery::extraParameters() const
 {
     return routeRequest().extraParameters();
 }
