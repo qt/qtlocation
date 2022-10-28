@@ -39,7 +39,7 @@
 
 #include "qgeoroutingmanagerengineosm.h"
 #include "qgeoroutereplyosm.h"
-#include "QtLocation/private/qgeorouteparserosrmv4_p.h"
+#include "qgeorouteparserosrmv4_p.h"
 #include "QtLocation/private/qgeorouteparserosrmv5_p.h"
 
 #include <QtCore/QUrlQuery>

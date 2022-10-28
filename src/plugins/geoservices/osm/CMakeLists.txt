@@ -17,6 +17,7 @@ qt_internal_add_plugin(QGeoServiceProviderFactoryOsmPlugin
         qgeotiledmaposm.h qgeotiledmaposm.cpp
         qgeofiletilecacheosm.h qgeofiletilecacheosm.cpp
         qgeotileproviderosm.h qgeotileproviderosm.cpp
+        qgeorouteparserosrmv4_p.h qgeorouteparserosrmv4.cpp
     LIBRARIES
         Qt::Core
         Qt::Network

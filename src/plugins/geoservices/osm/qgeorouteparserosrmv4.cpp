@@ -38,10 +38,10 @@
 ****************************************************************************/
 
 #include "qgeorouteparserosrmv4_p.h"
-#include "qgeorouteparser_p_p.h"
 #include "qgeoroutesegment.h"
 #include "qgeomaneuver.h"
 
+#include <QtLocation/private/qgeorouteparser_p_p.h>
 #include <QtCore/private/qobject_p.h>
 #include <QtCore/QJsonDocument>
 #include <QtCore/QJsonObject>

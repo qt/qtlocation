@@ -31,7 +31,6 @@ qt_internal_add_module(Location
         maps/qgeoroute.h maps/qgeoroute_p.h maps/qgeoroute.cpp
         maps/qgeoroutesegment.h maps/qgeoroutesegment_p.h maps/qgeoroutesegment.cpp
         maps/qgeorouteparser_p.h maps/qgeorouteparser_p_p.h maps/qgeorouteparser.cpp
-        maps/qgeorouteparserosrmv4_p.h maps/qgeorouteparserosrmv4.cpp
         maps/qgeorouteparserosrmv5_p.h maps/qgeorouteparserosrmv5.cpp
         maps/qgeomaneuver.h maps/qgeomaneuver_p.h maps/qgeomaneuver.cpp
         maps/qgeomappingmanager_p.h maps/qgeomappingmanager_p_p.h maps/qgeomappingmanager.cpp

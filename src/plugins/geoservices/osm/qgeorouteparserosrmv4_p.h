@@ -57,7 +57,7 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoRouteParserOsrmV4Private;
-class Q_LOCATION_PRIVATE_EXPORT QGeoRouteParserOsrmV4 : public QGeoRouteParser
+class QGeoRouteParserOsrmV4 : public QGeoRouteParser
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoRouteParserOsrmV4)
