@@ -181,6 +181,7 @@ qt_internal_add_qml_module(Location
 )
 
 qt_internal_add_shaders(Location "declarative_location_shaders"
+    SILENT
     BATCHABLE
     PRECOMPILE
     OPTIMIZED
