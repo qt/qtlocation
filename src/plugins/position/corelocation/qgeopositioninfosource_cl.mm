@@ -63,9 +63,8 @@
 }
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    Q_UNUSED(manager)
-    if (status == kCLAuthorizationStatusNotDetermined)
-        m_positionInfoSource->requestUpdate(MINIMUM_UPDATE_INTERVAL);
+    Q_UNUSED(manager);
+    m_positionInfoSource->changeAuthorizationStatus(status);
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
@@ -112,12 +111,12 @@
 QT_BEGIN_NAMESPACE
 
 QGeoPositionInfoSourceCL::QGeoPositionInfoSourceCL(QObject *parent)
-    : QGeoPositionInfoSource(parent)
-    , m_locationManager(0)
-    , m_started(false)
-    , m_updateTimer(0)
-    , m_updateTimeout(0)
-    , m_positionError(QGeoPositionInfoSource::NoError)
+    : QGeoPositionInfoSource(parent),
+      m_locationManager(0),
+      m_updatesWanted(false),
+      m_updateTimer(0),
+      m_updateTimeout(0),
+      m_positionError(QGeoPositionInfoSource::NoError)
 {
 }
 
@@ -138,45 +137,14 @@ void QGeoPositionInfoSourceCL::setUpdateInterval(int msec)
 
     // Must timeout if update takes longer than specified interval
     m_updateTimeout = msec;
-    if (m_started) setTimeoutInterval(m_updateTimeout);
+    if (m_updatesWanted)
+        setTimeoutInterval(m_updateTimeout);
 }
 
 bool QGeoPositionInfoSourceCL::enableLocationManager()
 {
     if (!m_locationManager) {
-        if ([CLLocationManager locationServicesEnabled]) {
-            // Location Services Are Enabled
-            switch ([CLLocationManager authorizationStatus]) {
-                case kCLAuthorizationStatusNotDetermined:
-                    // User has not yet made a choice with regards to this application
-                    break;
-                case kCLAuthorizationStatusRestricted:
-                    // This application is not authorized to use location services.  Due
-                    // to active restrictions on location services, the user cannot change
-                    // this status, and may not have personally denied authorization
-                    return false;
-                case kCLAuthorizationStatusDenied:
-                    // User has explicitly denied authorization for this application, or
-                    // location services are disabled in Settings
-                    return false;
-                case kCLAuthorizationStatusAuthorizedAlways:
-                    // This app is authorized to start location services at any time.
-                    break;
-#ifndef Q_OS_MACOS
-                case kCLAuthorizationStatusAuthorizedWhenInUse:
-                    // This app is authorized to start most location services while running in the foreground.
-                    break;
-#endif
-                default:
-                    // By default, try to enable it
-                    break;
-            }
-        } else {
-            // Location Services Disabled
-            return false;
-        }
-
-    m_locationManager = [[CLLocationManager alloc] init];
+        m_locationManager = [[CLLocationManager alloc] init];
 
 #if defined(Q_OS_IOS) || defined(Q_OS_WATCHOS)
         if (__builtin_available(watchOS 4.0, *)) {
@@ -232,32 +200,37 @@ void QGeoPositionInfoSourceCL::setTimeoutInterval(int msec)
 
 void QGeoPositionInfoSourceCL::startUpdates()
 {
+    m_positionError = QGeoPositionInfoSource::NoError;
+    m_updatesWanted = true;
     if (enableLocationManager()) {
 #ifdef Q_OS_TVOS
         [m_locationManager requestLocation];    // service will run long enough for one location update
 #else
         [m_locationManager startUpdatingLocation];
 #endif
-        m_started = true;
-
         setTimeoutInterval(m_updateTimeout);
-    } else setError(QGeoPositionInfoSource::AccessError);
+    } else {
+        setError(QGeoPositionInfoSource::AccessError);
+    }
 }
 
 void QGeoPositionInfoSourceCL::stopUpdates()
 {
     if (m_locationManager) {
         [m_locationManager stopUpdatingLocation];
-        m_started = false;
+        m_updatesWanted = false;
 
         // Stop timeout timer
         setTimeoutInterval(0);
-    } else setError(QGeoPositionInfoSource::AccessError);
+    } else {
+        setError(QGeoPositionInfoSource::AccessError);
+    }
 }
 
 void QGeoPositionInfoSourceCL::requestUpdate(int timeout)
 {
     // Get a single update within timeframe
+    m_positionError = QGeoPositionInfoSource::NoError;
     if (timeout < minimumUpdateInterval() && timeout != 0)
         emit updateTimeout();
     else if (enableLocationManager()) {
@@ -270,7 +243,21 @@ void QGeoPositionInfoSourceCL::requestUpdate(int timeout)
 #endif
 
         setTimeoutInterval(timeout);
-    } else setError(QGeoPositionInfoSource::AccessError);
+    } else {
+        setError(QGeoPositionInfoSource::AccessError);
+    }
+}
+
+void QGeoPositionInfoSourceCL::changeAuthorizationStatus(CLAuthorizationStatus status)
+{
+    if (status == kCLAuthorizationStatusAuthorizedAlways
+#ifndef Q_OS_MACOS
+        || status == kCLAuthorizationStatusAuthorizedWhenInUse
+#endif
+    ) {
+        if (m_updatesWanted)
+            startUpdates();
+    }
 }
 
 void QGeoPositionInfoSourceCL::timerEvent( QTimerEvent * event )
@@ -283,7 +270,8 @@ void QGeoPositionInfoSourceCL::timerEvent( QTimerEvent * event )
         setTimeoutInterval(0);
 
         // Started for single update?
-        if (!m_started) stopUpdates();
+        if (!m_updatesWanted)
+            stopUpdates();
     }
 }
 
@@ -305,7 +293,8 @@ void QGeoPositionInfoSourceCL::locationDataAvailable(QGeoPositionInfo location)
     emit positionUpdated(location);
 
     // Started for single update?
-    if (!m_started) stopUpdates();
+    if (!m_updatesWanted)
+        stopUpdates();
     // ...otherwise restart timeout timer
     else setTimeoutInterval(m_updateTimeout);
 }
@@ -325,7 +314,8 @@ QGeoPositionInfoSource::Error QGeoPositionInfoSourceCL::error() const
 void QGeoPositionInfoSourceCL::setError(QGeoPositionInfoSource::Error positionError)
 {
     m_positionError = positionError;
-    emit QGeoPositionInfoSource::error(positionError);
+    if (m_positionError != QGeoPositionInfoSource::NoError)
+        emit QGeoPositionInfoSource::error(positionError);
 }
 
 QT_END_NAMESPACE
