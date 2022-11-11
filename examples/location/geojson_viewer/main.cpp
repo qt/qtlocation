@@ -74,6 +74,8 @@
 #    include <QtCore/private/qandroidextras_p.h>
 #endif
 
+using namespace Qt::StringLiterals;
+
 class extractor
 {
 public:
@@ -257,7 +259,7 @@ public:
 // Request permissions because we're using QStandardPaths::writableLocation()
 bool requestStoragePermissions()
 {
-    const auto permission = QtAndroidPrivate::Storage;
+    const QString permission = "android.permission.WRITE_EXTERNAL_STORAGE"_L1;
     auto checkFuture = QtAndroidPrivate::checkPermission(permission);
     if (checkFuture.result() == QtAndroidPrivate::Denied) {
         auto requestFuture = QtAndroidPrivate::requestPermission(permission);
