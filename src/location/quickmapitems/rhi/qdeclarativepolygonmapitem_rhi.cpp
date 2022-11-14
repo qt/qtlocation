@@ -233,7 +233,7 @@ QSGNode *QDeclarativePolygonMapItemPrivateOpenGL::updateMapItemPaintNode(QSGNode
         m_rootNode = new RootNode();
         m_node = new MapPolygonNodeGL();
         m_rootNode->appendChildNode(m_node);
-        m_polylinenode = new MapPolylineNodeOpenGLExtruded();
+        m_polylinenode = new MapPolylineNodeOpenGL();
         m_rootNode->appendChildNode(m_polylinenode);
         m_rootNode->markDirty(QSGNode::DirtyNodeAdded);
         if (oldNode)

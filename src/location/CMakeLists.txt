@@ -188,10 +188,8 @@ qt_internal_add_shaders(Location "declarative_location_shaders"
     PREFIX
         "/location"
     FILES
-        "quickmapitems/rhi/shaders/polyline_linestrip.vert"
-        "quickmapitems/rhi/shaders/polyline_linestrip.frag"
-        "quickmapitems/rhi/shaders/polyline_extruded.vert"
-        "quickmapitems/rhi/shaders/polyline_extruded.frag"
+        "quickmapitems/rhi/shaders/polyline.vert"
+        "quickmapitems/rhi/shaders/polyline.frag"
         "quickmapitems/rhi/shaders/polygon.vert"
         "quickmapitems/rhi/shaders/polygon.frag"
 )

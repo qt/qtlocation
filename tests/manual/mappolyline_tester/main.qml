@@ -110,7 +110,7 @@ Window {
             }
 
             C2.ComboBox {
-                model: ['Software','OpenGL LineStrip','OpenGL Triangles']
+                model: ['Software', 'OpenGL']
                 id: switchPolylines1
                 anchors {
                     top: parent.top
@@ -153,7 +153,7 @@ Window {
             }
 
             C2.ComboBox {
-                model: ['Software','OpenGL LineStrip','OpenGL Triangles']
+                model: ['Software', 'OpenGL']
                 id: switchPolylines2
                 anchors {
                     top: parent.top
@@ -178,10 +178,8 @@ Window {
 
             function polylineBackend()
             {
-                return (polyGroup.glPolylines === "OpenGL LineStrip")
-                       ? MapPolyline.OpenGLLineStrip
-                       :  ((polyGroup.glPolylines === "Software")
-                           ? MapPolyline.Software : MapPolyline.OpenGLExtruded)
+                return (polyGroup.glPolylines === "Software")
+                       ? MapPolyline.Software : MapPolyline.OpenGL
             }
 
             function polygonBackend()

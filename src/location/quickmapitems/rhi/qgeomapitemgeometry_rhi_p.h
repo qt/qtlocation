@@ -144,8 +144,6 @@ public:
     bool allocateAndFillEntries(QSGGeometry *geom,
                                 bool closed = false,
                                 unsigned int zoom = 0) const;
-    void allocateAndFillLineStrip(QSGGeometry *geom,
-                                  int lod = 0) const;
 
     bool contains(const QPointF &point) const override
     {

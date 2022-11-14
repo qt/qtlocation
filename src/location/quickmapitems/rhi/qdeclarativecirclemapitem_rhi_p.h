@@ -121,7 +121,7 @@ public:
     QGeoMapPolylineGeometryOpenGL m_borderGeometry;
     QDeclarativePolygonMapItemPrivateOpenGL::RootNode *m_rootNode = nullptr;
     MapPolygonNodeGL *m_node = nullptr;
-    MapPolylineNodeOpenGLExtruded *m_polylinenode = nullptr;
+    MapPolylineNodeOpenGL *m_polylinenode = nullptr;
 };
 
 QT_END_NAMESPACE

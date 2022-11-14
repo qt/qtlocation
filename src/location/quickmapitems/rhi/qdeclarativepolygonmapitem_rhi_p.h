@@ -230,7 +230,7 @@ public:
     QGeoMapPolylineGeometryOpenGL m_borderGeometry;
     RootNode *m_rootNode = nullptr;
     MapPolygonNodeGL *m_node = nullptr;
-    MapPolylineNodeOpenGLExtruded *m_polylinenode = nullptr;
+    MapPolylineNodeOpenGL *m_polylinenode = nullptr;
 };
 
 

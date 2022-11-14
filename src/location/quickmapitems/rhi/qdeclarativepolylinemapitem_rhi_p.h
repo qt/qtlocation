@@ -67,10 +67,10 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT MapPolylineShaderLineStrip : public QSGMaterialShader
+class Q_LOCATION_PRIVATE_EXPORT MapPolylineShader : public QSGMaterialShader
 {
 public:
-    MapPolylineShaderLineStrip();
+    MapPolylineShader();
 
     bool updateUniformData(RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect) override;
 };
@@ -78,8 +78,7 @@ public:
 class Q_LOCATION_PRIVATE_EXPORT MapPolylineMaterial : public QSGFlatColorMaterial
 {
 public:
-    MapPolylineMaterial()
-        : QSGFlatColorMaterial()
+    MapPolylineMaterial() : QSGFlatColorMaterial()
     {
         // Passing RequiresFullMatrix is essential in order to prevent the
         // batch renderer from baking in simple, translate-only transforms into
@@ -131,52 +130,6 @@ public:
         return m_lineWidth;
     }
 
-    QSGMaterialType *type() const override;
-    int compare(const QSGMaterial *other) const override;
-
-protected:
-    QMatrix4x4 m_geoProjection;
-    QDoubleVector3D m_center;
-    int m_wrapOffset = 0;
-    float m_lineWidth = 1.0;
-};
-
-
-class Q_LOCATION_PRIVATE_EXPORT MapPolylineShaderExtruded : public QSGMaterialShader
-{
-public:
-    MapPolylineShaderExtruded();
-
-    bool updateUniformData(RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect) override;
-};
-
-class Q_LOCATION_PRIVATE_EXPORT MapPolylineNodeOpenGLLineStrip : public MapItemGeometryNode
-{
-public:
-    MapPolylineNodeOpenGLLineStrip();
-    ~MapPolylineNodeOpenGLLineStrip() override;
-
-    void update(const QColor &fillColor,
-                const qreal lineWidth,
-                const QGeoMapPolylineGeometryOpenGL *shape,
-                const QMatrix4x4 &geoProjection,
-                const QDoubleVector3D &center,
-                const Qt::PenCapStyle capStyle = Qt::SquareCap);
-
-protected:
-    MapPolylineMaterial fill_material_;
-    QSGGeometry geometry_;
-};
-
-class Q_LOCATION_PRIVATE_EXPORT MapPolylineMaterialExtruded : public MapPolylineMaterial
-{
-public:
-    MapPolylineMaterialExtruded() : MapPolylineMaterial()
-    {
-
-    }
-    QSGMaterialShader *createShader(QSGRendererInterface::RenderMode renderMode) const override;
-
     void setMiter(int m)
     {
         m_miter = m;
@@ -190,10 +143,14 @@ public:
     QSGMaterialType *type() const override;
     int compare(const QSGMaterial *other) const override;
 
+    QMatrix4x4 m_geoProjection;
+    QDoubleVector3D m_center;
+    int m_wrapOffset = 0;
+    float m_lineWidth = 1.0;
     int m_miter = 0;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT MapPolylineNodeOpenGLExtruded : public MapItemGeometryNode
+class Q_LOCATION_PRIVATE_EXPORT MapPolylineNodeOpenGL : public MapItemGeometryNode
 {
 public:
 
@@ -223,15 +180,15 @@ public:
              };
              static const QSGGeometry::AttributeSet attrsTri = {
                 6,
-                sizeof(MapPolylineNodeOpenGLExtruded::MapPolylineEntry),
+                sizeof(MapPolylineNodeOpenGL::MapPolylineEntry),
                 dataTri
             };
              return attrsTri;
          }
     } MapPolylineEntry;
 
-    MapPolylineNodeOpenGLExtruded();
-    ~MapPolylineNodeOpenGLExtruded() override;
+    MapPolylineNodeOpenGL();
+    ~MapPolylineNodeOpenGL() override;
 
     void update(const QColor &fillColor,
                 float lineWidth,
@@ -245,20 +202,21 @@ public:
     static const QSGGeometry::AttributeSet &attributesMapPolylineTriangulated();
 
 protected:
-    MapPolylineMaterialExtruded fill_material_;
+    MapPolylineMaterial fill_material_;
     QSGGeometry m_geometryTriangulating;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateOpenGLLineStrip: public QDeclarativePolylineMapItemPrivate
+class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateOpenGL: public QDeclarativePolylineMapItemPrivate
 {
 public:
 
-    QDeclarativePolylineMapItemPrivateOpenGLLineStrip(QDeclarativePolylineMapItem &poly)
+    QDeclarativePolylineMapItemPrivateOpenGL(QDeclarativePolylineMapItem &poly)
         : QDeclarativePolylineMapItemPrivate(poly)
     {
     }
 
-    ~QDeclarativePolylineMapItemPrivateOpenGLLineStrip() override;
+    ~QDeclarativePolylineMapItemPrivateOpenGL() override;
+
     void onLinePropertiesChanged() override
     {
         afterViewportChanged();
@@ -295,28 +253,13 @@ public:
         preserveGeometry();
         m_poly.polishAndUpdate();
     }
+
     bool contains(const QPointF &point) const override;
     void updatePolish() override;
     QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override;
 
     QGeoMapPolylineGeometryOpenGL m_geometry;
-    MapPolylineNodeOpenGLLineStrip *m_node = nullptr;
-};
-
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateOpenGLExtruded: public QDeclarativePolylineMapItemPrivateOpenGLLineStrip
-{
-public:
-
-    QDeclarativePolylineMapItemPrivateOpenGLExtruded(QDeclarativePolylineMapItem &poly)
-        : QDeclarativePolylineMapItemPrivateOpenGLLineStrip(poly)
-    {
-    }
-
-    ~QDeclarativePolylineMapItemPrivateOpenGLExtruded() override;
-
-    QSGNode * updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override;
-
-    MapPolylineNodeOpenGLExtruded *m_nodeTri = nullptr;
+    MapPolylineNodeOpenGL *m_nodeTri = nullptr;
 };
 
 QT_END_NAMESPACE

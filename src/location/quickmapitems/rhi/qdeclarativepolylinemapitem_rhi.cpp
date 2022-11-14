@@ -44,142 +44,13 @@
 
 QT_BEGIN_NAMESPACE
 
-MapPolylineNodeOpenGLLineStrip::MapPolylineNodeOpenGLLineStrip()
-: geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
-{
-    geometry_.setDrawingMode(QSGGeometry::DrawLineStrip);
-    QSGGeometryNode::setMaterial(&fill_material_);
-    QSGGeometryNode::setGeometry(&geometry_);
-}
-
-MapPolylineNodeOpenGLLineStrip::~MapPolylineNodeOpenGLLineStrip()
-{
-
-}
-
-void MapPolylineNodeOpenGLLineStrip::update(const QColor &fillColor,
-                                   const qreal lineWidth,
-                                   const QGeoMapPolylineGeometryOpenGL *shape,
-                                   const QMatrix4x4 &geoProjection,
-                                   const QDoubleVector3D &center,
-                                   const Qt::PenCapStyle /*capStyle*/)
-{
-    if (shape->m_screenVertices->size() < 2) {
-        setSubtreeBlocked(true);
-        return;
-    } else {
-        setSubtreeBlocked(false);
-    }
-
-    QSGGeometry *fill = QSGGeometryNode::geometry();
-    if (shape->m_dataChanged) {
-        shape->allocateAndFillLineStrip(fill);
-        markDirty(DirtyGeometry);
-        shape->m_dataChanged = false;
-    }
-    fill->setLineWidth(lineWidth);
-    fill_material_.setLineWidth(lineWidth); // to make the material not compare equal if linewidth changes
-
-//    if (fillColor != fill_material_.color())
-    {
-        fill_material_.setWrapOffset(shape->m_wrapOffset - 1);
-        fill_material_.setColor(fillColor);
-        fill_material_.setGeoProjection(geoProjection);
-        fill_material_.setCenter(center);
-        setMaterial(&fill_material_);
-        markDirty(DirtyMaterial);
-    }
-}
-
-MapPolylineShaderLineStrip::MapPolylineShaderLineStrip() : QSGMaterialShader(*new QSGMaterialShaderPrivate(this))
-{
-    setShaderFileName(VertexStage, QLatin1String(":/location/quickmapitems/rhi/shaders/polyline_linestrip.vert.qsb"));
-    setShaderFileName(FragmentStage, QLatin1String(":/location/quickmapitems/rhi/shaders/polyline_linestrip.frag.qsb"));
-}
-
-bool MapPolylineShaderLineStrip::updateUniformData(QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
-{
-    Q_ASSERT(oldEffect == nullptr || newEffect->type() == oldEffect->type());
-    MapPolylineMaterial *oldMaterial = static_cast<MapPolylineMaterial *>(oldEffect);
-    MapPolylineMaterial *newMaterial = static_cast<MapPolylineMaterial *>(newEffect);
-
-    const QColor &c = newMaterial->color();
-    const QMatrix4x4 &geoProjection = newMaterial->geoProjection();
-    const QDoubleVector3D &center = newMaterial->center();
-
-    QVector4D vecCenter, vecCenter_lowpart;
-    for (int i = 0; i < 3; i++)
-        QLocationUtils::split_double(center.get(i), &vecCenter[i], &vecCenter_lowpart[i]);
-    vecCenter[3] = 0;
-    vecCenter_lowpart[3] = 0;
-
-    int offset = 0;
-    char *buf_p = state.uniformData()->data();
-
-    if (state.isMatrixDirty()) {
-        const QMatrix4x4 m = state.projectionMatrix();
-        memcpy(buf_p + offset, m.constData(), 4*4*4);
-    }
-    offset += 4*4*4;
-
-    memcpy(buf_p + offset, geoProjection.constData(), 4*4*4); offset+=4*4*4;
-
-    memcpy(buf_p + offset, &vecCenter, 4*4); offset += 4*4;
-
-    memcpy(buf_p + offset, &vecCenter_lowpart, 4*4); offset+=4*4;
-
-    if (state.isOpacityDirty()) {
-        const float opacity = state.opacity();
-        memcpy(buf_p + offset, &opacity, 4);
-    }
-    offset += 4;
-
-    float wrapOffset = newMaterial->wrapOffset();
-    memcpy(buf_p + offset, &wrapOffset, 4); offset+=4;
-
-    offset+=8; // float padding
-
-    if (oldMaterial == nullptr || c != oldMaterial->color() || state.isOpacityDirty()) {
-        float opacity = state.opacity() * c.alphaF();
-        QVector4D v(c.redF() * opacity,
-                    c.greenF() *  opacity,
-                    c.blueF() * opacity,
-                    opacity);
-        memcpy(buf_p + offset, &v, 4*4);
-    }
-    offset+=4*4;
-
-    return true;
-}
-
-QSGMaterialShader *MapPolylineMaterial::createShader(QSGRendererInterface::RenderMode renderMode) const
-{
-    Q_UNUSED(renderMode);
-    return new MapPolylineShaderLineStrip();
-}
-
-QSGMaterialType *MapPolylineMaterial::type() const
-{
-    static QSGMaterialType type;
-    return &type;
-}
-
-int MapPolylineMaterial::compare(const QSGMaterial *other) const
-{
-    const MapPolylineMaterial &o = *static_cast<const MapPolylineMaterial *>(other);
-    if (o.m_center == m_center && o.m_geoProjection == m_geoProjection && o.m_wrapOffset == m_wrapOffset && o.m_lineWidth == m_lineWidth)
-        return QSGFlatColorMaterial::compare(other);
-    return -1;
-}
-
-
-const QSGGeometry::AttributeSet &MapPolylineNodeOpenGLExtruded::attributesMapPolylineTriangulated()
+const QSGGeometry::AttributeSet &MapPolylineNodeOpenGL::attributesMapPolylineTriangulated()
 {
     return MapPolylineEntry::attributes();
 }
 
-MapPolylineNodeOpenGLExtruded::MapPolylineNodeOpenGLExtruded()
-: m_geometryTriangulating(MapPolylineNodeOpenGLExtruded::attributesMapPolylineTriangulated(),
+MapPolylineNodeOpenGL::MapPolylineNodeOpenGL()
+: m_geometryTriangulating(MapPolylineNodeOpenGL::attributesMapPolylineTriangulated(),
             0 /* vtx cnt */, 0 /* index cnt */, QSGGeometry::UnsignedIntType /* index type */)
 {
     m_geometryTriangulating.setDrawingMode(QSGGeometry::DrawTriangles);
@@ -187,7 +58,7 @@ MapPolylineNodeOpenGLExtruded::MapPolylineNodeOpenGLExtruded()
     QSGGeometryNode::setGeometry(&m_geometryTriangulating);
 }
 
-MapPolylineNodeOpenGLExtruded::~MapPolylineNodeOpenGLExtruded()
+MapPolylineNodeOpenGL::~MapPolylineNodeOpenGL()
 {
 
 }
@@ -218,11 +89,11 @@ bool QGeoMapPolylineGeometryOpenGL::allocateAndFillEntries(QSGGeometry *geom,
 
     const int numIndices = numSegments * 6; // six vertices per line segment
     geom->allocate(numIndices);
-    MapPolylineNodeOpenGLExtruded::MapPolylineEntry *vertices =
-            static_cast<MapPolylineNodeOpenGLExtruded::MapPolylineEntry *>(geom->vertexData());
+    MapPolylineNodeOpenGL::MapPolylineEntry *vertices =
+            static_cast<MapPolylineNodeOpenGL::MapPolylineEntry *>(geom->vertexData());
 
     for (int i = 0; i < numSegments; ++i) {
-        MapPolylineNodeOpenGLExtruded::MapPolylineEntry e;
+        MapPolylineNodeOpenGL::MapPolylineEntry e;
         const QDeclarativeGeoMapItemUtils::vec2 &cur = v[i];
         const QDeclarativeGeoMapItemUtils::vec2 &next = v[i+1];
         e.triangletype = 1.0;
@@ -270,21 +141,7 @@ bool QGeoMapPolylineGeometryOpenGL::allocateAndFillEntries(QSGGeometry *geom,
     return true;
 }
 
-void QGeoMapPolylineGeometryOpenGL::allocateAndFillLineStrip(QSGGeometry *geom,
-                                                             int lod) const
-{
-    // Select LOD. Generate if not present. Assign it to m_screenVertices;
-    Q_UNUSED(lod);
-
-    const QList<QDeclarativeGeoMapItemUtils::vec2> &vx = *m_screenVertices;
-    geom->allocate(vx.size());
-
-    QSGGeometry::Point2D *pts = geom->vertexDataAsPoint2D();
-    for (qsizetype i = 0; i < vx.size(); ++i)
-        pts[i].set(vx[i].x, vx[i].y);
-}
-
-void MapPolylineNodeOpenGLExtruded::update(const QColor &fillColor,
+void MapPolylineNodeOpenGL::update(const QColor &fillColor,
                                    float lineWidth,
                                    const QGeoMapPolylineGeometryOpenGL *shape,
                                    const QMatrix4x4 &geoProjection,
@@ -324,19 +181,19 @@ void MapPolylineNodeOpenGLExtruded::update(const QColor &fillColor,
     }
 }
 
-MapPolylineShaderExtruded::MapPolylineShaderExtruded() : QSGMaterialShader(*new QSGMaterialShaderPrivate(this))
+MapPolylineShader::MapPolylineShader() : QSGMaterialShader(*new QSGMaterialShaderPrivate(this))
 {
     // Heavily adapted from https://github.com/mattdesl/webgl-lines/blob/master/projected/vert.glsl,
     // that is (c) Matt DesLauriers, and released under the MIT license.
-    setShaderFileName(VertexStage, QLatin1String(":/location/quickmapitems/rhi/shaders/polyline_extruded.vert.qsb"));
-    setShaderFileName(FragmentStage, QLatin1String(":/location/quickmapitems/rhi/shaders/polyline_extruded.frag.qsb"));
+    setShaderFileName(VertexStage, QLatin1String(":/location/quickmapitems/rhi/shaders/polyline.vert.qsb"));
+    setShaderFileName(FragmentStage, QLatin1String(":/location/quickmapitems/rhi/shaders/polyline.frag.qsb"));
 }
 
-bool MapPolylineShaderExtruded::updateUniformData(QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
+bool MapPolylineShader::updateUniformData(QSGMaterialShader::RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
 {
     Q_ASSERT(oldEffect == nullptr || newEffect->type() == oldEffect->type());
-    MapPolylineMaterialExtruded *oldMaterial = static_cast<MapPolylineMaterialExtruded *>(oldEffect);
-    MapPolylineMaterialExtruded *newMaterial = static_cast<MapPolylineMaterialExtruded *>(newEffect);
+    MapPolylineMaterial *oldMaterial = static_cast<MapPolylineMaterial *>(oldEffect);
+    MapPolylineMaterial *newMaterial = static_cast<MapPolylineMaterial *>(newEffect);
 
     const QColor &c = newMaterial->color();
     const QMatrix4x4 &geoProjection = newMaterial->geoProjection();
@@ -393,36 +250,40 @@ bool MapPolylineShaderExtruded::updateUniformData(QSGMaterialShader::RenderState
     return true;
 }
 
-QSGMaterialShader *MapPolylineMaterialExtruded::createShader(QSGRendererInterface::RenderMode renderMode) const
+QSGMaterialShader *MapPolylineMaterial::createShader(QSGRendererInterface::RenderMode renderMode) const
 {
     Q_UNUSED(renderMode);
-    return new MapPolylineShaderExtruded();
+    return new MapPolylineShader();
 }
 
-QSGMaterialType *MapPolylineMaterialExtruded::type() const
+QSGMaterialType *MapPolylineMaterial::type() const
 {
     static QSGMaterialType type;
     return &type;
 }
 
-int MapPolylineMaterialExtruded::compare(const QSGMaterial *other) const
+int MapPolylineMaterial::compare(const QSGMaterial *other) const
 {
-    const MapPolylineMaterialExtruded &o = *static_cast<const MapPolylineMaterialExtruded *>(other);
-    if (o.m_miter == m_miter)
-        return MapPolylineMaterial::compare(other);
+    const MapPolylineMaterial &o = *static_cast<const MapPolylineMaterial *>(other);
+    if (o.m_center == m_center
+            && o.m_geoProjection == m_geoProjection
+            && o.m_wrapOffset == m_wrapOffset
+            && o.m_lineWidth == m_lineWidth
+            && o.m_miter == m_miter)
+    {
+        return QSGFlatColorMaterial::compare(other);
+    }
     return -1;
 }
 
-QDeclarativePolylineMapItemPrivateOpenGLLineStrip::~QDeclarativePolylineMapItemPrivateOpenGLLineStrip() {}
-
-bool QDeclarativePolylineMapItemPrivateOpenGLLineStrip::contains(const QPointF &point) const
+bool QDeclarativePolylineMapItemPrivateOpenGL::contains(const QPointF &point) const
 {
     return m_geometry.contains(m_poly.mapToItem(m_poly.quickMap(), point),
                                 m_poly.line()->width(),
                                 static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection()));
 }
 
-void QDeclarativePolylineMapItemPrivateOpenGLLineStrip::updatePolish()
+void QDeclarativePolylineMapItemPrivateOpenGL::updatePolish()
 {
     if (m_poly.m_geopath.path().length() == 0) { // Possibly cleared
         m_geometry.clear();
@@ -444,39 +305,10 @@ void QDeclarativePolylineMapItemPrivateOpenGLLineStrip::updatePolish()
     m_poly.setPosition(1.0 * m_geometry.firstPointOffset() - QPointF(lineWidth * 0.5,lineWidth * 0.5));
 }
 
-QSGNode *QDeclarativePolylineMapItemPrivateOpenGLLineStrip::updateMapItemPaintNode(QSGNode *oldNode,
-                                                            QQuickItem::UpdatePaintNodeData *data)
-{
-    Q_UNUSED(data);
+QDeclarativePolylineMapItemPrivateOpenGL::~QDeclarativePolylineMapItemPrivateOpenGL() {}
 
-    if (!m_node || !oldNode) {
-        m_node = new MapPolylineNodeOpenGLLineStrip();
-        if (oldNode)
-            delete oldNode;
-    } else {
-        m_node = static_cast<MapPolylineNodeOpenGLLineStrip *>(oldNode);
-    }
-
-    if (m_geometry.isScreenDirty() || m_poly.m_dirtyMaterial) {
-        const QGeoMap *map = m_poly.map();
-        const QMatrix4x4 &combinedMatrix = map->geoProjection().qsgTransform();
-        const QDoubleVector3D &cameraCenter = map->geoProjection().centerMercator();
-        m_node->update(m_poly.m_line.color(), // This updates only the material if the geometry is unchanged
-                        m_poly.m_line.width(),
-                        &m_geometry,
-                        combinedMatrix,
-                        cameraCenter);
-        m_geometry.setPreserveGeometry(false);
-        m_geometry.markClean();
-        m_poly.m_dirtyMaterial = false;
-    }
-    return m_node;
-}
-
-QDeclarativePolylineMapItemPrivateOpenGLExtruded::~QDeclarativePolylineMapItemPrivateOpenGLExtruded() {}
-
-QSGNode *QDeclarativePolylineMapItemPrivateOpenGLExtruded::updateMapItemPaintNode(QSGNode *oldNode,
-                                                            QQuickItem::UpdatePaintNodeData *data)
+QSGNode *QDeclarativePolylineMapItemPrivateOpenGL::updateMapItemPaintNode(QSGNode *oldNode,
+                                                                          QQuickItem::UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
     const QGeoMap *map = m_poly.map();
@@ -486,13 +318,13 @@ QSGNode *QDeclarativePolylineMapItemPrivateOpenGLExtruded::updateMapItemPaintNod
     const QColor &color = m_poly.m_line.color();
     const float lineWidth = m_poly.m_line.width();
 
-    MapPolylineNodeOpenGLExtruded *nodeTri = nullptr;
+    MapPolylineNodeOpenGL *nodeTri = nullptr;
     if (!m_nodeTri || !oldNode) {
         if (oldNode)
             delete oldNode;
-        nodeTri = new MapPolylineNodeOpenGLExtruded();
+        nodeTri = new MapPolylineNodeOpenGL();
     } else {
-        nodeTri = static_cast<MapPolylineNodeOpenGLExtruded *>(oldNode);
+        nodeTri = static_cast<MapPolylineNodeOpenGL *>(oldNode);
     }
 
     //TODO: update only material

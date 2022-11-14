@@ -803,7 +803,7 @@ struct PolylineBackendSelector
 {
     PolylineBackendSelector()
     {
-        backend = (qgetenv("QTLOCATION_OPENGL_ITEMS").toInt()) ? QDeclarativePolylineMapItem::OpenGLExtruded : QDeclarativePolylineMapItem::Software;
+        backend = (qgetenv("QTLOCATION_OPENGL_ITEMS").toInt()) ? QDeclarativePolylineMapItem::OpenGL : QDeclarativePolylineMapItem::Software;
     }
     QDeclarativePolylineMapItem::Backend backend = QDeclarativePolylineMapItem::Software;
 };
@@ -1065,8 +1065,7 @@ QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
     \qmlproperty MapPolyline.Backend QtLocation::MapPolyline::backend
 
     This property holds which backend is in use to render the map item.
-    Valid values are \b MapPolyline.Software and \b{MapPolyline.OpenGLLineStrip}
-    and \b{MapPolyline.OpenGLExtruded}.
+    Valid values are \b MapPolyline.Software and \b{MapPolyline.OpenGL}.
     The default value is \b{MapPolyline.Software}.
 
     \note \b{The release of this API with Qt 5.15 is a Technology Preview}.
@@ -1095,12 +1094,8 @@ void QDeclarativePolylineMapItem::setBackend(QDeclarativePolylineMapItem::Backen
             (m_backend == Software)
                     ? static_cast<QDeclarativePolylineMapItemPrivate *>(
                             new QDeclarativePolylineMapItemPrivateCPU(*this))
-                    : ((m_backend == OpenGLExtruded)
-                               ? static_cast<QDeclarativePolylineMapItemPrivate *>(
-                                       new QDeclarativePolylineMapItemPrivateOpenGLExtruded(*this))
-                               : static_cast<QDeclarativePolylineMapItemPrivate *>(
-                                       new QDeclarativePolylineMapItemPrivateOpenGLLineStrip(
-                                               *this))));
+                    : static_cast<QDeclarativePolylineMapItemPrivate *>(
+                          new QDeclarativePolylineMapItemPrivateOpenGL(*this)));
     m_d.swap(d);
     m_d->onGeoGeometryChanged();
     emit backendChanged();
