@@ -726,23 +726,7 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
     if (!qIsNaN(m_userMinimumZoomLevel))
         return m_userMinimumZoomLevel;
     else
-        return m_gestureArea->minimumZoomLevel();
-}
-
-/*!
-    \internal
-*/
-qreal QDeclarativeGeoMap::implicitMinimumZoomLevel() const
-{
-    return m_gestureArea->minimumZoomLevel();
-}
-
-/*!
-    \internal
-*/
-qreal QDeclarativeGeoMap::effectiveMinimumZoomLevel() const
-{
-    return qMax<qreal>(minimumZoomLevel(), implicitMinimumZoomLevel());
+        return m_cameraCapabilities.minimumZoomLevel();
 }
 
 /*!
@@ -780,7 +764,10 @@ void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel, bool userSe
 
 qreal QDeclarativeGeoMap::maximumZoomLevel() const
 {
-    return m_gestureArea->maximumZoomLevel();
+    if (!qIsNaN(m_userMaximumZoomLevel))
+        return m_userMaximumZoomLevel;
+    else
+        return m_cameraCapabilities.maximumZoomLevel();
 }
 
 /*!
@@ -818,7 +805,7 @@ void QDeclarativeGeoMap::setZoomLevel(qreal zoomLevel, bool overzoom)
         if (cameraData.zoomLevel() == zoomLevel)
             return;
 
-        cameraData.setZoomLevel(qBound<qreal>(overzoom ? m_map->minimumZoom() : effectiveMinimumZoomLevel(),
+        cameraData.setZoomLevel(qBound<qreal>(overzoom ? m_map->minimumZoom() : m_cameraCapabilities.minimumZoomLevel(),
                                                 zoomLevel,
                                                 overzoom ? 30 : maximumZoomLevel()));
         m_maximumViewportLatitude = m_map->maximumCenterLatitudeAtZoom(cameraData);
