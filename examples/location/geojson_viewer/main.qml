@@ -54,8 +54,7 @@ import QtQuick.Dialogs
 import QtQuick.Controls
 import QtPositioning
 import QtLocation
-import Qt.labs.location
-import Qt.labs.platform as Platform
+import QtCore
 import Qt.GeoJson
 
 ApplicationWindow {
@@ -73,6 +72,7 @@ ApplicationWindow {
         title: "Choose a GeoJSON file"
         fileMode: FileDialog.OpenFile
         currentFolder: dataPath
+        nameFilters: ["GeoJSON files (*.geojson *.json)"]
         onAccepted: {
             geoJsoner.load(fileDialog.selectedFile)
         }
@@ -83,7 +83,8 @@ ApplicationWindow {
         id: fileWriteDialog
         title: "Write your geometry to a file"
         fileMode: FileDialog.SaveFile
-        currentFolder: Platform.StandardPaths.writableLocation(Platform.StandardPaths.TempLocation)
+        currentFolder: StandardPaths.writableLocation(StandardPaths.TempLocation)
+        nameFilters: ["GeoJSON files (*.geojson *.json)"]
         onAccepted: {
             geoJsoner.dumpGeoJSON(geoJsoner.toGeoJson(miv), fileWriteDialog.selectedFile);
         }
@@ -94,7 +95,8 @@ ApplicationWindow {
         id: debugWriteDialog
         title: "Write Qvariant debug view"
         fileMode: FileDialog.SaveFile
-        currentFolder: Platform.StandardPaths.writableLocation(Platform.StandardPaths.TempLocation)
+        currentFolder: StandardPaths.writableLocation(StandardPaths.TempLocation)
+        nameFilters: ["GeoJSON files (*.geojson *.json)"]
         onAccepted: {
             geoJsoner.writeDebug(geoJsoner.toGeoJson(miv), debugWriteDialog.selectedFile);
         }
@@ -144,29 +146,7 @@ ApplicationWindow {
                 checkable: true
                 checked: false
             }
-
-            MenuItem {
-                text: "Map Object Delegates"
-                id: mapObjectsSelector
-                checkable: true
-                checked: false
-
-                onCheckedChanged: {
-                    if (checked) {
-                        miv.model = undefined
-                        map.removeMapItemView(miv)
-                        rootMoV.addMapObject(mov)
-                        mov.model = geoJsoner.model
-                    } else {
-                        mov.model = undefined
-                        rootMoV.removeMapObject(mov)
-                        map.addMapItemView(miv)
-                        miv.model = geoJsoner.model
-                    }
-                }
-            }
         }
-
     }
 
     GeoJsoner {
@@ -182,21 +162,12 @@ ApplicationWindow {
         }
     }
 
-    MapObjectView {
-        id: mov
-        delegate: GeoJsonDelegateMapObject {}
-    }
-
     Map {
         id: map
         anchors.fill: parent
         center: QtPositioning.coordinate(43.59, 13.50) // Starting coordinates: Ancona, the city where I am studying :)
         plugin: Plugin { name: "osm" }
         zoomLevel: 4
-
-        MapObjectView {
-            id: rootMoV
-        }
 
         MapItemView {
             id: miv

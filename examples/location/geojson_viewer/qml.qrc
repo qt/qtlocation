@@ -2,6 +2,5 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>GeoJsonDelegate.qml</file>
-        <file>GeoJsonDelegateMapObject.qml</file>
     </qresource>
 </RCC>

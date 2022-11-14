@@ -49,7 +49,7 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
+#include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <QFile>
@@ -275,7 +275,7 @@ bool requestStoragePermissions()
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
 #ifdef Q_OS_ANDROID
     if (!requestStoragePermissions())

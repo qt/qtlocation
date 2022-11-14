@@ -22,7 +22,6 @@ find_package(Qt6 COMPONENTS Network)
 find_package(Qt6 COMPONENTS Quick)
 find_package(Qt6 COMPONENTS Positioning)
 find_package(Qt6 COMPONENTS Location)
-find_package(Qt6 COMPONENTS Widgets)
 
 qt_add_executable(qml_location_geojsonviewer WIN32 MACOSX_BUNDLE
     main.cpp
@@ -35,7 +34,6 @@ target_link_libraries(qml_location_geojsonviewer PUBLIC
     Qt::Positioning
     Qt::Qml
     Qt::Quick
-    Qt::Widgets
 )
 
 
