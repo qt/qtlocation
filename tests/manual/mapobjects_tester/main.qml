@@ -26,12 +26,10 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.7
-import QtQuick.Window 2.2
-import QtQuick.Controls 2.2 as C2
-import QtPositioning 5.6
-import QtLocation 5.15
-import Qt.labs.location 1.0
+import QtQuick
+import QtQuick.Controls as C2
+import QtPositioning
+import QtLocation
 
 Window {
     id: win
@@ -92,7 +90,7 @@ Window {
             Component.onCompleted: {
                 var o = migComponent.createObject(map)
                 o.glPolygons  = Qt.binding(function() {return switchPolygons2.checked})
-                o.glPolylines  = Qt.binding(function() {return switchPolylines2.currentText})
+                o.glPolylines  = Qt.binding(function() {return switchPolylines2.checked})
                 o.glCircles  = Qt.binding(function() {return switchCircles2.checked})
                 o.glRectangles  = Qt.binding(function() {return switchRectangles2.checked})
                 map.addMapItemGroup(o);
@@ -101,7 +99,6 @@ Window {
             C2.Switch {
                 text: qsTr("OGL Polygons")
                 id: switchPolygons2
-                checked: false
                 anchors {
                     top: parent.top
                     right: parent.right
@@ -109,8 +106,8 @@ Window {
                     rightMargin: 12
                 }
             }
-            C2.ComboBox {
-                model: ['Software','OpenGL','Triangulated']
+            C2.Switch {
+                text: qsTr("OGL Polylines")
                 id: switchPolylines2
                 anchors {
                     top: switchPolygons2.bottom
@@ -118,7 +115,6 @@ Window {
                     topMargin: 12
                     rightMargin: 12
                 }
-                onCurrentTextChanged: console.log("CURRENT TEXT CHANGED ",currentText)
             }
             C2.Switch {
                 text: qsTr("OGL Circles")
@@ -147,17 +143,16 @@ Window {
         id: migComponent
         MapItemGroup {
             id: polyGroup
-            property bool glPolygons : true
-            property string glPolylines : "Software"
-            property bool glCircles : true
-            property bool glRectangles : true
+            property bool glPolygons
+            property bool glPolylines
+            property bool glCircles
+            property bool glRectangles
             objectName: parent.objectName + "_MIG_"
+
             function polylineBackend()
             {
-                return (polyGroup.glPolylines === "OpenGL")
-                       ? MapPolyline.OpenGLLineStrip
-                       :  ((polyGroup.glPolylines === "Software")
-                           ? MapPolyline.Software : MapPolyline.OpenGLExtruded)
+                return (polyGroup.glPolylines)
+                       ? MapPolyline.OpenGL : MapPolyline.Software
             }
 
             function polygonBackend()
