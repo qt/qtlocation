@@ -97,12 +97,18 @@ qt_internal_add_module(Location
     GENERATE_PRIVATE_CPP_EXPORTS
 )
 
+set_source_files_properties(maps/MapView.qml PROPERTIES
+     QT_RESOURCE_ALIAS MapView.qml
+)
+
 qt_internal_add_qml_module(Location
     URI QtLocation
     VERSION ${PROJECT_VERSION}
     PLUGIN_TARGET declarative_location
     NO_PLUGIN_OPTIONAL
     CLASS_NAME QtLocationDeclarativeModule
+    QML_FILES
+        maps/MapView.qml
     SOURCES
         # value types
         maps/qgeomaptype_p.h

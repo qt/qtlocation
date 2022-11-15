@@ -63,7 +63,10 @@ ApplicationWindow {
     width: 1024
     height: 1024
     menuBar: mainMenu
-    title: qsTr("GeoJSON Viewer")
+    title: qsTr("GeoJSON Viewer: ") + view.map.center +
+           " zoom " + view.map.zoomLevel.toFixed(3)
+           + " min " + view.map.minimumZoomLevel +
+           " max " + view.map.maximumZoomLevel
 
     FileDialog {
         visible: false
@@ -147,23 +150,26 @@ ApplicationWindow {
     }
 
     Shortcut {
-        sequence: "Ctrl+P"
-        onActivated: {
-
-            console.log("Center : QtPositioning.coordinate(",map.center.latitude,",",map.center.longitude,")")
-            console.log("Zoom   : ",map.zoomLevel)
-        }
+        enabled: view.map.zoomLevel < view.map.maximumZoomLevel
+        sequence: StandardKey.ZoomIn
+        onActivated: view.map.zoomLevel = Math.round(view.map.zoomLevel + 1)
+    }
+    Shortcut {
+        enabled: view.map.zoomLevel > view.map.minimumZoomLevel
+        sequence: StandardKey.ZoomOut
+        onActivated: view.map.zoomLevel = Math.round(view.map.zoomLevel - 1)
     }
 
-    Map {
-        id: map
+    MapView {
+        id: view
         anchors.fill: parent
-        center: QtPositioning.coordinate(43.59, 13.50) // Starting coordinates: Ancona, the city where I am studying :)
-        plugin: Plugin { name: "osm" }
-        zoomLevel: 4
+        map.center: QtPositioning.coordinate(43.59, 13.50) // Ancona, Italy
+        map.plugin: Plugin { name: "osm" }
+        map.zoomLevel: 4
 
         MapItemView {
             id: miv
+            parent: view.map
             model: geoJsoner.model
             delegate: GeoJsonDelegate {
             }
