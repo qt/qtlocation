@@ -83,7 +83,7 @@ DelegateChooser {
         delegate: MapPolyline {
             property string geojsonType: "LineString"
             property var props: modelData.properties
-            backend: (dc.openGLBackends) ? MapPolyline.OpenGLExtruded : MapPolyline.Software
+            backend: (dc.openGLBackends) ? MapPolyline.OpenGL : MapPolyline.Software
             geoShape: modelData.data
             line.width: 4
             opacity: dc.defaultOpacity
