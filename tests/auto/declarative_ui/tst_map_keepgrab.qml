@@ -44,45 +44,37 @@ Item {
         anchors.fill: parent
         contentWidth: flickable.width * 4; contentHeight: flickable.height
 
-        Map {
-            id: map
+        MapView {
+            id: mapView
             x: flickable.width
-            height: flickable.height
-            width:flickable.width
-            plugin: testPlugin
+            height: flickable.height - 10
+            width: flickable.width - 10
+            map.plugin: testPlugin
+
+            property DragHandler __drag: mapView.map.data[2] // verified in init()
         }
     }
 
-    SignalSpy { id: mapPanStartedSpy; target: map.gesture; signalName: 'panStarted' }
-    SignalSpy { id: mapPanFinishedSpy; target: map.gesture; signalName: 'panFinished' }
+    SignalSpy { id: panActiveSpy; target: mapView.__drag; signalName: 'activeChanged' }
     SignalSpy { id: flickStartedSpy; target: flickable; signalName: 'flickStarted' }
     SignalSpy { id: flickEndedSpy; target: flickable; signalName: 'flickEnded' }
-    SignalSpy { id: preventStealingChangedSpy; target: map.gesture; signalName: 'preventStealingChanged' }
 
 
     TestCase {
-        when: windowShown && map.mapReady
+        when: windowShown && mapView.map.mapReady
         name: "MapKeepGrabAndPreventSteal"
-
-        function initTestCase()
-        {
-            compare(map.gesture.preventStealing, false)
-        }
 
         function init()
         {
-            map.gesture.acceptedGestures = MapGestureArea.PanGesture | MapGestureArea.FlickGesture;
-            map.gesture.flickDeceleration = 500
-            map.zoomLevel = 1
-            map.center = QtPositioning.coordinate(50,50)
-            map.gesture.preventStealing = false
+            mapView.map.zoomLevel = 1
+            mapView.map.center = QtPositioning.coordinate(50,50)
             flickable.contentX = 0
             flickable.contentY = 0
-            mapPanStartedSpy.clear()
-            mapPanFinishedSpy.clear()
+            panActiveSpy.clear()
             flickStartedSpy.clear()
             flickEndedSpy.clear()
-            preventStealingChangedSpy.clear()
+            // sanity check: verify that map's third child is the main DragHandler
+            compare(mapView.__drag.minimumPointCount, 1)
         }
 
         function flick()
@@ -99,58 +91,27 @@ Item {
         function pan()
         {
             var i = 0
-            mousePress(map, 0, 0)
+            mousePress(mapView, 0, 0)
             for (i = 0; i < flickable.width; i += 5) {
                 wait(5)
-                mouseMove(map, i, 0, 0, Qt.LeftButton);
+                mouseMove(mapView, i, 0, 0, Qt.LeftButton);
             }
-            mouseRelease(map, i, 0)
-        }
-
-        function test_flick()
-        {
-            var center = QtPositioning.coordinate(map.center.latitude,map.center.longitude)
-            flick() //flick flickable
-            tryCompare(flickStartedSpy,"count",1)
-            pan() //pan map
-            tryCompare(flickStartedSpy,"count",2) // both directions
-            tryCompare(flickEndedSpy,"count",1)
-            tryCompare(mapPanStartedSpy,"count", 0)
-            tryCompare(mapPanFinishedSpy,"count", 0)
-            //map should not change
-            verify(center == map.center)
-        }
-
-        function test_map_grab()
-        {
-             var center = QtPositioning.coordinate(map.center.latitude,map.center.longitude)
-            pan() //pan map
-            tryCompare(mapPanStartedSpy,"count",1)
-            tryCompare(mapPanFinishedSpy, "count", 1)
-
-            compare(flickStartedSpy.count, 0)
-            compare(flickEndedSpy.count, 0)
-            //map should change
-            verify(center != map.center)
+            mouseRelease(mapView, i, 0)
         }
 
         function test_map_preventsteal()
         {
-            map.gesture.preventStealing = false
-            compare(preventStealingChangedSpy.count, 0)
-            map.gesture.preventStealing = true
-            compare(preventStealingChangedSpy.count, 1)
-
-            var center = QtPositioning.coordinate(map.center.latitude,map.center.longitude)
-            flick() //flick flickable
+            var center = QtPositioning.coordinate(mapView.map.center.latitude,mapView.map.center.longitude)
+            flick() // flick flickable
             tryCompare(flickStartedSpy,"count",1)
-            pan() //pan map
-            tryCompare(flickStartedSpy,"count",1) // both directions
-            tryCompare(flickEndedSpy,"count",1)
-            tryCompare(mapPanStartedSpy,"count", 1)
-            tryCompare(mapPanFinishedSpy,"count", 1)
-            //map should not change
-            verify(center != map.center)
+            compare(flickable.flicking, true)
+            pan() // pan map: this interrupts flicking
+            compare(flickStartedSpy.count, 1) // didn't start flicking again
+            compare(flickable.flicking, false)
+            tryCompare(flickEndedSpy, "count", 0) // canceled rather than ending normally
+            tryCompare(panActiveSpy, "count", 2)
+            // map should change
+            verify(center != mapView.map.center)
         }
     }
 }

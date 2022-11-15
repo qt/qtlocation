@@ -81,16 +81,17 @@ Item {
 
     MapCircle {
         id: extMapCircle
+        objectName: "extMapCircle"
         center {
             latitude: 35
             longitude: 15
         }
         color: 'firebrick'
         radius: 600000
-        MouseArea {
-            anchors.fill: parent
-            SignalSpy { id: extMapCircleClicked; target: parent; signalName: "clicked" }
+        TapHandler {
+            id: extMapCircleTap
         }
+        SignalSpy { id: extMapCircleClicked; target: extMapCircleTap; signalName: "tapped" }
     }
 
     MapQuickItem {
@@ -118,8 +119,10 @@ Item {
 
         MapRectangle {
             id: preMapRect
+            objectName: "preMapRect"
             MouseArea {
                 id: preMapRectMa
+                objectName: "preMapRectMa"
                 anchors.fill: parent
                 drag.target: parent
                 preventStealing: true
@@ -132,14 +135,18 @@ Item {
         }
         MapCircle {
             id: preMapCircle
-            MouseArea {
-                id: preMapCircleMa
-                anchors.fill: parent
-                drag.target: parent
-                preventStealing: true
-                SignalSpy { id: preMapCircleClicked; target: parent; signalName: "clicked" }
-                SignalSpy { id: preMapCircleActiveChanged; target: parent.drag; signalName: "activeChanged" }
+            objectName: "preMapCircle"
+
+            TapHandler {
+                id: preMapCircleTap
+                objectName: "preMapCircleTap"
             }
+            DragHandler {
+                id: preMapCircleDrag
+            }
+
+            SignalSpy { id: preMapCircleClicked; target: preMapCircleTap; signalName: "tapped" }
+            SignalSpy { id: preMapCircleActiveChanged; target: preMapCircleDrag; signalName: "activeChanged" }
             SignalSpy {id: preMapCircleCenterChanged; target: parent; signalName: "centerChanged"}
             SignalSpy {id: preMapCircleColorChanged; target: parent; signalName: "colorChanged"}
             SignalSpy {id: preMapCircleRadiusChanged; target: parent; signalName: "radiusChanged"}

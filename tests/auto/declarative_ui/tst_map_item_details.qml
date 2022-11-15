@@ -56,11 +56,13 @@ Item {
             { latitude: 25, longitude: 5 },
             { latitude: 20, longitude: 10 }
         ]
-        MouseArea {
-            anchors.fill: parent
-            drag.target: parent
-            SignalSpy { id: extMapPolygonClicked; target: parent; signalName: "clicked" }
+        TapHandler {
+            id: tap
         }
+        DragHandler {
+            id: drag
+        }
+        SignalSpy { id: extMapPolygonClicked; target: tap; signalName: "tapped" }
         SignalSpy {id: extMapPolygonPathChanged; target: parent; signalName: "pathChanged"}
         SignalSpy {id: extMapPolygonColorChanged; target: parent; signalName: "colorChanged"}
         SignalSpy {id: extMapPolygonBorderWidthChanged; target: parent.border; signalName: "widthChanged"}
@@ -115,10 +117,9 @@ Item {
             longitude: 180
         }
         radius: 400000
-        MouseArea {
-            anchors.fill: parent
-            drag.target: parent
-            preventStealing: true
+        TapHandler {
+        }
+        DragHandler {
         }
     }
 
@@ -216,9 +217,9 @@ Item {
             longitude: -15
         }
         radius: 400000
-        MouseArea {
-            anchors.fill: parent
-            drag.target: parent
+        TapHandler {
+        }
+        DragHandler {
         }
     }
 
@@ -589,7 +590,7 @@ Item {
                 mouseMove(map, point.x + 5 - i, point.y - 5 )
             }
             mouseRelease(map, point.x + 5 - i, point.y - 5)
-            verify(LocationTestHelper.waitForPolished(map))
+//            verify(LocationTestHelper.waitForPolished(map))
             visualInspectionPoint(inspectionTime)
             point = map.fromCoordinate(extMapPolygonDateline.path[0])
             verify(point.x < map.width / 2.0)
