@@ -41,7 +41,7 @@
 #include "qsgmapboxglnode.h"
 #include "qgeomapmapboxgl.h"
 
-#if QT_HAS_INCLUDE(<QtQuick/private/qsgplaintexture_p.h>)
+#if __has_include(<QtQuick/private/qsgplaintexture_p.h>)
 #include <QtQuick/private/qsgplaintexture_p.h>
 #endif
 
