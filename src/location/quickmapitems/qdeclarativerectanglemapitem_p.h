@@ -69,20 +69,13 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItem: public QDeclarativ
     Q_OBJECT
     QML_NAMED_ELEMENT(MapRectangle)
     QML_ADDED_IN_VERSION(5, 0)
-    Q_ENUMS(Backend)
 
     Q_PROPERTY(QGeoCoordinate topLeft READ topLeft WRITE setTopLeft NOTIFY topLeftChanged)
     Q_PROPERTY(QGeoCoordinate bottomRight READ bottomRight WRITE setBottomRight NOTIFY bottomRightChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
-    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION(5, 15))
 
 public:
-    enum Backend {
-        Software = 0,
-        OpenGL = 1
-    };
-
     explicit QDeclarativeRectangleMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativeRectangleMapItem() override;
 
@@ -105,14 +98,10 @@ public:
     const QGeoShape &geoShape() const override;
     void setGeoShape(const QGeoShape &shape) override;
 
-    Backend backend() const;
-    void setBackend(Backend b);
-
 Q_SIGNALS:
     void topLeftChanged(const QGeoCoordinate &topLeft);
     void bottomRightChanged(const QGeoCoordinate &bottomRight);
     void colorChanged(const QColor &color);
-    void backendChanged();
 
 protected:
     void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
@@ -130,7 +119,6 @@ private:
     bool m_dirtyMaterial = true;
 
     bool m_updatingGeometry = false;
-    Backend m_backend = Software;
 
     std::unique_ptr<QDeclarativeRectangleMapItemPrivate> m_d;
 

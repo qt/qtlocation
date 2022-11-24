@@ -66,20 +66,13 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItem : public QDeclarativeG
     Q_OBJECT
     QML_NAMED_ELEMENT(MapCircle)
     QML_ADDED_IN_VERSION(5, 0)
-    Q_ENUMS(Backend)
 
     Q_PROPERTY(QGeoCoordinate center READ center WRITE setCenter NOTIFY centerChanged)
     Q_PROPERTY(qreal radius READ radius WRITE setRadius NOTIFY radiusChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
-    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION(5, 15))
 
 public:
-    enum Backend {
-        Software = 0,
-        OpenGL = 1
-    };
-
     explicit QDeclarativeCircleMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativeCircleMapItem() override;
 
@@ -101,19 +94,14 @@ public:
     const QGeoShape &geoShape() const override;
     void setGeoShape(const QGeoShape &shape) override;
 
-    Backend backend() const;
-    void setBackend(Backend b);
-
 Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &center);
     void radiusChanged(qreal radius);
     void colorChanged(const QColor &color);
-    void backendChanged();
 
 protected:
     void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
     void updatePolish() override;
-    void possiblySwitchBackend(const QGeoCoordinate &oldCenter, qreal oldRadius, const QGeoCoordinate &newCenter, qreal newRadius);
 
 protected Q_SLOTS:
     void markSourceDirtyAndUpdate();
@@ -129,7 +117,6 @@ private:
     QColor m_color;
     bool m_dirtyMaterial;
     bool m_updatingGeometry;
-    Backend m_backend = Software;
 
     std::unique_ptr<QDeclarativeCircleMapItemPrivate> m_d;
 

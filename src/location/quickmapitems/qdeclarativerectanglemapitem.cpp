@@ -132,17 +132,6 @@ QT_BEGIN_NAMESPACE
     \since 5.14
 */
 
-struct RectangleBackendSelector
-{
-    RectangleBackendSelector()
-    {
-        backend = (qgetenv("QTLOCATION_OPENGL_ITEMS").toInt()) ? QDeclarativeRectangleMapItem::OpenGL : QDeclarativeRectangleMapItem::Software;
-    }
-    QDeclarativeRectangleMapItem::Backend backend = QDeclarativeRectangleMapItem::Software;
-};
-
-Q_GLOBAL_STATIC(RectangleBackendSelector, mapRectangleBackendSelector)
-
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
     : QDeclarativeGeoMapItemBase(parent), m_border(this),
       m_d(new QDeclarativeRectangleMapItemPrivateCPU(*this))
@@ -154,52 +143,10 @@ QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
                      this, &QDeclarativeRectangleMapItem::onLinePropertiesChanged);
     QObject::connect(&m_border, &QDeclarativeMapLineProperties::widthChanged,
                      this, &QDeclarativeRectangleMapItem::onLinePropertiesChanged);
-    setBackend(mapRectangleBackendSelector->backend);
 }
 
 QDeclarativeRectangleMapItem::~QDeclarativeRectangleMapItem()
 {
-}
-
-/*!
-    \internal
-    \qmlproperty MapRectangle.Backend QtLocation::MapRectangle::backend
-
-    This property holds which backend is in use to render the map item.
-    Valid values are \b MapRectangle.Software and \b{MapRectangle.OpenGL}.
-    The default value is \b{MapRectangle.Software}.
-
-    \note \b{The release of this API with Qt 5.15 is a Technology Preview}.
-    Ideally, as the OpenGL backends for map items mature, there will be
-    no more need to also offer the legacy software-projection backend.
-    So this property will likely disappear at some later point.
-    To select OpenGL-accelerated item backends without using this property,
-    it is also possible to set the environment variable \b QTLOCATION_OPENGL_ITEMS
-    to \b{1}.
-    Also note that all current OpenGL backends won't work as expected when enabling
-    layers on the individual item, or when running on OpenGL core profiles greater than 2.x.
-
-    \since 5.15
-*/
-QDeclarativeRectangleMapItem::Backend QDeclarativeRectangleMapItem::backend() const
-{
-    return m_backend;
-}
-
-void QDeclarativeRectangleMapItem::setBackend(QDeclarativeRectangleMapItem::Backend b)
-{
-    if (b == m_backend)
-        return;
-    m_backend = b;
-    std::unique_ptr<QDeclarativeRectangleMapItemPrivate> d(
-            (m_backend == Software) ? static_cast<QDeclarativeRectangleMapItemPrivate *>(
-                    new QDeclarativeRectangleMapItemPrivateCPU(*this))
-                                    : static_cast<QDeclarativeRectangleMapItemPrivate *>(
-                                            new QDeclarativeRectangleMapItemPrivateOpenGL(*this)));
-
-    std::swap(m_d, d);
-    m_d->onGeoGeometryChanged();
-    emit backendChanged();
 }
 
 /*!

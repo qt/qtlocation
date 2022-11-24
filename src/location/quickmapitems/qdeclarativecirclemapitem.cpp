@@ -265,17 +265,6 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
     sourceBounds_ = screenBounds_;
 }
 
-struct CircleBackendSelector
-{
-    CircleBackendSelector()
-    {
-        backend = (qgetenv("QTLOCATION_OPENGL_ITEMS").toInt()) ? QDeclarativeCircleMapItem::OpenGL : QDeclarativeCircleMapItem::Software;
-    }
-    QDeclarativeCircleMapItem::Backend backend = QDeclarativeCircleMapItem::Software;
-};
-
-Q_GLOBAL_STATIC(CircleBackendSelector, mapCircleBackendSelector)
-
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
 :   QDeclarativeGeoMapItemBase(parent), m_border(this), m_color(Qt::transparent), m_dirtyMaterial(true),
     m_updatingGeometry(false)
@@ -294,7 +283,6 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
     // FIXME: unfortunately they self-intersect at the poles due to current drawing method
     // so the line is commented out until fixed
     //geometry_.setAssumeSimple(true);
-    setBackend(mapCircleBackendSelector->backend);
 }
 
 QDeclarativeCircleMapItem::~QDeclarativeCircleMapItem()
@@ -347,7 +335,6 @@ void QDeclarativeCircleMapItem::setCenter(const QGeoCoordinate &center)
     if (m_circle.center() == center)
         return;
 
-    possiblySwitchBackend(m_circle.center(), m_circle.radius(), center, m_circle.radius());
     m_circle.setCenter(center);
     m_d->onGeoGeometryChanged();
     emit centerChanged(center);
@@ -391,7 +378,6 @@ void QDeclarativeCircleMapItem::setRadius(qreal radius)
     if (m_circle.radius() == radius)
         return;
 
-    possiblySwitchBackend(m_circle.center(), m_circle.radius(), m_circle.center(), radius);
     m_circle.setRadius(radius);
     m_d->onGeoGeometryChanged();
     emit radiusChanged(radius);
@@ -432,29 +418,6 @@ void QDeclarativeCircleMapItem::updatePolish()
 
 /*!
     \internal
-
-    The OpenGL backend doesn't do circles crossing poles yet.
-    So if that backend is selected and the circle crosses the poles, use the CPU backend instead.
-*/
-void QDeclarativeCircleMapItem::possiblySwitchBackend(const QGeoCoordinate &oldCenter, qreal oldRadius, const QGeoCoordinate &newCenter, qreal newRadius)
-{
-    if (m_backend != QDeclarativeCircleMapItem::OpenGL)
-        return;
-
-    // if old does not cross and new crosses, move to CPU.
-    if (!QDeclarativeCircleMapItemPrivate::crossEarthPole(oldCenter, oldRadius)
-            && !QDeclarativeCircleMapItemPrivate::crossEarthPole(newCenter, newRadius)) {
-        std::unique_ptr<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateCPU(*this)));
-        std::swap(m_d, d);
-    } else if (QDeclarativeCircleMapItemPrivate::crossEarthPole(oldCenter, oldRadius)
-               && !QDeclarativeCircleMapItemPrivate::crossEarthPole(newCenter, newRadius)) { // else if old crosses and new does not cross, move back to OpenGL
-        std::unique_ptr<QDeclarativeCircleMapItemPrivate> d(static_cast<QDeclarativeCircleMapItemPrivate *>(new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
-        std::swap(m_d, d);
-    }
-}
-
-/*!
-    \internal
 */
 void QDeclarativeCircleMapItem::afterViewportChanged(const QGeoMapViewportChangeEvent &event)
 {
@@ -486,7 +449,6 @@ void QDeclarativeCircleMapItem::setGeoShape(const QGeoShape &shape)
     const QGeoCircle circle(shape); // if shape isn't a circle, circle will be created as a default-constructed circle
     const bool centerHasChanged = circle.center() != m_circle.center();
     const bool radiusHasChanged = circle.radius() != m_circle.radius();
-    possiblySwitchBackend(m_circle.center(), m_circle.radius(), circle.center(), circle.radius());
     m_circle = circle;
 
     m_d->onGeoGeometryChanged();
@@ -494,47 +456,6 @@ void QDeclarativeCircleMapItem::setGeoShape(const QGeoShape &shape)
         emit centerChanged(m_circle.center());
     if (radiusHasChanged)
         emit radiusChanged(m_circle.radius());
-}
-
-/*!
-    \internal
-    \qmlproperty MapCircle.Backend QtLocation::MapCircle::backend
-
-    This property holds which backend is in use to render the map item.
-    Valid values are \b MapCircle.Software and \b{MapCircle.OpenGL}.
-    The default value is \b{MapCircle.Software}.
-
-    \note \b{The release of this API with Qt 5.15 is a Technology Preview}.
-    Ideally, as the OpenGL backends for map items mature, there will be
-    no more need to also offer the legacy software-projection backend.
-    So this property will likely disappear at some later point.
-    To select OpenGL-accelerated item backends without using this property,
-    it is also possible to set the environment variable \b QTLOCATION_OPENGL_ITEMS
-    to \b{1}.
-    Also note that all current OpenGL backends won't work as expected when enabling
-    layers on the individual item, or when running on OpenGL core profiles greater than 2.x.
-
-    \since 5.15
-*/
-
-QDeclarativeCircleMapItem::Backend QDeclarativeCircleMapItem::backend() const
-{
-    return m_backend;
-}
-
-void QDeclarativeCircleMapItem::setBackend(QDeclarativeCircleMapItem::Backend b)
-{
-    if (b == m_backend)
-        return;
-    m_backend = b;
-    std::unique_ptr<QDeclarativeCircleMapItemPrivate> d(
-            (m_backend == Software) ? static_cast<QDeclarativeCircleMapItemPrivate *>(
-                    new QDeclarativeCircleMapItemPrivateCPU(*this))
-                                    : static_cast<QDeclarativeCircleMapItemPrivate *>(
-                                            new QDeclarativeCircleMapItemPrivateOpenGL(*this)));
-    std::swap(m_d, d);
-    m_d->onGeoGeometryChanged();
-    emit backendChanged();
 }
 
 /*!

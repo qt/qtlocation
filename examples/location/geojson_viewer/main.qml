@@ -64,7 +64,6 @@ ApplicationWindow {
     height: 1024
     menuBar: mainMenu
     title: qsTr("GeoJSON Viewer")
-    property bool openGLBackends: glBackendSelector.checked
 
     FileDialog {
         visible: false
@@ -140,12 +139,6 @@ ApplicationWindow {
                     geoJsoner.print(miv)
                 }
             }
-            MenuItem {
-                text: "OpenGL Item backends"
-                id: glBackendSelector
-                checkable: true
-                checked: false
-            }
         }
     }
 
@@ -173,7 +166,6 @@ ApplicationWindow {
             id: miv
             model: geoJsoner.model
             delegate: GeoJsonDelegate {
-                openGLBackends: win.openGLBackends
             }
         }
     }

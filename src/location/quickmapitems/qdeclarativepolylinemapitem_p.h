@@ -96,18 +96,11 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItem : public QDeclarativ
     Q_OBJECT
     QML_NAMED_ELEMENT(MapPolyline)
     QML_ADDED_IN_VERSION(5, 0)
-    Q_ENUMS(Backend)
 
     Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *line READ line CONSTANT)
-    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION(5, 15))
 
 public:
-    enum Backend {
-        Software = 0,
-        OpenGL = 1
-    };
-
     explicit QDeclarativePolylineMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativePolylineMapItem();
 
@@ -134,12 +127,8 @@ public:
 
     QDeclarativeMapLineProperties *line();
 
-    Backend backend() const;
-    void setBackend(Backend b);
-
 Q_SIGNALS:
     void pathChanged();
-    void backendChanged();
 
 protected Q_SLOTS:
     void updateAfterLinePropertiesChanged();
@@ -156,7 +145,6 @@ public:
     QGeoPath m_geopath;
     QDeclarativeMapLineProperties m_line;
 
-    Backend m_backend = Software;
     bool m_dirtyMaterial = true;
     bool m_updatingGeometry = false;
 

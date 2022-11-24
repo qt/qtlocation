@@ -59,7 +59,6 @@ DelegateChooser {
     role: "type"
     property color defaultColor: "grey"
     property real defaultOpacity: 0.6
-    property bool openGLBackends: false
 
     DelegateChoice {
         roleValue: "Point"
@@ -83,7 +82,6 @@ DelegateChooser {
         delegate: MapPolyline {
             property string geojsonType: "LineString"
             property var props: modelData.properties
-            backend: (dc.openGLBackends) ? MapPolyline.OpenGL : MapPolyline.Software
             geoShape: modelData.data
             line.width: 4
             opacity: dc.defaultOpacity
@@ -101,7 +99,6 @@ DelegateChooser {
             color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
             border.width: 4
             border.color: 'black'
-            backend: (dc.openGLBackends) ? MapPolygon.OpenGL : MapPolygon.Software
             MouseArea {
                 anchors.fill: parent
                 onClicked: {

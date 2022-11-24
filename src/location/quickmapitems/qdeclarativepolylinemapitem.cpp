@@ -799,17 +799,6 @@ bool QDeclarativePolylineMapItemPrivateCPU::contains(const QPointF &point) const
  * QDeclarativePolygonMapItem Implementation
  */
 
-struct PolylineBackendSelector
-{
-    PolylineBackendSelector()
-    {
-        backend = (qgetenv("QTLOCATION_OPENGL_ITEMS").toInt()) ? QDeclarativePolylineMapItem::OpenGL : QDeclarativePolylineMapItem::Software;
-    }
-    QDeclarativePolylineMapItem::Backend backend = QDeclarativePolylineMapItem::Software;
-};
-
-Q_GLOBAL_STATIC(PolylineBackendSelector, mapPolylineBackendSelector)
-
 QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
     : QDeclarativeGeoMapItemBase(parent), m_line(this),
       m_d(new QDeclarativePolylineMapItemPrivateCPU(*this))
@@ -821,7 +810,6 @@ QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
                      this, &QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged);
     QObject::connect(&m_line, &QDeclarativeMapLineProperties::widthChanged,
                      this, &QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged);
-    setBackend(mapPolylineBackendSelector->backend);
 }
 
 QDeclarativePolylineMapItem::~QDeclarativePolylineMapItem()
@@ -1058,47 +1046,6 @@ void QDeclarativePolylineMapItem::removeCoordinate(int index)
 QDeclarativeMapLineProperties *QDeclarativePolylineMapItem::line()
 {
     return &m_line;
-}
-
-/*!
-    \internal
-    \qmlproperty MapPolyline.Backend QtLocation::MapPolyline::backend
-
-    This property holds which backend is in use to render the map item.
-    Valid values are \b MapPolyline.Software and \b{MapPolyline.OpenGL}.
-    The default value is \b{MapPolyline.Software}.
-
-    \note \b{The release of this API with Qt 5.15 is a Technology Preview}.
-    Ideally, as the OpenGL backends for map items mature, there will be
-    no more need to also offer the legacy software-projection backend.
-    So this property will likely disappear at some later point.
-    To select OpenGL-accelerated item backends without using this property,
-    it is also possible to set the environment variable \b QTLOCATION_OPENGL_ITEMS
-    to \b{1}.
-    Also note that all current OpenGL backends won't work as expected when enabling
-    layers on the individual item, or when running on OpenGL core profiles greater than 2.x.
-
-    \since 5.15
-*/
-QDeclarativePolylineMapItem::Backend QDeclarativePolylineMapItem::backend() const
-{
-    return m_backend;
-}
-
-void QDeclarativePolylineMapItem::setBackend(QDeclarativePolylineMapItem::Backend b)
-{
-    if (b == m_backend)
-        return;
-    m_backend = b;
-    std::unique_ptr<QDeclarativePolylineMapItemPrivate> d(
-            (m_backend == Software)
-                    ? static_cast<QDeclarativePolylineMapItemPrivate *>(
-                            new QDeclarativePolylineMapItemPrivateCPU(*this))
-                    : static_cast<QDeclarativePolylineMapItemPrivate *>(
-                          new QDeclarativePolylineMapItemPrivateOpenGL(*this)));
-    m_d.swap(d);
-    m_d->onGeoGeometryChanged();
-    emit backendChanged();
 }
 
 /*!

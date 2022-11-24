@@ -176,25 +176,12 @@ Window {
             property bool glRectangles : true
             objectName: parent.objectName + "_MIG_"
 
-            function polylineBackend()
-            {
-                return (polyGroup.glPolylines === "Software")
-                       ? MapPolyline.Software : MapPolyline.OpenGL
-            }
-
-            function polygonBackend()
-            {
-                return (polyGroup.glPolylines === "Software")
-                       ? MapPolygon.Software : MapPolygon.OpenGL
-            }
-
             MapPolyline {
                 id: tstPolyLine // to verify the polygon stays where it's supposed to
                 line.color: 'black'
                 objectName: parent.objectName + "black"
                 line.width: 1
                 opacity: 1.0
-                backend: polylineBackend()
                 path: [
                     { latitude: 76.9965, longitude: -175.012 },
                     { latitude: 26.9965, longitude: -175.012 }
@@ -206,7 +193,6 @@ Window {
                 line.color: "red"
                 objectName: parent.objectName + "timeline"
                 line.width: 4
-                backend: polylineBackend()
                 path: [
                     { latitude: 90, longitude: 180 },
                     { latitude: -90, longitude: -180 }
@@ -218,7 +204,6 @@ Window {
                 line.color: "pink"
                 line.width: sliWidth.value
                 objectName: parent.objectName + "red"
-                backend: polylineBackend()
 
                 path: [
                     { latitude: 55, longitude: 170 },
@@ -248,7 +233,6 @@ Window {
                 border.color: "black"
                 border.width: 12
                 objectName: parent.objectName + "green"
-                backend: polygonBackend()
                 path: [
                     { latitude: -45, longitude: -170 },
                     { latitude: -55, longitude: -155 },
@@ -265,13 +249,6 @@ Window {
                     }
                 }
             }
-
-//            LongPolyline {
-//                id: longPolyline
-//                line.width: 10
-//                line.color: 'firebrick'
-//                backend: polylineBackend()
-//            }
         }
     }
 

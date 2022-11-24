@@ -178,19 +178,12 @@ Window {
 //                border.color: "black"
 //                border.width: 15
 //                objectName: parent.objectName + "limegreen"
-//                backend: polygonBackend()
 //                path: [
 //                        { longitude:17.13, latitude: 51.11},
 //                        { longitude:30.54, latitude: 50.42},
 //                        { longitude:26.70, latitude: 58.36},
 //                        { longitude:17.13, latitude: 51.11}
 //                    ]
-
-//                function polygonBackend()
-//                {
-//                    return (switchPolygons1.checked)
-//                           ? MapPolygon.OpenGL : MapPolygon.Software
-//                }
 //            }
 
             layer {
@@ -289,36 +282,13 @@ Window {
             property bool glCircles
             property bool glRectangles
             objectName: parent.objectName + "_MIG_"
-            function polylineBackend()
-            {
-                return (polyGroup.glPolylines)
-                       ? MapPolyline.OpenGL : MapPolyline.Software
-            }
 
-            function polygonBackend()
-            {
-                return (polyGroup.glPolygons)
-                       ? MapPolygon.OpenGL : MapPolygon.Software
-            }
-
-            function rectangleBackend()
-            {
-                return (polyGroup.glRectangles)
-                       ? MapRectangle.OpenGL : MapRectangle.Software
-            }
-
-            function circleBackend()
-            {
-                return (polyGroup.glCircles)
-                       ? MapCircle.OpenGL : MapCircle.Software
-            }
             MapPolyline {
                 id: tstPolyLine // to verify the polygon stays where it's supposed to
                 line.color: 'black'
                 objectName: parent.objectName + "black"
                 line.width: 1
                 opacity: 1.0
-                backend: polylineBackend()
                 path: [
                     { latitude: 76.9965, longitude: -175.012 },
                     { latitude: 26.9965, longitude: -175.012 }
@@ -330,7 +300,6 @@ Window {
                 line.color: "red"
                 objectName: parent.objectName + "timeline"
                 line.width: 4
-                backend: polylineBackend()
                 path: [
                     { latitude: 90, longitude: 180 },
                     { latitude: -90, longitude: -180 }
@@ -341,7 +310,6 @@ Window {
                 id: poly1
                 color: "red"
                 objectName: parent.objectName + "red"
-                backend: polygonBackend()
                 path: [
                     { latitude: 55, longitude: 170 },
                     { latitude: 66.9965, longitude: -175.012 },
@@ -365,7 +333,6 @@ Window {
                 id: selfIntersectingPolygon
                 color: 'darkmagenta'
                 objectName: parent.objectName + "darkmagenta"
-                backend: polygonBackend()
                 opacity: 1.0
                 path: [
                     { latitude: 19, longitude: 49 },
@@ -398,7 +365,6 @@ Window {
                 border.color: "black"
                 border.width: 8
                 objectName: parent.objectName + "green"
-                backend: polygonBackend()
                 path: [
                     { latitude: -45, longitude: -170 },
                     { latitude: -55, longitude: -155 },
@@ -420,7 +386,6 @@ Window {
                 id: poly3
                 color: "deepskyblue"
                 objectName: parent.objectName + "deepskyblue"
-                backend: polygonBackend()
                 opacity: 0.2
                 path: [
                     { latitude: 65, longitude: -20 },
@@ -436,7 +401,6 @@ Window {
                 border.color: "black"
                 border.width: 15
                 objectName: parent.objectName + "limegreen"
-                backend: polygonBackend()
                 path: [
                         { longitude:17.13, latitude: 51.11},
                         { longitude:30.54, latitude: 50.42},
@@ -451,7 +415,6 @@ Window {
                 border.color: "black"
                 border.width: 8
                 objectName: parent.objectName + "yellow"
-                backend: polygonBackend()
                 path: [
                         { longitude:4, latitude: 15},
                         { longitude:5, latitude: 15},
@@ -470,7 +433,6 @@ Window {
                 border.width: 6
                 topLeft: QtPositioning.coordinate(10,-10)
                 bottomRight: QtPositioning.coordinate(-10,10)
-                backend: rectangleBackend()
                 MouseArea {
                     anchors.fill: parent
                     Rectangle {
@@ -486,7 +448,6 @@ Window {
                 id: longPolyline
                 line.width: sliLineWidth.value
                 line.color: 'firebrick'
-                backend: polylineBackend()
             }
 
             MapCircle {
@@ -495,7 +456,6 @@ Window {
                 color: 'deepskyblue'
                 border.width: 6
                 border.color: 'firebrick'
-                backend: circleBackend()
                 MouseArea {
                     anchors.fill: parent
                     Rectangle {
@@ -511,12 +471,9 @@ Window {
                 id: circle1
                 border.color: 'deepskyblue'
                 border.width: 26
-                backend: circleBackend()
                 center: QtPositioning.coordinate(17, 44);
                 radius: 200*1000
                 color: "firebrick"
-//                layer.enabled: (backend == MapCircle.Software)
-//                layer.samples: 4
             }
         }
     }

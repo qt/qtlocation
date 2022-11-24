@@ -64,19 +64,12 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItem : public QDeclarative
     Q_OBJECT
     QML_NAMED_ELEMENT(MapPolygon)
     QML_ADDED_IN_VERSION(5, 0)
-    Q_ENUMS(Backend)
 
     Q_PROPERTY(QList<QGeoCoordinate> path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
     Q_PROPERTY(QDeclarativeMapLineProperties *border READ border CONSTANT)
-    Q_PROPERTY(Backend backend READ backend WRITE setBackend NOTIFY backendChanged REVISION(5, 15))
 
 public:
-    enum Backend {
-        Software = 0,
-        OpenGL = 1
-    };
-
     explicit QDeclarativePolygonMapItem(QQuickItem *parent = nullptr);
     ~QDeclarativePolygonMapItem() override;
 
@@ -95,9 +88,6 @@ public:
 
     QDeclarativeMapLineProperties *border();
 
-    Backend backend() const;
-    void setBackend(Backend b);
-
     bool contains(const QPointF &point) const override;
     const QGeoShape &geoShape() const override;
     void setGeoShape(const QGeoShape &shape) override;
@@ -105,7 +95,6 @@ public:
 Q_SIGNALS:
     void pathChanged();
     void colorChanged(const QColor &color);
-    void backendChanged();
 
 protected Q_SLOTS:
     void markSourceDirtyAndUpdate();
@@ -123,7 +112,6 @@ public:
     QGeoPolygon m_geopoly;
     QDeclarativeMapLineProperties m_border;
     QColor m_color;
-    Backend m_backend = Software;
     bool m_dirtyMaterial;
 //    bool m_dirtyGeometry = false;
     bool m_updatingGeometry;
