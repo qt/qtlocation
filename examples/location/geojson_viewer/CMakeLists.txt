@@ -40,7 +40,6 @@ target_link_libraries(qml_location_geojsonviewer PUBLIC
 # Resources:
 set(qml_resource_files
     "GeoJsonDelegate.qml"
-    "GeoJsonDelegateMapObject.qml"
     "main.qml"
 )
 
