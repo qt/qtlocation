@@ -26,6 +26,7 @@
 ****************************************************************************/
 
 /*!
+\internal
 \page location-plugin-here.html
 \title Qt Location HERE Plugin
 \ingroup QtLocation-plugins

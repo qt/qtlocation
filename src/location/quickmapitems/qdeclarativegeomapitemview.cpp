@@ -67,7 +67,7 @@ QT_BEGIN_NAMESPACE
     \section2 Example Usage
 
     This example demonstrates how to use the MapViewItem object to display
-    a \l{Route}{route} on a \l{Map}{map}:
+    a \l{route}{route} on a \l{Map}{map}:
 
     \snippet declarative/maps.qml QtQuick import
     \snippet declarative/maps.qml QtLocation import

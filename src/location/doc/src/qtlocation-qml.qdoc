@@ -41,7 +41,7 @@
     paths, roads, or forms of transport, enabling navigation optimization
     and assistance.
 
-    To perform navigation we need \l {Route}s from start to destination.
+    To perform navigation we need \l {route}s from start to destination.
     These routes are made up of segments, where each \l {QtLocation::}
     {routeSegment} can be considered a navigation subtask; for example,
     "drive 100 meters", or "turn left". The beginning and end of each
@@ -68,7 +68,7 @@
             \l [QML] {Place} objects to be displayed, panned, zoomed,
             and so on.
 
-        \li The \l [QML] Route is be determined by a \e plugin, with each
+        \li The \l [QML] route is be determined by a \e plugin, with each
             \l [QML] routeSegment holding the navigation instructions,
             guided by the continuously updated current \l [QML] Location.
 

@@ -76,18 +76,13 @@ bool QPlaceRatingsPrivate::isEmpty() const
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data
-    \since QtLocation 5.5
+    \since QtLocation 6.5
 
     \brief The ratings type holds place rating information.
 
     Rating information is used to describe how \e good a place is conceived to be.  Typically this
-    information is visualized as a number of stars.  The \l average property gives an aggregated
-    ratings value out of a possible maximum as given by the \l maximum property.
-
-    \snippet declarative/places.qml QtQuick import
-    \snippet declarative/maps.qml QtLocation import
-    \codeline
-    \snippet declarative/places.qml ratings
+    information is visualized as a number of stars.  The \l {ratings::}{average} property gives an aggregated
+    ratings value out of a possible maximum as given by the \l {ratings::maximum} property.
 */
 
 /*!

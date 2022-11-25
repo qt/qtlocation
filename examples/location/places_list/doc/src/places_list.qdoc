@@ -50,9 +50,8 @@
     from where places are sourced from.  Depending on the type of the plugin,
     some mandatory parameters may be need to be filled in. The most likely type
     of PluginParameter are some form of service access token which are documented
-    in the service plugin. As an example see the \l
-    {Mandatory Parameters} {HERE Plugin} documentation. In this snippet the \c osm
-    plugin is used which does not require any further parameter:
+    in the service plugin. In this snippet the \c osm plugin is used which does
+    not require any further parameter:
 
     \snippet places_list/places_list.qml Initialize Plugin
 

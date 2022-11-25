@@ -53,10 +53,9 @@ QT_BEGIN_NAMESPACE
 
     \brief The ContactDetails type holds contact details for a \l Place.
 
-    The ContactDetails type is a map of \l {QtLocation::ContactDetail}{ContactDetail} objects.
+    The ContactDetails type is a map of \l contactDetail objects.
     To access contact details in the map use the \l keys() method to get the list of keys stored in
-    the map and then use the \c {[]} operator to access the
-    \l {QtLocation::ContactDetail}{ContactDetail} items.
+    the map and then use the \c {[]} operator to access the \l contactDetail items.
 
     The following keys are defined in the API.  \l Plugin implementations are free to define
     additional keys.
@@ -74,7 +73,7 @@ QT_BEGIN_NAMESPACE
 
     \section1 Examples
 
-    The following example shows how to access all \l {QtLocation::ContactDetail}{ContactDetails}
+    The following example shows how to access all \l {contactDetail}{contact details}
     and print them to the console:
 
     \snippet declarative/maps.qml QtLocation import

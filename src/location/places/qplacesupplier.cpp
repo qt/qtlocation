@@ -95,8 +95,6 @@ bool QPlaceSupplierPrivate::isEmpty() const
     Note: The Places API only supports suppliers as 'retrieve-only' objects.  Submitting
     suppliers to a provider is not a supported use case.
 
-    \sa ImageModel, ReviewModel, EditorialModel
-
     \section1 Example
 
     The following example shows how to create and display a supplier in QML:
@@ -105,6 +103,8 @@ bool QPlaceSupplierPrivate::isEmpty() const
     \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml Supplier
+
+    \sa ImageModel, ReviewModel, EditorialModel
 */
 
 /*!

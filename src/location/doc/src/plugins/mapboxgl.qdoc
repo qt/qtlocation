@@ -28,6 +28,7 @@
 ****************************************************************************/
 
 /*!
+\internal
 \page location-plugin-mapboxgl.html
 \title Qt Location Mapbox GL Plugin
 \ingroup QtLocation-plugins

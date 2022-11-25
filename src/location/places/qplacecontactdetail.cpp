@@ -94,8 +94,9 @@ types if necessary.
            address.
 
     The contactDetail provides a single detail on how one could contact a \l Place.  The
-    contactDetail consists of a \l label, which is a localized string describing the contact
-    method, and a \l value representing the actual contact detail.
+    contactDetail consists of a \l {contactDetail::}{label}, which is a localized string
+    describing the contact method, and a \l {contactDetail::}{value} representing the actual
+    contact detail.
 
     \section1 Examples
 
@@ -186,7 +187,7 @@ bool QPlaceContactDetail::isEqual(const QPlaceContactDetail &other) const noexce
 */
 
 /*!
-    \qmlproperty string QtLocation::ContactDetail::label
+    \qmlproperty string QtLocation::contactDetail::label
 
     This property holds a label describing the contact detail.
 
@@ -214,7 +215,7 @@ void QPlaceContactDetail::setLabel(const QString &label)
 }
 
 /*!
-    \qmlproperty string QtLocation::ContactDetail::value
+    \qmlproperty string QtLocation::contactDetail::value
 
     This property holds the value of the contact detail which may be a phone number, an email
     address, a website url and so on.

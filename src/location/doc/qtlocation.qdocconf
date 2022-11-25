@@ -32,16 +32,11 @@ tagfile                 = ../../../doc/qtlocation/qtlocation.tags
 
 depends += qtcore qtdoc qtgui qtquick qtqml qtnetwork qtpositioning qtlinguist
 
-headerdirs  +=  .. \
-                ../../imports/location
+headerdirs  +=  ..
 
-sourcedirs  +=  .. \
-                ../../imports/location \
-                ../../plugins/geoservices/nokia
+sourcedirs  +=  ..
 
 examplesinstallpath = location
-
-manifestmeta.highlighted.names = "QtLocation/Map Viewer (QML)"
 
 exampledirs += ../../../examples/location \
                snippets/

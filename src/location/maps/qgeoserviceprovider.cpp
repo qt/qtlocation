@@ -96,20 +96,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     Subclasses of QGeoServiceProvider guarantee that the different services
     that they provide are interoperable.
 
-    At this point there are two GeoServices plugins packaged with Qt. They are
-    accessible using their provider names:
-
-    \list
-        \li "mapbox" -> \l {Qt Location Mapbox Plugin}{Mapbox service}
-        \li "here" -> \l {Qt Location HERE Plugin}{HERE Services}
-        \li "osm" -> \l {Qt Location Open Street Map Plugin}{OpenStreetMap Services}
-        \li "esri" -> \l {Qt Location Esri Plugin}{ESRI Services}
-    \endlist
-
     Each service provider must follow a naming convention for their service specific
     parameter names/keys. They use the provider name as prefix for all their
-    parameter names. For example, the \l {Qt Location HERE Plugin}{HERE} service provider
-    requires the \c here.app_id parameter. When a provider is loaded only those parameters are
+    parameter names. When a provider is loaded only those parameters are
     passed on whose parameter names start with the provider name. This avoids the sharing
     sensitive parameters such as confidential \c token or \c app_id parameters with other
     plugins.

@@ -199,9 +199,10 @@ bool QPlaceAttributePrivate::isEmpty() const
 
     A place attribute stores an additional piece of information about a \l Place that is not
     otherwise exposed through the \l Place type.  A placeAttribute is a textual piece of data,
-    accessible through the \l text property, and a \l label.  Both the \l text and \l label
-    properties are intended to be displayed to the user.  placeAttributes are stored in an
-    \l ExtendedAttributes map with a unique key.
+    accessible through the \l {placeAttribute::}{text} property, and a \l {placeAttribute::}{label}.
+    Both the l {placeAttribute::}{text} and \l {placeAttribute::}{label} properties are intended
+    to be displayed to the user. placeAttributes are stored in an \l ExtendedAttributes map with
+    a unique key.
 
     The following example shows how to display all attributes in a list:
 

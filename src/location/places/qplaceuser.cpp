@@ -71,8 +71,6 @@ bool QPlaceUserPrivate::operator==(const QPlaceUserPrivate &other) const
     Each \l Place content item has an associated user who contributed the content.  This type
     provides information about that user.
 
-    \sa ImageModel, ReviewModel, EditorialModel
-
     \section1 Example
 
     The following example shows how to display information about the user who
@@ -82,6 +80,8 @@ bool QPlaceUserPrivate::operator==(const QPlaceUserPrivate &other) const
     \snippet declarative/maps.qml QtLocation import
     \codeline
     \snippet declarative/places.qml EditorialModel
+
+    \sa ImageModel, ReviewModel, EditorialModel
 */
 
 /*!

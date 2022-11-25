@@ -66,33 +66,24 @@ QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QPlaceContentPrivate)
     \ingroup QtLocation-places-data
     \since 5.6
 
-    \brief The QPlaceContent class serves as the base class for rich content types.
+    \brief The QPlaceContent class holds content about places.
 
-    Rich content such as \l {QPlaceImage}{images}, \l {QPlaceReview}{reviews}
-    and \l {QPlaceEditorial}{editorials} inherit
-    from the QPlaceContent class which contains common properties such as
-    an attribution string and content contributor, which may take the form of a
-    \l {QPlaceUser}{user} and/or \l {QPlaceSupplier}{supplier}.  It is possible that
-    a user from a supplier is contributing content, hence both fields could
-    be filled in simultaneously.
+    A QPlaceContent holds rich content such as images, reviews, or editorials, as well
+    as attributes about the content such as the user or supplier of the content. Content
+    objects might hold multiple data, e.g. an item holding a review typically includes
+    the user that wrote the review. Use type() to inspect the type of content a
+    QPlaceContent object represents, and dataTags() to see which data is held. Use value()
+    to get the individual data as a QVariant.
 
     \b {Note:} Some providers may \e {require} that the attribution string be displayed
     to the user whenever a piece of content is viewed.
 
-    Conversion between QPlaceContent and it's subclasses can be easily performed without
-    casting. Due to the way it has been implemented, object slicing is not an issue,
-    the following code is valid:
-    \snippet places/requesthandler.h Content conversion
-
-    The rich content of a place is typically made available as paginated items.  The ability
-    to convert between QPlaceContent and it's subclasses means that code which handles
-    the mechanics of paging can be easily shared for each of the sub types.
+    The rich content of a place is typically made available as paginated items.
 
     At present the QPlaceContent class is not extensible by 3rd parties.
 
     Note:  The Places API considers content objects to be 'retrieve-only' objects.
     Submission of content to a provider is not a supported use case.
-    \sa QPlaceImage, QPlaceReview, QPlaceEditorial
 */
 
 /*!
@@ -168,7 +159,7 @@ QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QPlaceContentPrivate)
 */
 
 /*!
-    Constructs an default content object which has no type.
+    Constructs an content object for \a type.
 */
 QPlaceContent::QPlaceContent(Type type)
     : d_ptr(new QPlaceContentPrivate(type))

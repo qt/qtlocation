@@ -109,12 +109,12 @@ bool QGeoCameraCapabilitiesPrivate::operator==(const QGeoCameraCapabilitiesPriva
 */
 
 /*!
-    \qmltype CameraCapabilities
+    \qmlvaluetype cameraCapabilities
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.10
 
-    \brief The CameraCapabilities type holds information about the camera capabilities for a specific map type.
+    \brief The cameraCapabilities type holds information about the camera capabilities for a specific map type.
 
     This includes the map minimum and maximum zoom level, minimum and maximum tilt angle and
     minimum and maximum field of view.
@@ -178,7 +178,7 @@ bool QGeoCameraCapabilities::isValid() const
 }
 
 /*!
-    \qmlproperty qreal CameraCapabilities::minimumZoomLevel
+    \qmlproperty qreal cameraCapabilities::minimumZoomLevel
 
     This read-only property holds the minimum available zoom level with this map type.
 */
@@ -209,7 +209,7 @@ double QGeoCameraCapabilities::minimumZoomLevelAt256() const
 }
 
 /*!
-    \qmlproperty qreal CameraCapabilities::maximumZoomLevel
+    \qmlproperty qreal cameraCapabilities::maximumZoomLevel
 
     This read-only property holds the maximum available zoom level with this map type.
 */
@@ -297,7 +297,7 @@ bool QGeoCameraCapabilities::supportsTilting() const
 }
 
 /*!
-    \qmlproperty qreal CameraCapabilities::minimumTilt
+    \qmlproperty qreal cameraCapabilities::minimumTilt
 
     This read-only property holds the minimum available tilt with this map type.
 */
@@ -321,7 +321,7 @@ double QGeoCameraCapabilities::minimumTilt() const
 }
 
 /*!
-    \qmlproperty qreal CameraCapabilities::maximumTilt
+    \qmlproperty qreal cameraCapabilities::maximumTilt
 
     This read-only property holds the maximum available tilt with this map type.
 */
@@ -345,7 +345,7 @@ double QGeoCameraCapabilities::maximumTilt() const
 }
 
 /*!
-    \qmlproperty qreal CameraCapabilities::minimumFieldOfView
+    \qmlproperty qreal cameraCapabilities::minimumFieldOfView
 
     This read-only property holds the minimum available field of view with this map type.
 */
@@ -370,7 +370,7 @@ double QGeoCameraCapabilities::minimumFieldOfView() const
 }
 
 /*!
-    \qmlproperty qreal CameraCapabilities::maximumFieldOfView
+    \qmlproperty qreal cameraCapabilities::maximumFieldOfView
 
     This read-only property holds the maximum available field of view with this map type.
 */

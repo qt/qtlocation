@@ -71,7 +71,7 @@ QT_BEGIN_NAMESPACE
 
     \section2 Example Usage
 
-    Here is how to draw a \l{Route}{route} on a \l{Map}{map}:
+    Here is how to draw a \l{route}{route} on a \l{Map}{map}:
 
     \snippet declarative/maps.qml QtQuick import
     \snippet declarative/maps.qml QtLocation import

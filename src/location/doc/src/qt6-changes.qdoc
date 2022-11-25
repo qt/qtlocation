@@ -74,9 +74,9 @@
     \list
         \li The former QML element types \c PlaceUser, \c PlaceRatings,
             \c PlaceAttribute, \c PlaceIcon, \c PlaceSupplier, and
-            \c PlaceContactDetail are now value types \l placeUser,
-            \l placeRatings, \l placeAttribute, \l placeIcon,
-            \l placeSupplier, and \l placeContactDetail.
+            \c PlaceContactDetail are now value types \l user,
+            \l ratings, \l placeAttribute, \l icon,
+            \l supplier, and \l contactDetail.
             They can no longer be instantiated as items from QML, and
             their properties can not be bound to.
     \endlist

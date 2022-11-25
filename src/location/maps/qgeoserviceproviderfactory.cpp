@@ -173,7 +173,7 @@ QGeoServiceProviderFactory::createPlaceManagerEngine(const QVariantMap &paramete
 }
 
 /*!
-    Notify the plugin when the qml engine is ready. In this moment the plugins can use it
+    Notify the plugin when the qml \a engine is ready. In this moment the plugins can use it
     to register Image Providers.
 
     The default implementation does nothing.

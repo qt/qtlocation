@@ -148,11 +148,7 @@ void QDeclarativeCategory::pluginReady()
 
 
 /*!
-    \qmlproperty QPlaceCategory Category::category
-    \keyword Category::category
-
-    For details on how to use this property to interface between C++ and QML see
-    "\l {Category - QPlaceCategory} {Interfaces between C++ and QML Code}".
+    \internal
 */
 void QDeclarativeCategory::setCategory(const QPlaceCategory &category)
 {

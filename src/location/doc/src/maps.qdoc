@@ -166,7 +166,7 @@ between the segments.
 \b{Key Types}
 \table
     \row
-        \li \l{QtLocation::Route}{Route}
+        \li \l route
         \li The entire path to be navigated.
     \row
         \li \l{QtLocation::routeSegment}{routeSegment}

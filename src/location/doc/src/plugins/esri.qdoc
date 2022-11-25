@@ -26,6 +26,7 @@
 ****************************************************************************/
 
 /*!
+\internal
 \page location-plugin-esri.html
 \title Qt Location Esri Plugin
 \ingroup QtLocation-plugins

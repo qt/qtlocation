@@ -51,14 +51,13 @@
 QT_BEGIN_NAMESPACE
 
 /*!
-    \qmltype ContentModel
-    \instantiates QDeclarativePlaceContentModel
+    \qmltype EditorialModel
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models
     \since QtLocation 5.5
 
-    \brief The EditorialModel type provides a model of place content.
+    \brief The EditorialModel type provides a model of place editorials.
 
     The EditorialModel is a read-only model used to fetch editorials related to a \l Place.
     Binding a \l Place via \l EditorialModel::place initiates an initial fetch of editorials.
@@ -66,8 +65,9 @@ QT_BEGIN_NAMESPACE
     with a View such as a \l ListView.  When the View reaches the last of the editorials
     currently in the model, a fetch is performed to retrieve more if they are available.
     The View is automatically updated as the editorials are received.  The number of
-    editorials which are fetched at a time is specified by the \l batchSize property.
-    The total number of editorials available can be accessed via the \l totalCount property.
+    editorials which are fetched at a time is specified by the
+    \l {EditorialModel::}{batchSize} property. The total number of editorials available can be
+    accessed via the \l {EditorialModel::}{totalCount} property.
 
     The model returns data for the following roles:
 
@@ -78,11 +78,11 @@ QT_BEGIN_NAMESPACE
             \li Description
         \row
             \li supplier
-            \li \l Supplier
+            \li \l supplier
             \li The supplier of the content.
         \row
             \li user
-            \li \l {QtLocation::User}{User}
+            \li \l user
             \li The user who contributed the content.
         \row
             \li attribution
@@ -169,6 +169,29 @@ QT_BEGIN_NAMESPACE
     This property holds the total number of editorial items for the place.
 */
 
+/*!
+    \qmltype ImageModel
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-models
+    \since QtLocation 5.5
+
+    \brief The ImageModel type provides a model of place images.
+
+    \sa EditorialModel
+*/
+
+/*!
+    \qmltype ReviewModel
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-models
+    \since QtLocation 5.5
+
+    \brief The ReviewModel type provides a model of place reviews.
+
+    \sa EditorialModel
+*/
 
 QDeclarativePlaceContentModel::QDeclarativePlaceContentModel(QPlaceContent::Type type,
                                                              QObject *parent)

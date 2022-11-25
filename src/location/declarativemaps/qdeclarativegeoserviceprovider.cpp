@@ -860,33 +860,17 @@ bool QDeclarativeGeoServiceProviderRequirements::operator == (const QDeclarative
     \ingroup qml-QtLocation5-common
     \since QtLocation 5.5
 
-    \brief The PluginParameter type describes a parameter for a plugin, either
-    geo service \l Plugin, or \l{Qt Positioning plugins}{position Plugin}.
+    \brief The PluginParameter type describes a parameter for a plugin.
 
     The PluginParameter object is used to provide a parameter of some kind
     to a plugin. Typically these parameters contain details like an application
     token for access to a service, or a proxy server to use for network access,
     or the serial port to which a serial GPS receiver is connected.
 
-    To set such a parameter, declare a PluginParameter inside an element that accepts
-    plugin parameters as configuration objects, such as a \l Plugin object, or a
-    \l PositionSource object, and give it \l{name} and \l{value} properties. A list of valid
-    parameter names for each plugin is available from the
-    \l {Qt Location#Plugin References and Parameters}{plugin reference pages} for geoservice plugins,
-    and \l {Qt Positioning plugins#Default plugins} for position plugins.
-
-    \section2 Example Usage
-
-    The following example shows an instantiation of the \l {Qt Location HERE Plugin}{HERE} plugin
-    with a mapping API \e app_id and \e token pair specific to the application.
-
-    \code
-    Plugin {
-        name: "here"
-        PluginParameter { name: "here.app_id"; value: "EXAMPLE_API_ID" }
-        PluginParameter { name: "here.token"; value: "EXAMPLE_TOKEN_123" }
-    }
-    \endcode
+    To set such a parameter, declare a PluginParameter inside an \l Plugin object
+    and give it \l{name} and \l{value} properties. A list of valid parameter names
+    is available from the
+    \l {Qt Location#Plugin References and Parameters}{plugin reference pages}.
 */
 
 /*!

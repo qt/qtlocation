@@ -106,8 +106,8 @@ static QList<QGeoCoordinate> waypointCoordinates(const QList<QDeclarativeGeoWayp
     Otherwise, the \l{update} method may be used. By default, autoUpdate is
     disabled.
 
-    The data stored and returned in the RouteModel consists of \l Route objects,
-    as a list with the role name "routeData". See the documentation for \l Route
+    The data stored and returned in the RouteModel consists of \l route objects,
+    as a list with the role name "routeData". See the documentation for \l route
     for further details on its structure and contents.
 
     \section2 Example Usage
@@ -1492,9 +1492,6 @@ void QDeclarativeGeoRouteQuery::doCoordinateChanged()
 
     A Waypoint is a type that allows to specify properties of a waypoint in a \l RouteQuery,
     such as the waypoint coordinate, or the angle of approach to the waypoint.
-
-    Additional information that are backend-specific can be specified by nesting \l MapParameter
-    elements.
 
     Changing properties of the waypoint or of its nested MapParameteters will cause the containing
     \l RouteQuery to emit the queryDetailsChanged signal.

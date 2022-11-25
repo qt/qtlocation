@@ -75,7 +75,6 @@ QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QGeoRoutePrivate)
 
 /*!
     \qmlvaluetype route
-    \instantiates QDeclarativeGeoRoute
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
     \since QtLocation 5.5
@@ -186,9 +185,10 @@ QString QGeoRoute::routeId() const
 }
 
 /*!
+    \internal
     \property QGeoRoute::request
     \brief the route request which describes the criteria used in the
-           calculcation of this route
+           calculation of this route
 */
 void QGeoRoute::setRequest(const QGeoRouteRequest &request)
 {
@@ -290,7 +290,7 @@ QList<QGeoRouteSegment> QGeoRoute::segments() const
 */
 
 /*!
-    \property QGeoRoute::traveltime
+    \property QGeoRoute::travelTime
     \brief the estimated amount of time it will take to traverse this route,
            in seconds
 */
@@ -391,7 +391,6 @@ QList<QGeoCoordinate> QGeoRoute::path() const
     \property QGeoRoute::routeLegs
     \brief the route \a legs for a multi-waypoint route
 
-    \sa QGeoRouteLeg
     \since 5.12
 */
 void QGeoRoute::setRouteLegs(const QList<QGeoRoute> &legs)

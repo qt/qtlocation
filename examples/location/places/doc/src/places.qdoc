@@ -51,9 +51,9 @@
     desired category.  The place search query will be for places that are near the current location
     shown on the map.
 
-    For some plugins like \l {Qt Location HERE Plugin} the search box provides search term
-    suggestions when three or more characters are entered. Selecting one of the suggestions will
-    cause a place search to be performed with the selected search text.
+    For some plugins, the search box provides search term suggestions when three or more characters
+    are entered. Selecting one of the suggestions will cause a place search to be performed with
+    the selected search text.
 
     Clicking on a search result will display details about the place. If a places has rich content
     (editorials, reviews and images), these can be accessed by the buttons on the details page.

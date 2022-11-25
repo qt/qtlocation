@@ -302,10 +302,7 @@ QDeclarativePlaceEditorialModel *QDeclarativePlace::editorialModel()
 }
 
 /*!
-    \qmlproperty QPlace Place::place
-
-    For details on how to use this property to interface between C++ and QML see
-    "\l {Place - QPlace} {Interfaces between C++ and QML Code}".
+    \internal
 */
 void QDeclarativePlace::setPlace(const QPlace &src)
 {
@@ -828,7 +825,7 @@ QQmlPropertyMap *QDeclarativePlace::extendedAttributes() const
     \qmlproperty ContactDetails Place::contactDetails
 
     This property holds the contact information for this place, for example a phone number or
-    a website URL.  This property is a map of \l ContactDetail objects.
+    a website URL.  This property is a map of \l contactDetail objects.
 */
 QDeclarativeContactDetails *QDeclarativePlace::contactDetails() const
 {
