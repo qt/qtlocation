@@ -39,7 +39,6 @@
 
 #include "qdeclarativerectanglemapitem_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
-#include "rhi/qdeclarativerectanglemapitem_rhi_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
 
 #include <QtCore/QScopedValueRollback>

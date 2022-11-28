@@ -122,7 +122,6 @@ private:
 
     friend class QDeclarativeCircleMapItemPrivate;
     friend class QDeclarativeCircleMapItemPrivateCPU;
-    friend class QDeclarativeCircleMapItemPrivateOpenGL;
 };
 
 //////////////////////////////////////////////////////////////////////

@@ -40,7 +40,6 @@
 #include "qdeclarativegeomapitemutils_p.h"
 #include "qdeclarativepolygonmapitem_p.h"
 #include "qdeclarativepolygonmapitem_p_p.h"
-#include "rhi/qdeclarativepolygonmapitem_rhi_p.h"
 
 #include <QtCore/QScopedValueRollback>
 #include <qnumeric.h>

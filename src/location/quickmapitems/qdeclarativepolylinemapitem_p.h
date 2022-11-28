@@ -152,7 +152,6 @@ public:
 
     friend class QDeclarativePolylineMapItemPrivate;
     friend class QDeclarativePolylineMapItemPrivateCPU;
-    friend class QDeclarativePolylineMapItemPrivateOpenGL;
 };
 
 QT_END_NAMESPACE

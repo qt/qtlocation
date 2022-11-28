@@ -124,7 +124,6 @@ private:
 
     friend class QDeclarativeRectangleMapItemPrivate;
     friend class QDeclarativeRectangleMapItemPrivateCPU;
-    friend class QDeclarativeRectangleMapItemPrivateOpenGL;
 };
 
 //////////////////////////////////////////////////////////////////////

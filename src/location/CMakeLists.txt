@@ -149,16 +149,6 @@ qt_internal_add_qml_module(Location
         quickmapitems/qdeclarativegeomapcopyrightsnotice.cpp
         quickmapitems/qdeclarativegeomapitemtransitionmanager_p.h
         quickmapitems/qdeclarativegeomapitemtransitionmanager.cpp
-        quickmapitems/rhi/qdeclarativepolygonmapitem_rhi_p.h
-        quickmapitems/rhi/qdeclarativepolygonmapitem_rhi.cpp
-        quickmapitems/rhi/qdeclarativepolylinemapitem_rhi_p.h
-        quickmapitems/rhi/qdeclarativepolylinemapitem_rhi.cpp
-        quickmapitems/rhi/qdeclarativerectanglemapitem_rhi_p.h
-        quickmapitems/rhi/qdeclarativerectanglemapitem_rhi.cpp
-        quickmapitems/rhi/qdeclarativecirclemapitem_rhi_p.h
-        quickmapitems/rhi/qdeclarativecirclemapitem_rhi.cpp
-        quickmapitems/rhi/qgeomapitemgeometry_rhi_p.h quickmapitems/rhi/qgeomapitemgeometry_rhi.cpp
-        quickmapitems/rhi/qgeosimplify.cpp quickmapitems/rhi/qgeosimplify_p.h
         declarativeplaces/qdeclarativecategory.cpp
         declarativeplaces/qdeclarativecategory_p.h
         declarativeplaces/qdeclarativecontactdetails.cpp
@@ -177,20 +167,6 @@ qt_internal_add_qml_module(Location
         declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h
     DEFINES
         QT_NO_FOREACH
-)
-
-qt_internal_add_shaders(Location "declarative_location_shaders"
-    SILENT
-    BATCHABLE
-    PRECOMPILE
-    OPTIMIZED
-    PREFIX
-        "/location"
-    FILES
-        "quickmapitems/rhi/shaders/polyline.vert"
-        "quickmapitems/rhi/shaders/polyline.frag"
-        "quickmapitems/rhi/shaders/polygon.vert"
-        "quickmapitems/rhi/shaders/polygon.frag"
 )
 
 qt_internal_add_docs(Location

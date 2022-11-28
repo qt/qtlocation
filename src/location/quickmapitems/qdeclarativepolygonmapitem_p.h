@@ -120,7 +120,6 @@ public:
 
     friend class QDeclarativePolygonMapItemPrivate;
     friend class QDeclarativePolygonMapItemPrivateCPU;
-    friend class QDeclarativePolygonMapItemPrivateOpenGL;
 };
 
 QT_END_NAMESPACE

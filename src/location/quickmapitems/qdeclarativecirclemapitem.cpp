@@ -39,7 +39,6 @@
 
 #include "qdeclarativecirclemapitem_p.h"
 #include "qdeclarativecirclemapitem_p_p.h"
-#include "rhi/qdeclarativecirclemapitem_rhi_p.h"
 
 #include <QtCore/QScopedValueRollback>
 #include <QPen>

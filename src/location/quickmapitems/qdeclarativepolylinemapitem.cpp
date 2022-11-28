@@ -39,7 +39,6 @@
 
 #include "qdeclarativepolylinemapitem_p.h"
 #include "qdeclarativepolylinemapitem_p_p.h"
-#include "rhi/qdeclarativepolylinemapitem_rhi_p.h"
 #include "qdeclarativegeomapitemutils_p.h"
 
 #include <QtCore/QScopedValueRollback>
