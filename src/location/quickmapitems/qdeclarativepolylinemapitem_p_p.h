@@ -28,7 +28,8 @@
 
 QT_BEGIN_NAMESPACE
 
-class QSGMaterialShader;
+class QQuickShape;
+class QQuickShapePath;
 
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolylineGeometry : public QGeoMapItemGeometry
 {
@@ -55,9 +56,13 @@ public:
                       const QList<QList<QDoubleVector2D> > &clippedPaths,
                       const QDoubleVector2D &leftBoundWrapped);
 
+    QPainterPath srcPath() const { return srcPath_; }
+
 public:
     QList<qreal> srcPoints_;
     QList<QPainterPath::ElementType> srcPointTypes_;
+    QPainterPath srcPath_;
+    qreal maxCoord_ = 0.0;
 
 #ifdef QT_LOCATION_DEBUG
     QList<QDoubleVector2D> m_wrappedPath;
@@ -69,6 +74,7 @@ public:
     friend class QDeclarativeRectangleMapItem;
 };
 
+#ifndef MAPITEMS_USE_SHAPES
 class Q_LOCATION_PRIVATE_EXPORT VisibleNode
 {
 public:
@@ -103,6 +109,7 @@ protected:
     QSGFlatColorMaterial fill_material_;
     QSGGeometry geometry_;
 };
+#endif
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivate
 {
@@ -131,12 +138,9 @@ public:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateCPU: public QDeclarativePolylineMapItemPrivate
 {
 public:
-    QDeclarativePolylineMapItemPrivateCPU(QDeclarativePolylineMapItem &poly)
-        : QDeclarativePolylineMapItemPrivate(poly)
-    {
-    }
-
+    QDeclarativePolylineMapItemPrivateCPU(QDeclarativePolylineMapItem &poly);
     ~QDeclarativePolylineMapItemPrivateCPU() override;
+
     void onLinePropertiesChanged() override
     {
         // mark dirty just in case we're a width change
@@ -186,7 +190,13 @@ public:
 
     QList<QDoubleVector2D> m_geopathProjected;
     QGeoMapPolylineGeometry m_geometry;
+#ifdef MAPITEMS_USE_SHAPES
+    QQuickShape *m_shape = nullptr;
+    QQuickShapePath *m_shapePath = nullptr;
+    QDeclarativeGeoMapPainterPath *m_painterPath = nullptr;
+#else
     MapPolylineNode *m_node = nullptr;
+#endif
 };
 
 QT_END_NAMESPACE

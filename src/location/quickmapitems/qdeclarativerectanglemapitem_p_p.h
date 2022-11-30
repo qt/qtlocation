@@ -23,14 +23,14 @@
 
 QT_BEGIN_NAMESPACE
 
+class QQuickShape;
+class QQuickShapePath;
+
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItemPrivate
 {
     Q_DISABLE_COPY_MOVE(QDeclarativeRectangleMapItemPrivate)
 public:
-    QDeclarativeRectangleMapItemPrivate(QDeclarativeRectangleMapItem &rect)
-        : m_rect(rect)
-    {
-    }
+    QDeclarativeRectangleMapItemPrivate(QDeclarativeRectangleMapItem &rect);
 
     virtual ~QDeclarativeRectangleMapItemPrivate();
     virtual void onLinePropertiesChanged() = 0;
@@ -49,11 +49,7 @@ public:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItemPrivateCPU: public QDeclarativeRectangleMapItemPrivate
 {
 public:
-    QDeclarativeRectangleMapItemPrivateCPU(QDeclarativeRectangleMapItem &rect)
-        : QDeclarativeRectangleMapItemPrivate(rect)
-    {
-    }
-
+    QDeclarativeRectangleMapItemPrivateCPU(QDeclarativeRectangleMapItem &rect);
     ~QDeclarativeRectangleMapItemPrivateCPU() override;
 
     void onLinePropertiesChanged() override
@@ -64,7 +60,9 @@ public:
     void markSourceDirtyAndUpdate() override
     {
         m_geometry.markSourceDirty();
+#ifndef MAPITEMS_USE_SHAPES
         m_borderGeometry.markSourceDirty();
+#endif
         m_rect.polishAndUpdate();
     }
     void onMapSet() override
@@ -78,13 +76,17 @@ public:
     void onItemGeometryChanged() override
     {
         m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
+#ifndef MAPITEMS_USE_SHAPES
         m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
+#endif
         markSourceDirtyAndUpdate();
     }
     void afterViewportChanged() override
     {
         m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
+#ifndef MAPITEMS_USE_SHAPES
         m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
+#endif
         markSourceDirtyAndUpdate();
     }
     void updatePolish() override;
@@ -92,8 +94,14 @@ public:
     bool contains(const QPointF &point) const override;
 
     QGeoMapPolygonGeometry m_geometry;
+#ifdef MAPITEMS_USE_SHAPES
+    QQuickShape *m_shape = nullptr;
+    QQuickShapePath *m_shapePath = nullptr;
+    QDeclarativeGeoMapPainterPath *m_painterPath = nullptr;
+#else
     QGeoMapPolylineGeometry m_borderGeometry;
     MapPolygonNode *m_node = nullptr;
+#endif
 };
 
 QT_END_NAMESPACE

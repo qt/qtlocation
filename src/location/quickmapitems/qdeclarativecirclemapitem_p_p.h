@@ -22,12 +22,15 @@
 
 QT_BEGIN_NAMESPACE
 
+class QQuickShape;
+class QQuickShapePath;
+
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
 {
 public:
     QGeoMapCircleGeometry();
 
-    void updateScreenPointsInvert(const QList<QDoubleVector2D> &circlePath, const QGeoMap &map);
+    void updateSourceAndScreenPointsInvert(const QList<QDoubleVector2D> &circlePath, const QGeoMap &map);
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivate
@@ -83,12 +86,7 @@ public:
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivateCPU: public QDeclarativeCircleMapItemPrivate
 {
 public:
-
-    QDeclarativeCircleMapItemPrivateCPU(QDeclarativeCircleMapItem &circle)
-        : QDeclarativeCircleMapItemPrivate(circle)
-    {
-    }
-
+    QDeclarativeCircleMapItemPrivateCPU(QDeclarativeCircleMapItem &circle);
     ~QDeclarativeCircleMapItemPrivateCPU() override;
 
     void onLinePropertiesChanged() override
@@ -100,7 +98,9 @@ public:
     {
         // preserveGeometry is cleared in updateMapItemPaintNode
         m_geometry.markSourceDirty();
+#ifndef MAPITEMS_USE_SHAPES
         m_borderGeometry.markSourceDirty();
+#endif
         m_circle.polishAndUpdate();
     }
     void onMapSet() override
@@ -126,8 +126,14 @@ public:
     bool contains(const QPointF &point) const override;
 
     QGeoMapCircleGeometry m_geometry;
+#ifdef MAPITEMS_USE_SHAPES
+    QQuickShape *m_shape = nullptr;
+    QQuickShapePath *m_shapePath = nullptr;
+    QDeclarativeGeoMapPainterPath *m_painterPath = nullptr;
+#else
     QGeoMapPolylineGeometry m_borderGeometry;
     MapPolygonNode *m_node = nullptr;
+#endif
 };
 
 QT_END_NAMESPACE

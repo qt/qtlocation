@@ -187,12 +187,16 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     }
 
     // 3)
+    maxCoord_ = 0.0;
     QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(leftBoundWrapped);
     for (const QList<QDoubleVector2D> &path: clippedPaths) {
         QDoubleVector2D lastAddedPoint;
         for (qsizetype i = 0; i < path.size(); ++i) {
             QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(path.at(i));
             point = point - origin; // (0,0) if point == geoLeftBound_
+
+            if (qMax(point.x(), point.y()) > maxCoord_)
+                maxCoord_ = qMax(point.x(), point.y());
 
             if (i == 0) {
                 srcPath_.moveTo(point.toPointF());
@@ -214,6 +218,7 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     sourceBounds_ = srcPath_.boundingRect();
 }
 
+#ifndef MAPITEMS_USE_SHAPES
 /*!
     \internal
 */
@@ -284,37 +289,71 @@ void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map, qreal stroke
     if (strokeWidth != 0.0)
         this->translate(QPointF(strokeWidth, strokeWidth));
 }
+#endif
 
 /*
  * QDeclarativePolygonMapItem Private Implementations
  */
 
-QDeclarativePolygonMapItemPrivate::~QDeclarativePolygonMapItemPrivate() {}
+QDeclarativePolygonMapItemPrivate::~QDeclarativePolygonMapItemPrivate()
+{
+}
 
-QDeclarativePolygonMapItemPrivateCPU::~QDeclarativePolygonMapItemPrivateCPU() {}
+QDeclarativePolygonMapItemPrivateCPU::QDeclarativePolygonMapItemPrivateCPU(QDeclarativePolygonMapItem &polygon)
+    : QDeclarativePolygonMapItemPrivate(polygon)
+{
+#ifdef MAPITEMS_USE_SHAPES
+    m_shape = new QQuickShape(&m_poly);
+    m_shape->setObjectName("_qt_map_item_shape");
+    m_shape->setZ(-1);
+    m_shape->setContainsMode(QQuickShape::FillContains);
+
+    m_shapePath = new QQuickShapePath(m_shape);
+    m_painterPath = new QDeclarativeGeoMapPainterPath(m_shapePath);
+
+    auto pathElements = m_shapePath->pathElements();
+    pathElements.append(&pathElements, m_painterPath);
+
+    auto shapePaths = m_shape->data();
+    shapePaths.append(&shapePaths, m_shapePath);
+#endif
+}
+
+QDeclarativePolygonMapItemPrivateCPU::~QDeclarativePolygonMapItemPrivateCPU()
+{
+#ifdef MAPITEMS_USE_SHAPES
+    delete m_shape;
+#endif
+}
 
 void QDeclarativePolygonMapItemPrivateCPU::updatePolish()
 {
     if (m_poly.m_geopoly.perimeter().length() == 0) { // Possibly cleared
         m_geometry.clear();
-        m_borderGeometry.clear();
         m_poly.setWidth(0);
         m_poly.setHeight(0);
+#ifdef MAPITEMS_USE_SHAPES
+        m_shape->setVisible(false);
+#else
+        m_borderGeometry.clear();
+#endif
         return;
     }
     const QGeoMap *map = m_poly.map();
     const qreal borderWidth = m_poly.m_border.width();
-    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map->geoProjection());
     QScopedValueRollback<bool> rollback(m_poly.m_updatingGeometry);
     m_poly.m_updatingGeometry = true;
 
     m_geometry.updateSourcePoints(*map, m_geopathProjected);
+
+#ifndef MAPITEMS_USE_SHAPES
     m_geometry.updateScreenPoints(*map, borderWidth);
 
+    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map->geoProjection());
     QList<QGeoMapItemGeometry *> geoms;
     geoms << &m_geometry;
-    m_borderGeometry.clear();
 
+    m_borderGeometry.clear();
     if (m_poly.m_border.color().alpha() != 0 && borderWidth > 0) {
         QList<QDoubleVector2D> closedPath = m_geopathProjected;
         closedPath << closedPath.first();
@@ -338,19 +377,49 @@ void QDeclarativePolygonMapItemPrivateCPU::updatePolish()
             m_borderGeometry.clear();
         }
     }
+#endif
 
-    QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
+    const QRectF bb = m_geometry.sourceBoundingBox();
+
+#ifdef MAPITEMS_USE_SHAPES
+    m_poly.setShapeTriangulationScale(m_shape, m_geometry.maxCoord());
+
+    const bool hasBorder = m_poly.m_border.color().alpha() != 0 && m_poly.m_border.width() > 0;
+    m_shapePath->setStrokeColor(hasBorder ? m_poly.m_border.color() : Qt::transparent);
+    m_shapePath->setStrokeWidth(hasBorder ? borderWidth : -1.0f);
+    m_shapePath->setFillColor(m_poly.color());
+
+    QPainterPath path = m_geometry.srcPath();
+    path.translate(-bb.left() + borderWidth, -bb.top() + borderWidth);
+    path.closeSubpath();
+    m_painterPath->setPath(path);
+
+    m_poly.setSize(bb.size() + QSize(2 * borderWidth, 2 * borderWidth));
+    m_shape->setSize(m_poly.size());
+    m_shape->setOpacity(m_poly.zoomLevelOpacity());
+    m_shape->setVisible(true);
+#else
+    const QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
     m_poly.setWidth(combined.width() + 2 * borderWidth);
     m_poly.setHeight(combined.height() + 2 * borderWidth);
+#endif
 
-    m_poly.setPositionOnMap(m_geometry.origin(), -1 * m_geometry.sourceBoundingBox().topLeft()
-                                            + QPointF(borderWidth, borderWidth));
+    m_poly.setPositionOnMap(m_geometry.origin(), -1 * bb.topLeft() + QPointF(borderWidth, borderWidth));
 }
 
 QSGNode *QDeclarativePolygonMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *oldNode,
                                                             QQuickItem::UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
+#ifdef MAPITEMS_USE_SHAPES
+    delete oldNode;
+    if (m_geometry.isScreenDirty() || m_poly.m_dirtyMaterial) {
+        m_geometry.setPreserveGeometry(false);
+        m_geometry.markClean();
+        m_poly.m_dirtyMaterial = false;
+    }
+    return nullptr;
+#else
     if (!m_node || !oldNode) {
         m_node = new MapPolygonNode();
         if (oldNode) {
@@ -376,12 +445,18 @@ QSGNode *QDeclarativePolygonMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *o
         m_borderGeometry.markClean();
         m_poly.m_dirtyMaterial = false;
     }
+
     return m_node;
+#endif
 }
 
 bool QDeclarativePolygonMapItemPrivateCPU::contains(const QPointF &point) const
 {
+#ifdef MAPITEMS_USE_SHAPES
+    return m_shape->contains(m_poly.mapToItem(m_shape, point));
+#else
     return (m_geometry.contains(point) || m_borderGeometry.contains(point));
+#endif
 }
 
 /*
@@ -624,6 +699,8 @@ void QDeclarativePolygonMapItem::geometryChange(const QRectF &newGeometry, const
 
 //////////////////////////////////////////////////////////////////////
 
+#ifndef MAPITEMS_USE_SHAPES
+
 MapPolygonNode::MapPolygonNode()
     : border_(new MapPolylineNode()),
       geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
@@ -674,5 +751,6 @@ void MapPolygonNode::update(const QColor &fillColor, const QColor &borderColor,
     }
 }
 
+#endif
 
 QT_END_NAMESPACE

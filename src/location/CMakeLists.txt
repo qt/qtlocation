@@ -86,6 +86,7 @@ qt_internal_add_module(Location
         Qt::Core
         Qt::Positioning
         Qt::PositioningQuick
+        Qt::QuickShapesPrivate
     PRIVATE_MODULE_INTERFACE
         Qt::CorePrivate
         Qt::QuickPrivate

@@ -21,6 +21,7 @@ QGeoMapItemGeometry::~QGeoMapItemGeometry()
 
 }
 
+#ifndef MAPITEMS_USE_SHAPES
 /*!
     \internal
 */
@@ -87,5 +88,6 @@ QRectF QGeoMapItemGeometry::translateToCommonOrigin(const QList<QGeoMapItemGeome
 
     return brects.boundingRect();
 }
+#endif
 
 QT_END_NAMESPACE

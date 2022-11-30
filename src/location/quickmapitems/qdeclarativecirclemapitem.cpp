@@ -16,6 +16,8 @@
 #include <qmath.h>
 #include <algorithm>
 
+#include <QtQuick/private/qquickitem_p.h>
+
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -109,11 +111,12 @@ QGeoMapCircleGeometry::QGeoMapCircleGeometry()
 /*!
     \internal
 */
-void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D> &circlePath, const QGeoMap &map)
+void QGeoMapCircleGeometry::updateSourceAndScreenPointsInvert(const QList<QDoubleVector2D> &circlePath, const QGeoMap &map)
 {
     const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map.geoProjection());
     // Not checking for !screenDirty anymore, as everything is now recalculated.
     clear();
+    srcPath_ = QPainterPath();
     if (map.viewportWidth() == 0 || map.viewportHeight() == 0 || circlePath.size() < 3) // a circle requires at least 3 points;
         return;
 
@@ -187,23 +190,28 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
     //3)
     const QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(lb);
 
-    QPainterPath ppi;
     for (const QList<QDoubleVector2D> &path: clippedPaths) {
         QDoubleVector2D lastAddedPoint;
         for (qsizetype i = 0; i < path.size(); ++i) {
             QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(path.at(i));
             //point = point - origin; // Do this using ppi.translate()
 
+            const QDoubleVector2D pt = point - origin;
+            if (qMax(pt.x(), pt.y()) > maxCoord_)
+                maxCoord_ = qMax(pt.x(), pt.y());
+
             if (i == 0) {
-                ppi.moveTo(point.toPointF());
+                srcPath_.moveTo(point.toPointF());
                 lastAddedPoint = point;
             } else if ((point - lastAddedPoint).manhattanLength() > 3 || i == path.size() - 1) {
-                ppi.lineTo(point.toPointF());
+                srcPath_.lineTo(point.toPointF());
                 lastAddedPoint = point;
             }
         }
-        ppi.closeSubpath();
+        srcPath_.closeSubpath();
     }
+
+    QPainterPath ppi = srcPath_;
     ppi.translate(-1 * origin.toPointF());
 
     QTriangleSet ts = qTriangulate(ppi);
@@ -225,7 +233,7 @@ void QGeoMapCircleGeometry::updateScreenPointsInvert(const QList<QDoubleVector2D
         screenVertices_ << QPointF(vx[i], vx[i + 1]);
 
     screenBounds_ = ppi.boundingRect();
-    sourceBounds_ = screenBounds_;
+    sourceBounds_ = srcPath_.boundingRect();
 }
 
 QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
@@ -440,9 +448,36 @@ void QDeclarativeCircleMapItem::geometryChange(const QRectF &newGeometry, const 
     // call to this function.
 }
 
-QDeclarativeCircleMapItemPrivate::~QDeclarativeCircleMapItemPrivate() {}
+QDeclarativeCircleMapItemPrivate::~QDeclarativeCircleMapItemPrivate()
+{
+}
 
-QDeclarativeCircleMapItemPrivateCPU::~QDeclarativeCircleMapItemPrivateCPU() {}
+QDeclarativeCircleMapItemPrivateCPU::QDeclarativeCircleMapItemPrivateCPU(QDeclarativeCircleMapItem &circle)
+    : QDeclarativeCircleMapItemPrivate(circle)
+{
+#ifdef MAPITEMS_USE_SHAPES
+    m_shape = new QQuickShape(&m_circle);
+    m_shape->setObjectName("_qt_map_item_shape");
+    m_shape->setZ(-1);
+    m_shape->setContainsMode(QQuickShape::FillContains);
+
+    m_shapePath = new QQuickShapePath(m_shape);
+    m_painterPath = new QDeclarativeGeoMapPainterPath(m_shapePath);
+
+    auto pathElements = m_shapePath->pathElements();
+    pathElements.append(&pathElements, m_painterPath);
+
+    auto shapePaths = m_shape->data();
+    shapePaths.append(&shapePaths, m_shapePath);
+#endif
+}
+
+QDeclarativeCircleMapItemPrivateCPU::~QDeclarativeCircleMapItemPrivateCPU()
+{
+#ifdef MAPITEMS_USE_SHAPES
+    delete m_shape;
+#endif
+}
 
 bool QDeclarativeCircleMapItemPrivate::preserveCircleGeometry (QList<QDoubleVector2D> &path,
                                     const QGeoCoordinate &center, qreal distance, const QGeoProjectionWebMercator &p)
@@ -597,9 +632,13 @@ void QDeclarativeCircleMapItemPrivateCPU::updatePolish()
 {
     if (!m_circle.m_circle.isValid()) {
         m_geometry.clear();
-        m_borderGeometry.clear();
         m_circle.setWidth(0);
         m_circle.setHeight(0);
+#ifdef MAPITEMS_USE_SHAPES
+        m_shape->setVisible(false);
+#else
+        m_borderGeometry.clear();
+#endif
         return;
     }
 
@@ -619,15 +658,17 @@ void QDeclarativeCircleMapItemPrivateCPU::updatePolish()
     m_geometry.setPreserveGeometry(preserve, m_leftBound);
 
     bool invertedCircle = false;
-    if (crossEarthPole(m_circle.m_circle.center(), m_circle.m_circle.radius())
-        && circlePath.size() == pathCount) {
+    if (crossEarthPole(m_circle.m_circle.center(), m_circle.m_circle.radius()) && circlePath.size() == pathCount) {
         // invert fill area for really huge circles
-        m_geometry.updateScreenPointsInvert(circlePath, *m_circle.map());
+        m_geometry.updateSourceAndScreenPointsInvert(circlePath, *m_circle.map());
         invertedCircle = true;
     } else {
         m_geometry.updateSourcePoints(*m_circle.map(), circlePath);
-        m_geometry.updateScreenPoints(*m_circle.map(), m_circle.m_border.width());
     }
+
+#ifndef MAPITEMS_USE_SHAPES
+    if (!invertedCircle)
+        m_geometry.updateScreenPoints(*m_circle.map(), m_circle.m_border.width());
 
     m_borderGeometry.clear();
     QList<QGeoMapItemGeometry *> geoms;
@@ -665,9 +706,33 @@ void QDeclarativeCircleMapItemPrivateCPU::updatePolish()
             m_borderGeometry.clear();
         }
     }
+#endif
 
-    QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
+#ifdef MAPITEMS_USE_SHAPES
+    m_circle.setShapeTriangulationScale(m_shape, m_geometry.maxCoord());
 
+    const bool hasBorder = m_circle.m_border.color().alpha() != 0 && m_circle.m_border.width() > 0;
+    const float borderWidth = hasBorder ? m_circle.m_border.width() : 0.0f;
+    m_shapePath->setStrokeColor(hasBorder ? m_circle.m_border.color() : Qt::transparent);
+    m_shapePath->setStrokeWidth(hasBorder ? borderWidth : -1.0f);
+    m_shapePath->setFillColor(m_circle.color());
+
+    const QRectF bb = m_geometry.sourceBoundingBox();
+    QPainterPath path = m_geometry.srcPath();
+    path.translate(-bb.left() + borderWidth, -bb.top() + borderWidth);
+    path.closeSubpath();
+    m_painterPath->setPath(path);
+
+    m_circle.setSize(invertedCircle || !preserve
+                     ? bb.size()
+                     : bb.size() + QSize(2 * borderWidth, 2 * borderWidth));
+    m_shape->setSize(m_circle.size());
+    m_shape->setOpacity(m_circle.zoomLevelOpacity());
+    m_shape->setVisible(true);
+
+    m_circle.setPositionOnMap(m_geometry.origin(), -1 * bb.topLeft() + QPointF(borderWidth, borderWidth));
+#else
+    const QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
     if (invertedCircle || !preserve) {
         m_circle.setWidth(combined.width());
         m_circle.setHeight(combined.height());
@@ -675,15 +740,24 @@ void QDeclarativeCircleMapItemPrivateCPU::updatePolish()
         m_circle.setWidth(combined.width() + 2 * m_circle.m_border.width()); // ToDo: Fix this!
         m_circle.setHeight(combined.height() + 2 * m_circle.m_border.width());
     }
-
     // No offsetting here, even in normal case, because first point offset is already translated
     m_circle.setPositionOnMap(m_geometry.origin(), m_geometry.firstPointOffset());
+#endif
 }
 
 QSGNode *QDeclarativeCircleMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *oldNode,
                                                             QQuickItem::UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
+#ifdef MAPITEMS_USE_SHAPES
+    delete oldNode;
+    if (m_geometry.isScreenDirty() || m_circle.m_dirtyMaterial) {
+        m_geometry.setPreserveGeometry(false);
+        m_geometry.markClean();
+        m_circle.m_dirtyMaterial = false;
+    }
+    return nullptr;
+#else
     if (!m_node || !oldNode) { // Apparently the QSG might delete the nodes if they become invisible
         m_node = new MapPolygonNode();
         if (oldNode) {
@@ -703,11 +777,18 @@ QSGNode *QDeclarativeCircleMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *ol
         m_borderGeometry.markClean();
         m_circle.m_dirtyMaterial = false;
     }
+
     return m_node;
+#endif
 }
+
 bool QDeclarativeCircleMapItemPrivateCPU::contains(const QPointF &point) const
 {
+#ifdef MAPITEMS_USE_SHAPES
+    return m_shape->contains(m_circle.mapToItem(m_shape, point));
+#else
     return (m_geometry.contains(point) || m_borderGeometry.contains(point));
+#endif
 }
 
 QT_END_NAMESPACE

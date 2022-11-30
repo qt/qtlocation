@@ -25,6 +25,11 @@
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qdeclarativegeomapitemtransitionmanager_p.h>
 #include <QScopedPointer>
+#include <QtQuickShapes/private/qquickshape_p.h>
+
+// Master switch to make rectangle, circle, polygon, and polyline use
+// QQuickShape instead of a custom scenegraph node.
+#define MAPITEMS_USE_SHAPES
 
 QT_BEGIN_NAMESPACE
 
@@ -94,6 +99,8 @@ public:
         return res;
     }
 
+    void setShapeTriangulationScale(QQuickShape *shape, qreal maxCoord) const;
+
 Q_SIGNALS:
     void mapItemOpacityChanged();
     Q_REVISION(12) void addTransitionFinished();
@@ -132,6 +139,28 @@ private:
     friend class QDeclarativeGeoMap;
     friend class QDeclarativeGeoMapItemView;
     friend class QDeclarativeGeoMapItemTransitionManager;
+};
+
+class QDeclarativeGeoMapPainterPath : public QQuickCurve
+{
+    Q_OBJECT
+public:
+    QDeclarativeGeoMapPainterPath(QObject *parent = nullptr) : QQuickCurve(parent) {}
+    QPainterPath path() const
+    {
+        return m_path;
+    }
+    void setPath(const QPainterPath &path)
+    {
+        m_path = path;
+        emit changed();
+    }
+    void addToPath(QPainterPath &path, const QQuickPathData &) override
+    {
+        path.addPath(m_path);
+    }
+private:
+    QPainterPath m_path;
 };
 
 QT_END_NAMESPACE
