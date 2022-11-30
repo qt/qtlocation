@@ -13,6 +13,8 @@
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
 
+#include <QtQuickShapes/private/qquickshape_p_p.h>
+
 QT_BEGIN_NAMESPACE
 
 QDeclarativeGeoMapItemBase::QDeclarativeGeoMapItemBase(QQuickItem *parent)
@@ -43,7 +45,9 @@ void QDeclarativeGeoMapItemBase::afterChildrenChanged()
         bool printedWarning = false;
         for (auto *i : kids) {
             if (i->flags() & QQuickItem::ItemHasContents
-                    && !qobject_cast<QQuickMouseArea *>(i)) {
+                    && !qobject_cast<QQuickMouseArea *>(i)
+                    && i->objectName() != QStringLiteral("_qt_map_item_shape"))
+            {
                 if (!printedWarning) {
                     qmlWarning(this) << "Geographic map items do not support child items";
                     printedWarning = true;
@@ -197,6 +201,22 @@ float QDeclarativeGeoMapItemBase::zoomLevelOpacity() const
         return quickMap_->zoomLevel() - opacityRampMin;
     else
         return 0.0;
+}
+
+void QDeclarativeGeoMapItemBase::setShapeTriangulationScale(QQuickShape *shape, qreal maxCoord) const
+{
+    const qreal zoom = qMax(0.01, quickMap_->zoomLevel());
+    qreal scale = 1 / zoom;
+
+    // cater also for QTriangulator's 65536 coordinate limit due to the fixed point math
+    qint64 coord = qint64(maxCoord);
+    const qint64 COORD_LIMIT = (1 << 21) / 32; // 65536 (where 32 is Q_FIXED_POINT_SCALE)
+    while (coord > COORD_LIMIT) {
+        coord /= COORD_LIMIT;
+        scale /= COORD_LIMIT;
+    }
+
+    QQuickShapePrivate::get(shape)->triangulationScale = scale;
 }
 
 /*!

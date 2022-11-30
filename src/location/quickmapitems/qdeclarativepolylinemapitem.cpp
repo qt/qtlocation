@@ -458,6 +458,34 @@ void QGeoMapPolylineGeometry::updateSourcePoints(const QGeoMap &map,
 
     // 3)
     pathToScreen(map, clippedPaths, leftBoundWrapped);
+
+    srcPath_ = QPainterPath();
+    maxCoord_ = 0.0;
+    const int elemCount = srcPointTypes_.count();
+    for (int i = 0; i < elemCount; ++i) {
+        switch (srcPointTypes_[i]) {
+        case QPainterPath::MoveToElement:
+        {
+            const qreal x = srcPoints_[2 * i];
+            const qreal y = srcPoints_[2 * i + 1];
+            if (qMax(x, y) > maxCoord_)
+                maxCoord_ = qMax(x, y);
+            srcPath_.moveTo(x, y);
+        }
+            break;
+        case QPainterPath::LineToElement:
+        {
+            const qreal x = srcPoints_[2 * i];
+            const qreal y = srcPoints_[2 * i + 1];
+            if (qMax(x, y) > maxCoord_)
+                maxCoord_ = qMax(x, y);
+            srcPath_.lineTo(x, y);
+        }
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 // ***  SCREEN CLIPPING *** //
@@ -650,8 +678,15 @@ void QGeoMapPolylineGeometry::updateScreenPoints(const QGeoMap &map,
     }
 
     screenBounds_ = bb;
+
     const QPointF strokeOffset = (adjustTranslation) ? QPointF(strokeWidth, strokeWidth) * 0.5: QPointF();
-    this->translate( -1 * sourceBounds_.topLeft() + strokeOffset);
+    const QPointF offset = -1 * sourceBounds_.topLeft() + strokeOffset;
+    for (qsizetype i = 0; i < screenVertices_.size(); ++i)
+        screenVertices_[i] += offset;
+
+    firstPointOffset_ += offset;
+    screenOutline_.translate(offset);
+    screenBounds_.translate(offset);
 }
 
 void QGeoMapPolylineGeometry::clearSource()
@@ -682,10 +717,36 @@ bool QGeoMapPolylineGeometry::contains(const QPointF &point) const
  * QDeclarativePolygonMapItem Private Implementations
  */
 
-QDeclarativePolylineMapItemPrivate::~QDeclarativePolylineMapItemPrivate() {}
+QDeclarativePolylineMapItemPrivate::~QDeclarativePolylineMapItemPrivate()
+{
+}
 
-QDeclarativePolylineMapItemPrivateCPU::~QDeclarativePolylineMapItemPrivateCPU() {}
+QDeclarativePolylineMapItemPrivateCPU::QDeclarativePolylineMapItemPrivateCPU(QDeclarativePolylineMapItem &poly)
+    : QDeclarativePolylineMapItemPrivate(poly)
+{
+#ifdef MAPITEMS_USE_SHAPES
+    m_shape = new QQuickShape(&m_poly);
+    m_shape->setObjectName("_qt_map_item_shape");
+    m_shape->setZ(-1);
+    m_shape->setContainsMode(QQuickShape::FillContains);
 
+    m_shapePath = new QQuickShapePath(m_shape);
+    m_painterPath = new QDeclarativeGeoMapPainterPath(m_shapePath);
+
+    auto pathElements = m_shapePath->pathElements();
+    pathElements.append(&pathElements, m_painterPath);
+
+    auto shapePaths = m_shape->data();
+    shapePaths.append(&shapePaths, m_shapePath);
+#endif
+}
+
+QDeclarativePolylineMapItemPrivateCPU::~QDeclarativePolylineMapItemPrivateCPU()
+{
+#ifdef MAPITEMS_USE_SHAPES
+    delete m_shape;
+#endif
+}
 
 void QDeclarativePolylineMapItemPrivateCPU::regenerateCache()
 {
@@ -712,6 +773,9 @@ void QDeclarativePolylineMapItemPrivateCPU::updatePolish()
         m_geometry.clear();
         m_poly.setWidth(0);
         m_poly.setHeight(0);
+#ifdef MAPITEMS_USE_SHAPES
+        m_shape->setVisible(false);
+#endif
         return;
     }
     QScopedValueRollback<bool> rollback(m_poly.m_updatingGeometry);
@@ -721,19 +785,38 @@ void QDeclarativePolylineMapItemPrivateCPU::updatePolish()
     const qreal borderWidth = m_poly.m_line.width();
 
     m_geometry.updateSourcePoints(*map, m_geopathProjected, m_poly.m_geopath.boundingGeoRectangle().topLeft());
+
+    // still needed even with Shapes, due to contains()
     m_geometry.updateScreenPoints(*map, borderWidth);
 
-    m_poly.setWidth(m_geometry.sourceBoundingBox().width() + borderWidth);
-    m_poly.setHeight(m_geometry.sourceBoundingBox().height() + borderWidth);
-
+    const QRectF bb = m_geometry.sourceBoundingBox();
+    m_poly.setSize(bb.size() + QSizeF(borderWidth, borderWidth));
     // it has to be shifted so that the center of the line is on the correct geocoord
-    m_poly.setPositionOnMap(m_geometry.origin(), -1 * m_geometry.sourceBoundingBox().topLeft()
-                            + QPointF(borderWidth, borderWidth) * 0.5 );
+    m_poly.setPositionOnMap(m_geometry.origin(), -1 * bb.topLeft() + QPointF(borderWidth, borderWidth) * 0.5);
+
+#ifdef MAPITEMS_USE_SHAPES
+    m_poly.setShapeTriangulationScale(m_shape, m_geometry.maxCoord_);
+
+    m_shapePath->setStrokeColor(m_poly.m_line.color());
+    m_shapePath->setStrokeWidth(borderWidth);
+    m_shapePath->setFillColor(Qt::transparent);
+
+    QPainterPath path = m_geometry.srcPath();
+    path.translate(-bb.left() + borderWidth * 0.5, -bb.top() + borderWidth * 0.5);
+    m_painterPath->setPath(path);
+
+    m_shape->setSize(m_poly.size());
+    m_shape->setOpacity(m_poly.zoomLevelOpacity());
+    m_shape->setVisible(true);
+#endif
 }
 
 QSGNode *QDeclarativePolylineMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *oldNode,
                                                         QQuickItem::UpdatePaintNodeData * /*data*/)
 {
+#ifdef MAPITEMS_USE_SHAPES
+    delete oldNode;
+#else
     if (!m_node || !oldNode) {
         m_node = new MapPolylineNode();
         if (oldNode) {
@@ -743,18 +826,29 @@ QSGNode *QDeclarativePolylineMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *
     } else {
         m_node = static_cast<MapPolylineNode *>(oldNode);
     }
+#endif
 
     //TODO: update only material
     if (m_geometry.isScreenDirty() || m_poly.m_dirtyMaterial || !oldNode) {
+#ifndef MAPITEMS_USE_SHAPES
         m_node->update(m_poly.m_line.color(), &m_geometry);
+#endif
         m_geometry.setPreserveGeometry(false);
         m_geometry.markClean();
         m_poly.m_dirtyMaterial = false;
     }
+#ifdef MAPITEMS_USE_SHAPES
+    return nullptr;
+#else
     return m_node;
+#endif
 }
+
 bool QDeclarativePolylineMapItemPrivateCPU::contains(const QPointF &point) const
 {
+    // With Shapes, do not just call
+    // m_shape->contains(m_poly.mapToItem(m_shape, point)) because that can
+    // only do FillContains at best, whereas the polyline relies on stroking.
     return m_geometry.contains(point);
 }
 
@@ -1085,6 +1179,8 @@ void QDeclarativePolylineMapItem::setGeoShape(const QGeoShape &shape)
 
 //////////////////////////////////////////////////////////////////////
 
+#ifndef MAPITEMS_USE_SHAPES
+
 /*!
     \internal
 */
@@ -1183,5 +1279,7 @@ void MapPolylineNode::update(const QColor &fillColor,
         markDirty(DirtyMaterial);
     }
 }
+
+#endif
 
 QT_END_NAMESPACE

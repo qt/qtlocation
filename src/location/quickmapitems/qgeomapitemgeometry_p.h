@@ -16,6 +16,7 @@
 //
 
 #include <QtLocation/private/qlocationglobal_p.h>
+#include <QtLocation/private/qdeclarativegeomapitembase_p.h>
 #include <QtLocation/private/qdeclarativegeomapitemutils_p.h>
 #include <QtPositioning/private/qdoublevector2d_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
@@ -86,7 +87,6 @@ public:
     inline void clearBounds() { sourceBounds_ = screenBounds_ = QRectF(); firstPointOffset_ = QPointF(); }
 
     inline QPointF firstPointOffset() const { return firstPointOffset_; }
-    void translate(const QPointF &offset);
 
     inline const QGeoCoordinate &origin() const { return srcOrigin_; }
 
@@ -119,9 +119,11 @@ public:
     inline void clear() { firstPointOffset_ = QPointF(0,0);
                           screenVertices_.clear(); screenIndices_.clear(); }
 
+#ifndef MAPITEMS_USE_SHAPES
+    void translate(const QPointF &offset);
     void allocateAndFill(QSGGeometry *geom) const;
-
     static QRectF translateToCommonOrigin(const QList<QGeoMapItemGeometry *> &geoms);
+#endif
 
     mutable bool m_dataChanged = false;
 
