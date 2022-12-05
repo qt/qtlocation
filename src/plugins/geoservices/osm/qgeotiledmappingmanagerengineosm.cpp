@@ -233,7 +233,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
     if (parameters.contains(QStringLiteral("osm.mapping.providersrepository.disabled")))
         disableRedirection = parameters.value(QStringLiteral("osm.mapping.providersrepository.disabled")).toBool();
 
-    for (QGeoTileProviderOsm * provider: qAsConst(m_providers)) {
+    for (QGeoTileProviderOsm * provider: std::as_const(m_providers)) {
         // Providers are parented inside QGeoFileTileCacheOsm, as they are used in its destructor.
         if (disableRedirection) {
             provider->disableRedirection();

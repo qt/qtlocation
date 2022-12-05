@@ -99,12 +99,12 @@ QMapbox::Feature featureFromMapCircle(QDeclarativeCircleMapItem *mapItem)
     QGeoCoordinate leftBound;
     QDeclarativeCircleMapItemPrivate::calculatePeripheralPoints(path, mapItem->center(), mapItem->radius(), circleSamples, leftBound);
     QList<QDoubleVector2D> pathProjected;
-    for (const QGeoCoordinate &c : qAsConst(path))
+    for (const QGeoCoordinate &c : std::as_const(path))
         pathProjected << p.geoToMapProjection(c);
     if (QDeclarativeCircleMapItemPrivateCPU::crossEarthPole(mapItem->center(), mapItem->radius()))
         QDeclarativeCircleMapItemPrivateCPU::preserveCircleGeometry(pathProjected, mapItem->center(), mapItem->radius(), p);
     path.clear();
-    for (const QDoubleVector2D &c : qAsConst(pathProjected))
+    for (const QDoubleVector2D &c : std::as_const(pathProjected))
         path << p.mapProjectionToGeo(c);
 
 

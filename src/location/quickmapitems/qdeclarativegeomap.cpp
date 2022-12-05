@@ -415,7 +415,7 @@ void QDeclarativeGeoMap::populateMap()
     for (QQuickItem *ite: quickKids)
         kids.insert(ite);
 
-    for (QObject *k : qAsConst(kids)) {
+    for (QObject *k : std::as_const(kids)) {
         addMapChild(k);
     }
 }
@@ -572,7 +572,7 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     // Any map items that were added before the plugin was ready
     // need to have setMap called again
-    for (const QPointer<QDeclarativeGeoMapItemBase> &item : qAsConst(m_mapItems)) {
+    for (const QPointer<QDeclarativeGeoMapItemBase> &item : std::as_const(m_mapItems)) {
         if (item) {
             item->setMap(this, m_map);
             m_map->addMapItem(item.data()); // m_map filters out what is not supported.
@@ -1376,7 +1376,7 @@ void QDeclarativeGeoMap::setVisibleArea(const QRectF &visibleArea)
         const QRectF newVisibleArea = QDeclarativeGeoMap::visibleArea();
         if (newVisibleArea != oldVisibleArea) {
             // polish map items
-            for (const QPointer<QDeclarativeGeoMapItemBase> &i: qAsConst(m_mapItems)) {
+            for (const QPointer<QDeclarativeGeoMapItemBase> &i: std::as_const(m_mapItems)) {
                 if (i)
                     i->visibleAreaChanged();
             }
@@ -1713,7 +1713,7 @@ void QDeclarativeGeoMap::onCameraDataChanged(const QGeoCameraData &cameraData)
 
     m_cameraData = cameraData;
     // polish map items
-    for (const QPointer<QDeclarativeGeoMapItemBase> &i: qAsConst(m_mapItems)) {
+    for (const QPointer<QDeclarativeGeoMapItemBase> &i: std::as_const(m_mapItems)) {
         if (i)
             i->baseCameraDataChanged(m_cameraData); // Consider optimizing this further, removing the contained duplicate if conditions.
     }
@@ -1978,7 +1978,7 @@ void QDeclarativeGeoMap::updateItemToWindowTransform()
     // the item or one of its ancestors changed), a forced update of the map items using accelerated
     // GL implementation has to be performed in order to have them pulling the updated itemToWindowTransform.
     if (!m_sgNodeHasChanged && item2WindowOld != item2Window) {
-        for (auto i: qAsConst(m_mapItems))
+        for (auto i: std::as_const(m_mapItems))
             i->setMaterialDirty();
     }
 
@@ -2082,7 +2082,7 @@ void QDeclarativeGeoMap::geometryChange(const QRectF &newGeometry, const QRectF 
             m_map->setCameraData(cameraData); // this polishes map items
         } else if (oldGeometry.size() != newGeometry.size()) {
             // polish map items
-            for (const QPointer<QDeclarativeGeoMapItemBase> &i: qAsConst(m_mapItems)) {
+            for (const QPointer<QDeclarativeGeoMapItemBase> &i: std::as_const(m_mapItems)) {
                 if (i)
                     i->polishAndUpdate();
             }

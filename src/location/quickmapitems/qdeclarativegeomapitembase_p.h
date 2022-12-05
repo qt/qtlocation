@@ -123,7 +123,7 @@ public:
         const QList<QQuickItem *> quickKids = childItems();
         for (const auto &quickKid : quickKids)
             kids.append(quickKid);
-        for (auto *kid : qAsConst(kids)) {
+        for (auto *kid : std::as_const(kids)) {
             if (auto *val = qobject_cast<T*>(kid))
                 res.push_back(val);
         }

@@ -817,7 +817,7 @@ QByteArray QPlaceManagerEngineNokiaV2::createLanguageString() const
     if (locales.isEmpty())
         locales << QLocale();
 
-    for (const QLocale &loc : qAsConst(locales)) {
+    for (const QLocale &loc : std::as_const(locales)) {
         language.append(loc.name().replace(2, 1, QLatin1Char('-')).toLatin1());
         language.append(", ");
     }

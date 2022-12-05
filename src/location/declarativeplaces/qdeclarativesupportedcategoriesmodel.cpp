@@ -643,7 +643,7 @@ QStringList QDeclarativeSupportedCategoriesModel::populateCategories(QPlaceManag
     auto categories = manager->childCategories(parent.categoryId());
     std::sort(categories.begin(), categories.end(), byName);
 
-    for (const auto &category : qAsConst(categories)) {
+    for (const auto &category : std::as_const(categories)) {
         auto node = new PlaceCategoryNode;
         node->parentId = parent.categoryId();
         node->declCategory = QSharedPointer<QDeclarativeCategory>(new QDeclarativeCategory(category, m_plugin ,this));

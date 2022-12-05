@@ -501,14 +501,14 @@ QGeoCameraTilesPrivate::ClippedFootprint QGeoCameraTilesPrivate::clipFootprintTo
     if (clipY1)
         results = splitPolygonAtAxisValue(results, 1, side).first;
 
-    for (const QDoubleVector3D &p : qAsConst(results)) {
+    for (const QDoubleVector3D &p : std::as_const(results)) {
         if ((p.x() < 0.0) || (qFuzzyIsNull(p.x())))
             clipX0 = true;
         if ((p.x() > side) || (qFuzzyCompare(side, p.x())))
             clipX1 = true;
     }
 
-    for (const QDoubleVector3D &v : qAsConst(results)) {
+    for (const QDoubleVector3D &v : std::as_const(results)) {
         minX = qMin(v.x(), minX);
         maxX = qMax(v.x(), maxX);
     }
@@ -538,7 +538,7 @@ QGeoCameraTilesPrivate::ClippedFootprint QGeoCameraTilesPrivate::clipFootprintTo
             QPair<PolygonVector, PolygonVector> pair = splitPolygonAtAxisValue(results, 0, 0.0);
             if (pair.first.isEmpty()) {
                 // if we touched the line but didn't cross it...
-                for (const auto &v : qAsConst(pair.second)) {
+                for (const auto &v : std::as_const(pair.second)) {
                     if (qFuzzyIsNull(v.x()))
                         pair.first.append(v);
                 }
@@ -574,7 +574,7 @@ QGeoCameraTilesPrivate::ClippedFootprint QGeoCameraTilesPrivate::clipFootprintTo
             QPair<PolygonVector, PolygonVector> pair = splitPolygonAtAxisValue(results, 0, side);
             if (pair.second.isEmpty()) {
                 // if we touched the line but didn't cross it...
-                for (const auto &v : qAsConst(pair.first)) {
+                for (const auto &v : std::as_const(pair.first)) {
                     if (qFuzzyCompare(side, v.x()))
                         pair.second.append(v);
                 }

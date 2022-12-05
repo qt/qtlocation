@@ -980,7 +980,7 @@ QGeoRouteReply::Error QGeoRouteParserOsrmV5Private::parseReply(QList<QGeoRoute> 
                 QGeoRouteSegmentPrivate *segmentPrivate = QGeoRouteSegmentPrivate::get(segment);
                 segmentPrivate->setLegLastSegment(true);
                 QList<QGeoCoordinate> path;
-                for (const QGeoRouteSegment &s: qAsConst(legSegments))
+                for (const QGeoRouteSegment &s: std::as_const(legSegments))
                     path.append(s.path());
                 routeLeg.setLegIndex(legIndex);
                 routeLeg.setOverallRoute(route); // QGeoRoute::d_ptr is explicitlySharedDataPointer. Modifiers below won't detach it.

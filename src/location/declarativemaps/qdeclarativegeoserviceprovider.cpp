@@ -122,7 +122,7 @@ void QDeclarativeGeoServiceProvider::setName(const QString &name)
     \internal
 */
 bool QDeclarativeGeoServiceProvider::parametersReady() {
-    for (const QDeclarativePluginParameter *p: qAsConst(parameters_)) {
+    for (const QDeclarativePluginParameter *p: std::as_const(parameters_)) {
         if (!p->isInitialized())
             return false;
     }
@@ -176,7 +176,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
 {
     complete_ = true;
 
-    for (QDeclarativePluginParameter *p: qAsConst(parameters_)) {
+    for (QDeclarativePluginParameter *p: std::as_const(parameters_)) {
         if (!p->isInitialized()) {
             connect(p, &QDeclarativePluginParameter::initialized,
                     this, &QDeclarativeGeoServiceProvider::tryAttach);
@@ -195,7 +195,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
         QStringList providers = QGeoServiceProvider::availableServiceProviders();
 
         /* first check any preferred plugins */
-        for (const QString &name : qAsConst(prefer_)) {
+        for (const QString &name : std::as_const(prefer_)) {
             if (providers.contains(name)) {
                 // so we don't try it again later
                 providers.removeAll(name);
@@ -209,7 +209,7 @@ void QDeclarativeGeoServiceProvider::componentComplete()
         }
 
         /* then try the rest */
-        for (const QString &name : qAsConst(providers)) {
+        for (const QString &name : std::as_const(providers)) {
             QGeoServiceProvider sp(name, parameterMap(), experimental_);
             if (required_->matches(&sp)) {
                 setName(name);

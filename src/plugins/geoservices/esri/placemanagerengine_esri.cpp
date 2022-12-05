@@ -282,7 +282,7 @@ QString PlaceManagerEngineEsri::localizedName(const QJsonObject &jsonObject)
 {
     const QJsonObject localizedNames = jsonObject.value(kLocalizedNamesKey).toObject();
 
-    for (const QLocale &locale : qAsConst(m_locales)) {
+    for (const QLocale &locale : std::as_const(m_locales)) {
         const QString localeStr = locale.name();
         if (localizedNames.contains(localeStr))
         {

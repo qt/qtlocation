@@ -618,7 +618,7 @@ void tst_QPlaceManagerNokia::content()
 
     QVERIFY(results.count() > 0);
 
-    for (const auto &content : qAsConst(results)) {
+    for (const auto &content : std::as_const(results)) {
         switch (type) {
         case QPlaceContent::ImageType:
             QVERIFY(!content.value(QPlaceContent::ImageUrl).value<QUrl>().isEmpty());

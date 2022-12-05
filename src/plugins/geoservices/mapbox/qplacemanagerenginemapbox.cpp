@@ -182,7 +182,7 @@ QPlaceReply *QPlaceManagerEngineMapbox::doSearch(const QPlaceSearchRequest &requ
     // XXX: Investigate situations where we need to filter by 'country'.
 
     QStringList languageCodes;
-    for (const QLocale& locale: qAsConst(m_locales)) {
+    for (const QLocale& locale: std::as_const(m_locales)) {
         // Returns the language and country of this locale as a string of the
         // form "language_country", where language is a lowercase, two-letter
         // ISO 639 language code, and country is an uppercase, two- or

@@ -500,7 +500,7 @@ public:
         } else if (!query.categories().isEmpty()) {
             const auto &categoryList = query.categories();
             const QSet<QPlaceCategory> categories(categoryList.cbegin(), categoryList.cend());
-            for (const QPlace &place : qAsConst(m_places)) {
+            for (const QPlace &place : std::as_const(m_places)) {
                 const auto &placeCategoryList = place.categories();
                 const QSet<QPlaceCategory> placeCategories(placeCategoryList.cbegin(), placeCategoryList.cend());
                 if (!placeCategories.intersects(categories))

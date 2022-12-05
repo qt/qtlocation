@@ -834,12 +834,12 @@ void QGeoProjectionWebMercator::updateVisibleRegion()
 
     // Compute m_visibleRegionExpanded as a clipped expanded version of m_visibleRegion
     QDoubleVector2D centroid;
-    for (const QDoubleVector2D &v: qAsConst(m_visibleRegion))
+    for (const QDoubleVector2D &v: std::as_const(m_visibleRegion))
         centroid += v;
     centroid /= m_visibleRegion.size();
 
     m_visibleRegionExpanded.clear();
-    for (const QDoubleVector2D &v: qAsConst(m_visibleRegion)) {
+    for (const QDoubleVector2D &v: std::as_const(m_visibleRegion)) {
         const QDoubleVector2D vc = v - centroid;
         m_visibleRegionExpanded.push_back(centroid + vc * 1.2); // fixing expansion factor to 1.2
     }
