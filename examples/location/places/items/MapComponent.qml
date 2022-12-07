@@ -7,8 +7,8 @@ import QtPositioning
 import QtLocation
 import "../helper.js" as Helper
 
-Map {
-    id: map
+MapView {
+    id: view
     property bool followme: false
     property var scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
 
@@ -41,32 +41,30 @@ Map {
         scaleText.text = text
     }
 
-    center {
+    map.center {
         // The Qt Company in Oslo
         latitude: 59.9485
         longitude: 10.7686
     }
 
-    gesture.flickDeceleration: 3000
-    gesture.enabled: true
-    onCopyrightLinkActivated: Qt.openUrlExternally(link)
+    map.onCopyrightLinkActivated: Qt.openUrlExternally(link)
 
-    onCenterChanged:{
+    map.onCenterChanged: {
         scaleTimer.restart()
         if (map.followme)
             if (map.center !== positionSource.position.coordinate) map.followme = false
     }
 
-    onZoomLevelChanged:{
+    map.onZoomLevelChanged: {
         scaleTimer.restart()
         if (map.followme) map.center = positionSource.position.coordinate
     }
 
-    onWidthChanged:{
+    onWidthChanged: {
         scaleTimer.restart()
     }
 
-    onHeightChanged:{
+    onHeightChanged: {
         scaleTimer.restart()
     }
 
@@ -84,7 +82,7 @@ Map {
         running: false
         repeat: false
         onTriggered: {
-            map.calculateScale()
+            view.calculateScale()
         }
     }
 
@@ -123,12 +121,13 @@ Map {
             text: "0 m"
         }
         Component.onCompleted: {
-            map.calculateScale();
+            view.calculateScale();
         }
     }
 
     MapQuickItem {
-        id: poiTheQtComapny
+        parent: view.map
+        id: poiTheQtCompany
         sourceItem: Rectangle { width: 14; height: 14; color: "#e41e25"; border.width: 2; border.color: "white"; smooth: true; radius: 7 }
         coordinate {
             latitude: 59.9485
@@ -139,6 +138,7 @@ Map {
     }
 
     MapQuickItem {
+        parent: view.map
         sourceItem: Text{
             text: "The Qt Company"
             color:"#242424"
@@ -146,8 +146,8 @@ Map {
             styleColor: "#ECECEC"
             style: Text.Outline
         }
-        coordinate: poiTheQtComapny.coordinate
-        anchorPoint: Qt.point(-poiTheQtComapny.sourceItem.width * 0.5,poiTheQtComapny.sourceItem.height * 1.5)
+        coordinate: poiTheQtCompany.coordinate
+        anchorPoint: Qt.point(-poiTheQtCompany.sourceItem.width * 0.5,poiTheQtCompany.sourceItem.height * 1.5)
     }
 
     PositionSource{
@@ -155,7 +155,7 @@ Map {
         active: followme
 
         onPositionChanged: {
-            map.center = positionSource.position.coordinate
+            view.map.center = positionSource.position.coordinate
         }
     }
 

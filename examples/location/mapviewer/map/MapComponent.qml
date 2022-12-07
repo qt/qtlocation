@@ -7,24 +7,20 @@ import QtPositioning
 import "../helper.js" as Helper
 
 //! [top]
-Map {
-    id: map
+MapView {
+    id: view
 //! [top]
     property variant markers
     property variant mapItems
     property int markerCounter: 0 // counter for total amount of markers. Resets to 0 when number of markers = 0
     property int currentMarker
-    property int lastX : -1
-    property int lastY : -1
-    property int pressX : -1
-    property int pressY : -1
-    property int jitterThreshold : 30
     property bool followme: false
     property variant scaleLengths: [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000]
     property alias routeQuery: routeQuery
     property alias routeModel: routeModel
     property alias geocodeModel: geocodeModel
     property alias slidersExpanded: sliders.expanded
+    property variant unfinishedItem: 'undefined'
 
     signal showGeocodeInfo()
     signal geocodeFinished()
@@ -67,8 +63,8 @@ Map {
     {
         var coord1, coord2, dist, text, f
         f = 0
-        coord1 = map.toCoordinate(Qt.point(0,scale.y))
-        coord2 = map.toCoordinate(Qt.point(0+scaleImage.sourceSize.width,scale.y))
+        coord1 = view.map.toCoordinate(Qt.point(0,scale.y))
+        coord2 = view.map.toCoordinate(Qt.point(0+scaleImage.sourceSize.width,scale.y))
         dist = Math.round(coord1.distanceTo(coord2))
 
         if (dist === 0) {
@@ -94,59 +90,43 @@ Map {
 
     function deleteMarkers()
     {
-        var count = map.markers.length
-        for (var i = 0; i<count; i++){
-            map.removeMapItem(map.markers[i])
-            map.markers[i].destroy()
+        var count = view.markers.length
+        for (var i = count-1; i>=0; i--){
+            view.map.removeMapItem(view.markers[i])
         }
-        map.markers = []
-        markerCounter = 0
+        view.markers = []
     }
 
     function deleteMapItems()
     {
-        var count = map.mapItems.length
-        for (var i = 0; i<count; i++){
-            map.removeMapItem(map.mapItems[i])
-            map.mapItems[i].destroy()
+        var count = view.mapItems.length
+        for (var i = count-1; i>=0; i--){
+            view.map.removeMapItem(view.mapItems[i])
         }
-        map.mapItems = []
+        view.mapItems = []
     }
 
     function addMarker()
     {
-        var count = map.markers.length
+        var count = view.markers.length
         markerCounter++
         var marker = Qt.createQmlObject ('Marker {}', map)
-        map.addMapItem(marker)
-        marker.z = map.z+1
-        marker.coordinate = mouseArea.lastCoordinate
-
-        //update list of markers
-        var myArray = new Array()
-        for (var i = 0; i<count; i++){
-            myArray.push(markers[i])
-        }
-        myArray.push(marker)
-        markers = myArray
+        view.map.addMapItem(marker)
+        marker.z = view.map.z+1
+        marker.coordinate = tapHandler.lastCoordinate
+        markers.push(marker)
     }
 
     function addGeoItem(item)
     {
-        var count = map.mapItems.length
+        var count = view.map.mapItems.length
         var co = Qt.createComponent(item+'.qml')
-        if (co.status == Component.Ready) {
-            var o = co.createObject(map)
-            o.setGeometry(map.markers, currentMarker)
-            map.addMapItem(o)
-            //update list of items
-            var myArray = new Array()
-            for (var i = 0; i<count; i++){
-                myArray.push(mapItems[i])
-            }
-            myArray.push(o)
-            mapItems = myArray
-
+        if (co.status === Component.Ready) {
+            unfinishedItem = co.createObject(map)
+            unfinishedItem.setGeometry(tapHandler.lastCoordinate)
+            unfinishedItem.addGeometry(hoverHandler.currentCoordinate, false)
+            view.map.addMapItem(unfinishedItem)
+            mapItems.push(unfinishedItem)
         } else {
             console.log(item + " is not supported right now, please call us later.")
         }
@@ -155,27 +135,27 @@ Map {
     function deleteMarker(index)
     {
         //update list of markers
-        var myArray = new Array()
-        var count = map.markers.length
+        var myArray = []
+        var count = view.markers.length
         for (var i = 0; i<count; i++){
-            if (index != i) myArray.push(map.markers[i])
+            if (index !== i) myArray.push(view.markers[i])
         }
 
-        map.removeMapItem(map.markers[index])
-        map.markers[index].destroy()
-        map.markers = myArray
-        if (markers.length == 0) markerCounter = 0
+        view.map.removeMapItem(view.markers[index])
+        view.markers[index].destroy()
+        view.markers = myArray
+        if (markers.length === 0) markerCounter = 0
     }
 
     function calculateMarkerRoute()
     {
         routeQuery.clearWaypoints();
-        for (var i = currentMarker; i< map.markers.length; i++){
+        for (var i = currentMarker; i< view.markers.length; i++){
             routeQuery.addWaypoint(markers[i].coordinate)
         }
         routeQuery.travelModes = RouteQuery.CarTravel
         routeQuery.routeOptimizations = RouteQuery.ShortestRoute
-        routeQuery.setFeatureWeight(0, 0)
+
         routeModel.update();
     }
 
@@ -184,31 +164,20 @@ Map {
         //! [routerequest0]
         // clear away any old data in the query
         routeQuery.clearWaypoints();
-
         // add the start and end coords as waypoints on the route
         routeQuery.addWaypoint(startCoordinate)
         routeQuery.addWaypoint(endCoordinate)
         routeQuery.travelModes = RouteQuery.CarTravel
         routeQuery.routeOptimizations = RouteQuery.FastestRoute
-
         //! [routerequest0]
-
-        //! [routerequest0 feature weight]
-        for (var i=0; i<9; i++) {
-            routeQuery.setFeatureWeight(i, 0)
-        }
-        //for (var i=0; i<routeDialog.features.length; i++) {
-        //    map.routeQuery.setFeatureWeight(routeDialog.features[i], RouteQuery.AvoidFeatureWeight)
-        //}
-        //! [routerequest0 feature weight]
 
         //! [routerequest1]
         routeModel.update();
-
         //! [routerequest1]
+
         //! [routerequest2]
         // center the map on the start coord
-        map.center = startCoordinate;
+        view.map.center = startCoordinate;
         //! [routerequest2]
     }
 
@@ -223,32 +192,26 @@ Map {
 
 
 //! [coord]
-    zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
-    center {
+    map.zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
+    map.center {
         // The Qt Company in Oslo
         latitude: 59.9485
         longitude: 10.7686
     }
 //! [coord]
 
-//! [mapnavigation]
-    // Enable pan, flick, and pinch gestures to zoom in and out
-    gesture.acceptedGestures: MapGestureArea.PanGesture | MapGestureArea.FlickGesture | MapGestureArea.PinchGesture | MapGestureArea.RotationGesture | MapGestureArea.TiltGesture
-    gesture.flickDeceleration: 3000
-    gesture.enabled: true
-//! [mapnavigation]
     focus: true
-    onCopyrightLinkActivated: Qt.openUrlExternally(link)
+    map.onCopyrightLinkActivated: Qt.openUrlExternally(link)
 
-    onCenterChanged:{
+    map.onCenterChanged:{
         scaleTimer.restart()
-        if (map.followme)
-            if (map.center != positionSource.position.coordinate) map.followme = false
+        if (view.followme)
+            if (view.map.center != positionSource.position.coordinate) view.followme = false
     }
 
-    onZoomLevelChanged:{
+    map.onZoomLevelChanged:{
         scaleTimer.restart()
-        if (map.followme) map.center = positionSource.position.coordinate
+        if (view.followme) view.map.center = positionSource.position.coordinate
     }
 
     onWidthChanged:{
@@ -260,15 +223,15 @@ Map {
     }
 
     Component.onCompleted: {
-        markers = new Array();
-        mapItems = new Array();
+        markers = [];
+        mapItems = [];
     }
 
     Keys.onPressed: (event) => {
         if (event.key === Qt.Key_Plus) {
-            map.zoomLevel++;
+            view.map.zoomLevel++;
         } else if (event.key === Qt.Key_Minus) {
-            map.zoomLevel--;
+            view.map.zoomLevel--;
         } else if (event.key === Qt.Key_Left || event.key === Qt.Key_Right ||
                    event.key === Qt.Key_Up   || event.key === Qt.Key_Down) {
             var dx = 0;
@@ -276,15 +239,18 @@ Map {
 
             switch (event.key) {
 
-            case Qt.Key_Left: dx = map.width / 4; break;
-            case Qt.Key_Right: dx = -map.width / 4; break;
-            case Qt.Key_Up: dy = map.height / 4; break;
-            case Qt.Key_Down: dy = -map.height / 4; break;
+            case Qt.Key_Left: dx = view.map.width / 4; break;
+            case Qt.Key_Right: dx = -view.map.width / 4; break;
+            case Qt.Key_Up: dy = view.map.height / 4; break;
+            case Qt.Key_Down: dy = -view.map.height / 4; break;
 
             }
 
-            var mapCenterPoint = Qt.point(map.width / 2.0 - dx, map.height / 2.0 - dy);
-            map.center = map.toCoordinate(mapCenterPoint);
+            var mapCenterPoint = Qt.point(view.map.width / 2.0 - dx, view.map.height / 2.0 - dy);
+            view.map.center = view.map.toCoordinate(mapCenterPoint);
+        } else if (event.key === Qt.Key_Escape) {
+            mapview.unfinishedItem.finishAddGeometry()
+            mapview.unfinishedItem = 'undefined'
         }
     }
 
@@ -301,12 +267,13 @@ Map {
         active: followme
 
         onPositionChanged: {
-            map.center = positionSource.position.coordinate
+            view.map.center = positionSource.position.coordinate
         }
     }
 
     MapQuickItem {
         id: poiTheQtComapny
+        parent: view.map
         sourceItem: Rectangle { width: 14; height: 14; color: "#e41e25"; border.width: 2; border.color: "white"; smooth: true; radius: 7 }
         coordinate {
             latitude: 59.9485
@@ -317,6 +284,7 @@ Map {
     }
 
     MapQuickItem {
+        parent: view.map
         sourceItem: Text{
             text: "The Qt Company"
             color:"#242424"
@@ -330,15 +298,15 @@ Map {
 
     MapSliders {
         id: sliders
-        z: map.z + 3
+        z: view.map.z + 3
         mapSource: map
         edge: Qt.LeftEdge
     }
 
     Item {
         id: scale
-        z: map.z + 3
-        visible: scaleText.text != "0 m"
+        z: view.map.z + 3
+        visible: scaleText.text !== "0 m"
         anchors.bottom: parent.bottom;
         anchors.right: parent.right
         anchors.margins: 20
@@ -370,14 +338,14 @@ Map {
             text: "0 m"
         }
         Component.onCompleted: {
-            map.calculateScale();
+            view.calculateScale();
         }
     }
 
     //! [routemodel0]
     RouteModel {
         id: routeModel
-        plugin : map.plugin
+        plugin : view.map.plugin
         query:  RouteQuery {
             id: routeQuery
         }
@@ -386,14 +354,14 @@ Map {
                 switch (count) {
                 case 0:
                     // technically not an error
-                    map.routeError()
+                    view.routeError()
                     break
                 case 1:
-                    map.showRouteList()
+                    view.showRouteList()
                     break
                 }
             } else if (status == RouteModel.Error) {
-                map.routeError()
+                view.routeError()
             }
         }
     }
@@ -411,53 +379,30 @@ Map {
             smooth: true
             opacity: 0.8
      //! [routedelegate0]
-            MouseArea {
-                id: routeMouseArea
-                anchors.fill: parent
-                hoverEnabled: false
-                property variant lastCoordinate
-
-                onPressed : (mouse) => {
-                    map.lastX = mouse.x + parent.x
-                    map.lastY = mouse.y + parent.y
-                    map.pressX = mouse.x + parent.x
-                    map.pressY = mouse.y + parent.y
-                    lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
+            TapHandler {
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onLongPressed: showRouteMenu(view.map.toCoordinate(tapHandler.point.position))
+                onSingleTapped: (eventPoint, button) => {
+                    if (button === Qt.RightButton)
+                        showRouteMenu(view.map.toCoordinate(tapHandler.point.position))
                 }
-
-                onPositionChanged: (mouse) => {
-                    if (mouse.button == Qt.LeftButton) {
-                        map.lastX = mouse.x + parent.x
-                        map.lastY = mouse.y + parent.y
-                    }
-                }
-
-                onPressAndHold:{
-                    if (Math.abs(map.pressX - parent.x- mouse.x ) < map.jitterThreshold
-                            && Math.abs(map.pressY - parent.y - mouse.y ) < map.jitterThreshold) {
-                        showRouteMenu(lastCoordinate);
-                    }
-                }
-
             }
-    //! [routedelegate1]
         }
     }
-    //! [routedelegate1]
 
     //! [geocodemodel0]
     GeocodeModel {
         id: geocodeModel
-        plugin: map.plugin
+        plugin: view.map.plugin
         onStatusChanged: {
             if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error))
-                map.geocodeFinished()
+                view.geocodeFinished()
         }
         onLocationsChanged:
         {
-            if (count == 1) {
-                map.center.latitude = get(0).coordinate.latitude
-                map.center.longitude = get(0).coordinate.longitude
+            if (count === 1) {
+                view.map.center.latitude = get(0).coordinate.latitude
+                view.map.center.longitude = get(0).coordinate.longitude
             }
         }
     }
@@ -469,6 +414,7 @@ Map {
 
         MapCircle {
             id: point
+            parent: view.map
             radius: 1000
             color: "#46a2da"
             border.color: "#190a33"
@@ -477,39 +423,17 @@ Map {
             opacity: 0.25
             center: locationData.coordinate
             //! [pointdel0]
-            MouseArea {
-                anchors.fill:parent
-                id: circleMouseArea
-                hoverEnabled: false
-                property variant lastCoordinate
-
-                onPressed : (mouse) => {
-                    map.lastX = mouse.x + parent.x
-                    map.lastY = mouse.y + parent.y
-                    map.pressX = mouse.x + parent.x
-                    map.pressY = mouse.y + parent.y
-                    lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
-                }
-
-                onPositionChanged: (mouse) => {
-                    if (Math.abs(map.pressX - parent.x- mouse.x ) > map.jitterThreshold ||
-                            Math.abs(map.pressY - parent.y -mouse.y ) > map.jitterThreshold) {
-                        if (pressed) parent.radius = parent.center.distanceTo(
-                                         map.toCoordinate(Qt.point(mouse.x, mouse.y)))
-                    }
-                    if (mouse.button == Qt.LeftButton) {
-                        map.lastX = mouse.x + parent.x
-                        map.lastY = mouse.y + parent.y
+            /* TapHandler {
+                point.onPositionChanged: {
+                    if (Math.abs(view.map.pressX - parent.x - point.position.x) > view.map.jitterThreshold ||
+                            Math.abs(view.map.pressY - parent.y - point.position.y) > view.map.jitterThreshold) {
+                        if (pressed)
+                            parent.radius = parent.center.distanceTo(view.map.toCoordinate(point.position))
                     }
                 }
 
-                onPressAndHold: (mouse) => {
-                    if (Math.abs(map.pressX - parent.x- mouse.x ) < map.jitterThreshold
-                            && Math.abs(map.pressY - parent.y - mouse.y ) < map.jitterThreshold) {
-                        showPointMenu(lastCoordinate);
-                    }
-                }
-            }
+                onLongPressed: showPointMenu(view.map.toCoordinate(point.position))
+            }*/
     //! [pointdel1]
         }
     }
@@ -517,16 +441,16 @@ Map {
 
     //! [routeview0]
     MapItemView {
+        parent: view.map
         model: routeModel
         delegate: routeDelegate
     //! [routeview0]
         autoFitViewport: true
-    //! [routeview1]
     }
-    //! [routeview1]
 
     //! [geocodeview]
     MapItemView {
+        parent: view.map
         model: geocodeModel
         delegate: pointDelegate
     }
@@ -537,56 +461,63 @@ Map {
         interval: 100
         running: false
         repeat: false
-        onTriggered: {
-            map.calculateScale()
-        }
+        onTriggered: view.calculateScale()
     }
 
-    MouseArea {
-        id: mouseArea
+    HoverHandler {
+        id: hoverHandler
+        property variant currentCoordinate
+        grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType
+
+        onPointChanged: {
+            currentCoordinate = view.map.toCoordinate(hoverHandler.point.position)
+            if (mapview.unfinishedItem !== 'undefined')
+                mapview.unfinishedItem.addGeometry(view.map.toCoordinate(hoverHandler.point.position), true)
+        }
+
+    }
+
+    TapHandler {
+        id: tapHandler
         property variant lastCoordinate
-        anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-        onPressed: (mouse) => {
-            map.lastX = mouse.x
-            map.lastY = mouse.y
-            map.pressX = mouse.x
-            map.pressY = mouse.y
-            lastCoordinate = map.toCoordinate(Qt.point(mouse.x, mouse.y))
-        }
-
-        onPositionChanged: (mouse) => {
-            if (mouse.button == Qt.LeftButton) {
-                map.lastX = mouse.x
-                map.lastY = mouse.y
+        onPressedChanged: (eventPoint, button) => {
+            if (pressed) {
+                lastCoordinate = view.map.toCoordinate(tapHandler.point.position)
             }
         }
 
-        onDoubleClicked: (mouse) => {
-            var mouseGeoPos = map.toCoordinate(Qt.point(mouse.x, mouse.y));
-            var preZoomPoint = map.fromCoordinate(mouseGeoPos, false);
-            if (mouse.button === Qt.LeftButton) {
-                map.zoomLevel = Math.floor(map.zoomLevel + 1)
-            } else if (mouse.button === Qt.RightButton) {
-                map.zoomLevel = Math.floor(map.zoomLevel - 1)
-            }
-            var postZoomPoint = map.fromCoordinate(mouseGeoPos, false);
-            var dx = postZoomPoint.x - preZoomPoint.x;
-            var dy = postZoomPoint.y - preZoomPoint.y;
-
-            var mapCenterPoint = Qt.point(map.width / 2.0 + dx, map.height / 2.0 + dy);
-            map.center = map.toCoordinate(mapCenterPoint);
-
-            lastX = -1;
-            lastY = -1;
+        onSingleTapped: (eventPoint, button) => {
+                if (button === Qt.RightButton) {
+                    if (mapview.unfinishedItem !== 'undefined') {
+                        mapview.unfinishedItem.finishAddGeometry()
+                        mapview.unfinishedItem = 'undefined'
+                    } else
+                        showMainMenu(lastCoordinate)
+                } else if (button === Qt.LeftButton) {
+                    if (mapview.unfinishedItem !== 'undefined') {
+                        if (mapview.unfinishedItem.addGeometry(view.map.toCoordinate(tapHandler.point.position), false)) {
+                            mapview.unfinishedItem.finishAddGeometry()
+                            mapview.unfinishedItem = 'undefined'
+                        }
+                    }
+                }
         }
 
-        onPressAndHold: (mouse) => {
-            if (Math.abs(map.pressX - mouse.x ) < map.jitterThreshold
-                    && Math.abs(map.pressY - mouse.y ) < map.jitterThreshold) {
-                showMainMenu(lastCoordinate);
+        onDoubleTapped: (eventPoint, button) => {
+            var preZoomPoint = view.map.toCoordinate(eventPoint.position);
+            if (button === Qt.LeftButton) {
+                view.map.zoomLevel = Math.floor(view.map.zoomLevel + 1)
+            } else if (button === Qt.RightButton) {
+                view.map.zoomLevel = Math.floor(view.map.zoomLevel - 1)
             }
+            var postZoomPoint = view.map.toCoordinate(eventPoint.position);
+            var dx = postZoomPoint.latitude - preZoomPoint.latitude;
+            var dy = postZoomPoint.longitude - preZoomPoint.longitude;
+
+            view.map.center = QtPositioning.coordinate(view.map.center.latitude - dx,
+                                                       view.map.center.longitude - dy);
         }
     }
 //! [end]

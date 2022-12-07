@@ -50,15 +50,16 @@ Rectangle {
     //! [PlaceSearchModel]
 
     //! [Places MapItemView]
-    Map {
-        id: map
+    MapView {
+        id: view
         anchors.fill: parent
-        plugin: myPlugin;
-        center: positionSource.lastSearchPosition
-        zoomLevel: 13
+        map.plugin: myPlugin;
+        map.center: positionSource.lastSearchPosition
+        map.zoomLevel: 13
 
         MapItemView {
             model: searchModel
+            parent: view.map
             delegate: MapQuickItem {
                 coordinate: place.location.coordinate
 

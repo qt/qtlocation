@@ -11,7 +11,7 @@ import "helper.js" as Helper
 
 ApplicationWindow {
     id: appWindow
-    property variant map
+    property variant mapview
     property variant minimap
     property variant plugin
     property variant parameters
@@ -40,34 +40,33 @@ ApplicationWindow {
         var fov = null
         var center = null
         var panelExpanded = null
-        if (map) {
-            zoomLevel = map.zoomLevel
-            tilt = map.tilt
-            bearing = map.bearing
-            fov = map.fieldOfView
-            center = map.center
-            panelExpanded = map.slidersExpanded
-            map.destroy()
+        if (mapview) {
+            zoomLevel = mapview.zoomLevel
+            tilt = mapview.tilt
+            bearing = mapview.bearing
+            fov = mapview.fieldOfView
+            center = mapview.center
+            panelExpanded = mapview.slidersExpanded
+            mapview.destroy()
         }
-
-        map = mapComponent.createObject(page);
-        map.plugin = plugin;
+        mapview = mapComponent.createObject(page);
+        mapview.map.plugin = plugin;
 
         if (zoomLevel != null) {
-            map.tilt = tilt
-            map.bearing = bearing
-            map.fieldOfView = fov
-            map.zoomLevel = zoomLevel
-            map.center = center
-            map.slidersExpanded = panelExpanded
+            mapview.map.tilt = tilt
+            mapview.map.bearing = bearing
+            mapview.map.fieldOfView = fov
+            mapview.map.zoomLevel = zoomLevel
+            mapview.map.center = center
+            mapview.map.slidersExpanded = panelExpanded
         } else {
             // Use an integer ZL to enable nearest interpolation, if possible.
-            map.zoomLevel = Math.floor((map.maximumZoomLevel - map.minimumZoomLevel)/2)
+            mapview.map.zoomLevel = Math.floor((mapview.map.maximumZoomLevel - mapview.map.minimumZoomLevel)/2)
             // defaulting to 45 degrees, if possible.
-            map.fieldOfView = Math.min(Math.max(45.0, map.minimumFieldOfView), map.maximumFieldOfView)
+            mapview.map.fieldOfView = Math.min(Math.max(45.0, mapview.map.minimumFieldOfView), mapview.maximumFieldOfView)
         }
 
-        map.forceActiveFocus()
+        mapview.forceActiveFocus()
     }
 
     function getPlugins()
@@ -135,13 +134,13 @@ ApplicationWindow {
                 minimap.destroy()
                 minimap = null
             } else {
-                minimap = Qt.createQmlObject ('import "map"; MiniMap{ z: map.z + 2 }', map)
+                minimap = Qt.createQmlObject ('import "map"; MiniMap{ z: mapview.z + 2 }', mapview)
             }
         }
 
         function setLanguage(lang)
         {
-            map.plugin.locales = lang;
+            mapview.map.plugin.locales = lang;
             stackView.pop(page)
         }
 
@@ -152,8 +151,8 @@ ApplicationWindow {
             }
 
             createMap(providerName)
-            if (map.error === Map.NoError) {
-                selectMapType(map.activeMapType)
+            if (mapview.error === mapview.NoError) {
+                selectMapType(mapview.map.activeMapType)
             } else {
                 mainMenu.clearMenu(mapTypeMenu)
             }
@@ -164,7 +163,7 @@ ApplicationWindow {
             for (var i = 0; i < mapTypeMenu.count; i++) {
                 mapTypeMenu.actionAt(i).checked = mapTypeMenu.actionAt(i).text === mapType.name
             }
-            map.activeMapType = mapType
+            mapview.map.activeMapType = mapType
         }
 
 
@@ -173,10 +172,10 @@ ApplicationWindow {
             case "AddressRoute":
                 stackView.pop({item:page, immediate: true})
                 stackView.push("forms/RouteAddress.qml" ,
-                                   { "plugin": map.plugin,
+                                   { "plugin": mapview.map.plugin,
                                        "toAddress": toAddress,
                                        "fromAddress": fromAddress})
-                stackView.currentItem.showRoute.connect(map.calculateCoordinateRoute)
+                stackView.currentItem.showRoute.connect(mapview.calculateCoordinateRoute)
                 stackView.currentItem.showMessage.connect(stackView.showMessage)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
@@ -185,35 +184,35 @@ ApplicationWindow {
                 stackView.push("forms/RouteCoordinate.qml" ,
                                     { "toCoordinate": toCoordinate,
                                        "fromCoordinate": fromCoordinate})
-                stackView.currentItem.showRoute.connect(map.calculateCoordinateRoute)
+                stackView.currentItem.showRoute.connect(mapview.calculateCoordinateRoute)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Geocode":
                 stackView.pop({item:page, immediate: true})
                 stackView.push("forms/Geocode.qml",
                                    { "address": fromAddress})
-                stackView.currentItem.showPlace.connect(map.geocode)
+                stackView.currentItem.showPlace.connect(mapview.geocode)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "RevGeocode":
                 stackView.pop({item:page, immediate: true})
                 stackView.push("forms/ReverseGeocode.qml",
                                     { "coordinate": fromCoordinate })
-                stackView.currentItem.showPlace.connect(map.geocode)
+                stackView.currentItem.showPlace.connect(mapview.geocode)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Language":
                 stackView.pop({item:page, immediate: true})
                 stackView.push("forms/Locale.qml",
-                                   { "locale":  map.plugin.locales[0]})
+                                   { "locale":  mapview.map.plugin.locales[0]})
                 stackView.currentItem.selectLanguage.connect(setLanguage)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Clear":
-                map.clearData()
+                mapview.map.clearData()
                 break
             case "Prefetch":
-                map.prefetchData()
+                mapview.map.prefetchData()
                 break
             default:
                 console.log("Unsupported operation")
@@ -224,7 +223,7 @@ ApplicationWindow {
             stackView.pop(page)
             switch (state) {
             case "FollowMe":
-                map.followme = !map.followme
+                mapview.followme = !mapview.followme
                 break
             case "MiniMap":
                 toggleMiniMapState()
@@ -243,8 +242,8 @@ ApplicationWindow {
         {
             stackView.pop(page)
             mapPopupMenu.coordinate = coordinate
-            mapPopupMenu.markersCount = map.markers.length
-            mapPopupMenu.mapItemsCount = map.mapItems.length
+            mapPopupMenu.markersCount = mapview.markers.length
+            mapPopupMenu.mapItemsCount = mapview.mapItems.length
             mapPopupMenu.popup()
         }
 
@@ -252,22 +251,37 @@ ApplicationWindow {
             stackView.pop(page)
             switch (item) {
             case "addMarker":
-                map.addMarker()
+                mapview.addMarker()
                 break
             case "getCoordinate":
-                map.coordinatesCaptured(coordinate.latitude, coordinate.longitude)
+                mapview.coordinatesCaptured(coordinate.latitude, coordinate.longitude)
                 break
             case "fitViewport":
-                map.fitViewportToMapItems()
+                mapview.map.fitViewportToMapItems()
                 break
             case "deleteMarkers":
-                map.deleteMarkers()
+                mapview.deleteMarkers()
                 break
             case "deleteItems":
-                map.deleteMapItems()
+                mapview.deleteMapItems()
+                break
+            case "drawImage":
+                mapview.addGeoItem("ImageItem")
+                break
+            case "drawRectangle":
+                mapview.addGeoItem("RectangleItem")
+                break
+            case "drawCircle":
+                mapview.addGeoItem("CircleItem")
+                break;
+            case "drawPolyline":
+                mapview.addGeoItem("PolylineItem")
+                break;
+            case "drawPolygonMenu":
+                mapview.addGeoItem("PolygonItem")
                 break
             default:
-                console.log("Unsupported operation")
+                console.log("Unsupported operation:", item)
             }
         }
     }
@@ -278,8 +292,8 @@ ApplicationWindow {
         function show(coordinate)
         {
             stackView.pop(page)
-            markerPopupMenu.markersCount = map.markers.length
-            markerPopupMenu.currentMarker = map.currentMarker
+            markerPopupMenu.markersCount = mapview.markers.length
+            markerPopupMenu.currentMarker = mapview.currentMarker
             markerPopupMenu.popup()
         }
 
@@ -287,15 +301,15 @@ ApplicationWindow {
         {
             stackView.push("forms/ReverseGeocode.qml",
                                 { "title": qsTr("New Coordinate"),
-                                   "coordinate":   map.markers[map.currentMarker].coordinate})
+                                   "coordinate":   mapview.markers[mapview.currentMarker].coordinate})
             stackView.currentItem.showPlace.connect(moveMarker)
             stackView.currentItem.closeForm.connect(stackView.closeForm)
         }
 
         function moveMarker(coordinate)
         {
-            map.markers[map.currentMarker].coordinate = coordinate;
-            map.center = coordinate;
+            mapview.markers[mapview.currentMarker].coordinate = coordinate;
+            mapview.map.center = coordinate;
             stackView.pop(page)
         }
 
@@ -303,41 +317,27 @@ ApplicationWindow {
             stackView.pop(page)
             switch (item) {
             case "deleteMarker":
-                map.deleteMarker(map.currentMarker)
+                mapview.deleteMarker(mapview.currentMarker)
                 break;
             case "getMarkerCoordinate":
-                map.coordinatesCaptured(map.markers[map.currentMarker].coordinate.latitude, map.markers[map.currentMarker].coordinate.longitude)
+                mapview.coordinatesCaptured(mapview.markers[mapview.currentMarker].coordinate.latitude,
+                                            mapview.markers[mapview.currentMarker].coordinate.longitude)
                 break;
             case "moveMarkerTo":
                 askForCoordinate()
                 break;
             case "routeToNextPoint":
             case "routeToNextPoints":
-                map.calculateMarkerRoute()
+                mapview.calculateMarkerRoute()
                 break
             case "distanceToNextPoint":
-                var coordinate1 = map.markers[currentMarker].coordinate;
-                var coordinate2 = map.markers[currentMarker+1].coordinate;
+                var coordinate1 = mapview.markers[mapview.currentMarker].coordinate;
+                var coordinate2 = mapview.markers[mapview.currentMarker+1].coordinate;
                 var distance = Helper.formatDistance(coordinate1.distanceTo(coordinate2));
                 stackView.showMessage(qsTr("Distance"),"<b>" + qsTr("Distance:") + "</b> " + distance)
                 break
-            case "drawImage":
-                map.addGeoItem("ImageItem")
-                break
-            case "drawRectangle":
-                map.addGeoItem("RectangleItem")
-                break
-            case "drawCircle":
-                map.addGeoItem("CircleItem")
-                break;
-            case "drawPolyline":
-                map.addGeoItem("PolylineItem")
-                break;
-            case "drawPolygonMenu":
-                map.addGeoItem("PolygonItem")
-                break
             default:
-                console.log("Unsupported operation")
+                console.log("Unsupported operation:", item)
             }
         }
     }
@@ -359,13 +359,13 @@ ApplicationWindow {
                 stackView.showRouteListPage()
                 break;
             case "deleteRoute":
-                map.routeModel.reset();
+                mapview.routeModel.reset();
                 break;
             case "showPointInfo":
-                map.showGeocodeInfo()
+                mapview.showGeocodeInfo()
                 break;
             case "deletePoint":
-                map.geocodeModel.reset()
+                geocodeModel.reset()
                 break;
             default:
                 console.log("Unsupported operation")
@@ -381,7 +381,7 @@ ApplicationWindow {
             id: page
 
             Text {
-                visible: !supportsSsl && map && map.activeMapType && activeMapType.metadata.isHTTPS
+                visible: !supportsSsl && map && mapview.activeMapType && activeMapType.metadata.isHTTPS
                 text: "The active map type\n
 requires (missing) SSL\n
 support"
@@ -419,7 +419,7 @@ support"
         {
             push("forms/RouteList.qml",
                                {
-                                   "routeModel" : map.routeModel
+                                   "routeModel" : mapview.routeModel
                                })
             currentItem.closeForm.connect(closeForm)
         }
@@ -428,26 +428,26 @@ support"
     Component {
         id: mapComponent
 
-        MapComponent{
+        MapComponent {
             width: page.width
             height: page.height
-            onFollowmeChanged: mainMenu.isFollowMe = map.followme
-            onSupportedMapTypesChanged: mainMenu.mapTypeMenu.createMenu(map)
+            onFollowmeChanged: mainMenu.isFollowMe = followme
+            map.onSupportedMapTypesChanged: mainMenu.mapTypeMenu.createMenu(map)
             onCoordinatesCaptured: (latitude, longitude) => {
                 var text = "<b>" + qsTr("Latitude:") + "</b> " + Helper.roundNumber(latitude,4) + "<br/><b>" + qsTr("Longitude:") + "</b> " + Helper.roundNumber(longitude,4)
                 stackView.showMessage(qsTr("Coordinates"),text);
             }
             onGeocodeFinished:{
-                if (map.geocodeModel.status == GeocodeModel.Ready) {
-                    if (map.geocodeModel.count == 0) {
+                if (geocodeModel.status == GeocodeModel.Ready) {
+                    if (geocodeModel.count == 0) {
                         stackView.showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode"))
-                    } else if (map.geocodeModel.count > 1) {
-                        stackView.showMessage(qsTr("Ambiguous geocode"), map.geocodeModel.count + " " +
+                    } else if (geocodeModel.count > 1) {
+                        stackView.showMessage(qsTr("Ambiguous geocode"), geocodeModel.count + " " +
                                               qsTr("results found for the given address, please specify location"))
                     } else {
                         stackView.showMessage(qsTr("Location"), geocodeMessage(),page)
                     }
-                } else if (map.geocodeModel.status == GeocodeModel.Error) {
+                } else if (geocodeModel.status == GeocodeModel.Error) {
                     stackView.showMessage(qsTr("Geocode Error"),qsTr("Unsuccessful geocode"))
                 }
             }
@@ -455,11 +455,11 @@ support"
 
             onShowGeocodeInfo: stackView.showMessage(qsTr("Location"),geocodeMessage(),page)
 
-            onErrorChanged: {
-                if (map.error != Map.NoError) {
+            map.onErrorChanged: {
+                if (map.error != mapview.NoError) {
                     var title = qsTr("ProviderError")
-                    var message =  map.errorString + "<br/><br/><b>" + qsTr("Try to select other provider") + "</b>"
-                    if (map.error == Map.MissingRequiredParameterError)
+                    var message =  mapview.errorString + "<br/><br/><b>" + qsTr("Try to select other provider") + "</b>"
+                    if (map.error == mapview.MissingRequiredParameterError)
                         message += "<br/>" + qsTr("or see") + " \'mapviewer --help\' "
                                 + qsTr("how to pass plugin parameters.")
                     stackView.showMessage(title,message);
@@ -470,6 +470,11 @@ support"
             onShowRouteMenu: (coordinate) => itemPopupMenu.show("Route",coordinate)
             onShowPointMenu: (coordinate) => itemPopupMenu.show("Point",coordinate)
             onShowRouteList: stackView.showRouteListPage()
+
+            TapHandler {
+                onTapped: {
+                }
+            }
         }
     }
 }

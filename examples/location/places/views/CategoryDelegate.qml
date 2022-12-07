@@ -26,7 +26,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: "#44ffffff"
-        visible: mouse.pressed
+        visible: tapHanlder.pressed
     }
 
     //! [CategoryModel delegate text]
@@ -34,14 +34,19 @@ Item {
         id: labelItem
         text: category.name
         anchors.left: icon.right
+        anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        anchors.right: arrow.left
     }
 
-    MouseArea {
-        id: mouse
-        anchors.fill: parent
-        onClicked: root.searchCategory()
+    TapHandler {
+        id: tapHanlder
+        onTapped: {
+            if (model.hasModelChildren) {
+                root.showSubcategories()
+            } else {
+                root.searchCategory()
+            }
+        }
     }
     //! [CategoryModel delegate text]
 
@@ -52,15 +57,4 @@ Item {
         height: 1
         color: "#46a2da"
     }
-    //! [CategoryModel delegate arrow]
-    ToolButton {
-        id: arrow
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.rightMargin: 15
-        visible: model.hasModelChildren
-        icon.source: Qt.resolvedUrl("../resources/right.png")
-        onClicked: root.showSubcategories()
-    }
-    //! [CategoryModel delegate arrow]
 }
