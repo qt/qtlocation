@@ -3,24 +3,30 @@
 import QtQuick
 import QtLocation
 
-//TODO: remove me when items are integrated
-
 MapPolygon {
 
-    color: "#46a2da"
-    border.color: "#190a33"
+    color: "#da5546"
+    border.color: "#330a0a"
     border.width: 2
     smooth: true
-    opacity: 0.25
+    opacity: 0.75
 
-    function setGeometry(markers, index){
-        for (var i = index; i<markers.length; i++){
-            addCoordinate(markers[i].coordinate)
-        }
+    function setGeometry(anchorCoordinate){
+        addCoordinate(anchorCoordinate)
     }
-    MouseArea {
-        anchors.fill:parent
-        id: mousearea
-        drag.target: parent
+
+    function addGeometry(newCoordinate, changeLast){
+        if (changeLast && path.length > 0)
+            removeCoordinate(path[path.length-1])
+        addCoordinate(newCoordinate)
+        return false
+    }
+
+    function finishAddGeometry(){
+        if (path.length > 0)
+            removeCoordinate(path[path.length-1])
+        color = "#46a2da"
+        border.color = "#190a33"
+        opacity = 0.25
     }
 }

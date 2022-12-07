@@ -24,7 +24,7 @@ ListView {
         delegate: CategoryDelegate {
             width: ListView.view.width
             onSearchCategory: root.searchCategory(category);
-            onShowSubcategories: root.showSubcategories(delegeteDataModel.modelIndex(index))
+            onShowSubcategories: root.showSubcategories(delegeteDataModel.modelIndex(index));
         }
     }
 }

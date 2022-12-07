@@ -29,10 +29,10 @@ ToolBar {
         }
     }
 
+    height: searchBar.height
     RowLayout {
         id: searchBar
         width: parent.width
-        height: parent.height
         Behavior on opacity { NumberAnimation{} }
         visible: opacity ? true : false
         TextField {
@@ -42,6 +42,8 @@ ToolBar {
             property bool ignoreTextChange: false
             placeholderText: qsTr("Type place...")
             Layout.fillWidth: true
+            Layout.topMargin: 2
+            Layout.bottomMargin: 2
             onTextChanged: {
                 if (!ignoreTextChange)
                     searchTextChanged(text)
@@ -52,11 +54,15 @@ ToolBar {
             id: searchButton
             icon.source: Qt.resolvedUrl("../resources/search.png")
             onClicked: doSearch(searchText.text)
+            Layout.topMargin: 2
+            Layout.bottomMargin: 2
         }
         ToolButton {
             id: categoryButton
             icon.source: Qt.resolvedUrl("../resources/categories.png")
             onClicked: showCategories()
+            Layout.topMargin: 2
+            Layout.bottomMargin: 2
         }
     }
 
@@ -82,4 +88,3 @@ ToolBar {
         }
     }
 }
-

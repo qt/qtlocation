@@ -36,7 +36,6 @@ target_link_libraries(qml_location_mapviewer PUBLIC
     Qt::Quick
 )
 
-
 # Resources:
 set(mapviewer_resource_files
     "forms/Geocode.qml"

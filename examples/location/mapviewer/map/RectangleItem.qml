@@ -6,17 +6,24 @@ import QtLocation
 MapRectangle {
     id: mapRectangle
 
-    color: "#46a2da"
-    border.color: "#190a33"
+    color: "#da5546"
+    border.color: "#330a0a"
     border.width: 2
     smooth: true
-    opacity: 0.25
+    opacity: 0.75
 
-    function setGeometry(markers, index){
-        topLeft.latitude = Math.max(markers[index].coordinate.latitude, markers[index + 1].coordinate.latitude)
-        topLeft.longitude = Math.min(markers[index].coordinate.longitude, markers[index + 1].coordinate.longitude)
-        bottomRight.latitude = Math.min(markers[index].coordinate.latitude, markers[index + 1].coordinate.latitude)
-        bottomRight.longitude = Math.max(markers[index].coordinate.longitude, markers[index + 1].coordinate.longitude)
+    function setGeometry(anchorCoordinate) {
+        topLeft = anchorCoordinate
     }
 
+    function addGeometry(newCoordinate, changeLast){
+        bottomRight = newCoordinate
+        return true //finished
+    }
+
+    function finishAddGeometry(){
+        color = "#46a2da"
+        border.color = "#190a33"
+        opacity = 0.25
+    }
 }

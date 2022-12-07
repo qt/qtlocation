@@ -14,21 +14,21 @@ Rectangle{
 
     function minimumScaleFactor()
     {
-        var hscalefactor = (400.0 / Math.max(Math.min(map.width, 1000), 400)) * 0.5
-        var vscalefactor = (400.0 / Math.max(Math.min(map.height, 1000), 400)) * 0.5
+        var hscalefactor = (400.0 / Math.max(Math.min(mapview.width, 1000), 400)) * 0.5
+        var vscalefactor = (400.0 / Math.max(Math.min(mapview.height, 1000), 400)) * 0.5
         return Math.min(hscalefactor,vscalefactor)
     }
 
     function avgScaleFactor()
     {
-        var hscalefactor = (400.0 / Math.max(Math.min(map.width, 1000), 400)) * 0.5
-        var vscalefactor = (400.0 / Math.max(Math.min(map.height, 1000), 400)) * 0.5
+        var hscalefactor = (400.0 / Math.max(Math.min(mapview.width, 1000), 400)) * 0.5
+        var vscalefactor = (400.0 / Math.max(Math.min(mapview.height, 1000), 400)) * 0.5
         return (hscalefactor+vscalefactor) * 0.5
     }
 
     id: miniMapRect
-    width: Math.floor(map.width * avgScaleFactor()) + 2
-    height: Math.floor(map.height * avgScaleFactor()) + 2
+    width: Math.floor(mapview.width * avgScaleFactor()) + 2
+    height: Math.floor(mapview.height * avgScaleFactor()) + 2
     anchors.right: (parent) ? parent.right : undefined
     anchors.rightMargin: 10
     anchors.top: (parent) ? parent.top : undefined
@@ -40,14 +40,13 @@ Rectangle{
         anchors.topMargin: 1
         anchors.left: parent.left
         anchors.leftMargin: 1
-        width: Math.floor(map.width * avgScaleFactor())
-        height: Math.floor(map.height * avgScaleFactor())
-        zoomLevel: clamp(map.zoomLevel - 4.5, 2.0, 5.0) //(map.zoomLevel > minimumZoomLevel + 3) ? minimumZoomLevel + 3 : 1.5
-        center: map.center
-        plugin: map.plugin
-        gesture.enabled: false
+        width: Math.floor(mapview.width * avgScaleFactor())
+        height: Math.floor(mapview.height * avgScaleFactor())
+        zoomLevel: clamp(mapview.map.zoomLevel - 4.5, 1.0, 5.0) //(map.zoomLevel > minimumZoomLevel + 3) ? minimumZoomLevel + 3 : 1.5
+        center: mapview.map.center
+        plugin: mapview.map.plugin
         copyrightsVisible: false
-        property double mapZoomLevel : map.zoomLevel
+        property double mapZoomLevel : mapview.map.zoomLevel
 
         // cannot use property bindings on map.visibleRegion in MapRectangle because it's non-NOTIFYable
         onCenterChanged: miniMapRectangle.updateCoordinates()
@@ -60,10 +59,11 @@ Rectangle{
             color: "#44ff0000"
             border.width: 1
             border.color: "red"
+            autoFadeIn: false
 
             function getMapVisibleRegion()
             {
-                return QtPositioning.shapeToRectangle(map.visibleRegion)
+                return mapview.map.visibleRegion.boundingGeoRectangle()
             }
 
             function updateCoordinates()
