@@ -3,18 +3,28 @@
 import QtQuick
 import QtLocation
 
-//TODO: remove/refactor me when items are integrated
-
 MapPolyline {
 
-    line.color: "#46a2da"
+    line.color: "#330a0a"
     line.width: 4
-    opacity: 0.25
+    opacity: 0.75
     smooth: true
 
-    function setGeometry(markers, index){
-        for (var i = index; i<markers.length; i++){
-            addCoordinate(markers[i].coordinate)
-        }
+    function setGeometry(anchorCoordinate){
+        addCoordinate(anchorCoordinate)
+    }
+
+    function addGeometry(newCoordinate, changeLast){
+        if (changeLast)
+            replaceCoordinate(pathLength()-1, newCoordinate)
+        else
+            addCoordinate(newCoordinate)
+        return false
+    }
+
+    function finishAddGeometry(){
+        removeCoordinate(pathLength()-1)
+        line.color = "#46a2da"
+        opacity = 0.25
     }
 }

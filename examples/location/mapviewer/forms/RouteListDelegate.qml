@@ -12,7 +12,7 @@ Item {
     property alias routeDistance: distanceLabel
     property alias routeIndex: indexLabel
 
-    width: parent.width
+    width: appWindow.width
     height: indexLabel.height * 2
 
     RowLayout {

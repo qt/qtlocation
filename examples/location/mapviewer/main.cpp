@@ -102,5 +102,6 @@ int main(int argc, char *argv[])
     QMetaObject::invokeMethod(item, "initializeProviders",
                               Q_ARG(QVariant, QVariant::fromValue(parameters)));
 
+
     return application.exec();
 }

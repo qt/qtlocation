@@ -3,19 +3,26 @@
 import QtQuick
 import QtLocation
 
-//TODO: remove/refactor me when items are integrated
-
 MapCircle {
 
-    color: "#46a2da"
-    border.color: "#190a33"
+    color: "#da5546"
+    border.color: "#330a0a"
     border.width: 2
     smooth: true
-    opacity: 0.25
+    opacity: 0.75
 
-    function setGeometry(markers, index){
-        center.latitude = markers[index].coordinate.latitude
-        center.longitude = markers[index].coordinate.longitude
-        radius= center.distanceTo(markers[index + 1].coordinate)
+    function setGeometry(anchorCoordinate) {
+        center = anchorCoordinate
+    }
+
+    function addGeometry(newCoordinate, changeLast){
+        radius = center.distanceTo(newCoordinate)
+        return true
+    }
+
+    function finishAddGeometry(){
+        color = "#46a2da"
+        border.color = "#190a33"
+        opacity = 0.25
     }
 }

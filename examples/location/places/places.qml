@@ -10,13 +10,11 @@ import "items"
 
 ApplicationWindow {
     id: appWindow
-    property Map map
+    property MapView view
     property var parameters
-    property var searchLocation: map ? map.center : QtPositioning.coordinate()
-    property var searchRegion: QtPositioning.circle(searchLocation)
+    property var searchLocation: view ? view.map.center : QtPositioning.coordinate()
+    property var searchRegion: QtPositioning.circle(searchLocation, 5000)
     property var searchRegionItem
-
-    property Plugin favoritesPlugin
 
     function getPlugins() {
         var plugin = Qt.createQmlObject('import QtLocation; Plugin {}', appWindow);
@@ -53,15 +51,21 @@ ApplicationWindow {
         else
             plugin = Qt.createQmlObject ('import QtLocation; Plugin{ name:"' + provider + '"}', appWindow)
 
-        if (map)
-            map.destroy();
-        map = mapComponent.createObject(page);
-        map.plugin = plugin;
-        map.zoomLevel = (map.maximumZoomLevel - map.minimumZoomLevel)/2
+        if (view)
+            view.destroy();
+        view = mapComponent.createObject(page);
+        view.map.plugin = plugin;
+        view.map.zoomLevel = (view.map.maximumZoomLevel - view.map.minimumZoomLevel)/2
         categoryModel.plugin = plugin;
         categoryModel.update();
         placeSearchModel.plugin = plugin;
         suggestionModel.plugin = plugin;
+
+        searchRegionItem = Qt.createQmlObject('import QtLocation; MapCircle { parent: view.map; color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', view.map);
+        searchRegionItem.center = searchRegion.center;
+        searchRegionItem.radius = searchRegion.radius;
+        view.map.addMapItem(searchRegionItem);
+
     }
 
     title: qsTr("Places")
@@ -82,7 +86,7 @@ ApplicationWindow {
                 providerMenu.contentData[i].checked = providerMenu.contentData[i].text === providerName
             }
             createMap(providerName)
-            if (map.error === Map.NoError) {
+            if (view.map.error === Map.NoError) {
                 settingsMenu.create(settings)
             } else {
                 mainMenu.clearMenu(settingsMenu)
@@ -93,7 +97,7 @@ ApplicationWindow {
             stackView.pop({item:page,immediate: true})
             switch (setting) {
             case "Search Center":
-                stackView.push(Qt.resolvedUrl("forms/SearchCenter.qml"), { "coordinate": map.center })
+                stackView.push(Qt.resolvedUrl("forms/SearchCenter.qml"), { "coordinate": view.map.center })
                 stackView.currentItem.changeSearchCenter.connect(stackView.changeSearchCenter)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
@@ -108,7 +112,7 @@ ApplicationWindow {
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
             case "Search Options":
-                stackView.push(Qt.resolvedUrl("forms/SearchOptions.qml"), { "plugin": map.plugin, "model": placeSearchModel })
+                stackView.push(Qt.resolvedUrl("forms/SearchOptions.qml"), { "plugin": view.map.plugin, "model": placeSearchModel })
                 stackView.currentItem.changeSearchSettings.connect(stackView.changeSearchSettings)
                 stackView.currentItem.closeForm.connect(stackView.closeForm)
                 break
@@ -127,8 +131,8 @@ ApplicationWindow {
                           stackView.currentItem &&
                           stackView.currentItem.objectName != "suggestionView" ? false : true
         onShowCategories: {
-            if (map && map.plugin) {
-                stackView.pop({tem:page,immediate: true})
+            if (view && view.map.plugin) {
+                stackView.pop({item: page,immediate: true})
                 stackView.enterCategory()
             }
         }
@@ -288,9 +292,9 @@ ApplicationWindow {
         function changeSearchCenter(coordinate)
         {
             stackView.pop(page)
-            map.center = coordinate;
+            view.map.center = coordinate;
             if (searchRegionItem) {
-                map.removeMapItem(searchRegionItem);
+                view.map.removeMapItem(searchRegionItem);
                 searchRegionItem.destroy();
             }
         }
@@ -298,51 +302,43 @@ ApplicationWindow {
         function changeSearchBoundingBox(coordinate,widthDeg,heightDeg)
         {
             stackView.pop(page)
-            map.center = coordinate
-            searchRegion = QtPositioning.rectangle(map.center, widthDeg, heightDeg)
+            view.map.center = coordinate
+            searchRegion = QtPositioning.rectangle(view.map.center, widthDeg, heightDeg)
             if (searchRegionItem) {
-                map.removeMapItem(searchRegionItem);
+                view.map.removeMapItem(searchRegionItem);
                 searchRegionItem.destroy();
             }
-            searchRegionItem = Qt.createQmlObject('import QtLocation; MapRectangle { color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page, "MapRectangle");
+            searchRegionItem = Qt.createQmlObject('import QtLocation; MapRectangle { parent: view.map; color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page);
             searchRegionItem.topLeft = searchRegion.topLeft;
             searchRegionItem.bottomRight = searchRegion.bottomRight;
-            map.addMapItem(searchRegionItem);
+            view.map.addMapItem(searchRegionItem);
         }
 
         function changeSearchBoundingCircle(coordinate,radius)
         {
             stackView.pop(page)
-            map.center = coordinate;
+            view.map.center = coordinate;
             searchRegion = QtPositioning.circle(coordinate, radius)
 
             if (searchRegionItem) {
-                map.removeMapItem(searchRegionItem);
+                view.map.removeMapItem(searchRegionItem);
                 searchRegionItem.destroy();
             }
-            searchRegionItem = Qt.createQmlObject('import QtLocation; MapCircle { color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page, "MapRectangle");
+            searchRegionItem = Qt.createQmlObject('import QtLocation; MapCircle { parent: view.map; color: "#46a2da"; border.color: "#190a33"; border.width: 2; opacity: 0.25 }', page);
             searchRegionItem.center = searchRegion.center;
             searchRegionItem.radius = searchRegion.radius;
-            map.addMapItem(searchRegionItem);
+            view.map.addMapItem(searchRegionItem);
         }
 
         function changeSearchSettings(orderByDistance, orderByName, locales)
         {
             stackView.pop(page)
-            /*if (isFavoritesEnabled) {
-                if (favoritesPlugin == null)
-                    favoritesPlugin = Qt.createQmlObject('import QtLocation; Plugin { name: "places_jsondb" }', page);
-                favoritesPlugin.parameters = pluginParametersFromMap(pluginParameters);
-                placeSearchModel.favoritesPlugin = favoritesPlugin;
-            } else {
-                placeSearchModel.favoritesPlugin = null;
-            }*/
             placeSearchModel.favoritesPlugin = null;
 
             placeSearchModel.relevanceHint = orderByDistance ? PlaceSearchModel.DistanceHint :
                                                                orderByName ? PlaceSearchModel.LexicalPlaceNameHint :
                                                                              PlaceSearchModel.UnspecifiedHint;
-            map.plugin.locales = locales.split(Qt.locale().groupSeparator);
+            view.map.plugin.locales = locales.split(Qt.locale().groupSeparator);
         }
 
         //! [PlaceRecommendationModel search]
@@ -431,11 +427,12 @@ ApplicationWindow {
                 MapComponent {
                     width: page.width
                     height: page.height
+                    id: view
 
-                    onErrorChanged: {
+                    map.onErrorChanged: {
                         if (map.error !== Map.NoError) {
                             var title = qsTr("ProviderError");
-                            var message =  map.errorString + "<br/><br/><b>" + qsTr("Try to select other provider") + "</b>";
+                            var message = map.errorString + "<br/><br/><b>" + qsTr("Try to select other provider") + "</b>";
                             if (map.error === Map.MissingRequiredParameterError)
                                 message += "<br/>" + qsTr("or see") + " \'mapviewer --help\' "
                                         + qsTr("how to pass plugin parameters.");
@@ -445,20 +442,32 @@ ApplicationWindow {
 
                     MapItemView {
                         model: placeSearchModel
+                        parent: view.map
+
                         delegate: MapQuickItem {
                             coordinate: model.type === PlaceSearchModel.PlaceResult ? place.location.coordinate : QtPositioning.coordinate()
-
                             visible: model.type === PlaceSearchModel.PlaceResult
 
-                            anchorPoint.x: image.width * 0.28
-                            anchorPoint.y: image.height
+                            anchorPoint.x: image.width * 0.5
+                            anchorPoint.y: image.height * 0.5
 
-                            sourceItem: Image {
-                                id: image
-                                source: "resources/marker.png"
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: stackView.showPlaceDatails(model.place,model.distance)
+                            sourceItem: Column {
+                                TapHandler {
+                                    onTapped: stackView.showPlaceDatails(model.place,model.distance)
+                                }
+                                HoverHandler {
+                                    cursorShape: Qt.PointingHandCursor
+                                }
+
+                                Image {
+                                    id: image
+                                    source: place.icon.url(Qt.size(64,64))
+                                    anchors.horizontalCenter: parent.horizontalCenter;
+                                }
+                                Text {
+                                    id: text
+                                    text: title;
+                                    font.bold: true
                                 }
                             }
                         }

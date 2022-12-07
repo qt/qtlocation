@@ -35,32 +35,4 @@ Menu {
         onTriggered: currentMarker < markersCount-2 ? itemClicked("distanceToNextPoints")
                                                     : itemClicked("distanceToNextPoint")
     }
-    Menu {
-        title: qsTr("Draw...")
-
-        MenuItem {
-            text: qsTr("Image")
-            onTriggered: itemClicked("drawImage")
-        }
-        MenuItem {
-            text: qsTr("Rectangle")
-            enabled: currentMarker <= markersCount - 2
-            onTriggered: itemClicked("drawRectangle")
-        }
-        MenuItem {
-            text: qsTr("Circle")
-            enabled: currentMarker <= markersCount - 2
-            onTriggered: itemClicked("drawCircle")
-        }
-        MenuItem {
-            text: qsTr("Polyline")
-            enabled: currentMarker <= markersCount - 2
-            onTriggered: itemClicked("drawPolyline")
-        }
-        MenuItem {
-            text: qsTr("Polygon")
-            enabled: currentMarker < markersCount-2
-            onTriggered: itemClicked("drawPolygonMenu")
-        }
-    }
 }
