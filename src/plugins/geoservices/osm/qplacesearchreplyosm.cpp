@@ -186,8 +186,8 @@ QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) con
                                                item.value(QStringLiteral("lon")).toString().toDouble());
 
     //const QString placeRank = item.value(QStringLiteral("place_rank")).toString();
-    //const QString category = item.value(QStringLiteral("category")).toString();
-    const QString type = item.value(QStringLiteral("type")).toString();
+    const QString category = item.value(QStringLiteral("category")).toString();
+    // const QString type = item.value(QStringLiteral("type")).toString();
     //double importance = item.value(QStringLiteral("importance")).toDouble();
 
     place.setAttribution(item.value(QStringLiteral("licence")).toString());
@@ -202,7 +202,7 @@ QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) con
 
     QJsonObject addressDetails = item.value(QStringLiteral("address")).toObject();
 
-    const QString title = addressDetails.value(type).toString();
+    const QString title = addressDetails.value(category).toString();
 
     place.setName(title);
 
@@ -220,6 +220,7 @@ QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) con
     //address.setCountryCode(addressDetails.value(QStringLiteral("country_code")).toString());
     address.setPostalCode(addressDetails.value(QStringLiteral("postcode")).toString());
     address.setStreet(addressDetails.value(QStringLiteral("road")).toString());
+    address.setStreetNumber(addressDetails.value(QStringLiteral("house_number")).toString());
     address.setState(addressDetails.value(QStringLiteral("state")).toString());
     address.setDistrict(addressDetails.value(QStringLiteral("suburb")).toString());
 
