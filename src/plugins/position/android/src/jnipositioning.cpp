@@ -64,6 +64,58 @@ static const char logTag[] = "QtPositioning";
 static const char classErrorMsg[] = "Can't find class \"%s\"";
 static const char methodErrorMsg[] = "Can't find method \"%s%s\"";
 
+namespace {
+
+/*!
+    \internal
+    This class encapsulates satellite system types, as defined by Android
+    GnssStatus API. Initialize during JNI_OnLoad() by the init() method, from
+    the Java side, rather than hard-coding.
+*/
+class ConstellationMapper
+{
+public:
+    static bool init(JNIEnv *jniEnv)
+    {
+        if (QtAndroidPrivate::androidSdkVersion() > 23) {
+            jclass gnssStatusObject = jniEnv->FindClass("android/location/GnssStatus");
+            if (!gnssStatusObject)
+                return false;
+
+            jfieldID gpsFieldId = jniEnv->GetStaticFieldID(gnssStatusObject,
+                                                           "CONSTELLATION_GPS", "I");
+            jfieldID glonassFieldId = jniEnv->GetStaticFieldID(gnssStatusObject,
+                                                               "CONSTELLATION_GLONASS", "I");
+            if (!gpsFieldId || !glonassFieldId)
+                return false;
+
+            m_gpsId = jniEnv->GetStaticIntField(gnssStatusObject, gpsFieldId);
+            m_glonassId = jniEnv->GetStaticIntField(gnssStatusObject, glonassFieldId);
+        }
+        // no need to query it for API level <= 23
+        return true;
+    }
+
+    static QGeoSatelliteInfo::SatelliteSystem toSatelliteSystem(int constellationType)
+    {
+        if (constellationType == m_gpsId)
+            return QGeoSatelliteInfo::GPS;
+        else if (constellationType == m_glonassId)
+            return QGeoSatelliteInfo::GLONASS;
+
+        return QGeoSatelliteInfo::Undefined;
+    }
+
+private:
+    static int m_gpsId;
+    static int m_glonassId;
+};
+
+int ConstellationMapper::m_gpsId = -1;
+int ConstellationMapper::m_glonassId = -1;
+
+} // anonymous namespace
+
 namespace AndroidPositioning {
     typedef QMap<int, QGeoPositionInfoSourceAndroid * > PositionSourceMap;
     typedef QMap<int, QGeoSatelliteInfoSourceAndroid * > SatelliteSourceMap;
@@ -362,6 +414,74 @@ namespace AndroidPositioning {
         return sats;
     }
 
+    QList<QGeoSatelliteInfo> satelliteInfoFromJavaGnssStatus(JNIEnv *jniEnv, jobject gnssStatus,
+                                                             QList<QGeoSatelliteInfo>* usedInFix)
+    {
+        QList<QGeoSatelliteInfo> sats;
+
+        jclass statusClass = jniEnv->GetObjectClass(gnssStatus);
+        if (!statusClass)
+            return sats;
+
+        jmethodID satCountMethod = getCachedMethodID(jniEnv, statusClass,
+                                                     "getSatelliteCount", "()I");
+        jmethodID sigStrengthMethod = getCachedMethodID(jniEnv, statusClass, "getCn0DbHz", "(I)F");
+        jmethodID constTypeMethod = getCachedMethodID(jniEnv, statusClass,
+                                                      "getConstellationType", "(I)I");
+        jmethodID svIdMethod = getCachedMethodID(jniEnv, statusClass, "getSvid", "(I)I");
+        jmethodID azimuthMethod = getCachedMethodID(jniEnv, statusClass,
+                                                    "getAzimuthDegrees", "(I)F");
+        jmethodID elevationMethod = getCachedMethodID(jniEnv, statusClass,
+                                                      "getElevationDegrees", "(I)F");
+        jmethodID usedInFixMethod = getCachedMethodID(jniEnv, statusClass,
+                                                      "usedInFix", "(I)Z");
+
+        if (!satCountMethod || !sigStrengthMethod || !constTypeMethod || !svIdMethod
+                || !azimuthMethod || !elevationMethod || !usedInFixMethod) {
+            jniEnv->DeleteLocalRef(statusClass);
+            return sats;
+        }
+
+        const int satellitesCount = jniEnv->CallIntMethod(gnssStatus, satCountMethod);
+        for (int i = 0; i < satellitesCount; ++i) {
+            QGeoSatelliteInfo info;
+
+            // signal strength - this is actually a carrier-to-noise density,
+            // but the values are very close to what was previously returned by
+            // getSnr() method of the GpsSatellite API.
+            const jfloat cn0 = jniEnv->CallFloatMethod(gnssStatus, sigStrengthMethod, i);
+            info.setSignalStrength(static_cast<int>(cn0));
+
+            // satellite system
+            const jint constellationType = jniEnv->CallIntMethod(gnssStatus, constTypeMethod, i);
+            info.setSatelliteSystem(ConstellationMapper::toSatelliteSystem(constellationType));
+
+            // satellite identifier
+            const jint svId = jniEnv->CallIntMethod(gnssStatus, svIdMethod, i);
+            info.setSatelliteIdentifier(svId);
+
+            // azimuth
+            const jfloat azimuth = jniEnv->CallFloatMethod(gnssStatus, azimuthMethod, i);
+            info.setAttribute(QGeoSatelliteInfo::Azimuth, static_cast<qreal>(azimuth));
+
+            // elevation
+            const jfloat elevation = jniEnv->CallFloatMethod(gnssStatus, elevationMethod, i);
+            info.setAttribute(QGeoSatelliteInfo::Elevation, static_cast<qreal>(elevation));
+
+            // Used in fix - true if this satellite is actually used in
+            // determining the position.
+            const jboolean inFix = jniEnv->CallBooleanMethod(gnssStatus, usedInFixMethod, i);
+
+            sats.append(info);
+
+            if (inFix)
+                usedInFix->append(info);
+        }
+
+        jniEnv->DeleteLocalRef(statusClass);
+        return sats;
+    }
+
     QGeoPositionInfo lastKnownPosition(bool fromSatellitePositioningMethodsOnly)
     {
         AttachedJNIEnv env;
@@ -562,11 +682,10 @@ static void locationProvidersChanged(JNIEnv *env, jobject /*thiz*/, jint android
     QMetaObject::invokeMethod(source, "locationProvidersChanged", Qt::AutoConnection);
 }
 
-static void satelliteUpdated(JNIEnv *env, jobject /*thiz*/, jobjectArray satellites, jint androidClassKey, jboolean isSingleUpdate)
+static void notifySatelliteInfoUpdated(const QList<QGeoSatelliteInfo> &inView,
+                                       const QList<QGeoSatelliteInfo> &inUse,
+                                       jint androidClassKey, jboolean isSingleUpdate)
 {
-    QList<QGeoSatelliteInfo> inUse;
-    QList<QGeoSatelliteInfo> sats = AndroidPositioning::satelliteInfoFromJavaLocation(env, satellites, &inUse);
-
     QGeoSatelliteInfoSourceAndroid *source = AndroidPositioning::idToSatSource()->value(androidClassKey);
     if (!source) {
         qWarning("satelliteUpdated: source == 0");
@@ -574,10 +693,32 @@ static void satelliteUpdated(JNIEnv *env, jobject /*thiz*/, jobjectArray satelli
     }
 
     QMetaObject::invokeMethod(source, "processSatelliteUpdateInView", Qt::AutoConnection,
-                              Q_ARG(QList<QGeoSatelliteInfo>, sats), Q_ARG(bool, isSingleUpdate));
+                              Q_ARG(QList<QGeoSatelliteInfo>, inView), Q_ARG(bool, isSingleUpdate));
 
     QMetaObject::invokeMethod(source, "processSatelliteUpdateInUse", Qt::AutoConnection,
                               Q_ARG(QList<QGeoSatelliteInfo>, inUse), Q_ARG(bool, isSingleUpdate));
+}
+
+static void satelliteGpsUpdated(JNIEnv *env, jobject thiz, jobjectArray satellites,
+                                jint androidClassKey, jboolean isSingleUpdate)
+{
+    Q_UNUSED(thiz);
+    QList<QGeoSatelliteInfo> inUse;
+    QList<QGeoSatelliteInfo> sats =
+            AndroidPositioning::satelliteInfoFromJavaLocation(env, satellites, &inUse);
+
+    notifySatelliteInfoUpdated(sats, inUse, androidClassKey, isSingleUpdate);
+}
+
+static void satelliteGnssUpdated(JNIEnv *env, jobject thiz, jobject gnssStatus,
+                                 jint androidClassKey, jboolean isSingleUpdate)
+{
+    Q_UNUSED(thiz);
+    QList<QGeoSatelliteInfo> inUse;
+    QList<QGeoSatelliteInfo> sats =
+            AndroidPositioning::satelliteInfoFromJavaGnssStatus(env, gnssStatus, &inUse);
+
+    notifySatelliteInfoUpdated(sats, inUse, androidClassKey, isSingleUpdate);
 }
 
 
@@ -598,8 +739,9 @@ if (!VAR) { \
 static JNINativeMethod methods[] = {
     {"positionUpdated", "(Landroid/location/Location;IZ)V", (void *)positionUpdated},
     {"locationProvidersDisabled", "(I)V", (void *) locationProvidersDisabled},
-    {"satelliteUpdated", "([Landroid/location/GpsSatellite;IZ)V", (void *)satelliteUpdated},
-    {"locationProvidersChanged", "(I)V", (void *) locationProvidersChanged}
+    {"satelliteGpsUpdated", "([Landroid/location/GpsSatellite;IZ)V", (void *)satelliteGpsUpdated},
+    {"locationProvidersChanged", "(I)V", (void *) locationProvidersChanged},
+    {"satelliteGnssUpdated", "(Landroid/location/GnssStatus;IZ)V", (void *)satelliteGnssUpdated}
 };
 
 static bool registerNatives(JNIEnv *env)
@@ -648,6 +790,12 @@ Q_DECL_EXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void * /*reserved*/)
     if (!registerNatives(env)) {
         __android_log_print(ANDROID_LOG_FATAL, logTag, "registerNatives failed");
         return -1;
+    }
+
+    if (!ConstellationMapper::init(env)) {
+        __android_log_print(ANDROID_LOG_ERROR, logTag,
+                            "Failed to extract constellation type constants. "
+                            "Satellite system will be undefined!");
     }
 
     javaVM = vm;

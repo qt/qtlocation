@@ -45,9 +45,12 @@ import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.GnssStatus;
+import android.location.GnssStatus.Callback;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Build;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -97,7 +100,7 @@ public class QtPositioning implements LocationListener
     /* If true this class acts as satellite signal monitor rather than location monitor */
     private boolean isSatelliteUpdate = false;
 
-    private PositioningLooper looperThread;
+    private PositioningLooperBase looperThread;
 
     static public void setContext(Context context)
     {
@@ -404,7 +407,12 @@ public class QtPositioning implements LocationListener
 
     public QtPositioning()
     {
-        looperThread = new PositioningLooper();
+        // Use GpsStatus for API Level <= 23 (version M and below) and
+        // GnssStatus for other API levels.
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M)
+            looperThread = new PositioningLooperGps();
+        else
+            looperThread = new PositioningLooperGnss();
     }
 
     public Looper looper()
@@ -438,13 +446,16 @@ public class QtPositioning implements LocationListener
         }
     }
 
-    private class PositioningLooper extends Thread implements GpsStatus.Listener{
+    private abstract class PositioningLooperBase extends Thread
+    {
         private boolean looperRunning;
         private Looper posLooper;
         private boolean isSatelliteLooper = false;
-        private LocationManager locManager = null;
 
-        private PositioningLooper()
+        abstract protected void addSatelliteInfoListener();
+        abstract protected void removeSatelliteInfoListener();
+
+        private PositioningLooperBase()
         {
             looperRunning = false;
         }
@@ -454,13 +465,8 @@ public class QtPositioning implements LocationListener
             Looper.prepare();
             Handler handler = new Handler();
 
-            if (isSatelliteLooper) {
-                try {
-                    locationManager.addGpsStatusListener(this);
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            if (isSatelliteLooper)
+                addSatelliteInfoListener();
 
             posLooper = Looper.myLooper();
             synchronized (this) {
@@ -475,7 +481,7 @@ public class QtPositioning implements LocationListener
         public void quitLooper()
         {
             if (isSatelliteLooper)
-                locationManager.removeGpsStatusListener(this);
+                removeSatelliteInfoListener();
             looper().quit();
         }
 
@@ -494,6 +500,26 @@ public class QtPositioning implements LocationListener
             return posLooper;
         }
 
+    }
+
+    private class PositioningLooperGps extends PositioningLooperBase implements GpsStatus.Listener
+    {
+        @Override
+        protected void addSatelliteInfoListener()
+        {
+            try {
+                locationManager.addGpsStatusListener(this);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void removeSatelliteInfoListener()
+        {
+            locationManager.removeGpsStatusListener(this);
+        }
+
         @Override
         public void onGpsStatusChanged(int event) {
             switch (event) {
@@ -510,7 +536,7 @@ public class QtPositioning implements LocationListener
                         list.add(sat);
                     }
                     GpsSatellite[] sats = list.toArray(new GpsSatellite[list.size()]);
-                    satelliteUpdated(sats, nativeClassReference, isSingleUpdate);
+                    satelliteGpsUpdated(sats, nativeClassReference, isSingleUpdate);
 
                     break;
                 case GpsStatus.GPS_EVENT_STARTED:
@@ -521,10 +547,46 @@ public class QtPositioning implements LocationListener
         }
     }
 
+    private class PositioningGnssListener extends GnssStatus.Callback
+    {
+        @Override
+        public void onSatelliteStatusChanged(GnssStatus status)
+        {
+            satelliteGnssUpdated(status, nativeClassReference, isSingleUpdate);
+        }
+    }
+
+    private class PositioningLooperGnss extends PositioningLooperBase
+    {
+        private PositioningGnssListener gnssListener;
+
+        private PositioningLooperGnss()
+        {
+            gnssListener = new PositioningGnssListener();
+        }
+
+        @Override
+        protected void addSatelliteInfoListener()
+        {
+            try {
+                locationManager.registerGnssStatusCallback(gnssListener);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected void removeSatelliteInfoListener()
+        {
+            locationManager.unregisterGnssStatusCallback(gnssListener);
+        }
+    }
+
     public static native void positionUpdated(Location update, int androidClassKey, boolean isSingleUpdate);
     public static native void locationProvidersDisabled(int androidClassKey);
     public static native void locationProvidersChanged(int androidClassKey);
-    public static native void satelliteUpdated(GpsSatellite[] update, int androidClassKey, boolean isSingleUpdate);
+    public static native void satelliteGpsUpdated(GpsSatellite[] update, int androidClassKey, boolean isSingleUpdate);
+    public static native void satelliteGnssUpdated(GnssStatus update, int androidClassKey, boolean isSingleUpdate);
 
     @Override
     public void onLocationChanged(Location location) {
