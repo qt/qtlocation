@@ -2079,8 +2079,9 @@ void QDeclarativeGeoMap::geometryChange(const QRectF &newGeometry, const QRectF 
             QGeoCoordinate coord = cameraData.center();
             coord.setLatitude(qBound(m_minimumViewportLatitude, coord.latitude(), m_maximumViewportLatitude));
             cameraData.setCenter(coord);
-            m_map->setCameraData(cameraData); // this polishes map items
-        } else if (oldGeometry.size() != newGeometry.size()) {
+            m_map->setCameraData(cameraData);
+        }
+        if (oldGeometry.size() != newGeometry.size()) {
             // polish map items
             for (const QPointer<QDeclarativeGeoMapItemBase> &i: std::as_const(m_mapItems)) {
                 if (i)
