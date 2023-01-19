@@ -2,7 +2,7 @@ qt_internal_add_test(tst_qmlinterface
     SOURCES
         tst_qmlinterface.cpp
     DEFINES
-        SRCDIR=\\\"${CMAKE_CURRENT_SOURCE_DIR}/\\\"
+        SRCDIR="${CMAKE_CURRENT_SOURCE_DIR}/"
     LIBRARIES
         Qt::Location
         Qt::Positioning
