@@ -35,8 +35,8 @@
     \image places_map.png
 
     The example displays a map of the current location or, if no position is
-    available, it uses Brisbane/Australia. Subsequently a search for places
-    matching the term "pizza" is performed and each result shown on the map.
+    available, it uses Oslo/Norway. Subsequently a search for places
+    matching the term "food" is performed and each result shown on the map.
 
     \include examples-run.qdocinc
 
@@ -75,9 +75,9 @@
     \snippet places_map/places_map.qml Places MapItemView
 
     Finally, a \c PositionSource is used to reset the map to the curent
-    location and find "pizza" places in the new area. The position information
+    location and find "food" places in the new area. The position information
     is updated every 2 minutes and if the new position is more than 500 meters
-    away from the last pizza search area the place search is retriggered.
+    away from the last food search area the place search is retriggered.
 
     \snippet places_map/places_map.qml Current Location
 */

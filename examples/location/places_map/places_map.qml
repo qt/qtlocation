@@ -71,34 +71,27 @@ Rectangle {
     //! [Current Location]
     PositionSource {
         id: positionSource
-        property variant lastSearchPosition: locationOslo
+        property variant lastSearchPosition: QtPositioning.coordinate(59.93, 10.76) //Initialized/Fallback to Oslo
         active: true
         updateInterval: 120000 // 2 mins
         onPositionChanged:  {
-            var currentPosition = positionSource.position.coordinate
-            map.center = currentPosition
-            var distance = currentPosition.distanceTo(lastSearchPosition)
+            var distance = lastSearchPosition.distanceTo(position.coordinate)
             if (distance > 500) {
-                // 500m from last performed pizza search
-                lastSearchPosition = currentPosition
-                searchModel.searchArea = QtPositioning.circle(currentPosition)
-                searchModel.update()
+                // 500m from last performed food search
+                lastSearchPosition = positionSource.position.coordinate
             }
         }
     }
     //! [Current Location]
 
     //! [PlaceSearchModel]
-    property variant locationOslo: QtPositioning.coordinate( 59.93, 10.76)
-
     PlaceSearchModel {
         id: searchModel
 
         plugin: myPlugin
 
-        searchTerm: "Pizza"
-        searchArea: QtPositioning.circle(locationOslo, 500000 /* 5 km radius */)
-
+        searchTerm: "food"
+        searchArea:  QtPositioning.circle(positionSource.lastSearchPosition, 1000 /* 1 km radius */)
         Component.onCompleted: update()
     }
     //! [PlaceSearchModel]
@@ -108,8 +101,8 @@ Rectangle {
         id: map
         anchors.fill: parent
         plugin: myPlugin;
-        center: locationOslo
-        zoomLevel: 5
+        center: positionSource.lastSearchPosition
+        zoomLevel: 13
 
         MapItemView {
             model: searchModel
