@@ -37,7 +37,7 @@
 
     The \c {Places List} example demonstrates how to search for a list of places
     in a certain area and displays the result using a \l ListView. In this particular case, a search
-    for places associated with the term \c pizza is performed.
+    for places associated with the term \c food is performed.
 
     \section1 Performing a Place Search
 
