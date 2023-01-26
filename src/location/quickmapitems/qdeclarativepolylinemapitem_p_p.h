@@ -31,47 +31,15 @@ QT_BEGIN_NAMESPACE
 class QQuickShape;
 class QQuickShapePath;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolylineGeometry : public QGeoMapItemGeometry
+struct QGeoMapPolylineGeometry : QGeoMapItemGeometry
 {
-public:
-    QGeoMapPolylineGeometry();
-
     void updateSourcePoints(const QGeoMap &map,
-                            const QList<QDoubleVector2D> &path,
-                            const QGeoCoordinate geoLeftBound);
-
-    void updateScreenPoints(const QGeoMap &map,
-                            qreal strokeWidth,
-                            bool adjustTranslation = true);
-
-    void clearSource();
-
-    bool contains(const QPointF &point) const override;
-
-    QList<QList<QDoubleVector2D> > clipPath(const QGeoMap &map,
-                    const QList<QDoubleVector2D> &path,
-                    QDoubleVector2D &leftBoundWrapped);
-
-    void pathToScreen(const QGeoMap &map,
-                      const QList<QList<QDoubleVector2D> > &clippedPaths,
-                      const QDoubleVector2D &leftBoundWrapped);
+                            const QList<QDoubleVector2D> &basePath);
 
     QPainterPath srcPath() const { return srcPath_; }
 
-public:
-    QList<qreal> srcPoints_;
-    QList<QPainterPath::ElementType> srcPointTypes_;
     QPainterPath srcPath_;
     qreal maxCoord_ = 0.0;
-
-#ifdef QT_LOCATION_DEBUG
-    QList<QDoubleVector2D> m_wrappedPath;
-    QList<QList<QDoubleVector2D>> m_clippedPaths;
-#endif
-
-    friend class QDeclarativeCircleMapItem;
-    friend class QDeclarativePolygonMapItem;
-    friend class QDeclarativeRectangleMapItem;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivate
@@ -116,14 +84,9 @@ public:
     }
     void regenerateCache();
     void updateCache();
-    void preserveGeometry()
-    {
-        m_geometry.setPreserveGeometry(true, m_poly.m_geopath.boundingGeoRectangle().topLeft());
-    }
     void afterViewportChanged() override
     {
         // preserveGeometry is cleared in updateMapItemPaintNode
-        preserveGeometry();
         markSourceDirtyAndUpdate();
     }
     void onMapSet() override
@@ -134,13 +97,11 @@ public:
     void onGeoGeometryChanged() override
     {
         regenerateCache();
-        preserveGeometry();
         markSourceDirtyAndUpdate();
     }
     void onGeoGeometryUpdated() override
     {
         updateCache();
-        preserveGeometry();
         markSourceDirtyAndUpdate();
     }
     void onItemGeometryChanged() override

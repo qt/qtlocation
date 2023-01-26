@@ -72,12 +72,10 @@ public:
     }
     void onItemGeometryChanged() override
     {
-        m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
         markSourceDirtyAndUpdate();
     }
     void afterViewportChanged() override
     {
-        m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
         markSourceDirtyAndUpdate();
     }
     void updatePolish() override;

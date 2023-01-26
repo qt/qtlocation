@@ -77,7 +77,7 @@ void QDeclarativeGeoMapItemBase::setMap(QDeclarativeGeoMap *quickMap, QGeoMap *m
         // For performance reasons we're not connecting map_'s and quickMap_'s signals to this.
         // Rather, the handling of cameraDataChanged, visibleAreaChanged, heightChanged and widthChanged is done explicitly in QDeclarativeGeoMap by directly calling methods on the items.
         // See QTBUG-76950
-        lastSize_ = QSizeF(quickMap_->width(), quickMap_->height());
+        lastMapSize_ = QSizeF(quickMap_->width(), quickMap_->height());
         lastCameraData_ = map_->cameraData();
     }
 }
@@ -91,7 +91,7 @@ void QDeclarativeGeoMapItemBase::baseCameraDataChanged(const QGeoCameraData &cam
     evt.cameraData = cameraData;
     evt.mapSize = QSizeF(quickMap_->width(), quickMap_->height());
 
-    if (evt.mapSize != lastSize_)
+    if (evt.mapSize != lastMapSize_)
         evt.mapSizeChanged = true;
 
     if (cameraData.bearing() != lastCameraData_.bearing())
@@ -105,7 +105,7 @@ void QDeclarativeGeoMapItemBase::baseCameraDataChanged(const QGeoCameraData &cam
     if (cameraData.zoomLevel() != lastCameraData_.zoomLevel())
         evt.zoomLevelChanged = true;
 
-    lastSize_ = evt.mapSize;
+    lastMapSize_ = evt.mapSize;
     lastCameraData_ = cameraData;
 
     afterViewportChanged(evt);
@@ -285,8 +285,6 @@ bool QDeclarativeGeoMapItemBase::isPolishScheduled() const
 {
     return QQuickItemPrivate::get(this)->polishScheduled;
 }
-
-void QDeclarativeGeoMapItemBase::setMaterialDirty() {}
 
 void QDeclarativeGeoMapItemBase::polishAndUpdate()
 {

@@ -68,7 +68,6 @@ protected Q_SLOTS:
 protected:
     void geometryChange(const QRectF &newGeometry, const QRectF &oldGeometry) override;
     void updatePolish() override;
-    void setMaterialDirty() override;
 
 #ifdef QT_LOCATION_DEBUG
 public:
@@ -76,8 +75,6 @@ public:
     QGeoPolygon m_geopoly;
     QDeclarativeMapLineProperties m_border;
     QColor m_color;
-    bool m_dirtyMaterial;
-//    bool m_dirtyGeometry = false;
     bool m_updatingGeometry;
 
     std::unique_ptr<QDeclarativePolygonMapItemPrivate> m_d;

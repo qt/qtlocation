@@ -79,7 +79,6 @@ private:
     QGeoCircle m_circle;
     QDeclarativeMapLineProperties m_border;
     QColor m_color;
-    bool m_dirtyMaterial;
     bool m_updatingGeometry;
 
     std::unique_ptr<QDeclarativeCircleMapItemPrivate> m_d;

@@ -38,12 +38,18 @@ class QQuickShapePath;
 class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolygonGeometry : public QGeoMapItemGeometry
 {
 public:
+    enum MapBorderBehaviour {
+        DrawOnce,
+        WrapAround
+    };
+
     QGeoMapPolygonGeometry();
 
     inline void setAssumeSimple(bool value) { assumeSimple_ = value; }
 
     void updateSourcePoints(const QGeoMap &map,
-                            const QList<QDoubleVector2D> &path);
+                            const QList<QList<QDoubleVector2D>> &path,
+                            MapBorderBehaviour wrapping = WrapAround);
 
     QPainterPath srcPath() const { return srcPath_; }
     qreal maxCoord() const { return maxCoord_; }
@@ -91,7 +97,6 @@ public:
     }
     void markSourceDirtyAndUpdate() override
     {
-        // preserveGeometry is cleared in updateMapItemPaintNode
         m_geometry.markSourceDirty();
         m_poly.polishAndUpdate();
     }
@@ -101,25 +106,29 @@ public:
             return;
         const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
         m_geopathProjected.clear();
-        m_geopathProjected.reserve(m_poly.m_geopoly.size());
+        m_geopathProjected << QList<QDoubleVector2D>();
+        QList<QDoubleVector2D> &pP = m_geopathProjected.last();
+        pP.reserve(m_poly.m_geopoly.perimeter().size());
         for (const QGeoCoordinate &c : m_poly.m_geopoly.perimeter())
-            m_geopathProjected << p.geoToMapProjection(c);
+            pP << p.geoToMapProjection(c);
+        for (int i = 0; i < m_poly.m_geopoly.holesCount(); i++) {
+            m_geopathProjected << QList<QDoubleVector2D>();
+            QList<QDoubleVector2D> &pH = m_geopathProjected.last();
+            pH.reserve(m_poly.m_geopoly.holePath(i).size());
+            for (const QGeoCoordinate &c : m_poly.m_geopoly.holePath(i))
+                pH << p.geoToMapProjection(c);
+        }
     }
     void updateCache()
     {
         if (!m_poly.map() || m_poly.map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
             return;
         const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
-        m_geopathProjected << p.geoToMapProjection(m_poly.m_geopoly.perimeter().last());
-    }
-    void preserveGeometry()
-    {
-        m_geometry.setPreserveGeometry(true, m_poly.m_geopoly.boundingGeoRectangle().topLeft());
+        QList<QDoubleVector2D> &pP = m_geopathProjected.first();
+        pP << p.geoToMapProjection(m_poly.m_geopoly.perimeter().last());
     }
     void afterViewportChanged() override
     {
-        // preserveGeometry is cleared in updateMapItemPaintNode
-        preserveGeometry();
         markSourceDirtyAndUpdate();
     }
     void onMapSet() override
@@ -130,13 +139,11 @@ public:
     void onGeoGeometryChanged() override
     {
         regenerateCache();
-        preserveGeometry();
         markSourceDirtyAndUpdate();
     }
     void onGeoGeometryUpdated() override
     {
         updateCache();
-        preserveGeometry();
         markSourceDirtyAndUpdate();
     }
     void onItemGeometryChanged() override
@@ -147,7 +154,7 @@ public:
     QSGNode *updateMapItemPaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *data) override;
     bool contains(const QPointF &point) const override;
 
-    QList<QDoubleVector2D> m_geopathProjected;
+    QList<QList<QDoubleVector2D>> m_geopathProjected;
     QGeoMapPolygonGeometry m_geometry;
     QQuickShape *m_shape = nullptr;
     QQuickShapePath *m_shapePath = nullptr;

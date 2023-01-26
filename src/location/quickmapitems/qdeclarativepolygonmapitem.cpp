@@ -115,98 +115,105 @@ QGeoMapPolygonGeometry::QGeoMapPolygonGeometry() = default;
     \internal
 */
 void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
-                                                const QList<QDoubleVector2D> &path)
+                                                const QList<QList <QDoubleVector2D>> &paths,
+                                                MapBorderBehaviour wrapping)
 {
+    // A polygon consists of mutliple paths. This is usually a perimeter and multiple holes
+    // We move all paths into a single QPainterPath. The filling rule EvenOdd will then ensure that the paths are shown correctly
     if (!sourceDirty_)
         return;
     const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map.geoProjection());
     srcPath_ = QPainterPath();
+    srcOrigin_ = p.mapProjectionToGeo(QDoubleVector2D(0.0, 0.0)); //avoid warning of NaN values if function is returned early
 
-    // build the actual path
-    // The approach is the same as described in QGeoMapPolylineGeometry::updateSourcePoints
-    srcOrigin_ = geoLeftBound_;
-    double unwrapBelowX = 0;
-    QDoubleVector2D leftBoundWrapped = p.wrapMapProjection(p.geoToMapProjection(geoLeftBound_));
-    if (preserveGeometry_)
-        unwrapBelowX = leftBoundWrapped.x();
+    //1 The bounding rectangle of the polygon and camera view are compared to determine if the polygon is visible
+    //  The viewport is periodic in x-direction in the interval [-1; 1].
+    //  The polygon (maybe) has to be ploted periodically too by shifting it by -1 or +1;
+    const QRectF cameraRect = QDeclarativeGeoMapItemUtils::boundingRectangleFromList(p.visibleGeometry());
+    QRectF itemRect;
+    for (const auto &path : paths)
+        itemRect |= QDeclarativeGeoMapItemUtils::boundingRectangleFromList(path);
+    QList<QList<QDoubleVector2D>> wrappedPaths;
 
-    QList<QDoubleVector2D> wrappedPath;
-    wrappedPath.reserve(path.size());
-    QDoubleVector2D wrappedLeftBound(qInf(), qInf());
-    // 1)
-    for (const auto &coord : path) {
-        QDoubleVector2D wrappedProjection = p.wrapMapProjection(coord);
-
-        // We can get NaN if the map isn't set up correctly, or the projection
-        // is faulty -- probably best thing to do is abort
-        if (!qIsFinite(wrappedProjection.x()) || !qIsFinite(wrappedProjection.y()))
-            return;
-
-        const bool isPointLessThanUnwrapBelowX = (wrappedProjection.x() < leftBoundWrapped.x());
-        // unwrap x to preserve geometry if moved to border of map
-        if (preserveGeometry_ && isPointLessThanUnwrapBelowX) {
-            double distance = wrappedProjection.x() - unwrapBelowX;
-            if (distance < 0.0)
-                distance += 1.0;
-            wrappedProjection.setX(unwrapBelowX + distance);
+    if (wrapping == WrapAround) {
+        for (double xoffset : {-1.0, 0.0, 1.0}) {
+            if (!cameraRect.intersects(itemRect.translated(QPointF(xoffset, 0.0))))
+                continue;
+            for (const auto &path : paths) {
+                wrappedPaths.append(QList<QDoubleVector2D>());
+                QList<QDoubleVector2D> &wP = wrappedPaths.last();
+                wP.reserve(path.size());
+                for (const QDoubleVector2D &coord : path)
+                    wP.append(coord+QDoubleVector2D(xoffset, 0.0));
+            }
         }
-        if (wrappedProjection.x() < wrappedLeftBound.x() || (wrappedProjection.x() == wrappedLeftBound.x() && wrappedProjection.y() < wrappedLeftBound.y())) {
-            wrappedLeftBound = wrappedProjection;
+    } else
+        wrappedPaths = paths;
+
+    if (wrappedPaths.isEmpty()) // the polygon boundary rectangle does not overlap with the viewport rectangle
+        return;
+
+
+    //2 The polygons that are at least partially in the viewport are cliped to reduce their size
+    QList<QList<QDoubleVector2D>> clippedPaths;
+    const QList<QDoubleVector2D> &visibleRegion = p.visibleGeometryExpanded();
+    for (const auto &path : wrappedPaths) {
+        if (visibleRegion.size()) {
+            QClipperUtils clipper;
+            clipper.addSubjectPath(path, true);
+            clipper.addClipPolygon(visibleRegion);
+            clippedPaths << clipper.execute(QClipperUtils::Intersection, QClipperUtils::pftEvenOdd,
+                                           QClipperUtils::pftEvenOdd);
         }
-        wrappedPath.append(wrappedProjection);
+        else {
+            clippedPaths.append(path); //Do we really need this if there are no visible regions??
+        }
     }
+    if (clippedPaths.isEmpty()) //the polygon is entirely outside visibleRegion
+        return;
 
-    // 2)
-    QList<QList<QDoubleVector2D> > clippedPaths;
-    const QList<QDoubleVector2D> &visibleRegion = p.projectableGeometry();
-    if (visibleRegion.size()) {
-        QClipperUtils clipper;
-        clipper.addSubjectPath(wrappedPath, true);
-        clipper.addClipPolygon(visibleRegion);
-        clippedPaths = clipper.execute(QClipperUtils::Intersection, QClipperUtils::pftEvenOdd,
-                                       QClipperUtils::pftEvenOdd);
-
-        // 2.1) update srcOrigin_ and leftBoundWrapped with the point with minimum X
-        QDoubleVector2D lb(qInf(), qInf());
-        for (const QList<QDoubleVector2D> &path: clippedPaths)
-            for (const QDoubleVector2D &p: path)
-                if (p.x() < lb.x() || (p.x() == lb.x() && p.y() < lb.y()))
-                    // y-minimization needed to find the same point on polygon and border
-                    lb = p;
-
-        if (qIsInf(lb.x())) // e.g., when the polygon is clipped entirely
-            return;
-
-        // 2.2) Prevent the conversion to and from clipper from introducing negative offsets which
-        //      in turn will make the geometry wrap around.
-        lb.setX(qMax(wrappedLeftBound.x(), lb.x()));
-        leftBoundWrapped = lb;
-        srcOrigin_ = p.mapProjectionToGeo(p.unwrapMapProjection(lb));
-    } else {
-        clippedPaths.append(wrappedPath);
-    }
-
-    // 3)
+    QRectF bb;
+    for (const auto &path: clippedPaths)
+        bb |= QDeclarativeGeoMapItemUtils::boundingRectangleFromList(path);
+    //Offset by origin, find the maximum coordinate
+    srcOrigin_ = p.mapProjectionToGeo(QDoubleVector2D(bb.left(), bb.top()));
+    QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(p.geoToWrappedMapProjection(srcOrigin_)); //save way: redo all projections
     maxCoord_ = 0.0;
-    QDoubleVector2D origin = p.wrappedMapProjectionToItemPosition(leftBoundWrapped);
-    for (const QList<QDoubleVector2D> &path: clippedPaths) {
-        QDoubleVector2D lastAddedPoint;
-        for (qsizetype i = 0; i < path.size(); ++i) {
-            QDoubleVector2D point = p.wrappedMapProjectionToItemPosition(path.at(i));
-            point = point - origin; // (0,0) if point == geoLeftBound_
+    for (const auto &path: clippedPaths) {
+        QDoubleVector2D prevPoint = p.wrappedMapProjectionToItemPosition(path.at(0)) - origin;
+        QDoubleVector2D nextPoint = p.wrappedMapProjectionToItemPosition(path.at(1)) - origin;
+        srcPath_.moveTo(prevPoint.toPointF());
+        maxCoord_ = qMax(maxCoord_, qMax(prevPoint.x(), prevPoint.y()));
+        qsizetype pointsAdded = 1;
+        for (qsizetype i = 1; i < path.size(); ++i) {
+            const QDoubleVector2D point = nextPoint;
 
             if (qMax(point.x(), point.y()) > maxCoord_)
                 maxCoord_ = qMax(point.x(), point.y());
 
-            if (i == 0) {
-                srcPath_.moveTo(point.toPointF());
-                lastAddedPoint = point;
+            if (i == path.size() - 1) {
+                srcPath_.lineTo(point.toPointF()); //close the path
             } else {
-                if ((point - lastAddedPoint).manhattanLength() > 3 ||
-                        i == path.size() - 1) {
-                    srcPath_.lineTo(point.toPointF());
-                    lastAddedPoint = point;
+                nextPoint = p.wrappedMapProjectionToItemPosition(path.at(i+1)) - origin;
+
+                bool addPoint = ( i > pointsAdded * 10 || //make sure that at least every 10th point is drawn
+                                  path.size() < 10 );     //draw small paths completely
+
+                const double tolerance = 0.1;
+                if (!addPoint) { //add the point to the shape if it deflects the boundary by more than the tolerance
+                    const double dsqr = QDeclarativeGeoMapItemUtils::distanceSqrPointLine(
+                                            point.x(), point.y(),
+                                            nextPoint.x(), nextPoint.y(),
+                                            prevPoint.x(), prevPoint.y());
+                    addPoint = addPoint || (dsqr > (tolerance*tolerance));
                 }
+
+                if (addPoint) {
+                    srcPath_.lineTo(point.toPointF());
+                    pointsAdded++;
+                    prevPoint = point;
+                }
+
             }
         }
         srcPath_.closeSubpath();
@@ -292,10 +299,8 @@ QSGNode *QDeclarativePolygonMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *o
 {
     Q_UNUSED(data);
     delete oldNode;
-    if (m_geometry.isScreenDirty() || m_poly.m_dirtyMaterial) {
-        m_geometry.setPreserveGeometry(false);
+    if (m_geometry.isScreenDirty()) {
         m_geometry.markClean();
-        m_poly.m_dirtyMaterial = false;
     }
     return nullptr;
 }
@@ -310,7 +315,7 @@ bool QDeclarativePolygonMapItemPrivateCPU::contains(const QPointF &point) const
  */
 
 QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
-:   QDeclarativeGeoMapItemBase(parent), m_border(this), m_color(Qt::transparent), m_dirtyMaterial(true),
+:   QDeclarativeGeoMapItemBase(parent), m_border(this), m_color(Qt::transparent),
     m_updatingGeometry(false)
   , m_d(new QDeclarativePolygonMapItemPrivateCPU(*this))
 
@@ -443,7 +448,6 @@ void QDeclarativePolygonMapItem::setColor(const QColor &color)
         return;
 
     m_color = color;
-    m_dirtyMaterial = true;
     polishAndUpdate(); // in case color was transparent and now is not or vice versa
     emit colorChanged(m_color);
 }
@@ -464,12 +468,6 @@ void QDeclarativePolygonMapItem::updatePolish()
     if (!map() || map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
         return;
     m_d->updatePolish();
-}
-
-void QDeclarativePolygonMapItem::setMaterialDirty()
-{
-    m_dirtyMaterial = true;
-    update();
 }
 
 void QDeclarativePolygonMapItem::markSourceDirtyAndUpdate()
