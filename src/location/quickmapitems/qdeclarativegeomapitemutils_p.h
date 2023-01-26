@@ -52,6 +52,14 @@ namespace QDeclarativeGeoMapItemUtils
         }
     };
 
+
+    double distanceSqrPointLine(double p0_x
+                              , double p0_y
+                              , double p1_x
+                              , double p1_y
+                              , double p2_x
+                              , double p2_y);
+
     void wrapPath(const QList<QGeoCoordinate> &perimeter
                 , const QGeoCoordinate &geoLeftBound
                 , const QGeoProjectionWebMercator &p
@@ -79,6 +87,8 @@ namespace QDeclarativeGeoMapItemUtils
     void projectBbox(const QList<QDoubleVector2D> &clippedBbox
                    , const QGeoProjectionWebMercator &p
                    , QPainterPath &projectedBbox);
+
+    QRectF boundingRectangleFromList(const QList<QDoubleVector2D> &list);
 
 };
 

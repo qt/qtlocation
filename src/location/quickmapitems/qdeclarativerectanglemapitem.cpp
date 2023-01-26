@@ -211,7 +211,6 @@ void QDeclarativeRectangleMapItem::setColor(const QColor &color)
     if (m_color == color)
         return;
     m_color = color;
-    m_dirtyMaterial = true;
     polishAndUpdate();
     emit colorChanged(m_color);
 }
@@ -359,8 +358,7 @@ void QDeclarativeRectangleMapItemPrivateCPU::updatePolish()
 
     const QList<QGeoCoordinate> perimeter = QGeoMapItemGeometry::path(m_rect.m_rectangle);
     const QList<QDoubleVector2D> pathMercator_ = QGeoMapItemGeometry::pathMercator(perimeter);
-    m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-    m_geometry.updateSourcePoints(*m_rect.map(), pathMercator_);
+    m_geometry.updateSourcePoints(*m_rect.map(), QList<QList<QDoubleVector2D>>{pathMercator_});
 
     m_rect.setShapeTriangulationScale(m_shape, m_geometry.maxCoord());
 
@@ -389,10 +387,8 @@ QSGNode *QDeclarativeRectangleMapItemPrivateCPU::updateMapItemPaintNode(QSGNode 
 {
     Q_UNUSED(data);
     delete oldNode;
-    if (m_geometry.isScreenDirty() || m_rect.m_dirtyMaterial) {
-        m_geometry.setPreserveGeometry(false);
+    if (m_geometry.isScreenDirty()) {
         m_geometry.markClean();
-        m_rect.m_dirtyMaterial = false;
     }
     return nullptr;
 }

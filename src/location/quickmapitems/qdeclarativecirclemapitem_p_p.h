@@ -60,27 +60,21 @@ public:
         if (!m_circle.map() || m_circle.map()->geoProjection().projectionType() != QGeoProjection::ProjectionWebMercator)
             return;
 
-        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_circle.map()->geoProjection());
-        QList<QGeoCoordinate> path;
-        calculatePeripheralPoints(path, m_circle.center(), m_circle.radius(), CircleSamples, m_leftBound);
         m_circlePath.clear();
-        for (const QGeoCoordinate &c : path)
-            m_circlePath << p.geoToMapProjection(c);
+        const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_circle.map()->geoProjection());
+        calculatePeripheralPoints(m_circlePath, m_circle.center(), m_circle.radius(), p, CircleSamples);
     }
 
-    static bool crossEarthPole(const QGeoCoordinate &center, qreal distance);
+    static int crossEarthPole(const QGeoCoordinate &center, qreal distance);
 
-    static bool preserveCircleGeometry(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
-                                qreal distance, const QGeoProjectionWebMercator &p);
-    static void updateCirclePathForRendering(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
+    static void includeOnePoleInPath(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
                                       qreal distance, const QGeoProjectionWebMercator &p);
 
-    static void calculatePeripheralPoints(QList<QGeoCoordinate> &path, const QGeoCoordinate &center,
-                                   qreal distance, int steps, QGeoCoordinate &leftBound);
+    static void calculatePeripheralPoints(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
+                                   qreal distance, const QGeoProjectionWebMercator &p, int steps);
 
     QDeclarativeCircleMapItem &m_circle;
     QList<QDoubleVector2D> m_circlePath;
-    QGeoCoordinate m_leftBound;
 };
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivateCPU: public QDeclarativeCircleMapItemPrivate
@@ -96,7 +90,6 @@ public:
     }
     void markSourceDirtyAndUpdate() override
     {
-        // preserveGeometry is cleared in updateMapItemPaintNode
         m_geometry.markSourceDirty();
         m_circle.polishAndUpdate();
     }

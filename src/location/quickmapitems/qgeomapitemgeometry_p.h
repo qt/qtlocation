@@ -74,12 +74,6 @@ public:
     inline void markClean() { screenDirty_ = (sourceDirty_ = false); clipToViewport_ = true;}
     inline void clearScreen() { screenDirty_ = false; }
 
-    inline void setPreserveGeometry(bool value, const QGeoCoordinate &geoLeftBound = QGeoCoordinate())
-    {
-        preserveGeometry_ = value;
-        if (preserveGeometry_)
-            geoLeftBound_ = geoLeftBound;
-    }
     inline QGeoCoordinate geoLeftBound() { return geoLeftBound_; }
 
     inline QRectF sourceBoundingBox() const { return sourceBounds_; }

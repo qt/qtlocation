@@ -16,6 +16,31 @@ QT_BEGIN_NAMESPACE
 
 namespace QDeclarativeGeoMapItemUtils {
 
+double distanceSqrPointLine(double p0_x
+                          , double p0_y
+                          , double p1_x
+                          , double p1_y
+                          , double p2_x
+                          , double p2_y)
+{
+    const double t_x = p2_x - p1_x;
+    const double t_y = p2_y - p1_y;
+    const double p_x = p0_x - p1_x;
+    const double p_y = p0_y - p1_y;
+    const double tsqr = t_x * t_x + t_y * t_y;
+
+    if (tsqr == 0)
+        return qInf();
+
+    double alpha = (p_x * t_x + p_y * t_y) / tsqr;
+    alpha = qBound<double>(0, alpha, 1);
+
+    const double dx = p_x - t_x * alpha;
+    const double dy = p_y - t_y * alpha;
+
+    return dx * dx + dy * dy;
+}
+
 void wrapPath(const QList<QGeoCoordinate> &perimeter,
               const QGeoCoordinate &geoLeftBound,
               const QGeoProjectionWebMercator &p,
@@ -148,6 +173,22 @@ void projectBbox(const QList<QDoubleVector2D> &clippedBbox,
         }
     }
     projectedBbox.closeSubpath();
+}
+
+
+QRectF boundingRectangleFromList(const QList<QDoubleVector2D> &list)
+{
+    double xMin = qInf();
+    double xMax = -qInf();
+    double yMin = qInf();
+    double yMax = -qInf();
+    for (const auto &coord : list) {
+        xMin = qMin(xMin, coord.x());
+        xMax = qMax(xMax, coord.x());
+        yMin = qMin(yMin, coord.y());
+        yMax = qMax(yMax, coord.y());
+    }
+    return QRectF(xMin, yMin, xMax - xMin, yMax - yMin);
 }
 
 } // namespace QDeclarativeGeoMapItemUtils

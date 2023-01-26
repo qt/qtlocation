@@ -111,7 +111,6 @@ protected Q_SLOTS:
 protected:
     float zoomLevelOpacity() const;
     bool isPolishScheduled() const;
-    virtual void setMaterialDirty();
 
     QGeoMap::ItemType m_itemType = QGeoMap::NoItem;
 
@@ -123,7 +122,7 @@ private:
     QPointer<QGeoMap> map_;
     QDeclarativeGeoMap *quickMap_ = nullptr;
 
-    QSizeF lastSize_;
+    QSizeF lastMapSize_;
     QGeoCameraData lastCameraData_;
 
     QDeclarativeGeoMapItemGroup *parentGroup_ = nullptr;

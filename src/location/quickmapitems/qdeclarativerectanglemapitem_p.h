@@ -80,7 +80,6 @@ private:
     QGeoRectangle m_rectangle;
     QDeclarativeMapLineProperties m_border;
     QColor m_color = Qt::transparent;
-    bool m_dirtyMaterial = true;
 
     bool m_updatingGeometry = false;
 

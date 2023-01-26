@@ -109,7 +109,6 @@ public:
     QGeoPath m_geopath;
     QDeclarativeMapLineProperties m_line;
 
-    bool m_dirtyMaterial = true;
     bool m_updatingGeometry = false;
 
     std::unique_ptr<QDeclarativePolylineMapItemPrivate> m_d;
