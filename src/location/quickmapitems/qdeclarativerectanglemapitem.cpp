@@ -324,7 +324,6 @@ QDeclarativeRectangleMapItemPrivate::~QDeclarativeRectangleMapItemPrivate()
 QDeclarativeRectangleMapItemPrivateCPU::QDeclarativeRectangleMapItemPrivateCPU(QDeclarativeRectangleMapItem &rect)
     : QDeclarativeRectangleMapItemPrivate(rect)
 {
-#ifdef MAPITEMS_USE_SHAPES
     m_shape = new QQuickShape(&m_rect);
     m_shape->setObjectName("_qt_map_item_shape");
     m_shape->setZ(-1);
@@ -338,14 +337,11 @@ QDeclarativeRectangleMapItemPrivateCPU::QDeclarativeRectangleMapItemPrivateCPU(Q
 
     auto shapePaths = m_shape->data();
     shapePaths.append(&shapePaths, m_shapePath);
-#endif
 }
 
 QDeclarativeRectangleMapItemPrivateCPU::~QDeclarativeRectangleMapItemPrivateCPU()
 {
-#ifdef MAPITEMS_USE_SHAPES
     delete m_shape;
-#endif
 }
 
 void QDeclarativeRectangleMapItemPrivateCPU::updatePolish()
@@ -354,11 +350,7 @@ void QDeclarativeRectangleMapItemPrivateCPU::updatePolish()
         m_geometry.clear();
         m_rect.setWidth(0);
         m_rect.setHeight(0);
-#ifdef MAPITEMS_USE_SHAPES
         m_shape->setVisible(false);
-#else
-        m_borderGeometry.clear();
-#endif
         return;
     }
 
@@ -370,38 +362,6 @@ void QDeclarativeRectangleMapItemPrivateCPU::updatePolish()
     m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
     m_geometry.updateSourcePoints(*m_rect.map(), pathMercator_);
 
-#ifndef MAPITEMS_USE_SHAPES
-    m_geometry.updateScreenPoints(*m_rect.map(), m_rect.m_border.width());
-
-    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_rect.map()->geoProjection());
-    QList<QGeoMapItemGeometry *> geoms;
-    geoms << &m_geometry;
-
-    m_borderGeometry.clear();
-    if (m_rect.m_border.color().alpha() != 0 && m_rect.m_border.width() > 0) {
-        QList<QDoubleVector2D> closedPath = pathMercator_;
-        closedPath << closedPath.first();
-
-        m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-        const QGeoCoordinate &geometryOrigin = m_geometry.origin();
-
-        m_borderGeometry.srcPoints_.clear();
-        m_borderGeometry.srcPointTypes_.clear();
-
-        QDoubleVector2D borderLeftBoundWrapped;
-        QList<QList<QDoubleVector2D > > clippedPaths = m_borderGeometry.clipPath(*m_rect.map(), closedPath, borderLeftBoundWrapped);
-        if (clippedPaths.size()) {
-            borderLeftBoundWrapped = p.geoToWrappedMapProjection(geometryOrigin);
-            m_borderGeometry.pathToScreen(*m_rect.map(), clippedPaths, borderLeftBoundWrapped);
-            m_borderGeometry.updateScreenPoints(*m_rect.map(), m_rect.m_border.width());
-            geoms << &m_borderGeometry;
-        } else {
-            m_borderGeometry.clear();
-        }
-    }
-#endif
-
-#ifdef MAPITEMS_USE_SHAPES
     m_rect.setShapeTriangulationScale(m_shape, m_geometry.maxCoord());
 
     const bool hasBorder = m_rect.m_border.color().alpha() != 0 && m_rect.m_border.width() > 0;
@@ -422,19 +382,12 @@ void QDeclarativeRectangleMapItemPrivateCPU::updatePolish()
     m_shape->setVisible(true);
 
     m_rect.setPositionOnMap(m_geometry.origin(), -1 * bb.topLeft() + QPointF(borderWidth, borderWidth));
-#else
-    const QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
-    m_rect.setWidth(combined.width()  + 2 * m_rect.m_border.width()); // ToDo: fix this! 2 is incorrect
-    m_rect.setHeight(combined.height()  + 2 * m_rect.m_border.width());
-    m_rect.setPositionOnMap(m_geometry.origin(), m_geometry.firstPointOffset());
-#endif
 }
 
 QSGNode *QDeclarativeRectangleMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *oldNode,
                                                             QQuickItem::UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
-#ifdef MAPITEMS_USE_SHAPES
     delete oldNode;
     if (m_geometry.isScreenDirty() || m_rect.m_dirtyMaterial) {
         m_geometry.setPreserveGeometry(false);
@@ -442,38 +395,11 @@ QSGNode *QDeclarativeRectangleMapItemPrivateCPU::updateMapItemPaintNode(QSGNode 
         m_rect.m_dirtyMaterial = false;
     }
     return nullptr;
-#else
-    if (!m_node || !oldNode) {
-        m_node = new MapPolygonNode();
-        if (oldNode) {
-            delete oldNode;
-            oldNode = nullptr;
-        }
-    } else {
-        m_node = static_cast<MapPolygonNode *>(oldNode);
-    }
-
-    //TODO: update only material
-    if (m_geometry.isScreenDirty() || m_borderGeometry.isScreenDirty() || m_rect.m_dirtyMaterial) {
-        m_node->update(m_rect.m_color, m_rect.m_border.color(), &m_geometry, &m_borderGeometry);
-        m_geometry.setPreserveGeometry(false);
-        m_borderGeometry.setPreserveGeometry(false);
-        m_geometry.markClean();
-        m_borderGeometry.markClean();
-        m_rect.m_dirtyMaterial = false;
-    }
-
-    return m_node;
-#endif
 }
 
 bool QDeclarativeRectangleMapItemPrivateCPU::contains(const QPointF &point) const
 {
-#ifdef MAPITEMS_USE_SHAPES
     return m_shape->contains(m_rect.mapToItem(m_shape, point));
-#else
-    return (m_geometry.contains(point) || m_borderGeometry.contains(point));
-#endif
 }
 
 QT_END_NAMESPACE

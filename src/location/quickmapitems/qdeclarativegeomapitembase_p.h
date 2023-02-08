@@ -27,10 +27,6 @@
 #include <QScopedPointer>
 #include <QtQuickShapes/private/qquickshape_p.h>
 
-// Master switch to make rectangle, circle, polygon, and polyline use
-// QQuickShape instead of a custom scenegraph node.
-#define MAPITEMS_USE_SHAPES
-
 QT_BEGIN_NAMESPACE
 
 struct Q_LOCATION_PRIVATE_EXPORT QGeoMapViewportChangeEvent

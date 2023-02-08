@@ -45,10 +45,6 @@ public:
     void updateSourcePoints(const QGeoMap &map,
                             const QList<QDoubleVector2D> &path);
 
-#ifndef MAPITEMS_USE_SHAPES
-    void updateScreenPoints(const QGeoMap &map, qreal strokeWidth = 0.0);
-#endif
-
     QPainterPath srcPath() const { return srcPath_; }
     qreal maxCoord() const { return maxCoord_; }
 
@@ -57,24 +53,6 @@ protected:
     qreal maxCoord_ = 0.0;
     bool assumeSimple_ = false;
 };
-
-#ifndef MAPITEMS_USE_SHAPES
-class Q_LOCATION_PRIVATE_EXPORT MapPolygonNode : public MapItemGeometryNode
-{
-
-public:
-    MapPolygonNode();
-    ~MapPolygonNode() override;
-
-    void update(const QColor &fillColor, const QColor &borderColor,
-                const QGeoMapItemGeometry *fillShape,
-                const QGeoMapItemGeometry *borderShape);
-private:
-    QSGFlatColorMaterial fill_material_;
-    MapPolylineNode *border_;
-    QSGGeometry geometry_;
-};
-#endif
 
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItemPrivate
 {
@@ -115,9 +93,6 @@ public:
     {
         // preserveGeometry is cleared in updateMapItemPaintNode
         m_geometry.markSourceDirty();
-#ifndef MAPITEMS_USE_SHAPES
-        m_borderGeometry.markSourceDirty();
-#endif
         m_poly.polishAndUpdate();
     }
     void regenerateCache()
@@ -140,9 +115,6 @@ public:
     void preserveGeometry()
     {
         m_geometry.setPreserveGeometry(true, m_poly.m_geopoly.boundingGeoRectangle().topLeft());
-#ifndef MAPITEMS_USE_SHAPES
-        m_borderGeometry.setPreserveGeometry(true, m_poly.m_geopoly.boundingGeoRectangle().topLeft());
-#endif
     }
     void afterViewportChanged() override
     {
@@ -177,14 +149,9 @@ public:
 
     QList<QDoubleVector2D> m_geopathProjected;
     QGeoMapPolygonGeometry m_geometry;
-#ifdef MAPITEMS_USE_SHAPES
     QQuickShape *m_shape = nullptr;
     QQuickShapePath *m_shapePath = nullptr;
     QDeclarativeGeoMapPainterPath *m_painterPath = nullptr;
-#else
-    QGeoMapPolylineGeometry m_borderGeometry;
-    MapPolygonNode *m_node = nullptr;
-#endif
 };
 
 QT_END_NAMESPACE
