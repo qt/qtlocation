@@ -218,79 +218,6 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     sourceBounds_ = srcPath_.boundingRect();
 }
 
-#ifndef MAPITEMS_USE_SHAPES
-/*!
-    \internal
-*/
-void QGeoMapPolygonGeometry::updateScreenPoints(const QGeoMap &map, qreal strokeWidth)
-{
-    if (!screenDirty_)
-        return;
-
-    if (map.viewportWidth() == 0 || map.viewportHeight() == 0) {
-        clear();
-        return;
-    }
-
-    // The geometry has already been clipped against the visible region projection in wrapped mercator space.
-    QPainterPath ppi = srcPath_;
-    clear();
-
-    // a polygon requires at least 3 points;
-    if (ppi.elementCount() < 3)
-        return;
-
-    // translate the path into top-left-centric coordinates
-    QRectF bb = ppi.boundingRect();
-    ppi.translate(-bb.left(), -bb.top());
-    firstPointOffset_ = -1 * bb.topLeft();
-
-    ppi.closeSubpath();
-    screenOutline_ = ppi;
-
-    using Coord = double;
-    using N = uint32_t;
-    using Point = std::array<Coord, 2>;
-
-    std::vector<std::vector<Point>> polygon;
-    polygon.push_back(std::vector<Point>());
-    std::vector<Point> &poly = polygon.front();
-    // ... fill polygon structure with actual data
-
-    for (int i = 0; i < ppi.elementCount(); ++i) {
-        const QPainterPath::Element e = ppi.elementAt(i);
-        if (e.isMoveTo() || i == ppi.elementCount() - 1
-                || (qAbs(e.x - poly.front()[0]) < 0.1
-                    && qAbs(e.y - poly.front()[1]) < 0.1)) {
-            Point p = {{ e.x, e.y }};
-            poly.push_back( p );
-        } else if (e.isLineTo()) {
-            Point p = {{ e.x, e.y }};
-            poly.push_back( p );
-        } else {
-            qWarning("Unhandled element type in polygon painterpath");
-        }
-    }
-
-    if (poly.size() > 2) {
-        // Run tessellation
-        // Returns array of indices that refer to the vertices of the input polygon.
-        // Three subsequent indices form a triangle.
-        screenVertices_.clear();
-        screenIndices_.clear();
-        for (const auto &p : poly)
-            screenVertices_ << QPointF(p[0], p[1]);
-        std::vector<N> indices = qt_mapbox::earcut<N>(polygon);
-        for (const auto &i: indices)
-            screenIndices_ << quint32(i);
-    }
-
-    screenBounds_ = ppi.boundingRect();
-    if (strokeWidth != 0.0)
-        this->translate(QPointF(strokeWidth, strokeWidth));
-}
-#endif
-
 /*
  * QDeclarativePolygonMapItem Private Implementations
  */
@@ -302,7 +229,6 @@ QDeclarativePolygonMapItemPrivate::~QDeclarativePolygonMapItemPrivate()
 QDeclarativePolygonMapItemPrivateCPU::QDeclarativePolygonMapItemPrivateCPU(QDeclarativePolygonMapItem &polygon)
     : QDeclarativePolygonMapItemPrivate(polygon)
 {
-#ifdef MAPITEMS_USE_SHAPES
     m_shape = new QQuickShape(&m_poly);
     m_shape->setObjectName("_qt_map_item_shape");
     m_shape->setZ(-1);
@@ -316,14 +242,11 @@ QDeclarativePolygonMapItemPrivateCPU::QDeclarativePolygonMapItemPrivateCPU(QDecl
 
     auto shapePaths = m_shape->data();
     shapePaths.append(&shapePaths, m_shapePath);
-#endif
 }
 
 QDeclarativePolygonMapItemPrivateCPU::~QDeclarativePolygonMapItemPrivateCPU()
 {
-#ifdef MAPITEMS_USE_SHAPES
     delete m_shape;
-#endif
 }
 
 void QDeclarativePolygonMapItemPrivateCPU::updatePolish()
@@ -332,11 +255,7 @@ void QDeclarativePolygonMapItemPrivateCPU::updatePolish()
         m_geometry.clear();
         m_poly.setWidth(0);
         m_poly.setHeight(0);
-#ifdef MAPITEMS_USE_SHAPES
         m_shape->setVisible(false);
-#else
-        m_borderGeometry.clear();
-#endif
         return;
     }
     const QGeoMap *map = m_poly.map();
@@ -346,42 +265,8 @@ void QDeclarativePolygonMapItemPrivateCPU::updatePolish()
 
     m_geometry.updateSourcePoints(*map, m_geopathProjected);
 
-#ifndef MAPITEMS_USE_SHAPES
-    m_geometry.updateScreenPoints(*map, borderWidth);
-
-    const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map->geoProjection());
-    QList<QGeoMapItemGeometry *> geoms;
-    geoms << &m_geometry;
-
-    m_borderGeometry.clear();
-    if (m_poly.m_border.color().alpha() != 0 && borderWidth > 0) {
-        QList<QDoubleVector2D> closedPath = m_geopathProjected;
-        closedPath << closedPath.first();
-
-        m_borderGeometry.setPreserveGeometry(true, m_poly.m_geopoly.boundingGeoRectangle().topLeft());
-
-        const QGeoCoordinate &geometryOrigin = m_geometry.origin();
-
-        m_borderGeometry.srcPoints_.clear();
-        m_borderGeometry.srcPointTypes_.clear();
-
-        QDoubleVector2D borderLeftBoundWrapped;
-        QList<QList<QDoubleVector2D > > clippedPaths = m_borderGeometry.clipPath(*map, closedPath, borderLeftBoundWrapped);
-        if (clippedPaths.size()) {
-            borderLeftBoundWrapped = p.geoToWrappedMapProjection(geometryOrigin);
-            m_borderGeometry.pathToScreen(*map, clippedPaths, borderLeftBoundWrapped);
-            m_borderGeometry.updateScreenPoints(*map, borderWidth);
-
-            geoms <<  &m_borderGeometry;
-        } else {
-            m_borderGeometry.clear();
-        }
-    }
-#endif
-
     const QRectF bb = m_geometry.sourceBoundingBox();
 
-#ifdef MAPITEMS_USE_SHAPES
     m_poly.setShapeTriangulationScale(m_shape, m_geometry.maxCoord());
 
     const bool hasBorder = m_poly.m_border.color().alpha() != 0 && m_poly.m_border.width() > 0;
@@ -398,11 +283,6 @@ void QDeclarativePolygonMapItemPrivateCPU::updatePolish()
     m_shape->setSize(m_poly.size());
     m_shape->setOpacity(m_poly.zoomLevelOpacity());
     m_shape->setVisible(true);
-#else
-    const QRectF combined = QGeoMapItemGeometry::translateToCommonOrigin(geoms);
-    m_poly.setWidth(combined.width() + 2 * borderWidth);
-    m_poly.setHeight(combined.height() + 2 * borderWidth);
-#endif
 
     m_poly.setPositionOnMap(m_geometry.origin(), -1 * bb.topLeft() + QPointF(borderWidth, borderWidth));
 }
@@ -411,7 +291,6 @@ QSGNode *QDeclarativePolygonMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *o
                                                             QQuickItem::UpdatePaintNodeData *data)
 {
     Q_UNUSED(data);
-#ifdef MAPITEMS_USE_SHAPES
     delete oldNode;
     if (m_geometry.isScreenDirty() || m_poly.m_dirtyMaterial) {
         m_geometry.setPreserveGeometry(false);
@@ -419,44 +298,11 @@ QSGNode *QDeclarativePolygonMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *o
         m_poly.m_dirtyMaterial = false;
     }
     return nullptr;
-#else
-    if (!m_node || !oldNode) {
-        m_node = new MapPolygonNode();
-        if (oldNode) {
-            delete oldNode;
-            oldNode = nullptr;
-        }
-    } else {
-        m_node = static_cast<MapPolygonNode *>(oldNode);
-    }
-
-    //TODO: update only material
-    if (m_geometry.isScreenDirty()
-            || m_borderGeometry.isScreenDirty()
-            || m_poly.m_dirtyMaterial
-            || !oldNode) {
-        m_node->update(m_poly.m_color,
-                        m_poly.m_border.color(),
-                        &m_geometry,
-                        &m_borderGeometry);
-        m_geometry.setPreserveGeometry(false);
-        m_borderGeometry.setPreserveGeometry(false);
-        m_geometry.markClean();
-        m_borderGeometry.markClean();
-        m_poly.m_dirtyMaterial = false;
-    }
-
-    return m_node;
-#endif
 }
 
 bool QDeclarativePolygonMapItemPrivateCPU::contains(const QPointF &point) const
 {
-#ifdef MAPITEMS_USE_SHAPES
     return m_shape->contains(m_poly.mapToItem(m_shape, point));
-#else
-    return (m_geometry.contains(point) || m_borderGeometry.contains(point));
-#endif
 }
 
 /*
@@ -698,59 +544,5 @@ void QDeclarativePolygonMapItem::geometryChange(const QRectF &newGeometry, const
 }
 
 //////////////////////////////////////////////////////////////////////
-
-#ifndef MAPITEMS_USE_SHAPES
-
-MapPolygonNode::MapPolygonNode()
-    : border_(new MapPolylineNode()),
-      geometry_(QSGGeometry::defaultAttributes_Point2D(), 0)
-{
-    geometry_.setDrawingMode(QSGGeometry::DrawTriangles);
-    QSGGeometryNode::setMaterial(&fill_material_);
-    QSGGeometryNode::setGeometry(&geometry_);
-
-    appendChildNode(border_);
-}
-
-MapPolygonNode::~MapPolygonNode()
-{
-}
-
-/*!
-    \internal
-*/
-void MapPolygonNode::update(const QColor &fillColor, const QColor &borderColor,
-                            const QGeoMapItemGeometry *fillShape,
-                            const QGeoMapItemGeometry *borderShape)
-{
-    /* Do the border update first */
-    border_->update(borderColor, borderShape);
-
-    /* If we have neither fill nor border with valid points, block the whole
-     * tree. We can't just block the fill without blocking the border too, so
-     * we're a little conservative here (maybe at the expense of rendering
-     * accuracy) */
-    if (fillShape->size() == 0 && borderShape->size() == 0) {
-            setSubtreeBlocked(true);
-            return;
-    }
-    setSubtreeBlocked(false);
-
-
-    // TODO: do this only if the geometry has changed!!
-    // No need to do this every frame.
-    // Then benchmark the difference!
-    QSGGeometry *fill = QSGGeometryNode::geometry();
-    fillShape->allocateAndFill(fill);
-    markDirty(DirtyGeometry);
-
-    if (fillColor != fill_material_.color()) {
-        fill_material_.setColor(fillColor);
-        setMaterial(&fill_material_);
-        markDirty(DirtyMaterial);
-    }
-}
-
-#endif
 
 QT_END_NAMESPACE

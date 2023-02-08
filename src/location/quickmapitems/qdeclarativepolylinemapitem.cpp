@@ -724,7 +724,6 @@ QDeclarativePolylineMapItemPrivate::~QDeclarativePolylineMapItemPrivate()
 QDeclarativePolylineMapItemPrivateCPU::QDeclarativePolylineMapItemPrivateCPU(QDeclarativePolylineMapItem &poly)
     : QDeclarativePolylineMapItemPrivate(poly)
 {
-#ifdef MAPITEMS_USE_SHAPES
     m_shape = new QQuickShape(&m_poly);
     m_shape->setObjectName("_qt_map_item_shape");
     m_shape->setZ(-1);
@@ -738,14 +737,11 @@ QDeclarativePolylineMapItemPrivateCPU::QDeclarativePolylineMapItemPrivateCPU(QDe
 
     auto shapePaths = m_shape->data();
     shapePaths.append(&shapePaths, m_shapePath);
-#endif
 }
 
 QDeclarativePolylineMapItemPrivateCPU::~QDeclarativePolylineMapItemPrivateCPU()
 {
-#ifdef MAPITEMS_USE_SHAPES
     delete m_shape;
-#endif
 }
 
 void QDeclarativePolylineMapItemPrivateCPU::regenerateCache()
@@ -773,9 +769,7 @@ void QDeclarativePolylineMapItemPrivateCPU::updatePolish()
         m_geometry.clear();
         m_poly.setWidth(0);
         m_poly.setHeight(0);
-#ifdef MAPITEMS_USE_SHAPES
         m_shape->setVisible(false);
-#endif
         return;
     }
     QScopedValueRollback<bool> rollback(m_poly.m_updatingGeometry);
@@ -794,7 +788,6 @@ void QDeclarativePolylineMapItemPrivateCPU::updatePolish()
     // it has to be shifted so that the center of the line is on the correct geocoord
     m_poly.setPositionOnMap(m_geometry.origin(), -1 * bb.topLeft() + QPointF(borderWidth, borderWidth) * 0.5);
 
-#ifdef MAPITEMS_USE_SHAPES
     m_poly.setShapeTriangulationScale(m_shape, m_geometry.maxCoord_);
 
     m_shapePath->setStrokeColor(m_poly.m_line.color());
@@ -808,40 +801,20 @@ void QDeclarativePolylineMapItemPrivateCPU::updatePolish()
     m_shape->setSize(m_poly.size());
     m_shape->setOpacity(m_poly.zoomLevelOpacity());
     m_shape->setVisible(true);
-#endif
 }
 
 QSGNode *QDeclarativePolylineMapItemPrivateCPU::updateMapItemPaintNode(QSGNode *oldNode,
                                                         QQuickItem::UpdatePaintNodeData * /*data*/)
 {
-#ifdef MAPITEMS_USE_SHAPES
     delete oldNode;
-#else
-    if (!m_node || !oldNode) {
-        m_node = new MapPolylineNode();
-        if (oldNode) {
-            delete oldNode;
-            oldNode = nullptr;
-        }
-    } else {
-        m_node = static_cast<MapPolylineNode *>(oldNode);
-    }
-#endif
 
     //TODO: update only material
     if (m_geometry.isScreenDirty() || m_poly.m_dirtyMaterial || !oldNode) {
-#ifndef MAPITEMS_USE_SHAPES
-        m_node->update(m_poly.m_line.color(), &m_geometry);
-#endif
         m_geometry.setPreserveGeometry(false);
         m_geometry.markClean();
         m_poly.m_dirtyMaterial = false;
     }
-#ifdef MAPITEMS_USE_SHAPES
     return nullptr;
-#else
-    return m_node;
-#endif
 }
 
 bool QDeclarativePolylineMapItemPrivateCPU::contains(const QPointF &point) const
@@ -1178,108 +1151,5 @@ void QDeclarativePolylineMapItem::setGeoShape(const QGeoShape &shape)
 }
 
 //////////////////////////////////////////////////////////////////////
-
-#ifndef MAPITEMS_USE_SHAPES
-
-/*!
-    \internal
-*/
-VisibleNode::VisibleNode() : m_blocked{true}, m_visible{true}
-{
-
-}
-
-VisibleNode::~VisibleNode()
-{
-
-}
-
-/*!
-    \internal
-*/
-bool VisibleNode::subtreeBlocked() const
-{
-    return m_blocked || !m_visible;
-}
-
-/*!
-    \internal
-*/
-void VisibleNode::setSubtreeBlocked(bool blocked)
-{
-    m_blocked = blocked;
-}
-
-bool VisibleNode::visible() const
-{
-    return m_visible;
-}
-
-/*!
-    \internal
-*/
-void VisibleNode::setVisible(bool visible)
-{
-    m_visible = visible;
-}
-
-/*!
-    \internal
-*/
-MapItemGeometryNode::~MapItemGeometryNode()
-{
-
-}
-
-bool MapItemGeometryNode::isSubtreeBlocked() const
-{
-    return subtreeBlocked();
-}
-
-
-/*!
-    \internal
-*/
-MapPolylineNode::MapPolylineNode() :
-    geometry_(QSGGeometry::defaultAttributes_Point2D(),0)
-{
-    geometry_.setDrawingMode(QSGGeometry::DrawTriangleStrip);
-    QSGGeometryNode::setMaterial(&fill_material_);
-    QSGGeometryNode::setGeometry(&geometry_);
-}
-
-
-/*!
-    \internal
-*/
-MapPolylineNode::~MapPolylineNode()
-{
-}
-
-/*!
-    \internal
-*/
-void MapPolylineNode::update(const QColor &fillColor,
-                             const QGeoMapItemGeometry *shape)
-{
-    if (shape->size() == 0) {
-        setSubtreeBlocked(true);
-        return;
-    } else {
-        setSubtreeBlocked(false);
-    }
-
-    QSGGeometry *fill = QSGGeometryNode::geometry();
-    shape->allocateAndFill(fill);
-    markDirty(DirtyGeometry);
-
-    if (fillColor != fill_material_.color()) {
-        fill_material_.setColor(fillColor);
-        setMaterial(&fill_material_);
-        markDirty(DirtyMaterial);
-    }
-}
-
-#endif
 
 QT_END_NAMESPACE

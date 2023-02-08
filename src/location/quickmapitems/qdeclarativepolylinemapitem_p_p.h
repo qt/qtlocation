@@ -74,43 +74,6 @@ public:
     friend class QDeclarativeRectangleMapItem;
 };
 
-#ifndef MAPITEMS_USE_SHAPES
-class Q_LOCATION_PRIVATE_EXPORT VisibleNode
-{
-public:
-    VisibleNode();
-    virtual ~VisibleNode();
-
-    bool subtreeBlocked() const;
-    void setSubtreeBlocked(bool blocked);
-    bool visible() const;
-    void setVisible(bool visible);
-
-    bool m_blocked : 1;
-    bool m_visible : 1;
-};
-
-class Q_LOCATION_PRIVATE_EXPORT MapItemGeometryNode : public QSGGeometryNode, public VisibleNode
-{
-public:
-    ~MapItemGeometryNode() override;
-    bool isSubtreeBlocked() const override;
-};
-
-class Q_LOCATION_PRIVATE_EXPORT MapPolylineNode : public MapItemGeometryNode
-{
-public:
-    MapPolylineNode();
-    ~MapPolylineNode() override;
-
-    void update(const QColor &fillColor, const QGeoMapItemGeometry *shape);
-
-protected:
-    QSGFlatColorMaterial fill_material_;
-    QSGGeometry geometry_;
-};
-#endif
-
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivate
 {
     Q_DISABLE_COPY_MOVE(QDeclarativePolylineMapItemPrivate)
@@ -190,13 +153,9 @@ public:
 
     QList<QDoubleVector2D> m_geopathProjected;
     QGeoMapPolylineGeometry m_geometry;
-#ifdef MAPITEMS_USE_SHAPES
     QQuickShape *m_shape = nullptr;
     QQuickShapePath *m_shapePath = nullptr;
     QDeclarativeGeoMapPainterPath *m_painterPath = nullptr;
-#else
-    MapPolylineNode *m_node = nullptr;
-#endif
 };
 
 QT_END_NAMESPACE

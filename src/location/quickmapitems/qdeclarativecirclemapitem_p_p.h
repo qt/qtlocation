@@ -98,9 +98,6 @@ public:
     {
         // preserveGeometry is cleared in updateMapItemPaintNode
         m_geometry.markSourceDirty();
-#ifndef MAPITEMS_USE_SHAPES
-        m_borderGeometry.markSourceDirty();
-#endif
         m_circle.polishAndUpdate();
     }
     void onMapSet() override
@@ -126,14 +123,9 @@ public:
     bool contains(const QPointF &point) const override;
 
     QGeoMapCircleGeometry m_geometry;
-#ifdef MAPITEMS_USE_SHAPES
     QQuickShape *m_shape = nullptr;
     QQuickShapePath *m_shapePath = nullptr;
     QDeclarativeGeoMapPainterPath *m_painterPath = nullptr;
-#else
-    QGeoMapPolylineGeometry m_borderGeometry;
-    MapPolygonNode *m_node = nullptr;
-#endif
 };
 
 QT_END_NAMESPACE

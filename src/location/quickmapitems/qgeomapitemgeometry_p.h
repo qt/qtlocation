@@ -119,12 +119,6 @@ public:
     inline void clear() { firstPointOffset_ = QPointF(0,0);
                           screenVertices_.clear(); screenIndices_.clear(); }
 
-#ifndef MAPITEMS_USE_SHAPES
-    void translate(const QPointF &offset);
-    void allocateAndFill(QSGGeometry *geom) const;
-    static QRectF translateToCommonOrigin(const QList<QGeoMapItemGeometry *> &geoms);
-#endif
-
     mutable bool m_dataChanged = false;
 
 private:

@@ -60,9 +60,6 @@ public:
     void markSourceDirtyAndUpdate() override
     {
         m_geometry.markSourceDirty();
-#ifndef MAPITEMS_USE_SHAPES
-        m_borderGeometry.markSourceDirty();
-#endif
         m_rect.polishAndUpdate();
     }
     void onMapSet() override
@@ -76,17 +73,11 @@ public:
     void onItemGeometryChanged() override
     {
         m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-#ifndef MAPITEMS_USE_SHAPES
-        m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-#endif
         markSourceDirtyAndUpdate();
     }
     void afterViewportChanged() override
     {
         m_geometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-#ifndef MAPITEMS_USE_SHAPES
-        m_borderGeometry.setPreserveGeometry(true, m_rect.m_rectangle.topLeft());
-#endif
         markSourceDirtyAndUpdate();
     }
     void updatePolish() override;
@@ -94,14 +85,9 @@ public:
     bool contains(const QPointF &point) const override;
 
     QGeoMapPolygonGeometry m_geometry;
-#ifdef MAPITEMS_USE_SHAPES
     QQuickShape *m_shape = nullptr;
     QQuickShapePath *m_shapePath = nullptr;
     QDeclarativeGeoMapPainterPath *m_painterPath = nullptr;
-#else
-    QGeoMapPolylineGeometry m_borderGeometry;
-    MapPolygonNode *m_node = nullptr;
-#endif
 };
 
 QT_END_NAMESPACE
