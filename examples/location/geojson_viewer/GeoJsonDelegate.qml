@@ -21,12 +21,27 @@ DelegateChooser {
             geoShape: modelData.data
             radius: 20*1000
             border.width: 3
+            border.color: hh.hovered ? "magenta" : "black"
             opacity: dc.defaultOpacity
             /* The expression below is equivalent to:
                ((props !== undefined && props["color"] !== undefined) ? props["color"] :
                ((parent && parent.props !== undefined && parent.props["color"] !== undefined) ? parent.props["color"] : dc.defaultColor))
             */
             color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
+
+            TapHandler {
+                onTapped: {
+                    if (props !== undefined)
+                        console.log(props.name)
+                    else if (parent.parent.geojsonType == "MultiPoint")
+                        console.log(parent.parent.props.name)
+                    else
+                        console.log("NO NAME!", props)
+                }
+            }
+            HoverHandler {
+                id: hh
+            }
         }
     }
 
@@ -38,7 +53,21 @@ DelegateChooser {
             geoShape: modelData.data
             line.width: 4
             opacity: dc.defaultOpacity
-            line.color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
+            line.color: hh.hovered ? "magenta" : (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
+
+            TapHandler {
+                onTapped: {
+                    if (props !== undefined)
+                        console.log(props.name)
+                    else if (parent.parent.geojsonType == "MultiLineString")
+                        console.log(parent.parent.props.name)
+                    else
+                        console.log("NO NAME!", props)
+                }
+            }
+            HoverHandler {
+                id: hh
+            }
         }
     }
 
@@ -51,10 +80,9 @@ DelegateChooser {
             opacity: dc.defaultOpacity
             color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
             border.width: 4
-            border.color: 'black'
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
+            border.color: hh.hovered ? "magenta" : "black"
+            TapHandler {
+                onTapped: {
                     if (props !== undefined)
                         console.log(props.name)
                     else if (parent.parent.geojsonType == "MultiPolygon")
@@ -62,6 +90,9 @@ DelegateChooser {
                     else
                         console.log("NO NAME!", props)
                 }
+            }
+            HoverHandler {
+                id: hh
             }
         }
     }
