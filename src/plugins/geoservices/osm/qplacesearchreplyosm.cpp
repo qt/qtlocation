@@ -16,6 +16,7 @@
 #include <QtLocation/QPlaceAttribute>
 #include <QtLocation/QPlaceIcon>
 #include <QtLocation/QPlaceResult>
+#include <QtLocation/QPlaceCategory>
 #include <QtLocation/QPlaceSearchRequest>
 #include <QtLocation/private/qplacesearchrequest_p.h>
 
@@ -150,8 +151,8 @@ QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) con
                                                item.value(QStringLiteral("lon")).toString().toDouble());
 
     //const QString placeRank = item.value(QStringLiteral("place_rank")).toString();
-    const QString category = item.value(QStringLiteral("category")).toString();
-    // const QString type = item.value(QStringLiteral("type")).toString();
+    const QString categoryName = item.value(QStringLiteral("category")).toString();
+    const QString type = item.value(QStringLiteral("type")).toString();
     //double importance = item.value(QStringLiteral("importance")).toDouble();
 
     place.setAttribution(item.value(QStringLiteral("licence")).toString());
@@ -165,8 +166,7 @@ QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) con
     place.setIcon(icon);
 
     QJsonObject addressDetails = item.value(QStringLiteral("address")).toObject();
-
-    const QString title = addressDetails.value(category).toString();
+    const QString title = addressDetails.value(categoryName).toString();
 
     place.setName(title);
 
@@ -192,8 +192,12 @@ QPlaceResult QPlaceSearchReplyOsm::parsePlaceResult(const QJsonObject &item) con
     location.setCoordinate(coordinate);
     location.setAddress(address);
     location.setBoundingShape(parseBoundingBox(item.value(QStringLiteral("boundingbox")).toArray()));
-
     place.setLocation(location);
+
+    QPlaceCategory category;
+    category.setName(categoryName + "=" + type);
+    category.setCategoryId(categoryName + "=" + type);
+    place.setCategory(category);
 
     QPlaceResult result;
     result.setIcon(icon);
