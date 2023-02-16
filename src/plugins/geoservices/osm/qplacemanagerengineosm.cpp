@@ -129,9 +129,6 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
 
     for (const QPlaceCategory &category : request.categories()) {
         QString id = category.categoryId();
-        int index = id.indexOf(QLatin1Char('='));
-        if (index != -1)
-            id = id.mid(index+1);
         queryParts.append(QLatin1Char('[') + id + QLatin1Char(']'));
     }
 
