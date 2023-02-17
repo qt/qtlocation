@@ -154,6 +154,8 @@ QDeclarativeGeoMap::QDeclarativeGeoMap(QQuickItem *parent)
     m_cameraCapabilities.setMinimumFieldOfView(1);
     m_cameraCapabilities.setMaximumFieldOfView(179);
 
+    m_minimumZoomLevel = m_cameraCapabilities.minimumZoomLevel();
+    m_maximumZoomLevel = m_cameraCapabilities.maximumZoomLevel();
     m_minimumTilt = m_cameraCapabilities.minimumTilt();
     m_maximumTilt = m_cameraCapabilities.maximumTilt();
     m_minimumFieldOfView = m_cameraCapabilities.minimumFieldOfView();
@@ -247,10 +249,7 @@ void QDeclarativeGeoMap::initialize()
 
     QGeoCoordinate center = m_cameraData.center();
 
-    if (!qIsFinite(m_userMinimumZoomLevel))
-        setMinimumZoomLevel(m_map->minimumZoom(), false);
-    else
-        setMinimumZoomLevel(qMax<qreal>(m_map->minimumZoom(), m_userMinimumZoomLevel), false);
+    setMinimumZoomLevel(m_map->minimumZoom(), false);
 
     double bearing = m_cameraData.bearing();
     double tilt = m_cameraData.tilt();
@@ -422,66 +421,15 @@ void QDeclarativeGeoMap::onCameraCapabilitiesChanged(const QGeoCameraCapabilitie
 {
     if (m_map->cameraCapabilities() == oldCameraCapabilities)
         return;
+
     m_cameraCapabilities = m_map->cameraCapabilities();
 
-    //The zoom level limits are only restricted by the plugins values, if the user has set a more
-    //strict zoom level limit before initialization nothing is done here.
-    //minimum zoom level might be changed to limit gray bundaries
-    //This code assumes that plugins' maximum zoom level will never exceed 30.0
-    if (!qIsFinite(m_userMaximumZoomLevel)) {
-        // If the user didn't set anything
-        setMaximumZoomLevel(m_cameraCapabilities.maximumZoomLevelAt256(), false);
-    } else {  // Try to set what the user requested
-        // Else if the user set something larger, but that got clamped by the previous camera caps
-        setMaximumZoomLevel(qMin<qreal>(m_cameraCapabilities.maximumZoomLevelAt256(),
-                                        m_userMaximumZoomLevel), false);
-    }
-
-    if (!qIsFinite(m_userMinimumZoomLevel)) {
-        // If the user didn't set anything, trying to set the new caps.
-        setMinimumZoomLevel(m_cameraCapabilities.minimumZoomLevelAt256(), false);
-    } else {  // Try to set what the user requested
-        setMinimumZoomLevel(qMax<qreal>(m_cameraCapabilities.minimumZoomLevelAt256(),
-                                        m_userMinimumZoomLevel), false);
-    }
-
-    // Tilt
-    if (m_cameraCapabilities.minimumTilt() > m_minimumTilt) {
-        setMinimumTilt(m_cameraCapabilities.minimumTilt(), false);
-    } else if (m_cameraCapabilities.minimumTilt() < m_minimumTilt) {
-        if (!qIsFinite(m_userMinimumTilt))
-            setMinimumTilt(m_cameraCapabilities.minimumTilt(), false);
-        else // Try to set what the user requested
-            setMinimumTilt(qMax<qreal>(m_cameraCapabilities.minimumTilt(), m_userMinimumTilt), false);
-    }
-
-    if (m_cameraCapabilities.maximumTilt() < m_maximumTilt) {
-        setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
-    } else if (m_cameraCapabilities.maximumTilt() > m_maximumTilt) {
-        if (!qIsFinite(m_userMaximumTilt))
-            setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
-        else // Try to set what the user requested
-            setMaximumTilt(qMin<qreal>(m_cameraCapabilities.maximumTilt(), m_userMaximumTilt), false);
-    }
-
-    // FoV
-    if (m_cameraCapabilities.minimumFieldOfView() > m_minimumFieldOfView) {
-        setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
-    } else if (m_cameraCapabilities.minimumFieldOfView() < m_minimumFieldOfView) {
-        if (!qIsFinite(m_userMinimumFieldOfView))
-            setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
-        else // Try to set what the user requested
-            setMinimumFieldOfView(qMax<qreal>(m_cameraCapabilities.minimumFieldOfView(), m_userMinimumFieldOfView), false);
-    }
-
-    if (m_cameraCapabilities.maximumFieldOfView() < m_maximumFieldOfView) {
-        setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
-    } else if (m_cameraCapabilities.maximumFieldOfView() > m_maximumFieldOfView) {
-        if (!qIsFinite(m_userMaximumFieldOfView))
-            setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
-        else // Try to set what the user requested
-            setMaximumFieldOfView(qMin<qreal>(m_cameraCapabilities.maximumFieldOfView(), m_userMaximumFieldOfView), false);
-    }
+    setMaximumZoomLevel(m_cameraCapabilities.maximumZoomLevel(), false);
+    setMinimumZoomLevel(m_cameraCapabilities.minimumZoomLevel(), false);
+    setMinimumTilt(m_cameraCapabilities.minimumTilt(), false);
+    setMaximumTilt(m_cameraCapabilities.maximumTilt(), false);
+    setMinimumFieldOfView(m_cameraCapabilities.minimumFieldOfView(), false);
+    setMaximumFieldOfView(m_cameraCapabilities.maximumFieldOfView(), false);
 }
 
 /*!
@@ -577,8 +525,8 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
 
     connect(m_mappingManager, &QGeoMappingManager::supportedMapTypesChanged,
             this, &QDeclarativeGeoMap::onSupportedMapTypesChanged);
-    emit minimumZoomLevelChanged();
-    emit maximumZoomLevelChanged();
+    emit minimumZoomLevelChanged(minimumZoomLevel());
+    emit maximumZoomLevelChanged(maximumZoomLevel());
     emit supportedMapTypesChanged();
     emit activeMapTypeChanged();
 
@@ -608,24 +556,18 @@ QDeclarativeGeoServiceProvider *QDeclarativeGeoMap::plugin() const
 void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel, bool userSet)
 {
     if (minimumZoomLevel >= 0) {
-        qreal oldUserMinimumZoomLevel = m_userMinimumZoomLevel;
-        if (userSet)
-            m_userMinimumZoomLevel = minimumZoomLevel;
         qreal oldMinimumZoomLevel = this->minimumZoomLevel();
 
-        minimumZoomLevel = qBound(qreal(m_cameraCapabilities.minimumZoomLevelAt256()), minimumZoomLevel, maximumZoomLevel());
-        if (m_map)
-             minimumZoomLevel = qMax<qreal>(minimumZoomLevel, m_map->minimumZoom());
-
-        // minimumZoomLevel is, at this point, the implicit minimum zoom level
+        if (userSet)
+            m_userMinimumZoomLevel = minimumZoomLevel;
+        else
+            m_minimumZoomLevel = minimumZoomLevel;
 
         if (zoomLevel() < minimumZoomLevel)
             setZoomLevel(minimumZoomLevel);
 
-        if (qIsNaN(m_userMinimumZoomLevel) && oldMinimumZoomLevel != minimumZoomLevel)
-            emit minimumZoomLevelChanged();
-        else if (userSet && oldUserMinimumZoomLevel != m_userMinimumZoomLevel)
-            emit minimumZoomLevelChanged();
+        if (oldMinimumZoomLevel != this->minimumZoomLevel())
+            emit minimumZoomLevelChanged(this->minimumZoomLevel());
     }
 }
 
@@ -645,10 +587,7 @@ void QDeclarativeGeoMap::setMinimumZoomLevel(qreal minimumZoomLevel, bool userSe
 
 qreal QDeclarativeGeoMap::minimumZoomLevel() const
 {
-    if (!qIsNaN(m_userMinimumZoomLevel))
-        return m_userMinimumZoomLevel;
-    else
-        return m_cameraCapabilities.minimumZoomLevel();
+    return qMax(qMin(m_maximumZoomLevel, m_userMinimumZoomLevel), m_minimumZoomLevel);
 }
 
 /*!
@@ -659,17 +598,18 @@ qreal QDeclarativeGeoMap::minimumZoomLevel() const
 void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel, bool userSet)
 {
     if (maximumZoomLevel >= 0) {
-        if (userSet)
-            m_userMaximumZoomLevel = maximumZoomLevel;
         qreal oldMaximumZoomLevel = this->maximumZoomLevel();
 
-        maximumZoomLevel = qBound(minimumZoomLevel(), maximumZoomLevel, qreal(m_cameraCapabilities.maximumZoomLevelAt256()));
+        if (userSet)
+            m_userMaximumZoomLevel = maximumZoomLevel;
+        else
+            m_maximumZoomLevel = maximumZoomLevel;
 
         if (zoomLevel() > maximumZoomLevel)
             setZoomLevel(maximumZoomLevel);
 
-        if (oldMaximumZoomLevel != maximumZoomLevel)
-            emit maximumZoomLevelChanged();
+        if (oldMaximumZoomLevel != this->maximumZoomLevel())
+            emit maximumZoomLevelChanged(this->maximumZoomLevel());
     }
 }
 
@@ -684,10 +624,7 @@ void QDeclarativeGeoMap::setMaximumZoomLevel(qreal maximumZoomLevel, bool userSe
 
 qreal QDeclarativeGeoMap::maximumZoomLevel() const
 {
-    if (!qIsNaN(m_userMaximumZoomLevel))
-        return m_userMaximumZoomLevel;
-    else
-        return m_cameraCapabilities.maximumZoomLevel();
+    return qMin(qMax(m_minimumZoomLevel, m_userMaximumZoomLevel), m_maximumZoomLevel);
 }
 
 /*!
@@ -904,19 +841,18 @@ qreal QDeclarativeGeoMap::tilt() const
 void QDeclarativeGeoMap::setMinimumTilt(qreal minimumTilt, bool userSet)
 {
     if (minimumTilt >= 0) {
-        if (userSet)
-            m_userMinimumTilt = minimumTilt;
         qreal oldMinimumTilt = this->minimumTilt();
 
-        m_minimumTilt = qBound<double>(m_cameraCapabilities.minimumTilt(),
-                                       minimumTilt,
-                                       m_cameraCapabilities.maximumTilt());
+        if (userSet)
+            m_userMinimumTilt = minimumTilt;
+        else
+            m_minimumTilt = minimumTilt;
 
-        if (tilt() < m_minimumTilt)
-            setTilt(m_minimumTilt);
+        if (tilt() < minimumTilt)
+            setTilt(minimumTilt);
 
-        if (oldMinimumTilt != m_minimumTilt)
-            emit minimumTiltChanged(m_minimumTilt);
+        if (oldMinimumTilt != this->minimumTilt())
+            emit minimumTiltChanged(this->minimumTilt());
     }
 }
 
@@ -965,19 +901,18 @@ qreal QDeclarativeGeoMap::fieldOfView() const
 void QDeclarativeGeoMap::setMinimumFieldOfView(qreal minimumFieldOfView, bool userSet)
 {
     if (minimumFieldOfView > 0 && minimumFieldOfView < 180.0) {
-        if (userSet)
-            m_userMinimumFieldOfView = minimumFieldOfView;
         qreal oldMinimumFoV = this->minimumFieldOfView();
 
-        m_minimumFieldOfView = qBound<double>(m_cameraCapabilities.minimumFieldOfView(),
-                                              minimumFieldOfView,
-                                              m_cameraCapabilities.maximumFieldOfView());
+        if (userSet)
+            m_userMinimumFieldOfView = minimumFieldOfView;
+        else
+            m_minimumFieldOfView = minimumFieldOfView;
 
-        if (fieldOfView() < m_minimumFieldOfView)
-            setFieldOfView(m_minimumFieldOfView);
+        if (fieldOfView() < minimumFieldOfView)
+            setFieldOfView(minimumFieldOfView);
 
-        if (oldMinimumFoV != m_minimumFieldOfView)
-            emit minimumFieldOfViewChanged(m_minimumFieldOfView);
+        if (oldMinimumFoV != this->minimumFieldOfView())
+            emit minimumFieldOfViewChanged(this->minimumFieldOfView());
     }
 }
 
@@ -996,25 +931,23 @@ void QDeclarativeGeoMap::setMinimumFieldOfView(qreal minimumFieldOfView, bool us
 */
 qreal QDeclarativeGeoMap::minimumFieldOfView() const
 {
-    return m_minimumFieldOfView;
+    return qMax(qMin(m_maximumFieldOfView, m_userMinimumFieldOfView), m_minimumFieldOfView);
 }
 
 void QDeclarativeGeoMap::setMaximumFieldOfView(qreal maximumFieldOfView, bool userSet)
 {
     if (maximumFieldOfView > 0 && maximumFieldOfView < 180.0) {
+        qreal oldMaximumFoV = this->maximumFieldOfView();
         if (userSet)
             m_userMaximumFieldOfView = maximumFieldOfView;
-        qreal oldMaximumFoV = this->maximumFieldOfView();
+        else
+            m_maximumFieldOfView = maximumFieldOfView;
 
-        m_maximumFieldOfView = qBound<double>(m_cameraCapabilities.minimumFieldOfView(),
-                                              maximumFieldOfView,
-                                              m_cameraCapabilities.maximumFieldOfView());
+        if (fieldOfView() > maximumFieldOfView)
+            setFieldOfView(maximumFieldOfView);
 
-        if (fieldOfView() > m_maximumFieldOfView)
-            setFieldOfView(m_maximumFieldOfView);
-
-        if (oldMaximumFoV != m_maximumFieldOfView)
-            emit maximumFieldOfViewChanged(m_maximumFieldOfView);
+        if (oldMaximumFoV != this->maximumFieldOfView())
+            emit maximumFieldOfViewChanged(this->maximumFieldOfView());
     }
 }
 
@@ -1033,7 +966,7 @@ void QDeclarativeGeoMap::setMaximumFieldOfView(qreal maximumFieldOfView, bool us
 */
 qreal QDeclarativeGeoMap::maximumFieldOfView() const
 {
-    return m_maximumFieldOfView;
+    return qMin(qMax(m_minimumFieldOfView, m_userMaximumFieldOfView), m_maximumFieldOfView);
 }
 
 /*!
@@ -1053,25 +986,24 @@ qreal QDeclarativeGeoMap::maximumFieldOfView() const
 */
 qreal QDeclarativeGeoMap::minimumTilt() const
 {
-    return m_minimumTilt;
+    return qMax(qMin(m_maximumTilt, m_userMinimumTilt), m_minimumTilt);
 }
 
 void QDeclarativeGeoMap::setMaximumTilt(qreal maximumTilt, bool userSet)
 {
     if (maximumTilt >= 0) {
-        if (userSet)
-            m_userMaximumTilt = maximumTilt;
         qreal oldMaximumTilt = this->maximumTilt();
 
-        m_maximumTilt = qBound<double>(m_cameraCapabilities.minimumTilt(),
-                                       maximumTilt,
-                                       m_cameraCapabilities.maximumTilt());
+        if (userSet)
+            m_userMaximumTilt = maximumTilt;
+        else
+            m_maximumTilt = maximumTilt;
 
-        if (tilt() > m_maximumTilt)
-            setTilt(m_maximumTilt);
+        if (tilt() > maximumTilt)
+            setTilt(maximumTilt);
 
-        if (oldMaximumTilt != m_maximumTilt)
-            emit maximumTiltChanged(m_maximumTilt);
+        if (oldMaximumTilt != this->maximumTilt())
+            emit maximumTiltChanged(this->maximumTilt());
     }
 }
 
@@ -1092,7 +1024,7 @@ void QDeclarativeGeoMap::setMaximumTilt(qreal maximumTilt, bool userSet)
 */
 qreal QDeclarativeGeoMap::maximumTilt() const
 {
-    return m_maximumTilt;
+    return qMin(qMax(m_minimumTilt, m_userMaximumTilt), m_maximumTilt);
 }
 
 /*!

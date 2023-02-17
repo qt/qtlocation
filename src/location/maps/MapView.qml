@@ -4,7 +4,7 @@
 import QtQuick
 import QtLocation as QL
 import QtPositioning as QP
-
+import Qt.labs.animation
 /*!
     \qmltype MapView
     \inqmlmodule QtLocation
@@ -35,7 +35,6 @@ Item {
 
         \sa Map::minimumZoomLevel
     */
-    // TODO how do we calculate that? map.minimumZoomLevel is 0, but it stops you from zooming out that far
     property real minimumZoomLevel: map.minimumZoomLevel
 
     /*!
@@ -59,7 +58,16 @@ Item {
         tilt: tiltHandler.persistentTranslation.y / -5
         property bool pinchAdjustingZoom: false
 
-        onZoomLevelChanged: if (!pinchAdjustingZoom) resetPinchMinMax()
+        BoundaryRule on zoomLevel {
+            id: br
+            minimum: map.minimumZoomLevel
+            maximum: map.maximumZoomLevel
+        }
+
+        onZoomLevelChanged: {
+            br.returnToBounds();
+            if (!pinchAdjustingZoom) resetPinchMinMax()
+        }
 
         function resetPinchMinMax() {
             pinch.persistentScale = 1
@@ -93,7 +101,6 @@ Item {
             }
             grabPermissions: PointerHandler.TakeOverForbidden
         }
-        // TODO use BoundaryRule to limit zoom?
         WheelHandler {
             id: wheel
             onWheel: (event) => {

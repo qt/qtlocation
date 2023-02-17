@@ -168,8 +168,8 @@ Q_SIGNALS:
     void centerChanged(const QGeoCoordinate &coordinate);
     void activeMapTypeChanged();
     void supportedMapTypesChanged();
-    void minimumZoomLevelChanged();
-    void maximumZoomLevelChanged();
+    void minimumZoomLevelChanged(qreal minimumZoomLevel);
+    void maximumZoomLevelChanged(qreal maximumZoomLevel);
     void mapItemsChanged();
     void errorChanged();
     void copyrightLinkActivated(const QString &link);
@@ -249,18 +249,20 @@ private:
     bool m_initialized = false;
     bool m_sgNodeHasChanged = false;
     QGeoCameraCapabilities m_cameraCapabilities;
-    qreal m_userMinimumZoomLevel = Q_QNAN;
-    qreal m_userMaximumZoomLevel = Q_QNAN;
+    qreal m_minimumZoomLevel = Q_QNAN;
+    qreal m_maximumZoomLevel = Q_QNAN;
+    qreal m_userMinimumZoomLevel = 0;
+    qreal m_userMaximumZoomLevel = Q_INFINITY;
 
     qreal m_minimumTilt = Q_QNAN;
     qreal m_maximumTilt = Q_QNAN;
-    qreal m_userMinimumTilt = Q_QNAN;
-    qreal m_userMaximumTilt = Q_QNAN;
+    qreal m_userMinimumTilt = 0;
+    qreal m_userMaximumTilt = Q_INFINITY;
 
     qreal m_minimumFieldOfView = Q_QNAN;
     qreal m_maximumFieldOfView = Q_QNAN;
-    qreal m_userMinimumFieldOfView = Q_QNAN;
-    qreal m_userMaximumFieldOfView = Q_QNAN;
+    qreal m_userMinimumFieldOfView = 0;
+    qreal m_userMaximumFieldOfView = Q_INFINITY;
 
     int m_copyNoticesVisible = 0;
     qreal m_maxChildZ = 0;
