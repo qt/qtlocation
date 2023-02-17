@@ -257,13 +257,13 @@ Item {
             //Trying to set higher than max, max should be set.
             map.maximumZoomLevel = 21
             compare(map.minimumZoomLevel, 5)
-            compare(map.maximumZoomLevel, 21) // TODO enforce maximum from the plugin
+            compare(map.maximumZoomLevel, 20)
 
             //Negative values should be ignored
             map.minimumZoomLevel = -1
             map.maximumZoomLevel = -2
             compare(map.minimumZoomLevel, 5)
-            compare(map.maximumZoomLevel, 21)
+            compare(map.maximumZoomLevel, 20)
 
             //Max limit lower than curr zoom, should change curr zoom
             map.zoomLevel = 18
