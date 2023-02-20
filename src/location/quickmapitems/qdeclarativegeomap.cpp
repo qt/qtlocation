@@ -114,11 +114,10 @@ static qreal sanitizeBearing(qreal bearing)
 
     \quotefromfile minimal_map/main.qml
     \skipto import
-    \printuntil }
-    \printline }
-    \skipto Map
-    \printuntil }
-    \printline }
+    \printuntil Window {
+    \dots
+    \skipto Plugin
+    \printuntil
 
     \image minimal_map.png
 */

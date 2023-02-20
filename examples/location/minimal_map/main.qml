@@ -14,12 +14,7 @@ Window {
 
     Plugin {
         id: mapPlugin
-        name: "osm" // "maplibregl", "esri", ...
-        // specify plugin parameters if necessary
-        // PluginParameter {
-        //     name:
-        //     value:
-        // }
+        name: "osm"
     }
 
     Map {
