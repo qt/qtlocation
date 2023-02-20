@@ -725,20 +725,12 @@ void QDeclarativeGeoRouteQuery::setNumberAlternativeRoutes(int numberAlternative
 /*!
     \qmlproperty list<coordinate> RouteQuery::waypoints
 
-
     The coordinates of the waypoints for the desired route.
     The waypoints should be given in order from origin to destination.
     Two or more coordinates are needed.
 
     Waypoints can be set as part of the RouteQuery type declaration or
     dynamically with the functions provided.
-
-    When setting this property to a list of waypoints, each waypoint
-    can be either a \l coordinate or a \l Waypoint, interchangeably.
-    If a \l coordinate is passed, it will be internally converted to a
-    \l Waypoint.
-
-    This property, however, always contains a list of coordinates.
 
     \sa addWaypoint, removeWaypoint, clearWaypoints
 */
@@ -869,11 +861,8 @@ void QDeclarativeGeoRouteQuery::clearExcludedAreas()
 /*!
     \qmlmethod void QtLocation::RouteQuery::addWaypoint(coordinate)
 
-    Appends a coordinate to the list of waypoints. Same coordinate
-    can be set multiple times.
-    The \a coordinate argument can be a \l coordinate or a \l Waypoint.
-    If a \l coordinate is used, it will be internally converted to a
-    \l Waypoint.
+    Appends the given \a coordinate to the list of waypoints. The same
+    coordinate can be set multiple times.
 
     \sa removeWaypoint, clearWaypoints
 */
@@ -1270,63 +1259,5 @@ void QDeclarativeGeoRouteQuery::doCoordinateChanged()
     if (complete_)
         emit queryDetailsChanged();
 }
-
-/*!
-    \qmltype Waypoint
-    \instantiates QDeclarativeGeoWaypoint
-    \inqmlmodule QtLocation
-    \ingroup qml-QtLocation5-routing
-    \since QtLocation 5.11
-
-    \brief The Waypoint type provides a mean to specify a waypoint in a \l RouteQuery
-    in a more detailed way than by using a simple \l coordinate.
-
-    A Waypoint is a type that allows to specify properties of a waypoint in a \l RouteQuery,
-    such as the waypoint coordinate, or the angle of approach to the waypoint.
-
-    Changing properties of the waypoint or of its nested MapParameteters will cause the containing
-    \l RouteQuery to emit the queryDetailsChanged signal.
-
-    \section2 Example Usage
-
-    \code
-    Plugin {
-        id: aPlugin
-        name: "osm"
-    }
-
-    Waypoint {
-        id: waypointStart
-        coordinate: ...
-        bearing: ...
-    }
-    Waypoint {
-        id: waypointFinish
-        coordinate: ...
-        bearing: ...
-    }
-
-    RouteQuery {
-        id: aQuery
-        Component.onCompleted: {
-            travelModes = RouteQuery.CarTravel
-            addWaypoint(waypointStart)
-            var aWaypoint = Qt.createQmlObject ('import QtLocation 5.11; Waypoint { ... }', ...)
-            addWaypoint(aWaypoint)
-            addWaypoint(waypointFinish)
-        }
-    }
-
-    RouteModel {
-        id: routeModel
-        plugin: aPlugin
-        query: aQuery
-        autoUpdate: true
-    }
-    \endcode
-
-    \sa RouteQuery
-*/
-
 
 QT_END_NAMESPACE

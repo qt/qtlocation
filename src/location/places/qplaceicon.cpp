@@ -48,6 +48,32 @@ bool QPlaceIconPrivate::operator == (const QPlaceIconPrivate &other) const
 */
 
 /*!
+    \qmlvaluetype icon
+    \inqmlmodule QtLocation
+    \ingroup qml-QtLocation5-places
+    \ingroup qml-QtLocation5-places-data
+    \since QtLocation 5.5
+
+    \brief The icon type represents the icon of a place.
+
+    The typical usage of an icon is to use the url() function to specify
+    a preferred icon size.
+
+    The icons are typically backend dependent, if a manager backend does not support a given size, the URL of the icon that most
+    closely matches those parameters is returned.
+
+    The icon class also has a key-value set of parameters.  The precise key one
+    needs to use depends on the \l {Qt Location#Plugin References and Parameters}{plugin}
+    being used.  These parameters influence which icon URL is returned by
+    the manager and may also be used to specify icon URL locations when
+    saving icons.
+
+    If there is only ever one image for an icon, then QPlaceIcon::SingleUrl can be used as a parameter
+    key with a QUrl as the associated value.  If this key is set, then the url() function will always return the specified URL
+    and not defer to any manager.
+*/
+
+/*!
     \variable QPlaceIcon::SingleUrl
     \brief Parameter key for an icon that only has a single image URL.
 

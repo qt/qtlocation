@@ -39,7 +39,7 @@ Item {
     property real minimumZoomLevel: map.minimumZoomLevel
 
     /*!
-        \qmlproperty real minimumZoomLevel
+        \qmlproperty real maximumZoomLevel
 
         The maximum valid zoom level for the map.
 

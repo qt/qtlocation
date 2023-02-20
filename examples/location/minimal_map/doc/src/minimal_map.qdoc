@@ -41,11 +41,7 @@ it visible. The window will be filled by a \l [QML]{Map} item showing the map.
 
 \quotefromfile minimal_map/main.qml
 \skipto import
-\printuntil }
-\printline }
-\skipto Map
-\printuntil }
-\printline }
+\printuntil
 
 The \l [QML]{Plugin} item is necessary to define the map provider we are
 going to use. The example can work with any of the available geo services
