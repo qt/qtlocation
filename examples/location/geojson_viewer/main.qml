@@ -9,6 +9,7 @@ import QtPositioning
 import QtLocation
 import QtCore
 import Qt.GeoJson
+import "mapitems"
 
 ApplicationWindow {
     id: win
@@ -29,6 +30,7 @@ ApplicationWindow {
         currentFolder: dataPath
         nameFilters: ["GeoJSON files (*.geojson *.json)"]
         onAccepted: {
+            view.clearAllItems()
             geoJsoner.load(fileDialog.selectedFile)
         }
     }
@@ -120,11 +122,133 @@ ApplicationWindow {
         map.plugin: Plugin { name: "osm" }
         map.zoomLevel: 4
 
+        property variant unfinishedItem: 'undefined'
+
+        signal showMainMenu(variant coordinate)
+
+        function addGeoItem(item)
+        {
+            var count = view.map.mapItems.length
+            var co = Qt.createComponent('mapitems/'+item+'.qml')
+            if (co.status === Component.Ready) {
+                unfinishedItem = co.createObject(map)
+                unfinishedItem.setGeometry(tapHandler.lastCoordinate)
+                unfinishedItem.addGeometry(hoverHandler.currentCoordinate, false)
+                view.map.addMapItem(unfinishedItem)
+                unfinishedItem.parent = miv
+            } else {
+                console.log(item + " is not supported right now, please call us later.")
+            }
+        }
+
+        function clearAllItems()
+        {
+            var count = view.map.mapItems.length
+            for (var i = count-1; i>=0; i--){
+                var item = view.map.mapItems[i]
+                item.parent = view.map
+                view.map.removeMapItem(item)
+            }
+        }
+
         MapItemView {
             id: miv
             parent: view.map
             model: geoJsoner.model
             delegate: GeoJsonDelegate {
+            }
+        }
+
+        Menu {
+            id: mapPopupMenu
+
+            property variant coordinate
+
+            MenuItem {
+                text: qsTr("Rectangle")
+                onTriggered: view.addGeoItem("RectangleItem")
+            }
+            MenuItem {
+                text: qsTr("Circle")
+                onTriggered: view.addGeoItem("CircleItem")
+            }
+            MenuItem {
+                text: qsTr("Polyline")
+                onTriggered: view.addGeoItem("PolylineItem")
+            }
+            MenuItem {
+                text: qsTr("Polygon")
+                onTriggered: view.addGeoItem("PolygonItem")
+            }
+            MenuItem {
+                text: qsTr("Clear all")
+                onTriggered: view.clearAllItems()
+            }
+
+            function show(coordinate) {
+                mapPopupMenu.coordinate = coordinate
+                mapPopupMenu.popup()
+            }
+        }
+
+        HoverHandler {
+            id: hoverHandler
+            property variant currentCoordinate
+            grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType
+
+            onPointChanged: {
+                currentCoordinate = view.map.toCoordinate(hoverHandler.point.position)
+                if (view.unfinishedItem !== 'undefined')
+                    view.unfinishedItem.addGeometry(view.map.toCoordinate(hoverHandler.point.position), true)
+            }
+
+        }
+
+        TapHandler {
+            id: tapHandler
+            property variant lastCoordinate
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+            onSingleTapped: (eventPoint, button) => {
+                lastCoordinate = view.map.toCoordinate(tapHandler.point.position)
+                if (button === Qt.RightButton) {
+                    if (view.unfinishedItem !== 'undefined') {
+                        view.unfinishedItem.finishAddGeometry()
+                        view.unfinishedItem = 'undefined'
+                    } else
+                        mapPopupMenu.show(lastCoordinate)
+                } else if (button === Qt.LeftButton) {
+                    if (view.unfinishedItem !== 'undefined') {
+                        if (view.unfinishedItem.addGeometry(view.map.toCoordinate(tapHandler.point.position), false)) {
+                            view.unfinishedItem.finishAddGeometry()
+                            view.unfinishedItem = 'undefined'
+                        }
+                    }
+                }
+            }
+        }
+        TapHandler {
+            acceptedButtons: Qt.LeftButton
+            onDoubleTapped: (eventPoint, button) => {
+                var preZoomPoint = view.map.toCoordinate(eventPoint.position);
+                view.map.zoomLevel = Math.floor(view.map.zoomLevel + 1)
+                var postZoomPoint = view.map.toCoordinate(eventPoint.position);
+                var dx = postZoomPoint.latitude - preZoomPoint.latitude;
+                var dy = postZoomPoint.longitude - preZoomPoint.longitude;
+                view.map.center = QtPositioning.coordinate(view.map.center.latitude - dx,
+                                                           view.map.center.longitude - dy);
+            }
+        }
+        TapHandler {
+            acceptedButtons: Qt.RightButton
+            onDoubleTapped: (eventPoint, button) => {
+                var preZoomPoint = view.map.toCoordinate(eventPoint.position);
+                view.map.zoomLevel = Math.floor(view.map.zoomLevel - 1)
+                var postZoomPoint = view.map.toCoordinate(eventPoint.position);
+                var dx = postZoomPoint.latitude - preZoomPoint.latitude;
+                var dy = postZoomPoint.longitude - preZoomPoint.longitude;
+                view.map.center = QtPositioning.coordinate(view.map.center.latitude - dx,
+                                                           view.map.center.longitude - dy);
             }
         }
     }

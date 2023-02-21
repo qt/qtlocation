@@ -75,8 +75,24 @@ public:
         QVariantMap pt;
         pt["type"] = "Point";
         pt["data"] = QVariant::fromValue(mapCircle->geoShape());
-        if (hasProperties(mapCircle))
-            pt["properties"] = mapCircle->property("props").toMap();
+        QVariantMap propMap = mapCircle->property("props").toMap();
+        propMap["radius"] = mapCircle->radius();
+        pt["properties"] = propMap;
+        return pt;
+    }
+    static QVariantMap toVariant(QDeclarativeRectangleMapItem *mapRectangle)
+    {
+        QVariantMap pt;
+        pt["type"] = "Polygon";
+        QGeoRectangle rectanlge = mapRectangle->geoShape();
+        QGeoPolygon poly;
+        poly.addCoordinate(rectanlge.topLeft());
+        poly.addCoordinate(rectanlge.topRight());
+        poly.addCoordinate(rectanlge.bottomRight());
+        poly.addCoordinate(rectanlge.bottomLeft());
+        pt["data"] = QVariant::fromValue(poly);
+        if (hasProperties(mapRectangle))
+            pt["properties"] = mapRectangle->property("props").toMap();
         return pt;
     }
 
@@ -110,13 +126,19 @@ public:
                 entry = toVariant(polygon);
             } else if (QDeclarativeCircleMapItem *circle = qobject_cast<QDeclarativeCircleMapItem *>(kid)) {
                 entry = toVariant(circle); // If GeoJSON Point type is visualized in other ways, handle those types here instead.
+            } else if (QDeclarativeRectangleMapItem *rectangle = qobject_cast<QDeclarativeRectangleMapItem *>(kid)) {
+                entry = toVariant(rectangle); // For the self-drawn rectangles. Will be exported as Polygons
+
             }
             features.append(entry);
         }
-        if (nodeType.isEmpty()) { // Dirty hack to handle (=skip) the first MIV used to process the fictitious list with 1 element
+        if (nodeType.isEmpty()) {
             if (features.isEmpty())
                 return root;
-            return features.first().toMap();
+            else if (features.size() == 1)
+                return features.first().toMap();
+            else
+                root["type"] = "FeatureCollection";
         }
         root["data"] = features;
         return root;

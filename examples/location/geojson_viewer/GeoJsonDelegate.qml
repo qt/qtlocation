@@ -19,7 +19,7 @@ DelegateChooser {
             property string geojsonType: "Point"
             property var props: modelData.properties
             geoShape: modelData.data
-            radius: 20*1000
+            radius: (props && props.radius) || 20*1000
             border.width: 3
             border.color: hh.hovered ? "magenta" : "black"
             opacity: dc.defaultOpacity
