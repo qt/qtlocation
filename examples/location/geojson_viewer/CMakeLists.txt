@@ -41,6 +41,10 @@ target_link_libraries(qml_location_geojsonviewer PUBLIC
 set(qml_resource_files
     "GeoJsonDelegate.qml"
     "main.qml"
+    "mapitems/CircleItem.qml"
+    "mapitems/PolygonItem.qml"
+    "mapitems/PolylineItem.qml"
+    "mapitems/RectangleItem.qml"
 )
 
 qt6_add_resources(qml_location_geojsonviewer "qml"
