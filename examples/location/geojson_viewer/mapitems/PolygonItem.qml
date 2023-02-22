@@ -9,7 +9,8 @@ MapPolygon {
     border.width: 2
     smooth: true
     opacity: 0.75
-    autoFadeIn: false
+    autoFadeIn: view.autoFadeIn
+    referenceSurface: view.referenceSurface
 
     property string geojsonType: "Polygon"
 

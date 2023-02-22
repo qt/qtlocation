@@ -240,6 +240,19 @@ static QList<QList<QDoubleVector2D> > clipLine(
     \since 5.14
 */
 
+/*!
+    \qmlproperty enum QtLocation::MapPolyline::referenceSurface
+
+    This property determines the reference surface of the polyline. If it is set to
+    \l QLocation::ReferenceSurface::Map the polylines vertices are connected with straight
+    lines on the map. If it is set to \l QLocation::ReferenceSurface::Globe, the vertices
+    are connected following the great circle path, describing the shortest connection of
+    two points on a sphere.
+    Default value is \l QLocation::ReferenceSurface::Map.
+
+    \since 6.5
+*/
+
 QDeclarativeMapLineProperties::QDeclarativeMapLineProperties(QObject *parent)
     : QObject(parent)
 {
@@ -415,9 +428,17 @@ void QDeclarativePolylineMapItemPrivateCPU::regenerateCache()
         return;
     const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
     m_geopathProjected.clear();
-    m_geopathProjected.reserve(m_poly.m_geopath.path().size());
-    for (const QGeoCoordinate &c : m_poly.m_geopath.path())
-        m_geopathProjected << p.geoToMapProjection(c);
+    if (m_poly.referenceSurface() == QLocation::ReferenceSurface::Globe) {
+        const QList<QGeoCoordinate> realPath = QDeclarativeGeoMapItemUtils::greaterCirclePath(m_poly.m_geopath.path());
+        m_geopathProjected.reserve(realPath.size());
+        for (const QGeoCoordinate &c : realPath)
+            m_geopathProjected << p.geoToMapProjection(c);
+    } else {
+        m_geopathProjected.reserve(m_poly.m_geopath.path().size());
+        const QList<QGeoCoordinate> path = m_poly.m_geopath.path();
+        for (const QGeoCoordinate &c : path)
+            m_geopathProjected << p.geoToMapProjection(c);
+    }
 }
 
 void QDeclarativePolylineMapItemPrivateCPU::updateCache()
@@ -514,6 +535,8 @@ QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
                      this, &QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged);
     QObject::connect(&m_line, &QDeclarativeMapLineProperties::widthChanged,
                      this, &QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged);
+    QObject::connect(this, &QDeclarativePolylineMapItem::referenceSurfaceChanged,
+                     [=]() {m_d->onGeoGeometryChanged();});
 }
 
 QDeclarativePolylineMapItem::~QDeclarativePolylineMapItem()

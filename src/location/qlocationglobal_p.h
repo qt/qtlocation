@@ -16,7 +16,27 @@
 //
 
 #include "qlocationglobal.h"
+#include <qqml.h>
 #include "private/qglobal_p.h"
 #include <QtLocation/private/qtlocationexports_p.h>
+
+QT_BEGIN_NAMESPACE
+
+namespace QLocation
+{
+Q_NAMESPACE_EXPORT(Q_LOCATION_PRIVATE_EXPORT)
+QML_NAMED_ELEMENT(QtLocation)
+QML_ADDED_IN_VERSION(6, 6)
+Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
+
+enum class ReferenceSurface : uint8_t {
+    Map,
+    Globe
+};
+Q_ENUM_NS(ReferenceSurface)
+
+}
+
+QT_END_NAMESPACE
 
 #endif // QLOCATIONGLOBAL_P_H

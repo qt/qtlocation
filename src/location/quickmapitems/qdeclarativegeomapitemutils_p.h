@@ -25,6 +25,11 @@ QT_BEGIN_NAMESPACE
 
 namespace QDeclarativeGeoMapItemUtils
 {
+    enum greaterCirclePathForm {
+        OpenPath,
+        ClosedPath
+    };
+
     struct vec2 {
         float x;
         float y;
@@ -90,6 +95,9 @@ namespace QDeclarativeGeoMapItemUtils
 
     QRectF boundingRectangleFromList(const QList<QDoubleVector2D> &list);
 
+    QList<QGeoCoordinate> greaterCirclePath(const QList<QGeoCoordinate> &cornerPoints,
+                                            greaterCirclePathForm form = QDeclarativeGeoMapItemUtils::OpenPath,
+                                            int N=360);
 };
 
 QT_END_NAMESPACE

@@ -13,7 +13,7 @@ Map {
 
     id: map
     plugin: Plugin {
-        name: "osm"
+        name: "itemsoverlay"
     }
     zoomLevel: 1
     copyrightsVisible: false
@@ -29,6 +29,7 @@ Map {
         smooth: true
         border.width: 1
         autoFadeIn: false
+        referenceSurface: QtLocation.ReferenceSurface.Globe
         opacity: 0.5
     }
     MapCircle
@@ -43,6 +44,7 @@ Map {
         smooth: true
         border.width: 1
         autoFadeIn: false
+        referenceSurface: QtLocation.ReferenceSurface.Globe
         opacity: 0.5
     }
 }

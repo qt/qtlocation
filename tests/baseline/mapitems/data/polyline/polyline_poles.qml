@@ -12,7 +12,7 @@ Map {
     center: QtPositioning.coordinate(0, 0)
 
     plugin: Plugin {
-        name: "osm"
+        name: "itemsoverlay"
     }
     zoomLevel: 1
     copyrightsVisible: false

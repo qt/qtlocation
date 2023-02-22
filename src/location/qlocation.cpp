@@ -40,6 +40,19 @@ namespace QLocation {
 
     When \e searching for places, unspecified means that places of any scope is returned.
 */
+
+/*!
+    \enum QLocation::ReferenceSurface
+
+    Defines the reference surface on which various map items (e.g. polygons, polylines) are defined.
+
+    \value Map                      Items are defined on a map. This means, e.g. for a polyline that
+                                    nodes are connected with straight lines on the map.
+    \value Globe                    Items are defined on the globe. This means, e.g. for a polyine
+                                    that nodes are connected with circle sections that represent the
+                                    shortest connection between points on a sphere. This connection is
+                                    also known as great circle path.
+*/
 }
 
 QT_END_NAMESPACE

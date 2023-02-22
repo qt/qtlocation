@@ -96,13 +96,26 @@ QT_BEGIN_NAMESPACE
     \since 5.14
 */
 
+/*!
+    \qmlproperty enum QtLocation::MapPolygon::referenceSurface
+
+    This property determines the reference surface of the polygon. If it is set to
+    \l QLocation::ReferenceSurface::Map the polygons vertices are connected with straight
+    lines on the map. If it is set to \l QLocation::ReferenceSurface::Globe, the vertices
+    are connected following the great circle path, describing the shortest connection of
+    two points on a sphere.
+    Default value is \l QLocation::ReferenceSurface::Map.
+
+    \since 6.5
+*/
+
 QGeoMapPolygonGeometry::QGeoMapPolygonGeometry() = default;
 
 /*!
     \internal
 */
 void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
-                                                const QList<QList <QDoubleVector2D>> &paths,
+                                                const QList<QList <QDoubleVector2D>> &basePaths,
                                                 MapBorderBehaviour wrapping)
 {
     // A polygon consists of mutliple paths. This is usually a perimeter and multiple holes
@@ -112,17 +125,77 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
     const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(map.geoProjection());
     srcPath_ = QPainterPath();
     srcOrigin_ = p.mapProjectionToGeo(QDoubleVector2D(0.0, 0.0)); //avoid warning of NaN values if function is returned early
+    const QRectF cameraRect = QDeclarativeGeoMapItemUtils::boundingRectangleFromList(p.visibleGeometry());
+
+    QList<QList<QDoubleVector2D>> paths;
+
+    if (wrapping == WrapAround) {
+        // 0.1 Wrap the points around the globe if the path makes more sense that way.
+        //    Ultimately, this is done if it is closer to walk around the day-border than the other direction
+        paths.reserve(basePaths.size());
+        for (qsizetype j = 0; j< basePaths.size(); j++) {
+            const QList<QDoubleVector2D> &bp = basePaths[j];
+            if (bp.isEmpty())
+                continue;
+            paths << QList<QDoubleVector2D>({bp[0]});
+            QList<QDoubleVector2D> &pp = paths[j];
+            pp.reserve(bp.size());
+            for (qsizetype i = 1; i < bp.size(); i++) {
+                if (bp[i].x() > pp.last().x() + 0.5)
+                    pp << bp[i] - QDoubleVector2D(1.0, 0.0);
+                else if (bp[i].x() < pp.last().x() - 0.5)
+                    pp << bp[i] + QDoubleVector2D(1.0, 0.0);
+                else
+                    pp << bp[i];
+            }
+        }
+
+        // 0.2 Check and include one of the poles if necessary to make sense out of the polygon
+        for (qsizetype j = 0; j < paths.size(); j++) {
+            QList<QDoubleVector2D> &pp = paths[j];
+
+            if (pp.last().x() - pp.first().x() < -0.5) {
+                for (qsizetype i = 0; i < floor(pp.length()/2.); i++)
+                    pp.swapItemsAt(i, pp.length() - i - 1);
+            }
+            if (pp.last().x() - pp.first().x() > 0.5) {
+
+                const double leftBorder = cameraRect.left();
+                const double rightBorder = cameraRect.right();
+
+                qsizetype originalPathLength = pp.length();
+
+                if (pp.last().x() < rightBorder) {
+                    for (qsizetype i = 0; i < originalPathLength; i++)
+                        pp.append(pp[i] + QDoubleVector2D(1.0, 0.0));
+                }
+                if (pp.first().x() > leftBorder) {
+                    for (qsizetype i = 0; i < originalPathLength; i++)
+                        pp.insert(i, pp[2*i] - QDoubleVector2D(1.0, 0.0));
+                }
+                const double newPoleLat = (pp.first().y() + pp.last().y() < 1.0) ? 0.0 : 1.0; //mean of y < 0.5?
+                const QDoubleVector2D P1 = pp.first();
+                const QDoubleVector2D P2 = pp.last();
+                pp.push_front(QDoubleVector2D(P1.x(), newPoleLat));
+                pp.append(QDoubleVector2D(P2.x(), newPoleLat));
+
+                wrapping = DrawOnce;
+            }
+        }
+    } else {
+        paths = basePaths;
+    }
 
     //1 The bounding rectangle of the polygon and camera view are compared to determine if the polygon is visible
     //  The viewport is periodic in x-direction in the interval [-1; 1].
     //  The polygon (maybe) has to be ploted periodically too by shifting it by -1 or +1;
-    const QRectF cameraRect = QDeclarativeGeoMapItemUtils::boundingRectangleFromList(p.visibleGeometry());
-    QRectF itemRect;
-    for (const auto &path : paths)
-        itemRect |= QDeclarativeGeoMapItemUtils::boundingRectangleFromList(path);
     QList<QList<QDoubleVector2D>> wrappedPaths;
 
-    if (wrapping == WrapAround) {
+    if (wrapping == Duplicate || wrapping == WrapAround) {
+        QRectF itemRect;
+        for (const auto &path : paths)
+            itemRect |= QDeclarativeGeoMapItemUtils::boundingRectangleFromList(path);
+
         for (double xoffset : {-1.0, 0.0, 1.0}) {
             if (!cameraRect.intersects(itemRect.translated(QPointF(xoffset, 0.0))))
                 continue;
@@ -134,8 +207,9 @@ void QGeoMapPolygonGeometry::updateSourcePoints(const QGeoMap &map,
                     wP.append(coord+QDoubleVector2D(xoffset, 0.0));
             }
         }
-    } else
+    } else {
         wrappedPaths = paths;
+    }
 
     if (wrappedPaths.isEmpty()) // the polygon boundary rectangle does not overlap with the viewport rectangle
         return;
@@ -257,7 +331,10 @@ void QDeclarativePolygonMapItemPrivateCPU::updatePolish()
     QScopedValueRollback<bool> rollback(m_poly.m_updatingGeometry);
     m_poly.m_updatingGeometry = true;
 
-    m_geometry.updateSourcePoints(*map, m_geopathProjected);
+    m_geometry.updateSourcePoints(*map, m_geopathProjected,
+                                  m_poly.referenceSurface() == QLocation::ReferenceSurface::Globe ?
+                                    QGeoMapPolygonGeometry::WrapAround :
+                                    QGeoMapPolygonGeometry::Duplicate);
 
     const QRectF bb = m_geometry.sourceBoundingBox();
 
@@ -316,6 +393,8 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
                      this, &QDeclarativePolygonMapItem::onLinePropertiesChanged);
     QObject::connect(&m_border, &QDeclarativeMapLineProperties::widthChanged,
                      this, &QDeclarativePolygonMapItem::onLinePropertiesChanged);
+    QObject::connect(this, &QDeclarativePolygonMapItem::referenceSurfaceChanged,
+                     [=]() {m_d->onGeoGeometryChanged();});
 }
 
 QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()

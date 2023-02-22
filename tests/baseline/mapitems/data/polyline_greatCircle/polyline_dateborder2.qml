@@ -19,6 +19,7 @@ Map {
 
     MapPolyline {
         autoFadeIn: false
+        referenceSurface: QtLocation.ReferenceSurface.Globe
         line.color: "blue"
         line.width: 2
         path: [

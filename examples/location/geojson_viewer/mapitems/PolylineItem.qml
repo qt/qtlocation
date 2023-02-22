@@ -8,7 +8,8 @@ MapPolyline {
     line.width: 2
     opacity: 0.75
     smooth: true
-    autoFadeIn: false
+    autoFadeIn: view.autoFadeIn
+    referenceSurface: view.referenceSurface
 
     property string geojsonType: "Polyline"
 

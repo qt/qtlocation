@@ -13,7 +13,7 @@ Map {
 
     id: map
     plugin: Plugin {
-        name: "osm"
+        name: "itemsoverlay"
     }
     zoomLevel: 1
     copyrightsVisible: false

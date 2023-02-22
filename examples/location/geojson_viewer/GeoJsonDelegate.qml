@@ -27,8 +27,9 @@ DelegateChooser {
             border.color: hh.hovered ? "magenta" : Qt.darker(color)
             opacity: dc.defaultOpacity
             color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
-            autoFadeIn: false
     //! [DelegateChoice Point]
+            autoFadeIn: view.autoFadeIn
+            referenceSurface: view.referenceSurface
 
             //! [Handler Point]
             TapHandler {
@@ -57,7 +58,8 @@ DelegateChooser {
             line.width: 2
             opacity: dc.defaultOpacity
             line.color: hh.hovered ? "magenta" : (props && props.color) || (parent && parent.props && parent.props.color) || Qt.darker(dc.defaultColor)
-            autoFadeIn: false
+            autoFadeIn: view.autoFadeIn
+            referenceSurface: view.referenceSurface
 
             TapHandler {
                 onTapped: {
@@ -85,7 +87,8 @@ DelegateChooser {
             color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
             border.width: 2
             border.color: hh.hovered ? "magenta" : Qt.darker(color)
-            autoFadeIn: false
+            autoFadeIn: view.autoFadeIn
+            referenceSurface: view.referenceSurface
 
             TapHandler {
                 onTapped: {

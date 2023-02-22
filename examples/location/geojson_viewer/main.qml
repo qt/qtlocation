@@ -105,6 +105,20 @@ ApplicationWindow {
                     geoJsoner.print(miv)
                 }
             }
+            MenuItem {
+                text: "Auto fade in items"
+                checkable: true
+                checked: false
+                onCheckedChanged: view.autoFadeIn = checked
+            }
+            MenuItem {
+                text: "Draw path on globe"
+                checkable: true
+                checked: false
+                onCheckedChanged: view.referenceSurface = (checked ?
+                                        QtLocation.ReferenceSurface.Globe :
+                                        QtLocation.ReferenceSurface.Map);
+            }
         }
     }
 
@@ -132,6 +146,8 @@ ApplicationWindow {
     //! [MapView Creation]
 
         property variant unfinishedItem: undefined
+        property bool autoFadeIn: false
+        property variant referenceSurface: QtLocation.ReferenceSurface.Map
 
         signal showMainMenu(variant coordinate)
 

@@ -13,14 +13,22 @@ Map {
 
     id: map
     plugin: Plugin {
-        name: "osm"
+        name: "itemsoverlay"
     }
     zoomLevel: 1
     copyrightsVisible: false
 
     Repeater {
         id: c
-        property int count: 2
+        property var colors: [
+            "red",
+            "orange",
+            "yellow",
+            "green",
+            "blue",
+            "violet"
+        ]
+        property int count: c.colors.length
         model: count*count
         MapCircle
         {
@@ -29,10 +37,11 @@ Map {
                 longitude: -180+360*(index%c.count+0.5)/(c.count)
                 latitude: -90+180*(Math.floor(index/c.count)+0.5)/(c.count)
             }
-            radius: 8000*1000
-            color: 'green'
+            radius: 2000*1000
+            color: c.colors[Math.floor(index%c.colors.length)]
             border.width: 1
             autoFadeIn: false
+            referenceSurface: QtLocation.ReferenceSurface.Globe
             opacity: 0.3
         }
     }

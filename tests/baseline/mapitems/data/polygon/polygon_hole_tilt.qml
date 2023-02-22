@@ -10,10 +10,10 @@ Map {
     height: 512
 
     center: QtPositioning.coordinate(52, 22)
-	tilt: 60
-	
+    tilt: 60
+
     plugin: Plugin {
-        name: "osm"
+        name: "itemsoverlay"
     }
     zoomLevel: 4
     copyrightsVisible: false

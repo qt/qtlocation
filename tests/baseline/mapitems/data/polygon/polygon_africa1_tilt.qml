@@ -12,7 +12,7 @@ Map {
     height: 512
 
     center: QtPositioning.coordinate(20, 30)
-	tilt: 30
+    tilt: 30
 
 
     plugin: Plugin {

@@ -9,7 +9,7 @@ Map {
     width: 512
     height: 512
 
-    center: QtPositioning.coordinate(0, 47.4)
+    center: QtPositioning.coordinate(0, -110)
 
     id: map
     plugin: Plugin {
@@ -30,24 +30,18 @@ Map {
         ]
         property int count: 20
         model: count
-        MapRectangle
+        MapCircle
         {
-            property int rHeight: ((c.count-index-1)/(c.count-1)*(180-5)+5)
-            property int rWidth: rHeight*5
-
-            topLeft
+            center
             {
-                longitude: Math.min(175, Math.max(-180, 20 - rWidth/2))
-                latitude: Math.min(90, Math.max(-90, 20 - rHeight/2))
+                longitude: 170
+                latitude: 30
             }
-            bottomRight
-            {
-                longitude: Math.min(175, Math.max(-180, 20 + rWidth/2))
-                latitude: Math.min(90, Math.max(-90, 20 + rHeight/2))
-            }
+            radius: ((c.count-index-1)/(c.count-1)*(6371-1000)+500)*Math.PI*1000
             color: c.colors[Math.floor(index%c.colors.length)]
             border.width: 1
             autoFadeIn: false
+            referenceSurface: QtLocation.ReferenceSurface.Globe
             opacity: 1
         }
     }

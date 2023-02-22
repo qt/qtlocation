@@ -20,6 +20,7 @@ Map {
     MapPolygon {
         color: "green"
         autoFadeIn: false
+        referenceSurface: QtLocation.ReferenceSurface.Globe
         geoShape: QtPositioning.polygon(
             [
                 QtPositioning.coordinate(51.11, 17.13),
@@ -40,6 +41,7 @@ Map {
     MapPolygon {
         color: "blue"
         autoFadeIn: false
+        referenceSurface: QtLocation.ReferenceSurface.Globe
         geoShape: QtPositioning.polygon(
             [
                 QtPositioning.coordinate(54.36, 33.46),

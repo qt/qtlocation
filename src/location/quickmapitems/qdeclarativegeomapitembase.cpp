@@ -161,6 +161,20 @@ void QDeclarativeGeoMapItemBase::setAutoFadeIn(bool fadeIn)
         polishAndUpdate();
 }
 
+QLocation::ReferenceSurface QDeclarativeGeoMapItemBase::referenceSurface() const
+{
+    return m_referenceSurface;
+}
+
+void QDeclarativeGeoMapItemBase::setReferenceSurface(QLocation::ReferenceSurface referenceSurface)
+{
+    if (referenceSurface == m_referenceSurface)
+        return;
+    m_referenceSurface = referenceSurface;
+    emit referenceSurfaceChanged();
+    updatePolish();
+}
+
 int QDeclarativeGeoMapItemBase::lodThreshold() const
 {
     return m_lodThreshold;

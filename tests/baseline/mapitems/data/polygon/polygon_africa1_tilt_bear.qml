@@ -12,8 +12,8 @@ Map {
     height: 512
 
     center: QtPositioning.coordinate(20, 30)
-	tilt: 30
-	bearing: 34
+    tilt: 30
+    bearing: 34
 
 
     plugin: Plugin {

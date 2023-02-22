@@ -87,6 +87,19 @@ QT_BEGIN_NAMESPACE
     \since 5.14
 */
 
+/*!
+    \qmlproperty enum QtLocation::MapCircle::referenceSurface
+
+    This property determines the reference surface of the circle. If it is set to
+    \l QLocation::ReferenceSurface::Map the circle is drawn as a circe on the map with
+    \l radius approximated to match the map scale at the center of the circle.
+    If it is set to \l QLocation::ReferenceSurface::Globe the circle is mapped onto
+    a sphere and the great circle path is used to determine the coverage of the circle.
+    Default value is \l QLocation::ReferenceSurface::Map.
+
+    \since 6.5
+*/
+
 struct Vertex
 {
     QVector2D position;
@@ -108,6 +121,8 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
                      this, &QDeclarativeCircleMapItem::onLinePropertiesChanged);
     QObject::connect(&m_border, &QDeclarativeMapLineProperties::widthChanged,
                      this, &QDeclarativeCircleMapItem::onLinePropertiesChanged);
+    QObject::connect(this, &QDeclarativeCircleMapItem::referenceSurfaceChanged,
+                     [=]() {m_d->onGeoGeometryChanged();});
 }
 
 QDeclarativeCircleMapItem::~QDeclarativeCircleMapItem()
@@ -392,7 +407,24 @@ int QDeclarativeCircleMapItemPrivate::crossEarthPole(const QGeoCoordinate &cente
            (distanceToSouthPole < distance? 1 : 0);
 }
 
-void QDeclarativeCircleMapItemPrivate::calculatePeripheralPoints(QList<QDoubleVector2D> &path,
+void QDeclarativeCircleMapItemPrivate::calculatePeripheralPointsSimple(QList<QDoubleVector2D> &path,
+                                      const QGeoCoordinate &center,
+                                      qreal distance,
+                                      const QGeoProjectionWebMercator &p,
+                                      int steps)
+{
+    const double lambda = 0.0001;
+    const QDoubleVector2D c = p.geoToMapProjection(center);
+    const double lambda_geo = center.distanceTo(p.mapProjectionToGeo(c + QDoubleVector2D(lambda, 0)));
+    const qreal mapDistance = distance * lambda / lambda_geo;
+
+    for (int i = 0; i < steps; ++i) {
+        const qreal rad = 2 * M_PI * i / steps;
+        path << c + QDoubleVector2D(cos(rad), sin(rad)) * mapDistance;
+    }
+}
+
+void QDeclarativeCircleMapItemPrivate::calculatePeripheralPointsGreatCircle(QList<QDoubleVector2D> &path,
                                       const QGeoCoordinate &center,
                                       qreal distance,
                                       const QGeoProjectionWebMercator &p,
@@ -459,7 +491,7 @@ void QDeclarativeCircleMapItemPrivateCPU::updatePolish()
     const qreal &radius = m_circle.m_circle.radius();
 
     // if circle crosses north/south pole, then don't preserve circular shape,
-    int crossingPoles = crossEarthPole(center, radius);
+    int crossingPoles = m_circle.referenceSurface() == QLocation::ReferenceSurface::Globe ? crossEarthPole(center, radius) : 0;
     if (crossingPoles == 1) { // If the circle crosses both poles, we will remove it from a rectangle
         includeOnePoleInPath(circlePath, center, radius, p);
         m_geometry.updateSourcePoints(*m_circle.map(), QList<QList<QDoubleVector2D>>{circlePath}, QGeoMapPolygonGeometry::DrawOnce);
@@ -486,7 +518,7 @@ void QDeclarativeCircleMapItemPrivateCPU::updatePolish()
 
             surroundingRect = {{anchorRect, -0.1}, {anchorRect + 1.0, -0.1},
                                {anchorRect + 1.0, 1.1}, {anchorRect, 1.1}};
-            wrappingMode = QGeoMapPolygonGeometry::WrapAround;
+            wrappingMode = QGeoMapPolygonGeometry::Duplicate;
         }
         m_geometry.updateSourcePoints(*m_circle.map(), {surroundingRect, circlePath}, wrappingMode);
     } else {

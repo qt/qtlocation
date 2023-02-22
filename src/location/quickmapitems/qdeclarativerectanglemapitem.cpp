@@ -3,7 +3,6 @@
 
 #include "qdeclarativerectanglemapitem_p.h"
 #include "qdeclarativerectanglemapitem_p_p.h"
-#include "qdeclarativepolygonmapitem_p.h"
 
 #include <QtCore/QScopedValueRollback>
 #include <QPainterPath>
@@ -83,6 +82,19 @@ QT_BEGIN_NAMESPACE
     with the \l QtQuick::Item::opacity property, which is 1.0 by default.
 
     \since 5.14
+*/
+
+/*!
+    \qmlproperty enum QtLocation::MapRectangle::referenceSurface
+
+    This property determines the reference surface of the rectangle. If it is set to
+    \l QLocation::ReferenceSurface::Map the edge points are connected with straight lines
+    on the map. If it is set to \l QLocation::ReferenceSurface::Globe, the edge points
+    are connected following the great circle path, describing the shortest connection of
+    two points on a sphere.
+    Default value is \l QLocation::ReferenceSurface::Map.
+
+    \since 6.5
 */
 
 QDeclarativeRectangleMapItem::QDeclarativeRectangleMapItem(QQuickItem *parent)
@@ -346,10 +358,18 @@ void QDeclarativeRectangleMapItemPrivateCPU::updatePolish()
     QScopedValueRollback<bool> rollback(m_rect.m_updatingGeometry);
     m_rect.m_updatingGeometry = true;
 
-    const QList<QGeoCoordinate> perimeter = QGeoMapItemGeometry::path(m_rect.m_rectangle);
-    const QList<QDoubleVector2D> pathMercator_ = QGeoMapItemGeometry::pathMercator(perimeter);
-    m_geometry.updateSourcePoints(*m_rect.map(), QList<QList<QDoubleVector2D>>{pathMercator_});
+    QList<QGeoCoordinate> perimeter = QGeoMapItemGeometry::path(m_rect.m_rectangle);
 
+    if (m_rect.referenceSurface() == QLocation::ReferenceSurface::Globe) {
+        perimeter = QDeclarativeGeoMapItemUtils::greaterCirclePath(perimeter,
+                                                                      QDeclarativeGeoMapItemUtils::ClosedPath);
+    }
+
+    const QList<QDoubleVector2D> pathMercator = QGeoMapItemGeometry::pathMercator(perimeter);
+
+    m_geometry.updateSourcePoints(*m_rect.map(), QList<QList<QDoubleVector2D>>{pathMercator},
+                                  m_rect.referenceSurface() == QLocation::ReferenceSurface::Globe ? QGeoMapPolygonGeometry::WrapAround :
+                                                         QGeoMapPolygonGeometry::Duplicate);
     m_rect.setShapeTriangulationScale(m_shape, m_geometry.maxCoord());
 
     const bool hasBorder = m_rect.m_border.color().alpha() != 0 && m_rect.m_border.width() > 0;

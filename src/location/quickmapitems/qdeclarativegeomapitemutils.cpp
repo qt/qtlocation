@@ -191,6 +191,72 @@ QRectF boundingRectangleFromList(const QList<QDoubleVector2D> &list)
     return QRectF(xMin, yMin, xMax - xMin, yMax - yMin);
 }
 
+QList<QGeoCoordinate> greaterCirclePath(const QList<QGeoCoordinate> &cornerPoints,
+                                        greaterCirclePathForm form, int N)
+{
+    QList<QGeoCoordinate> path;
+    path.reserve(N);
+    //If the path has to be closed we include the first coordinate again at the end of the procedure
+    qsizetype lineCount = cornerPoints.size() - ((form == OpenPath) ? 1 : 0);
+    for (qsizetype i = 0; i < lineCount; i++) {
+        path.append(cornerPoints.at(i));
+        const double p_lat = cornerPoints.at(i).latitude() / 180.0 * M_PI; //latitude point p in rad
+        const double p_lon = cornerPoints.at(i).longitude() / 180.0 * M_PI; //longitude point p in rad
+        const double q_lat = cornerPoints.at((i + 1) % cornerPoints.size()).latitude() / 180.0 * M_PI; //latitude point q in rad
+        const double q_lon = cornerPoints.at((i + 1) % cornerPoints.size()).longitude() / 180.0 * M_PI;//longitude point q in rad
+
+        const double c_p_lat = cos(p_lat);
+        const double c_p_lon = cos(p_lon);
+        const double s_p_lat = sin(p_lat);
+        const double s_p_lon = sin(p_lon);
+        const double c_q_lat = cos(q_lat);
+        const double c_q_lon = cos(q_lon);
+        const double s_q_lat = sin(q_lat);
+        const double s_q_lon = sin(q_lon);
+
+        const QDoubleVector3D p(c_p_lat * c_p_lon,
+                                c_p_lat * s_p_lon,
+                                s_p_lat);
+        const QDoubleVector3D q(c_q_lat * c_q_lon,
+                                c_q_lat * s_q_lon,
+                                s_q_lat);
+        const double qp = QDoubleVector3D::dotProduct(q, p); //scalar product of q p
+
+        if (qp <= -1.0 || qp >= 1.0)
+            continue;
+
+        // the path from q to p will be parametrized as a combination of points p and q:
+        // x = s*p + t*q.
+        // We will then directly calculate the latitude and longitude of the interpolated point x
+        // from the latitude and longitude of cornerpoints q and p.
+        // The parameters s and t depend on each other to ensure that x is located on the
+        // surface of the earth: s*s + 2*s*t*qp + t*t = 1
+        // Their minimum value is 0, as negative values indicate a path that goes around earth
+        // long way. Their maximum value follows as
+        const double paramMax = sqrt(1 / (1 - qp * qp));
+
+        double t = 0.0;
+        for (int sign = 1; sign > -2.0; sign -= 2.0) {
+            for (; t <= paramMax && t >= 0.0; t += sign * paramMax / N / 2) {
+                // dependence between s and t requires a plus/minus
+                // therefore we solve this equation two times with sign = -1/+1
+                const double s = - t * qp + sign * sqrt(t * t * (qp * qp - 1.0) + 1.0);
+                if (s < 0.0) //s > paramMax will never happen. If s < 0 we are done.
+                    break;
+                const double lat = asin(s * s_p_lat + t * s_q_lat);
+                const double lon = atan2(s * c_p_lat * s_p_lon + t * c_q_lat * s_q_lon,
+                                         s * c_p_lat * c_p_lon + t * c_q_lat * c_q_lon);
+                path.append(QGeoCoordinate(lat * 180.0 / M_PI, lon * 180.0 / M_PI));
+            }
+            t -= paramMax / N / 2;
+        }
+    }
+    if (form == OpenPath)
+        path.append(cornerPoints.last());
+    path.squeeze();
+    return path;
+}
+
 } // namespace QDeclarativeGeoMapItemUtils
 
 QT_END_NAMESPACE

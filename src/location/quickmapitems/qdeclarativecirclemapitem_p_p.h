@@ -62,7 +62,10 @@ public:
 
         m_circlePath.clear();
         const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_circle.map()->geoProjection());
-        calculatePeripheralPoints(m_circlePath, m_circle.center(), m_circle.radius(), p, CircleSamples);
+        if (m_circle.referenceSurface() == QLocation::ReferenceSurface::Map)
+            calculatePeripheralPointsSimple(m_circlePath, m_circle.center(), m_circle.radius(), p, CircleSamples);
+        else
+            calculatePeripheralPointsGreatCircle(m_circlePath, m_circle.center(), m_circle.radius(), p, CircleSamples);
     }
 
     static int crossEarthPole(const QGeoCoordinate &center, qreal distance);
@@ -70,7 +73,10 @@ public:
     static void includeOnePoleInPath(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
                                       qreal distance, const QGeoProjectionWebMercator &p);
 
-    static void calculatePeripheralPoints(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
+    static void calculatePeripheralPointsSimple(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
+                                   qreal distance, const QGeoProjectionWebMercator &p, int steps);
+
+    static void calculatePeripheralPointsGreatCircle(QList<QDoubleVector2D> &path, const QGeoCoordinate &center,
                                    qreal distance, const QGeoProjectionWebMercator &p, int steps);
 
     QDeclarativeCircleMapItem &m_circle;

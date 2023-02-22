@@ -9,11 +9,11 @@ Map {
     width: 512
     height: 512
 
-    center: QtPositioning.coordinate(0, -110)
+    center: QtPositioning.coordinate(0, -20)
 
     id: map
     plugin: Plugin {
-        name: "osm"
+        name: "itemsoverlay"
     }
     zoomLevel: 1
     copyrightsVisible: false
@@ -34,13 +34,14 @@ Map {
         {
             center
             {
-                longitude: 170
-                latitude: 30
+                longitude: 20
+                latitude: 80
             }
             radius: ((c.count-index-1)/(c.count-1)*(6371-1000)+500)*Math.PI*1000
             color: c.colors[Math.floor(index%c.colors.length)]
             border.width: 1
             autoFadeIn: false
+            referenceSurface: QtLocation.ReferenceSurface.Globe
             opacity: 1
         }
     }

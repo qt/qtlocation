@@ -35,14 +35,14 @@ private Q_SLOTS:
     void init();
     void cleanup();
 
-    void circle_data() { setupTestSuite(); }
-    void circle() { runTest(); }
+    void mapItems_data() { setupTestSuite(); }
+    void mapItems() { runTest(); }
 
 private:
     void test();
 
     void setupTestSuite();
-    void runTest(const QString& style = QString());
+    void runTest();
     bool renderAndGrab(const QString& qmlFile, const QStringList& extraArgs, QImage *screenshot, QString *errMsg);
 
     QString testSuitePath;
@@ -171,7 +171,7 @@ void tst_Baseline_MapItems::setupTestSuite()
 }
 
 
-void tst_Baseline_MapItems::runTest(const QString& style)
+void tst_Baseline_MapItems::runTest()
 {
     if (aborted)
         QSKIP("System too unstable.");
@@ -181,8 +181,6 @@ void tst_Baseline_MapItems::runTest(const QString& style)
     QImage screenShot;
     QString errorMessage;
     QStringList args;
-    if (!style.isEmpty())
-        args.append({"-style", style});
     if (renderAndGrab(qmlFile, args, &screenShot, &errorMessage)) {
         consecutiveErrors = 0;
     } else {

@@ -20,6 +20,7 @@
 #include <QtQuick/QQuickItem>
 #include <QtPositioning/QGeoShape>
 
+#include <QtLocation/qlocation.h>
 #include <QtLocation/private/qdeclarativegeomap_p.h>
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtLocation/private/qgeomap_p.h>
@@ -48,14 +49,17 @@ class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
     QML_NAMED_ELEMENT(GeoMapItemBase)
     QML_ADDED_IN_VERSION(5, 0)
     QML_UNCREATABLE("GeoMapItemBase is not intended instantiable by developer.")
+    Q_ENUMS(ReferenceSurface)
 
     Q_PROPERTY(QGeoShape geoShape READ geoShape WRITE setGeoShape STORED false )
     Q_PROPERTY(bool autoFadeIn READ autoFadeIn WRITE setAutoFadeIn REVISION(5, 14))
+    Q_PROPERTY(QLocation::ReferenceSurface referenceSurface READ referenceSurface WRITE setReferenceSurface NOTIFY referenceSurfaceChanged REVISION(6, 6))
     Q_PROPERTY(int lodThreshold READ lodThreshold WRITE setLodThreshold NOTIFY lodThresholdChanged REVISION(5, 15))
 
 public:
     explicit QDeclarativeGeoMapItemBase(QQuickItem *parent = nullptr);
     virtual ~QDeclarativeGeoMapItemBase();
+
 
     virtual void setMap(QDeclarativeGeoMap *quickMap, QGeoMap *map);
     virtual void setPositionOnMap(const QGeoCoordinate &coordinate, const QPointF &offset);
@@ -67,6 +71,9 @@ public:
 
     bool autoFadeIn() const;
     void setAutoFadeIn(bool fadeIn);
+
+    QLocation::ReferenceSurface referenceSurface() const;
+    void setReferenceSurface(QLocation::ReferenceSurface referenceSurface);
 
     int lodThreshold() const;
     void setLodThreshold(int lt);
@@ -101,6 +108,7 @@ Q_SIGNALS:
     void mapItemOpacityChanged();
     Q_REVISION(12) void addTransitionFinished();
     Q_REVISION(12) void removeTransitionFinished();
+    void referenceSurfaceChanged();
     void lodThresholdChanged();
 
 protected Q_SLOTS:
@@ -129,6 +137,7 @@ private:
 
     std::unique_ptr<QDeclarativeGeoMapItemTransitionManager> m_transitionManager;
     bool m_autoFadeIn = true;
+    QLocation::ReferenceSurface m_referenceSurface = QLocation::ReferenceSurface::Map;
     int m_lodThreshold = 0;
 
     friend class QDeclarativeGeoMap;

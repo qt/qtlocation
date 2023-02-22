@@ -40,6 +40,7 @@ class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolygonGeometry : public QGeoMapItemGeome
 public:
     enum MapBorderBehaviour {
         DrawOnce,
+        Duplicate,
         WrapAround
     };
 
@@ -49,7 +50,7 @@ public:
 
     void updateSourcePoints(const QGeoMap &map,
                             const QList<QList<QDoubleVector2D>> &path,
-                            MapBorderBehaviour wrapping = WrapAround);
+                            MapBorderBehaviour wrapping = Duplicate);
 
     QPainterPath srcPath() const { return srcPath_; }
     qreal maxCoord() const { return maxCoord_; }
@@ -108,15 +109,33 @@ public:
         m_geopathProjected.clear();
         m_geopathProjected << QList<QDoubleVector2D>();
         QList<QDoubleVector2D> &pP = m_geopathProjected.last();
-        pP.reserve(m_poly.m_geopoly.perimeter().size());
-        for (const QGeoCoordinate &c : m_poly.m_geopoly.perimeter())
-            pP << p.geoToMapProjection(c);
+        if (m_poly.referenceSurface() == QLocation::ReferenceSurface::Globe) {
+            const QList<QGeoCoordinate> realPath = QDeclarativeGeoMapItemUtils::greaterCirclePath(m_poly.m_geopoly.perimeter(),
+                                                                                            QDeclarativeGeoMapItemUtils::ClosedPath);
+            pP.reserve(realPath.size());
+            for (const QGeoCoordinate &c : realPath)
+                pP << p.geoToMapProjection(c);
+        } else {
+            pP.reserve(m_poly.m_geopoly.perimeter().size());
+            const QList<QGeoCoordinate> perimeter = m_poly.m_geopoly.perimeter();
+            for (const QGeoCoordinate &c : perimeter)
+                pP << p.geoToMapProjection(c);
+        }
         for (int i = 0; i < m_poly.m_geopoly.holesCount(); i++) {
             m_geopathProjected << QList<QDoubleVector2D>();
             QList<QDoubleVector2D> &pH = m_geopathProjected.last();
-            pH.reserve(m_poly.m_geopoly.holePath(i).size());
-            for (const QGeoCoordinate &c : m_poly.m_geopoly.holePath(i))
-                pH << p.geoToMapProjection(c);
+            if (m_poly.referenceSurface() == QLocation::ReferenceSurface::Globe) {
+                const QList<QGeoCoordinate> realPath = QDeclarativeGeoMapItemUtils::greaterCirclePath(m_poly.m_geopoly.holePath(i),
+                                                                                                QDeclarativeGeoMapItemUtils::ClosedPath);
+                pH.reserve(realPath.size());
+                for (const QGeoCoordinate &c : realPath)
+                    pH << p.geoToMapProjection(c);
+            } else {
+                pH.reserve(m_poly.m_geopoly.holePath(i).size());
+                const QList<QGeoCoordinate> holePath = m_poly.m_geopoly.holePath(i);
+                for (const QGeoCoordinate &c : holePath)
+                    pH << p.geoToMapProjection(c);
+            }
         }
     }
     void updateCache()
@@ -125,7 +144,11 @@ public:
             return;
         const QGeoProjectionWebMercator &p = static_cast<const QGeoProjectionWebMercator&>(m_poly.map()->geoProjection());
         QList<QDoubleVector2D> &pP = m_geopathProjected.first();
-        pP << p.geoToMapProjection(m_poly.m_geopoly.perimeter().last());
+        if (m_poly.referenceSurface() == QLocation::ReferenceSurface::Globe && m_poly.m_geopoly.perimeter().size() > 1) {
+            regenerateCache(); //giving up here. Too difficult to take back all the interpolated points
+        } else {
+            pP << p.geoToMapProjection(m_poly.m_geopoly.perimeter().last());
+        }
     }
     void afterViewportChanged() override
     {

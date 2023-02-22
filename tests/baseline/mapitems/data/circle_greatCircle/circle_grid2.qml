@@ -20,15 +20,7 @@ Map {
 
     Repeater {
         id: c
-        property var colors: [
-            "red",
-            "orange",
-            "yellow",
-            "green",
-            "blue",
-            "violet"
-        ]
-        property int count: c.colors.length
+        property int count: 4
         model: count*count
         MapCircle
         {
@@ -37,10 +29,11 @@ Map {
                 longitude: -180+360*(index%c.count+0.5)/(c.count)
                 latitude: -90+180*(Math.floor(index/c.count)+0.5)/(c.count)
             }
-            radius: 2000*1000
-            color: c.colors[Math.floor(index%c.colors.length)]
+            radius: 4000*1000
+            color: 'green'
             border.width: 1
             autoFadeIn: false
+            referenceSurface: QtLocation.ReferenceSurface.Globe
             opacity: 0.3
         }
     }
