@@ -7,12 +7,15 @@ import QtPositioning
 import QtLocation
 import Qt.labs.qmlmodels 1.0
 
+//! [DelegateChooser]
 DelegateChooser {
     id: dc
     role: "type"
-    property color defaultColor: "grey"
+//! [DelegateChooser]
+    property color defaultColor: "#46a2da"
     property real defaultOpacity: 0.6
 
+    //! [DelegateChoice Point]
     DelegateChoice {
         roleValue: "Point"
         delegate: MapCircle {
@@ -20,15 +23,14 @@ DelegateChooser {
             property var props: modelData.properties
             geoShape: modelData.data
             radius: (props && props.radius) || 20*1000
-            border.width: 3
-            border.color: hh.hovered ? "magenta" : "black"
+            border.width: 2
+            border.color: hh.hovered ? "magenta" : Qt.darker(color)
             opacity: dc.defaultOpacity
-            /* The expression below is equivalent to:
-               ((props !== undefined && props["color"] !== undefined) ? props["color"] :
-               ((parent && parent.props !== undefined && parent.props["color"] !== undefined) ? parent.props["color"] : dc.defaultColor))
-            */
             color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
+            autoFadeIn: false
+    //! [DelegateChoice Point]
 
+            //! [Handler Point]
             TapHandler {
                 onTapped: {
                     if (props !== undefined)
@@ -42,6 +44,7 @@ DelegateChooser {
             HoverHandler {
                 id: hh
             }
+            //! [Handler Point]
         }
     }
 
@@ -51,9 +54,10 @@ DelegateChooser {
             property string geojsonType: "LineString"
             property var props: modelData.properties
             geoShape: modelData.data
-            line.width: 4
+            line.width: 2
             opacity: dc.defaultOpacity
-            line.color: hh.hovered ? "magenta" : (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
+            line.color: hh.hovered ? "magenta" : (props && props.color) || (parent && parent.props && parent.props.color) || Qt.darker(dc.defaultColor)
+            autoFadeIn: false
 
             TapHandler {
                 onTapped: {
@@ -79,8 +83,10 @@ DelegateChooser {
             geoShape: modelData.data
             opacity: dc.defaultOpacity
             color: (props && props.color) || (parent && parent.props && parent.props.color) || dc.defaultColor
-            border.width: 4
-            border.color: hh.hovered ? "magenta" : "black"
+            border.width: 2
+            border.color: hh.hovered ? "magenta" : Qt.darker(color)
+            autoFadeIn: false
+
             TapHandler {
                 onTapped: {
                     if (props !== undefined)
