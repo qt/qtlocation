@@ -70,6 +70,7 @@ public:
             ls["properties"] = mapPolyline->property("props").toMap();
         return ls;
     }
+    //! [Extractor Example Circle]
     static QVariantMap toVariant(QDeclarativeCircleMapItem *mapCircle)
     {
         QVariantMap pt;
@@ -80,6 +81,7 @@ public:
         pt["properties"] = propMap;
         return pt;
     }
+    //! [Extractor Example Circle]
     static QVariantMap toVariant(QDeclarativeRectangleMapItem *mapRectangle)
     {
         QVariantMap pt;
@@ -128,7 +130,6 @@ public:
                 entry = toVariant(circle); // If GeoJSON Point type is visualized in other ways, handle those types here instead.
             } else if (QDeclarativeRectangleMapItem *rectangle = qobject_cast<QDeclarativeRectangleMapItem *>(kid)) {
                 entry = toVariant(rectangle); // For the self-drawn rectangles. Will be exported as Polygons
-
             }
             features.append(entry);
         }
@@ -145,10 +146,12 @@ public:
     }
 };
 
+//! [GeoJsoner]
 class GeoJsoner: public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QVariant model MEMBER m_importedGeoJson NOTIFY modelChanged)
+//! [GeoJsoner]
 
 public:
     GeoJsoner(QObject *parent = nullptr) : QObject(parent)
@@ -157,6 +160,42 @@ public:
     }
 
 public slots:
+    //! [clear]
+    Q_INVOKABLE void clear()
+    {
+        m_importedGeoJson = QVariantList();
+        emit modelChanged();
+    }
+    //! [clear]
+
+    //! [add item]
+    Q_INVOKABLE void addItem(QQuickItem *item)
+    {
+        QVariant entry;
+        if (QDeclarativePolylineMapItem *polyline = qobject_cast<QDeclarativePolylineMapItem *>(item)) {
+            entry = extractor::toVariant(polyline);
+        } else if (QDeclarativePolygonMapItem *polygon = qobject_cast<QDeclarativePolygonMapItem *>(item)) {
+            entry = extractor::toVariant(polygon);
+        } else if (QDeclarativeCircleMapItem *circle = qobject_cast<QDeclarativeCircleMapItem *>(item)) {
+            entry = extractor::toVariant(circle);
+        } else if (QDeclarativeRectangleMapItem *rectangle = qobject_cast<QDeclarativeRectangleMapItem *>(item)) {
+            entry = extractor::toVariant(rectangle);
+        } else {
+            return;
+        }
+        QVariantList geoJson = m_importedGeoJson.toList();
+        if (!geoJson.isEmpty()){
+            QVariantList geoData = (geoJson[0].toMap()["type"] == "FeatureCollection") ? geoJson[0].toMap()["data"].toList() : geoJson;
+            geoData.append(entry);
+            geoJson[0] = QVariantMap{{"type", "FeatureCollection"}, {"data", geoData}};
+        }
+        else {
+            geoJson.append(entry);
+        }
+        m_importedGeoJson = geoJson;
+        emit modelChanged();
+    }
+    //! [add item]
 
     Q_INVOKABLE bool load(QUrl url)
     {
@@ -177,14 +216,17 @@ public slots:
         }
 
         // Import geographic data to a QVariantList
+        //! [Conversion QVariantList]
         QVariantList modelList = QGeoJson::importGeoJson(loadDoc);
         m_importedGeoJson =  modelList;
         emit modelChanged();
+        //! [Conversion QVariantList]
         return true;
     }
 
     // Used by the MapItemView Extractor to identify a Feature
-    Q_INVOKABLE QVariantList toGeoJson(QDeclarativeGeoMapItemView *mapItemView)
+    //! [Conversion QVariantList From Items]
+    Q_INVOKABLE QVariantList toVariant(QDeclarativeGeoMapItemView *mapItemView)
     {
         QVariantList res;
         QDeclarativeGeoMapItemView *root = mapItemView;
@@ -193,7 +235,9 @@ public slots:
             res.append(miv);
         return res;
     }
+    //! [Conversion QVariantList From Items]
 
+    //! [Write QVariantList to Json]
     Q_INVOKABLE void dumpGeoJSON(QVariantList geoJson, QUrl url)
     {
         QJsonDocument json = QGeoJson::exportGeoJson(geoJson);
@@ -202,6 +246,7 @@ public slots:
         jsonFile.write(json.toJson());
         jsonFile.close();
     }
+    //! [Write QVariantList to Json]
 
     Q_INVOKABLE void writeDebug(QVariantList geoJson, QUrl url)
     {
@@ -264,7 +309,10 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("dataPath", QUrl(QStringLiteral("file://")
                                                               + qPrintable(QT_STRINGIFY(SRC_PATH))
                                                               + QStringLiteral("/data")));
+    //! [QMLEngine]
     qmlRegisterType<GeoJsoner>("Qt.GeoJson", 1, 0, "GeoJsoner");
+    //! [QMLEngine]
+
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty())
