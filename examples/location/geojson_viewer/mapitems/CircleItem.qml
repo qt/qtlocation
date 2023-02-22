@@ -23,8 +23,5 @@ MapCircle {
     }
 
     function finishAddGeometry(){
-        color = "#46a2da"
-        border.color = "#190a33"
-        opacity = 0.25
     }
 }

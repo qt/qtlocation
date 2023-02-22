@@ -5,7 +5,7 @@ import QtLocation
 
 MapPolyline {
     line.color: "#330a0a"
-    line.width: 4
+    line.width: 2
     opacity: 0.75
     smooth: true
     autoFadeIn: false
@@ -26,7 +26,5 @@ MapPolyline {
 
     function finishAddGeometry(){
         removeCoordinate(pathLength()-1)
-        line.color = "#46a2da"
-        opacity = 0.5
     }
 }

@@ -27,8 +27,5 @@ MapPolygon {
     function finishAddGeometry(){
         if (path.length > 0)
             removeCoordinate(path[path.length-1])
-        color = "#46a2da"
-        border.color = "#190a33"
-        opacity = 0.25
     }
 }

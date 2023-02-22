@@ -14,8 +14,8 @@ import "mapitems"
 ApplicationWindow {
     id: win
     visible: true
-    width: 1024
-    height: 1024
+    width: 512
+    height: 512
     menuBar: mainMenu
     title: qsTr("GeoJSON Viewer: ") + view.map.center +
            " zoom " + view.map.zoomLevel.toFixed(3)
@@ -42,9 +42,11 @@ ApplicationWindow {
         fileMode: FileDialog.SaveFile
         currentFolder: StandardPaths.writableLocation(StandardPaths.TempLocation)
         nameFilters: ["GeoJSON files (*.geojson *.json)"]
+        //! [Write File]
         onAccepted: {
-            geoJsoner.dumpGeoJSON(geoJsoner.toGeoJson(miv), fileWriteDialog.selectedFile);
+            geoJsoner.dumpGeoJSON(geoJsoner.toVariant(miv), fileWriteDialog.selectedFile);
         }
+        //! [Write File]
     }
 
     FileDialog {
@@ -55,7 +57,7 @@ ApplicationWindow {
         currentFolder: StandardPaths.writableLocation(StandardPaths.TempLocation)
         nameFilters: ["GeoJSON files (*.geojson *.json)"]
         onAccepted: {
-            geoJsoner.writeDebug(geoJsoner.toGeoJson(miv), debugWriteDialog.selectedFile);
+            geoJsoner.writeDebug(geoJsoner.toVariant(miv), debugWriteDialog.selectedFile);
         }
     }
 
@@ -75,6 +77,12 @@ ApplicationWindow {
                 text: "&Export"
                 onTriggered: {
                     fileWriteDialog.open()
+                }
+            }
+            MenuItem {
+                text: "&Clear"
+                onTriggered: {
+                    view.clearAllItems()
                 }
             }
             MenuItem {
@@ -115,50 +123,63 @@ ApplicationWindow {
         onActivated: view.map.zoomLevel = Math.round(view.map.zoomLevel - 1)
     }
 
+    //! [MapView Creation]
     MapView {
         id: view
         anchors.fill: parent
-        map.center: QtPositioning.coordinate(43.59, 13.50) // Ancona, Italy
         map.plugin: Plugin { name: "osm" }
         map.zoomLevel: 4
+    //! [MapView Creation]
 
-        property variant unfinishedItem: 'undefined'
+        property variant unfinishedItem: undefined
 
         signal showMainMenu(variant coordinate)
 
+        //! [add item]
         function addGeoItem(item)
         {
-            var count = view.map.mapItems.length
             var co = Qt.createComponent('mapitems/'+item+'.qml')
             if (co.status === Component.Ready) {
                 unfinishedItem = co.createObject(map)
                 unfinishedItem.setGeometry(tapHandler.lastCoordinate)
                 unfinishedItem.addGeometry(hoverHandler.currentCoordinate, false)
                 view.map.addMapItem(unfinishedItem)
-                unfinishedItem.parent = miv
             } else {
                 console.log(item + " is not supported right now, please call us later.")
             }
         }
+        //! [add item]
 
+        //! [finish item]
+        function finishGeoItem()
+        {
+            unfinishedItem.finishAddGeometry()
+            geoJsoner.addItem(unfinishedItem)
+            map.removeMapItem(unfinishedItem)
+            unfinishedItem = undefined
+        }
+        //! [finish item]
+
+        //! [clearAllItems]
         function clearAllItems()
         {
-            var count = view.map.mapItems.length
-            for (var i = count-1; i>=0; i--){
-                var item = view.map.mapItems[i]
-                item.parent = view.map
-                view.map.removeMapItem(item)
-            }
+            geoJsoner.clear();
         }
+        //! [clearAllItems]
 
+        //! [MapItemView]
         MapItemView {
             id: miv
             parent: view.map
+            //! [MapItemView]
+            //! [MapItemView Model]
             model: geoJsoner.model
+            //! [MapItemView Model]
+            //! [MapItemView Delegate]
             delegate: GeoJsonDelegate {
             }
+            //! [MapItemView Delegate]
         }
-
         Menu {
             id: mapPopupMenu
 
@@ -191,6 +212,7 @@ ApplicationWindow {
             }
         }
 
+        //! [Hoverhandler Map]
         HoverHandler {
             id: hoverHandler
             property variant currentCoordinate
@@ -198,52 +220,43 @@ ApplicationWindow {
 
             onPointChanged: {
                 currentCoordinate = view.map.toCoordinate(hoverHandler.point.position)
-                if (view.unfinishedItem !== 'undefined')
+                if (view.unfinishedItem !== undefined)
                     view.unfinishedItem.addGeometry(view.map.toCoordinate(hoverHandler.point.position), true)
             }
-
         }
+        //! [Hoverhandler Map]
 
         TapHandler {
             id: tapHandler
             property variant lastCoordinate
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
+            //! [Taphandler Map]
             onSingleTapped: (eventPoint, button) => {
                 lastCoordinate = view.map.toCoordinate(tapHandler.point.position)
                 if (button === Qt.RightButton) {
-                    if (view.unfinishedItem !== 'undefined') {
-                        view.unfinishedItem.finishAddGeometry()
-                        view.unfinishedItem = 'undefined'
+                    if (view.unfinishedItem !== undefined) {
+                        view.finishGeoItem()
                     } else
                         mapPopupMenu.show(lastCoordinate)
                 } else if (button === Qt.LeftButton) {
-                    if (view.unfinishedItem !== 'undefined') {
+                    if (view.unfinishedItem !== undefined) {
                         if (view.unfinishedItem.addGeometry(view.map.toCoordinate(tapHandler.point.position), false)) {
-                            view.unfinishedItem.finishAddGeometry()
-                            view.unfinishedItem = 'undefined'
+                            view.finishGeoItem()
                         }
                     }
                 }
             }
+            //! [Taphandler Map]
         }
         TapHandler {
-            acceptedButtons: Qt.LeftButton
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             onDoubleTapped: (eventPoint, button) => {
                 var preZoomPoint = view.map.toCoordinate(eventPoint.position);
-                view.map.zoomLevel = Math.floor(view.map.zoomLevel + 1)
-                var postZoomPoint = view.map.toCoordinate(eventPoint.position);
-                var dx = postZoomPoint.latitude - preZoomPoint.latitude;
-                var dy = postZoomPoint.longitude - preZoomPoint.longitude;
-                view.map.center = QtPositioning.coordinate(view.map.center.latitude - dx,
-                                                           view.map.center.longitude - dy);
-            }
-        }
-        TapHandler {
-            acceptedButtons: Qt.RightButton
-            onDoubleTapped: (eventPoint, button) => {
-                var preZoomPoint = view.map.toCoordinate(eventPoint.position);
-                view.map.zoomLevel = Math.floor(view.map.zoomLevel - 1)
+                if (button === Qt.LeftButton)
+                    view.map.zoomLevel = Math.floor(view.map.zoomLevel + 1)
+                else
+                    view.map.zoomLevel = Math.floor(view.map.zoomLevel - 1)
                 var postZoomPoint = view.map.toCoordinate(eventPoint.position);
                 var dx = postZoomPoint.latitude - preZoomPoint.latitude;
                 var dy = postZoomPoint.longitude - preZoomPoint.longitude;
