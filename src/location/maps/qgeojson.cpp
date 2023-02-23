@@ -1058,6 +1058,8 @@ the data converted to GeoJSON.
 */
 QJsonDocument exportGeoJson(const QVariantList &geoData)
 {
+    if (geoData.isEmpty())
+        return QJsonDocument();
     QVariantMap exportMap = geoData.at(0).value<QVariantMap>(); // Extracting the QVMap
     QJsonObject newObject;
     QJsonDocument newDocument;
