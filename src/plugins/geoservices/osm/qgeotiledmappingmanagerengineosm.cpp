@@ -181,10 +181,12 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
         if (parameters.contains(QStringLiteral("osm.mapping.copyright")))
             m_customCopyright = parameters.value(QStringLiteral("osm.mapping.copyright")).toString();
 
+        if (!tmsServer.endsWith(".png"))
+             tmsServer += QStringLiteral("%z/%x/%y.png");
         m_providers.push_back(
             new QGeoTileProviderOsm( nmCached,
                 QGeoMapType(QGeoMapType::CustomMap, tr("Custom URL Map"), tr("Custom url map view set via urlprefix parameter"), false, false, 8, pluginName, cameraCaps),
-                { new TileProvider(tmsServer + QStringLiteral("%z/%x/%y.png"),
+                { new TileProvider(tmsServer,
                     QStringLiteral("png"),
                     mapCopyright,
                     dataCopyright) }, cameraCaps
