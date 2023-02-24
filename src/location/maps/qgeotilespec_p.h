@@ -17,6 +17,8 @@
 
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtCore/QMetaType>
+#include <QtCore/QList>
+#include <QtCore/QSet>
 #include <QString>
 
 #include <QSharedDataPointer>
@@ -78,5 +80,7 @@ Q_LOCATION_PRIVATE_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoTileSpec)
+Q_DECLARE_METATYPE(QList<QGeoTileSpec>)
+Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
 
 #endif // QGEOTILESPEC_H

@@ -12,9 +12,6 @@
 #include <QPixmap>
 #include <QDebug>
 
-Q_DECLARE_METATYPE(QList<QGeoTileSpec>)
-Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
-
 QT_BEGIN_NAMESPACE
 
 QAbstractGeoTileCache::QAbstractGeoTileCache(QObject *parent)
