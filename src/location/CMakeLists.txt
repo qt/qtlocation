@@ -67,6 +67,9 @@ qt_internal_add_module(Location
         places/qplaceratings.h places/qplaceratings_p.h places/qplaceratings.cpp
         places/qplacecontactdetail.h places/qplacecontactdetail_p.h places/qplacecontactdetail.cpp
         places/qplacecontent.h places/qplacecontent_p.h places/qplacecontent.cpp
+    NO_UNITY_BUILD_SOURCES
+        maps/qgeocameratiles.cpp
+        maps/qgeotiledmapscene.cpp
     INCLUDE_DIRECTORIES
         maps
         places
