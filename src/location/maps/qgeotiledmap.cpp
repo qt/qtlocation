@@ -16,13 +16,6 @@
 QT_BEGIN_NAMESPACE
 #define PREFETCH_FRUSTUM_SCALE 2.0
 
-static const double invLog2 = 1.0 / std::log(2.0);
-
-static double zoomLevelFrom256(double zoomLevelFor256, double tileSize)
-{
-    return std::log( std::pow(2.0, zoomLevelFor256) * 256.0 / tileSize ) * invLog2;
-}
-
 QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *parent)
     : QGeoMap(*new QGeoTiledMapPrivate(engine), parent)
 {
@@ -272,7 +265,7 @@ void QGeoTiledMapPrivate::changeCameraData(const QGeoCameraData &cameraData)
     // Adapt it to the current tileSize
     double zoomLevel = cameraData.zoomLevel();
     if (m_visibleTiles->tileSize() != 256)
-        zoomLevel = zoomLevelFrom256(zoomLevel, m_visibleTiles->tileSize());
+        zoomLevel = std::log(std::pow(2.0, zoomLevel) * 256.0 / m_visibleTiles->tileSize()) * (1.0 / std::log(2.0));
     cam.setZoomLevel(zoomLevel);
 
     // For zoomlevel, "snap" 0.01 either side of a whole number.

@@ -6,11 +6,9 @@
 #include <QSharedData>
 #include <cmath>
 
-static const double invLog2 = 1.0 / std::log(2.0);
-
 static double zoomLevelTo256(double zoomLevelForTileSize, double tileSize)
 {
-    return std::log( std::pow(2.0, zoomLevelForTileSize) * tileSize / 256.0 ) * invLog2;
+    return std::log(std::pow(2.0, zoomLevelForTileSize) * tileSize / 256.0) * (1.0 / std::log(2.0));
 }
 
 QT_BEGIN_NAMESPACE
