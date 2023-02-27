@@ -48,16 +48,6 @@ QT_BEGIN_NAMESPACE
     occurs when dragged to the a different latitude, however, its edges
     remain straight.
 
-    \section2 Performance
-
-    MapRectangles have a rendering cost identical to a MapPolygon with 4
-    vertices.
-
-    Like the other map objects, MapRectangle is normally drawn without a smooth
-    appearance. Setting the \l opacity property will force the object to be
-    blended, which decreases performance considerably depending on the hardware
-    in use.
-
     \section2 Example Usage
 
     The following snippet shows a map containing a MapRectangle, spanning
