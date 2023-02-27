@@ -18,6 +18,11 @@ QT_BEGIN_NAMESPACE
 
 /*! \namespace QGeoJson
     \inmodule QtLocation
+    \keyword QGeoJson Namespace
+
+    \brief The QGeoJson namespace contains functions to import and export
+           geolocated information from and to GeoJson files.
+
     \since 5.13
 
     The methods in the QGeoJson namespace can be used to convert between a
@@ -44,7 +49,8 @@ QT_BEGIN_NAMESPACE
     MultiPolygon, \c GeometryCollection, \c FeatureCollection. The second pair
     has \c data as key, and the corresponding value can be either a QGeoShape
     or a list, depending on the GeoJSON type. The next section provides details
-    about this node. The \c Feature type is converted into the type of the
+    about the conversation form GeoJson objects to objects known in Qt Location.
+    The \c Feature type is converted into the type of the
     geometry contained within, with an additional (key, value) pair, where the
     key is \c properties and the value is a \l QVariantMap. Thus, a feature Map
     is distinguishable from the corresponding geometry, by looking for a \c
@@ -73,12 +79,12 @@ QT_BEGIN_NAMESPACE
 
         \code
         {
-          type : Point
+          type : "Point"
           data : QGeoCircle({60.000, 11.000}, -1)
         }
         \endcode
 
-    \li When the type is \c LineString the data ia a QGeoPath.
+    \li When the type is \c LineString the data is a QGeoPath.
 
         For example, the following GeoJSON document contains a \c LineString
         geometry:
@@ -94,7 +100,7 @@ QT_BEGIN_NAMESPACE
 
         \code
         {
-          type : LineString,
+          type : "LineString",
           data : QGeoPath([{43.000, 13.500}, {59.920, 10.730}])
         }
         \endcode
@@ -123,7 +129,7 @@ QT_BEGIN_NAMESPACE
 
         \code
         {
-          type : Polygon
+          type : "Polygon"
           data : QGeoPolygon([{51.110, 17.130}, {50.420,30.540}, {58.360, 26.700}, {51.110, 17.130}])
         }
         \endcode
@@ -157,18 +163,18 @@ QT_BEGIN_NAMESPACE
 
         \code
         {
-          type : MultiPoint
+          type : "MultiPoint"
           data : [
             {
-              type : Point
+              type : "Point"
               data : QGeoCircle({60.000, 11.000}, -1)
             },
             {
-              type : Point
+              type : "Point"
               data : QGeoCircle({60.300, 5.500}, -1)
             },
             {
-              type : Point
+              type : "Point"
               data : QGeoCircle({58.900, 5.700}, -1)
             }
           ]
@@ -194,14 +200,14 @@ QT_BEGIN_NAMESPACE
 
         \code
         {
-          type : MultiLineString
+          type : "MultiLineString"
           data : [
             {
-              type : LineString
+              type : "LineString"
               data : QGeoPath([{45.000, 9.150}, {58.900, -3.150}])
             },
             {
-              type : LineString
+              type : "LineString"
               data : QGeoPath([{43.000, 13.500}, {59.920, 10.730}])
             }
           ]
@@ -215,11 +221,24 @@ QT_BEGIN_NAMESPACE
 
         \code
         {
-            "type" : "MultiPoint",
+            "type" : "MultiPolygon",
             "coordinates" : [
-              [11,60],
-              [5.5,60.3],
-              [5.7,58.90]
+               [
+                 [
+                   [17.13, 51.11],
+                   [30.54, 50.42],
+                   [26.74, 58.36],
+                   [17.13, 51.11]
+                 ]
+                ],
+               [
+                 [
+                   [19.84, 41.33],
+                   [30.45, 49.26],
+                   [17.07, 50.10],
+                   [19.84, 41.33]
+                 ]
+               ]
             ]
         }
         \endcode
@@ -228,19 +247,15 @@ QT_BEGIN_NAMESPACE
 
         \code
         {
-          type : MultiPoint
+          type : "MultiPolygon"
           data : [
             {
-              type : Point
-              data : QGeoCircle({60.000, 11.000}, -1)
+              type : "Polygon"
+              data : QGeoPolygon([{51.110, 17.130}, {50.420,30.540}, {58.360, 26.700}, {51.110, 17.130}])
             },
             {
-              type : Point
-              data : QGeoCircle({60.300, 5.500}, -1)
-            },
-            {
-              type : Point
-              data : QGeoCircle({58.900, 5.700}, -1)
+              type : "Polygon"
+              data : QGeoPolygon([{41.330, 19.840}, {49.260,30.450}, {50.100, 17.070}, {41.330, 19.840}])
             }
           ]
         }
@@ -297,36 +312,36 @@ QT_BEGIN_NAMESPACE
 
     \code
     {
-      type : GeometryCollection
+      type : "GeometryCollection"
       data : [
         {
-          type : MultiPolygon
+          type : "MultiPolygon"
           data : [
             {
-              type : Polygon
+              type : "Polygon"
               data : QGeoPolygon([{41.330, 19.840}, {49.260, 30.450}, {50.100, 17.070}, {41.330, 19.840}])
             }
             {
-              type : Polygon
+              type : "Polygon"
               data : QGeoPolygon([{51.110, 17.130}, {50.420, 30.540}, {58.360, 26.740}, {51.110, 17.130}])
             }
           ]
         }
         {
-          type : MultiLineString
+          type : "MultiLineString"
           data : [
             {
-              type : LineString
+              type : "LineString"
               data : QGeoPath([{45.000, 9.150}, {58.900, -3.150}])
             }
             {
-              type : LineString
+              type : "LineString"
               data : QGeoPath([{43.000, 13.500}, {59.920, 10.730}])
             }
           ]
         }
         {
-          type : MultiPoint
+          type : "MultiPoint"
           data : [
             {
               type : Point
@@ -383,9 +398,9 @@ QT_BEGIN_NAMESPACE
 
     \code
     {
-      type : Polygon
+      type : "Polygon"
       data : QGeoPolygon([{51.110, 17.130}, {50.420,30.540}, {58.360, 26.700}, {51.110, 17.130}])
-      properties : {text : This is a Feature with a Polygon}
+      properties : {text : "This is a Feature with a Polygon"}
     }
     \endcode
 
@@ -442,26 +457,26 @@ QT_BEGIN_NAMESPACE
 
     \code
     {
-      type : FeatureCollection
+      type : "FeatureCollection"
       data : [
         {
-          type : MultiLineString
+          type : "MultiLineString"
           data : [
             {
-              type : LineString
+              type : "LineString"
               data : QGeoPath([{45.000, 9.150}, {58.900, -3.150}])
             }
             {
-              type : LineString
+              type : "LineString"
               data : QGeoPath([{43.000, 13.500}, {59.920, 10.730}])
             }
           ]
-          properties : {text : This is a Feature with a MultiLineString}
+          properties : {text : "This is a Feature with a MultiLineString"}
         },
         {
-          type : Polygon
+          type : "Polygon"
           data : QGeoPolygon({51.110, 17.130}, {50.420, 30.540}, {58.360, 26.700}, {51.110, 17.130})
-          properties : {text : This is a Feature with a Polygon}
+          properties : {text : "This is a Feature with a Polygon"}
         }
       ]
     }

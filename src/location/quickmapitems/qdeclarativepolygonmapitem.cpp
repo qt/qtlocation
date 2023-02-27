@@ -57,24 +57,11 @@ QT_BEGIN_NAMESPACE
     \l border.width properties.
 
     \note Since MapPolygons are geographic items, dragging a MapPolygon
-    (through the use of \l MouseArea) causes its vertices to be
+    (through the use of \l MouseArea or \l PointHander) causes its vertices to be
     recalculated in the geographic coordinate space. The edges retain the
     same geographic lengths (latitude and longitude differences between the
     vertices), but they remain straight. Apparent stretching of the item occurs
     when dragged to a different latitude.
-
-    \section2 Performance
-
-    MapPolygons have a rendering cost that is O(n) with respect to the number
-    of vertices. This means that the per frame cost of having a Polygon on the
-    Map grows in direct proportion to the number of points on the Polygon. There
-    is an additional triangulation cost (approximately O(n log n)) which is
-    currently paid with each frame, but in future may be paid only upon adding
-    or removing points.
-
-    Like the other map objects, MapPolygon is normally drawn without a smooth
-    appearance. Setting the \l {Item::opacity}{opacity} property will force the object to
-    be blended, which decreases performance considerably depending on the hardware in use.
 
     \section2 Example Usage
 

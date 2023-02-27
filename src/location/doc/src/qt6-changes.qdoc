@@ -36,12 +36,15 @@
         \li The \c QGeoRouteLeg class and the QML equivalent, \c RouteLeg, have
             been merged into \l QGeoRoute (and the \l route type). A route can
             be an aggregate of several routes.
+        \li The \l {Map} type provides now minimal functionality without handling
+            of user intput. The \c {MapGestureArea} was removed. The \l {MapView}
+            type handles basic user input such as tap and drag events.
     \endlist
 
     \section2 Places
 
     \list
-        \li The \c {QPlaceImage}, {QPlaceEditorial}, and {QPlaceReview} classes
+        \li The \c {QPlaceImage}, \c {QPlaceEditorial}, and \c {QPlaceReview} classes
             have been folded into \l QPlaceContent.
         \li The \l QPlaceContent API has been changed to give access to a list of
             QVariant values.

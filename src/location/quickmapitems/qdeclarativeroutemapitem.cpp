@@ -28,11 +28,6 @@ QT_BEGIN_NAMESPACE
     By default, the route is displayed as a 1-pixel thick black line. This can
     be changed using the \l line.width and \l line.color properties.
 
-    \section2 Performance
-
-    For notes about the performance on MapRoute, refer to the documentation for
-    \l MapPolyline.
-
     \section2 Example Usage
 
     Here is how to draw a \l{route}{route} on a \l{Map}{map}:
