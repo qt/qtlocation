@@ -111,7 +111,7 @@
 
     \snippet planespotter/planespotter.qml QmlPlane1
 
-    The \l MouseArea of the QML plane implements the logic for the course setting
+    The \l TapHandler of the QML plane implements the logic for the course setting
     and starts the animation when required.
 
     \snippet planespotter/planespotter.qml QmlPlane2

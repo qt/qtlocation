@@ -64,9 +64,8 @@ Window {
             }
 
             //! [QmlPlane2]
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
+            TapHandler {
+                onTapped: {
                     if (qmlPlaneAnimation.running) {
                         console.log("Plane still in the air.");
                         return;
@@ -96,9 +95,8 @@ Window {
             pilotName: "C++"
             coordinate: berlin2London.position
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
+            TapHandler {
+                onTapped: {
                     if (cppPlaneAnimation.running || berlin2London.isFlying()) {
                         console.log("Plane still in the air.");
                         return;
