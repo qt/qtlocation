@@ -4,11 +4,6 @@
         <file>map/MapComponent.qml</file>
         <file>map/MapSliders.qml</file>
         <file>map/Marker.qml</file>
-        <file>map/PolylineItem.qml</file>
-        <file>map/RectangleItem.qml</file>
-        <file>map/CircleItem.qml</file>
-        <file>map/PolygonItem.qml</file>
-        <file>map/ImageItem.qml</file>
         <file>map/MiniMap.qml</file>
         <file>forms/Message.qml</file>
         <file>forms/MessageForm.ui.qml</file>
@@ -33,6 +28,7 @@
         <file>resources/scale_end.png</file>
         <file>resources/scale.png</file>
         <file>resources/marker.png</file>
+        <file>resources/marker_blue.png</file>
         <file>resources/icon.png</file>
     </qresource>
 </RCC>

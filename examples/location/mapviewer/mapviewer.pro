@@ -16,11 +16,6 @@ OTHER_FILES +=mapviewer.qml \
     map/MapComponent.qml \
     map/MapSliders.qml \
     map/Marker.qml \
-    map/CircleItem.qml \
-    map/RectangleItem.qml \
-    map/PolylineItem.qml \
-    map/PolygonItem.qml \
-    map/ImageItem.qml \
     map/MiniMap.qml \
     menus/ItemPopupMenu.qml \
     menus/MainMenu.qml \
