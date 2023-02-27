@@ -13,7 +13,7 @@ Rectangle {
     //! [Initialize Plugin]
     Plugin {
         id: myPlugin
-        name: "osm" // "maplibregl", "esri", ...
+        name: "osm"
         //specify plugin parameters if necessary
         //PluginParameter {...}
         //PluginParameter {...}
