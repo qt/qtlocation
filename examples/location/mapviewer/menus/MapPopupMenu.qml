@@ -19,42 +19,12 @@ Menu {
         onTriggered: itemClicked("getCoordinate")
     }
     MenuItem {
-        text: qsTr("Fit Viewport To Map Items")
+        text: qsTr("Fit Viewport To Markers")
         onTriggered: itemClicked("fitViewport")
     }
     MenuItem {
         text: qsTr("Delete all markers")
         enabled: markersCount > 0
         onTriggered: itemClicked("deleteMarkers")
-    }
-    MenuItem {
-        text: qsTr("Delete all items")
-        enabled: mapItemsCount > 0
-        onTriggered: itemClicked("deleteItems")
-    }
-
-    Menu {
-        title: qsTr("Draw...")
-
-        MenuItem {
-            text: qsTr("Image")
-            onTriggered: itemClicked("drawImage")
-        }
-        MenuItem {
-            text: qsTr("Rectangle")
-            onTriggered: itemClicked("drawRectangle")
-        }
-        MenuItem {
-            text: qsTr("Circle")
-            onTriggered: itemClicked("drawCircle")
-        }
-        MenuItem {
-            text: qsTr("Polyline")
-            onTriggered: itemClicked("drawPolyline")
-        }
-        MenuItem {
-            text: qsTr("Polygon")
-            onTriggered: itemClicked("drawPolygonMenu")
-        }
     }
 }

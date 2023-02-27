@@ -262,24 +262,6 @@ ApplicationWindow {
             case "deleteMarkers":
                 mapview.deleteMarkers()
                 break
-            case "deleteItems":
-                mapview.deleteMapItems()
-                break
-            case "drawImage":
-                mapview.addGeoItem("ImageItem")
-                break
-            case "drawRectangle":
-                mapview.addGeoItem("RectangleItem")
-                break
-            case "drawCircle":
-                mapview.addGeoItem("CircleItem")
-                break;
-            case "drawPolyline":
-                mapview.addGeoItem("PolylineItem")
-                break;
-            case "drawPolygonMenu":
-                mapview.addGeoItem("PolygonItem")
-                break
             default:
                 console.log("Unsupported operation:", item)
             }
