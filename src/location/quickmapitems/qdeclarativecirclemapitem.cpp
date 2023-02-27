@@ -37,8 +37,8 @@ QT_BEGIN_NAMESPACE
     MapQuickItem containing a relevant Qt Quick type instead.
 
     By default, the circle is displayed as a 1 pixel black border with
-    no fill. To change its appearance, use the color, border.color
-    and border.width properties.
+    no fill. To change its appearance, use the \l {color}, \l {border.color}
+    and \l {border.width} properties.
 
     Internally, a MapCircle is implemented as a many-sided polygon. To
     calculate the radius points it uses a spherical model of the Earth,
@@ -47,22 +47,11 @@ QT_BEGIN_NAMESPACE
     accuracy of the circle's shape, depending on position and map
     projection.
 
-    \note Dragging a MapCircle (through the use of \l MouseArea)
+    \note Dragging a MapCircle (through the use of \l {MouseArea} or \l {PointHandler})
     causes new points to be generated at the same distance (in meters)
     from the center. This is in contrast to other map items which store
     their dimensions in terms of latitude and longitude differences between
     vertices.
-
-    \section2 Performance
-
-    MapCircle performance is almost equivalent to that of a MapPolygon with
-    the same number of vertices. There is a small amount of additional
-    overhead with respect to calculating the vertices first.
-
-    Like the other map objects, MapCircle is normally drawn without a smooth
-    appearance. Setting the opacity property will force the object to be
-    blended, which decreases performance considerably depending on the graphics
-    hardware in use.
 
     \section2 Example Usage
 

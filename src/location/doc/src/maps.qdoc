@@ -24,7 +24,7 @@ A more hands-on introduction of the Maps and Navigation types can be found in th
 \section2 Displaying Maps
 
 Displaying a map is done using the \l{QtLocation::Map}{Map} QML types.  The Map type supports
-user interaction through the \l{QtLocation::MapGestureArea}{MapGestureArea} QML type. The Map
+user interaction through the \l{QtLocation::MapView}{MapView} QML type. The Map
 object draws the map on-screen using OpenGL (ES), allowing for hardware-accelerated rendering
 where available.
 
@@ -37,7 +37,7 @@ where available.
         \li \l{QtLocation::Map}{Map}
         \li QtQuick item to display a map on-screen.
     \row
-        \li \l{QtLocation::MapGestureArea}{MapGestureArea}
+        \li \l{QtLocation::MapView}{MapView}
         \li Interaction helper for panning, flicking and pinch-to-zoom gesture on a Map.
 \endtable
 

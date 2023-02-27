@@ -94,18 +94,12 @@ static qreal sanitizeBearing(qreal bearing)
     Maps are rendered using OpenGL (ES) and the Qt Scene Graph stack, and as
     a result perform quite well where GL accelerated hardware is available.
 
-    For "online" Map plugins, network bandwidth and latency can be major
+    For "online" Maps, network bandwidth and latency can be major
     contributors to the user's perception of performance. Extensive caching is
-    performed to mitigate this, but such mitigation is not always perfect. For
-    "offline" plugins, the time spent retrieving the stored geographic data
-    and rendering the basic map features can often play a dominant role. Some
-    offline plugins may use hardware acceleration themselves to (partially)
-    avert this.
+    performed to mitigate this, but such mitigation is not always perfect.
 
     In general, large and complex Map items such as polygons and polylines with
     large numbers of vertices can have an adverse effect on UI performance.
-    Further, more detailed notes on this are in the documentation for each
-    map item type.
 
     \section2 Example Usage
 

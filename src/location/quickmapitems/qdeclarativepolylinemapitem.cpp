@@ -205,16 +205,6 @@ static QList<QList<QDoubleVector2D> > clipLine(
     By default, the polyline is displayed as a 1-pixel thick black line. This
     can be changed using the \l line.width and \l line.color properties.
 
-    \section2 Performance
-
-    MapPolylines have a rendering cost that is O(n) with respect to the number
-    of vertices. This means that the per frame cost of having a polyline on
-    the Map grows in direct proportion to the number of points in the polyline.
-
-    Like the other map objects, MapPolyline is normally drawn without a smooth
-    appearance. Setting the \l {Item::opacity}{opacity} property will force the object to
-    be blended, which decreases performance considerably depending on the hardware in use.
-
     \section2 Example Usage
 
     The following snippet shows a MapPolyline with 4 points, making a shape
