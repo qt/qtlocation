@@ -40,7 +40,7 @@
 
     \snippet places_map/places_map.qml PlaceSearchModel
 
-    The map is displayed by using the \l Map type and inside we declare the \l
+    The map is displayed by using the \l MapView type and inside we declare the \l
     MapItemView and supply the search model and a delegate.  An inline delegate
     has been used and we have assumed that every search result is of \l {Search
     Result Types} {type} \c PlaceSerachesult.  Consequently it is assumed that
