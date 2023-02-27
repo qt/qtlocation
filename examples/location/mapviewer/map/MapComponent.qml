@@ -20,7 +20,6 @@ MapView {
     property alias routeModel: routeModel
     property alias geocodeModel: geocodeModel
     property alias slidersExpanded: sliders.expanded
-    property variant unfinishedItem: 'undefined'
 
     signal showGeocodeInfo()
     signal geocodeFinished()
@@ -97,15 +96,6 @@ MapView {
         view.markers = []
     }
 
-    function deleteMapItems()
-    {
-        var count = view.mapItems.length
-        for (var i = count-1; i>=0; i--){
-            view.map.removeMapItem(view.mapItems[i])
-        }
-        view.mapItems = []
-    }
-
     function addMarker()
     {
         var count = view.markers.length
@@ -115,21 +105,6 @@ MapView {
         marker.z = view.map.z+1
         marker.coordinate = tapHandler.lastCoordinate
         markers.push(marker)
-    }
-
-    function addGeoItem(item)
-    {
-        var count = view.map.mapItems.length
-        var co = Qt.createComponent(item+'.qml')
-        if (co.status === Component.Ready) {
-            unfinishedItem = co.createObject(map)
-            unfinishedItem.setGeometry(tapHandler.lastCoordinate)
-            unfinishedItem.addGeometry(hoverHandler.currentCoordinate, false)
-            view.map.addMapItem(unfinishedItem)
-            mapItems.push(unfinishedItem)
-        } else {
-            console.log(item + " is not supported right now, please call us later.")
-        }
     }
 
     function deleteMarker(index)
@@ -248,19 +223,8 @@ MapView {
 
             var mapCenterPoint = Qt.point(view.map.width / 2.0 - dx, view.map.height / 2.0 - dy);
             view.map.center = view.map.toCoordinate(mapCenterPoint);
-        } else if (event.key === Qt.Key_Escape) {
-            mapview.unfinishedItem.finishAddGeometry()
-            mapview.unfinishedItem = 'undefined'
         }
     }
-
-    /* @todo
-    Binding {
-        target: map
-        property: 'center'
-        value: positionSource.position.coordinate
-        when: followme
-    }*/
 
     PositionSource{
         id: positionSource
@@ -270,6 +234,30 @@ MapView {
             view.map.center = positionSource.position.coordinate
         }
     }
+
+    MapQuickItem {
+        id: mePoisition
+        parent: view.map
+        sourceItem: Rectangle { width: 14; height: 14; color: "#251ee4"; border.width: 2; border.color: "white"; smooth: true; radius: 7 }
+        coordinate: positionSource.position.coordinate
+        opacity: 1.0
+        anchorPoint: Qt.point(sourceItem.width/2, sourceItem.height/2)
+        visible: followme
+    }
+    MapQuickItem {
+        parent: view.map
+        sourceItem: Text{
+            text: qsTr("You're here!")
+            color:"#242424"
+            font.bold: true
+            styleColor: "#ECECEC"
+            style: Text.Outline
+        }
+        coordinate: positionSource.position.coordinate
+        anchorPoint: Qt.point(-mePoisition.sourceItem.width * 0.5, mePoisition.sourceItem.height * 1.5)
+        visible: followme
+    }
+
 
     MapQuickItem {
         id: poiTheQtComapny
@@ -293,7 +281,7 @@ MapView {
             style: Text.Outline
         }
         coordinate: poiTheQtComapny.coordinate
-        anchorPoint: Qt.point(-poiTheQtComapny.sourceItem.width * 0.5,poiTheQtComapny.sourceItem.height * 1.5)
+        anchorPoint: Qt.point(-poiTheQtComapny.sourceItem.width * 0.5, poiTheQtComapny.sourceItem.height * 1.5)
     }
 
     MapSliders {
@@ -412,29 +400,37 @@ MapView {
     Component {
         id: pointDelegate
 
-        MapCircle {
+        MapQuickItem {
             id: point
             parent: view.map
-            radius: 1000
-            color: "#46a2da"
-            border.color: "#190a33"
-            border.width: 2
-            smooth: true
-            opacity: 0.25
-            center: locationData.coordinate
-            //! [pointdel0]
-            /* TapHandler {
-                point.onPositionChanged: {
-                    if (Math.abs(view.map.pressX - parent.x - point.position.x) > view.map.jitterThreshold ||
-                            Math.abs(view.map.pressY - parent.y - point.position.y) > view.map.jitterThreshold) {
-                        if (pressed)
-                            parent.radius = parent.center.distanceTo(view.map.toCoordinate(point.position))
-                    }
+            coordinate: locationData.coordinate
+
+            sourceItem: Image {
+                id: pointMarker
+                source: "../resources/marker_blue.png"
+                //! [pointdel0]
+
+                Text{
+                    id: pointText
+                    anchors.bottom: pointMarker.top
+                    anchors.horizontalCenter: pointMarker.horizontalCenter
+                    text: locationData.address.street + ", " + locationData.address.city
+                    color:"#242424"
+                    font.bold: true
+                    styleColor: "#ECECEC"
+                    style: Text.Outline
                 }
 
-                onLongPressed: showPointMenu(view.map.toCoordinate(point.position))
-            }*/
-    //! [pointdel1]
+            }
+            smooth: true
+            autoFadeIn: false
+            anchorPoint.x: pointMarker.width/4
+            anchorPoint.y: pointMarker.height
+
+            TapHandler {
+                onLongPressed: showPointMenu(point.coordinate)
+            //! [pointdel1]
+            }
         }
     }
     //! [pointdel1]
@@ -464,19 +460,6 @@ MapView {
         onTriggered: view.calculateScale()
     }
 
-    HoverHandler {
-        id: hoverHandler
-        property variant currentCoordinate
-        grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType
-
-        onPointChanged: {
-            currentCoordinate = view.map.toCoordinate(hoverHandler.point.position)
-            if (mapview.unfinishedItem !== 'undefined')
-                mapview.unfinishedItem.addGeometry(view.map.toCoordinate(hoverHandler.point.position), true)
-        }
-
-    }
-
     TapHandler {
         id: tapHandler
         property variant lastCoordinate
@@ -490,18 +473,7 @@ MapView {
 
         onSingleTapped: (eventPoint, button) => {
                 if (button === Qt.RightButton) {
-                    if (mapview.unfinishedItem !== 'undefined') {
-                        mapview.unfinishedItem.finishAddGeometry()
-                        mapview.unfinishedItem = 'undefined'
-                    } else
-                        showMainMenu(lastCoordinate)
-                } else if (button === Qt.LeftButton) {
-                    if (mapview.unfinishedItem !== 'undefined') {
-                        if (mapview.unfinishedItem.addGeometry(view.map.toCoordinate(tapHandler.point.position), false)) {
-                            mapview.unfinishedItem.finishAddGeometry()
-                            mapview.unfinishedItem = 'undefined'
-                        }
-                    }
+                    showMainMenu(lastCoordinate)
                 }
         }
 

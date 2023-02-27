@@ -22,15 +22,15 @@ Menu {
         onTriggered: itemClicked("moveMarkerTo")
     }
     MenuItem {
-        text: currentMarker < markersCount-2 ? qsTr("Route to next points")
-                                             : qsTr("Route to next point")
+        text: currentMarker < markersCount-2 ? qsTr("Route to next markers")
+                                             : qsTr("Route to next marker")
         enabled: currentMarker <= markersCount - 2
         onTriggered: currentMarker < markersCount-2 ? itemClicked("routeToNextPoints")
                                                     : itemClicked("routeToNextPoint")
     }
     MenuItem {
-        text: currentMarker < markersCount-2 ? qsTr("Distance to next points")
-                                             : qsTr("Distance to next point")
+        text: currentMarker < markersCount-2 ? qsTr("Distance to next markers")
+                                             : qsTr("Distance to next marker")
         enabled: currentMarker <= markersCount - 2
         onTriggered: currentMarker < markersCount-2 ? itemClicked("distanceToNextPoints")
                                                     : itemClicked("distanceToNextPoint")

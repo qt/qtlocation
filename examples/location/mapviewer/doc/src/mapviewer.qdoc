@@ -27,7 +27,7 @@
     \li Displaying a map
         \list
         \li \l{QtLocation::Map}{Map}
-        \li \l{QtLocation::MapGestureArea}{MapGestureArea}
+        \li \l{QtLocation::MapView}{MapView}
         \li \l[QML]{coordinate}
         \endlist
     \li Finding an address
@@ -45,13 +45,15 @@
 
     \section1 Displaying a Map
 
-    Drawing a map on-screen is accomplished using the Map type, as shown
+    Drawing a map on-screen is accomplished using the MapView type, as shown
     below.
 
     \snippet mapviewer/map/MapComponent.qml top
     \snippet mapviewer/map/MapComponent.qml coord
     \snippet mapviewer/map/MapComponent.qml end
 
+    The MapView consists of a \l {MapView::map}{map} and extends it for basic navigation
+    capabilities.
     In this example, we give the map an initial center \l [QML]{coordinate}
     with a set latitude and longitude. We also set the initial zoom level to 50% (halfway between
     the maximum and minimum).
@@ -70,9 +72,9 @@
 
     \snippet mapviewer/map/MapComponent.qml geocodeview
 
-    MapItemView uses an object called a "delegate" to act as a template for the
+    MapItemView uses an object called a \c{delegate} to act as a template for the
     items it creates. This can contain any map object desired, but in this case
-    we show a MapCircle:
+    we show a MapQuickItem that contains an image of a marker:
 
     \snippet mapviewer/map/MapComponent.qml pointdel0
     \snippet mapviewer/map/MapComponent.qml pointdel1
@@ -86,7 +88,7 @@
 
     \snippet mapviewer/mapviewer.qml geocode0
 
-    Then we set "geocodeModel.query" to the filled in \l [QML]{Address},
+    Then we set \c{geocodeModel.query} to the filled in \l [QML]{Address},
     and call update() on the GeocodeModel.
 
     \snippet mapviewer/map/MapComponent.qml geocode1
@@ -95,7 +97,7 @@
 
     Similar to the GeocodeModel, Qt Location also features the RouteModel type,
     which allows information about routes (for example driving directions) between two
-    or more points, to be received and used with a Map.
+    or more points, to be received and used with a \l{Map}.
 
     Here again, we instantiate the RouteModel as a property of our Map:
 
