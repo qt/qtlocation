@@ -69,11 +69,6 @@
 
     \snippet places/views/CategoryDelegate.qml CategoryModel delegate text
 
-    The \e CategoryDelegate also displays \e arrow \l {ToolButton} when \e hasModelChildren property is set.
-
-    \snippet places/views/CategoryDelegate.qml CategoryModel delegate arrow
-
-
     \target Presenting-Search-Suggestions
     \section1 Presenting Search Suggestions
 

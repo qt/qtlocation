@@ -30,7 +30,7 @@ qhp.QtLocation.subprojects.examples.selectors = fake:example
 
 tagfile                 = ../../../doc/qtlocation/qtlocation.tags
 
-depends += qtcore qtdoc qtgui qtquick qtqml qtnetwork qtpositioning qtlinguist
+depends += qtcore qtdoc qtgui qtwidgets qtquick qtquickcontrols qtqml qtqmlmodels qtnetwork qtpositioning qtlinguist
 
 headerdirs  +=  ..
 
@@ -47,3 +47,6 @@ imagedirs   += images
 navigation.landingpage = "Qt Location"
 navigation.cppclassespage = "Qt Location C++ Classes"
 navigation.qmltypespage = "Qt Location QML Types"
+
+# Fail the documentation build when warnings get introduced
+warninglimit = 0

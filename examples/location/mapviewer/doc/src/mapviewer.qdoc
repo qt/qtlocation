@@ -107,13 +107,11 @@
     we will use a MapItemView, to display the Routes as objects on the Map:
 
     \snippet mapviewer/map/MapComponent.qml routeview0
-    \snippet mapviewer/map/MapComponent.qml routeview1
 
     To act as a template for the objects we wish the view to create, we create
     a delegate component:
 
     \snippet mapviewer/map/MapComponent.qml routedelegate0
-    \snippet mapviewer/map/MapComponent.qml routedelegate1
 
     With the model, view and delegate now complete, the only missing component
     is some kind of control over the model to begin the Route request process.
