@@ -175,10 +175,10 @@ The \l Map item also supports user interface interactions with the map using
 tactile and mouse gestures. That is features such as swiping to pan,
 pinching to zoom.
 
-Enabling and configuring pinch and flickable is easy within the \l Map type.
+Enabling and configuring pinch and flickable is easy within the \l MapView type.
 
 \snippet mapviewer/map/MapComponent.qml top
-\snippet mapviewer/map/MapComponent.qml mapnavigation
+\snippet mapviewer/map/MapComponent.qml handler
 \snippet mapviewer/map/MapComponent.qml end
 
 Zoom can also be controlled by other objects like sliders, with binding

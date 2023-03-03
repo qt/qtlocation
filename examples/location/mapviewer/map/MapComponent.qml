@@ -460,6 +460,7 @@ MapView {
         onTriggered: view.calculateScale()
     }
 
+    //! [handler]
     TapHandler {
         id: tapHandler
         property variant lastCoordinate
@@ -492,6 +493,7 @@ MapView {
                                                        view.map.center.longitude - dy);
         }
     }
+    //! [handler]
 //! [end]
 }
 //! [end]

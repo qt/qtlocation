@@ -45,7 +45,7 @@
     \section1 Setting up the GeoJson Model / Display MapItems
 
     In order to display file contents on the map we will use a design pattern known as
-    \l {model-view-programming}{Model/View Programming}. First we need to set up a suitable view,
+    \l {model-view-programming.html}{Model/View Programming}. First we need to set up a suitable view,
     in this example a \l {MapItemView} element. Its parent must be set to the underlying map of the
     \l {MapView} to correctly display all items placed in it.
 
@@ -135,7 +135,7 @@
     The \l {TapHandler} is used to write some information about the item on the console when the
     item is tapped. The \l {HoverHandler} is used to highlight items that lie beneath the mouse
     pointer. This is implemented by describing the property
-    \l {MapCircle::border::color}{border.color} depending on the property / state
+    \l {MapCircle::border.color}{border.color} depending on the property / state
     \l {HoverHandler::hovered}{hovered} of the \l{HoverHandler}.
 
 
@@ -151,7 +151,7 @@
 
     \snippet geojson_viewer/main.qml Taphandler Map
 
-    The \l {HoverHandler::pointChanged}{pointChanged} signal is used to temporarily update a
+    The \l {SinglePointHandler::point}{pointChanged} signal is used to temporarily update a
     MapItem, giving the user a preview.
 
     \snippet geojson_viewer/main.qml Hoverhandler Map
