@@ -40,5 +40,3 @@ GeocodeForm {
         postalCode.text = address.postalCode
     }
 }
-
-

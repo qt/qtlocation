@@ -39,4 +39,3 @@ RouteCoordinateForm {
         toLongitude.text = "" + toCoordinate.longitude
     }
 }
-
