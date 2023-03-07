@@ -1,70 +1,69 @@
 // Copyright (C) 2017 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
-#include <QtCore/QTextStream>
-#include <QtGui/QGuiApplication>
 #include <QtQml/QQmlApplicationEngine>
-#include <QtQuick/QQuickItem>
+#include <QtQml/QQmlContext>
+
+#include <QtGui/QGuiApplication>
+
 #if QT_CONFIG(ssl)
-#include <QSslSocket>
+#include <QtNetwork/QSslSocket>
 #endif
-#include <QQmlContext>
 
-static bool parseArgs(QStringList& args, QVariantMap& parameters)
+#include <iostream>
+
+using namespace Qt::StringLiterals;
+
+static const char *help = R"(Usage:
+--plugin.<parameter_name> <parameter_value>    -  Sets parameter = value for plugin
+)";
+
+static QVariantMap parseArgs(QStringList args)
 {
-
+    QVariantMap parameters;
     while (!args.isEmpty()) {
-
         QString param = args.takeFirst();
-
-        if (param.startsWith("--help")) {
-            QTextStream out(stdout);
-            out << "Usage: " << Qt::endl;
-            out << "--plugin.<parameter_name> <parameter_value>    -  Sets parameter = value for plugin" << Qt::endl;
-            out.flush();
-            return true;
-        }
-
-        if (param.startsWith("--plugin.")) {
-
+        if (param.startsWith(u"--plugin.")) {
             param.remove(0, 9);
-
-            if (args.isEmpty() || args.first().startsWith("--")) {
-                parameters[param] = true;
+            if (args.isEmpty() || args.constFirst().startsWith(u"--")) {
+                parameters.insert(param, QVariant(true));
             } else {
-
                 QString value = args.takeFirst();
-
-                if (value == "true" || value == "on" || value == "enabled") {
-                    parameters[param] = true;
-                } else if (value == "false" || value == "off"
-                           || value == "disable") {
-                    parameters[param] = false;
+                if (value == u"true" || value == u"on" || value == u"enabled") {
+                    parameters.insert(param, QVariant(true));
+                } else if (value == u"false" || value == u"off"
+                           || value == u"disable") {
+                    parameters.insert(param, QVariant(false));
                 } else {
-                    parameters[param] = value;
+                    parameters.insert(param, QVariant(value));
                 }
             }
         }
     }
-    return false;
+    return parameters;
 }
 
 int main(int argc, char *argv[])
 {
 #if QT_CONFIG(library)
-    const QByteArray additionalLibraryPaths = qgetenv("QTLOCATION_EXTRA_LIBRARY_PATH");
-    for (const QByteArray &p : additionalLibraryPaths.split(':'))
-        QCoreApplication::addLibraryPath(QString(p));
+    const QString additionalLibraryPaths = qEnvironmentVariable("QTLOCATION_EXTRA_LIBRARY_PATH");
+    for (const auto &p : additionalLibraryPaths.split(u':', Qt::SkipEmptyParts))
+        QCoreApplication::addLibraryPath(p);
 #endif
+
     QGuiApplication application(argc, argv);
+    QCoreApplication::setApplicationName(u"QtLocation Mapviewer example"_s);
 
-    QVariantMap parameters;
-    QStringList args(QCoreApplication::arguments());
-
-    if (parseArgs(args, parameters))
+    QStringList args = QCoreApplication::arguments();
+    args.removeFirst();
+    if (args.contains(u"--help")) {
+        std::cout << qPrintable(QCoreApplication::applicationName()) << "\n\n" << help;
         return 0;
-    if (!args.contains(QStringLiteral("osm.useragent")))
-        parameters[QStringLiteral("osm.useragent")] = QStringLiteral("QtLocation Mapviewer example");
+    }
+
+    QVariantMap parameters = parseArgs(args);
+    if (!parameters.contains(u"osm.useragent"_s))
+        parameters.insert(u"osm.useragent"_s, QCoreApplication::applicationName());
 
     QQmlApplicationEngine engine;
 #if QT_CONFIG(ssl)
@@ -72,16 +71,16 @@ int main(int argc, char *argv[])
 #else
     engine.rootContext()->setContextProperty("supportsSsl", false);
 #endif
-    engine.addImportPath(QStringLiteral(":/imports"));
-    engine.load(QUrl(QStringLiteral("qrc:///mapviewer.qml")));
-    QObject::connect(&engine, SIGNAL(quit()), qApp, SLOT(quit()));
+    engine.addImportPath(u":/imports"_s);
+    engine.load(QUrl(u"qrc:///mapviewer.qml"_s));
+    QObject::connect(&engine, &QQmlApplicationEngine::quit,
+                     qApp, QCoreApplication::quit);
 
-    QObject *item = engine.rootObjects().first();
-    Q_ASSERT(item);
+    auto *item = engine.rootObjects().value(0);
+    if (item == nullptr)
+        return -1;
 
-    QMetaObject::invokeMethod(item, "initializeProviders",
-                              Q_ARG(QVariant, QVariant::fromValue(parameters)));
-
+    QMetaObject::invokeMethod(item, "initializeProviders", QVariant::fromValue(parameters));
 
     return application.exec();
 }
