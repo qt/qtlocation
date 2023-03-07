@@ -2,8 +2,6 @@ TEMPLATE = app
 
 QT += qml quick location
 
-CONFIG += c++11
-
 SOURCES += main.cpp
 
 qmlfiles.files = $$files($$PWD/*.qml)

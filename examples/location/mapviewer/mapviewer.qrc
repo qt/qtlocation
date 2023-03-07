@@ -29,6 +29,5 @@
         <file>resources/scale.png</file>
         <file>resources/marker.png</file>
         <file>resources/marker_blue.png</file>
-        <file>resources/icon.png</file>
     </qresource>
 </RCC>

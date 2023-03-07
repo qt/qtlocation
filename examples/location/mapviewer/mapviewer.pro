@@ -6,7 +6,6 @@ SOURCES += main.cpp
 
 # Workaround for QTBUG-38735
 QT_FOR_CONFIG += location-private
-QT += concurrent sql
 
 RESOURCES += \
     mapviewer.qrc
