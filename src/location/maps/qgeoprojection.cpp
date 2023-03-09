@@ -808,15 +808,6 @@ void QGeoProjectionWebMercator::updateVisibleRegion()
         m_visibleRegionExpanded.push_back(centroid + vc * 1.2); // fixing expansion factor to 1.2
     }
 
-    QClipperUtils clipperExpanded;
-    clipperExpanded.clearClipper();
-    clipperExpanded.addSubjectPath(m_visibleRegionExpanded, true);
-    clipperExpanded.addClipPolygon(m_projectableRegion);
-    const auto resVisibleExpanded = clipperExpanded.execute(QClipperUtils::Intersection);
-    if (resVisibleExpanded.size())
-        m_visibleRegionExpanded = resVisibleExpanded[0]; // Intersection between two convex quadrilaterals should always be a single polygon
-    else
-        m_visibleRegionExpanded = m_visibleRegion;
 }
 
 QGeoCameraData QGeoProjectionWebMercator::cameraData() const
