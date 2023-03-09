@@ -371,7 +371,7 @@ void QDeclarativeCircleMapItemPrivate::includeOnePoleInPath(QList<QDoubleVector2
               [](const QDoubleVector2D &a, const QDoubleVector2D &b) -> bool
                 {return a.x() < b.x();});
 
-    const qreal newPoleLat = crossNorthPole ? 0.0 : 1.0;
+    const qreal newPoleLat = crossNorthPole ? -0.1 : 1.1;
     const QDoubleVector2D P1 = path.first() + QDoubleVector2D(1.0, 0.0);
     const QDoubleVector2D P2 = path.last() - QDoubleVector2D(1.0, 0.0);
     path.push_front(P2);
@@ -478,13 +478,14 @@ void QDeclarativeCircleMapItemPrivateCPU::updatePolish()
         QGeoMapPolygonGeometry::MapBorderBehaviour wrappingMode = QGeoMapPolygonGeometry::DrawOnce;
         QList<QDoubleVector2D> surroundingRect;
         if (cameraRect.contains(circleRect)){
-            cameraRect = cameraRect.adjusted(-0.1, 0.0, 0.2, 0.0);
+            cameraRect = cameraRect.adjusted(-0.1, -0.1, 0.2, 0.2);
             surroundingRect = {{cameraRect.left(), cameraRect.top()}, {cameraRect.right(), cameraRect.top()},
                                {cameraRect.right(), cameraRect.bottom()}, {cameraRect.left() , cameraRect.bottom()}};
         } else {
             const qreal anchorRect = centerX;
-            surroundingRect = {{anchorRect, 0.0}, {anchorRect + 1.0, 0.0},
-                               {anchorRect + 1.0, 1.0}, {anchorRect, 1.0}};
+
+            surroundingRect = {{anchorRect, -0.1}, {anchorRect + 1.0, -0.1},
+                               {anchorRect + 1.0, 1.1}, {anchorRect, 1.1}};
             wrappingMode = QGeoMapPolygonGeometry::WrapAround;
         }
         m_geometry.updateSourcePoints(*m_circle.map(), {surroundingRect, circlePath}, wrappingMode);
