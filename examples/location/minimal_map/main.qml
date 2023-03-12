@@ -43,6 +43,11 @@ Window {
         }
         WheelHandler {
             id: wheel
+            // workaround for QTBUG-87646 / QTBUG-112394:
+            // Magic Mouse pretends to be a trackpad but doesn't work with PinchHandler
+            acceptedDevices: Qt.platform.pluginName === "cocoa"
+                             ? PointerDevice.Mouse | PointerDevice.TouchPad
+                             : PointerDevice.Mouse
             rotationScale: 1/120
             property: "zoomLevel"
         }
