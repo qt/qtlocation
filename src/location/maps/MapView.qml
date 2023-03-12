@@ -103,9 +103,24 @@ Item {
         }
         WheelHandler {
             id: wheel
+            // workaround for QTBUG-87646 / QTBUG-112394:
+            // Magic Mouse pretends to be a trackpad but doesn't work with PinchHandler
+            acceptedDevices: Qt.platform.pluginName === "cocoa"
+                             ? PointerDevice.Mouse | PointerDevice.TouchPad
+                             : PointerDevice.Mouse
             onWheel: (event) => {
                 const loc = map.toCoordinate(wheel.point.position)
-                map.zoomLevel += event.angleDelta.y / 120
+                switch (event.modifiers) {
+                    case Qt.NoModifier:
+                        map.zoomLevel += event.angleDelta.y / 120
+                        break
+                    case Qt.ShiftModifier:
+                        map.bearing += event.angleDelta.y / 15
+                        break
+                    case Qt.ControlModifier:
+                        map.tilt += event.angleDelta.y / 15
+                        break
+                }
                 map.alignCoordinateToPoint(loc, wheel.point.position)
             }
         }
