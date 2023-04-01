@@ -76,7 +76,6 @@ qt_internal_add_module(Location
         declarativemaps
         declarativeplaces
         quickmapitems
-        ../3rdparty/earcut
     LIBRARIES
         Qt::CorePrivate
         Qt::Gui

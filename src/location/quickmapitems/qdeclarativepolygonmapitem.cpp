@@ -16,10 +16,6 @@
 #include <QtPositioning/private/qgeopolygon_p.h>
 #include <QtPositioning/private/qwebmercator_p.h>
 
-/* poly2tri triangulator includes */
-#include <earcut.hpp>
-#include <array>
-
 QT_BEGIN_NAMESPACE
 
 /*!
