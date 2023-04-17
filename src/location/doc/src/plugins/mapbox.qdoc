@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GFDL-1.3-no-invariants-only
 
 /*!
+\internal
 \page location-plugin-mapbox.html
 \title Qt Location Mapbox Plugin
 \ingroup QtLocation-plugins
