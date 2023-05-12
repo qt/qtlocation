@@ -71,10 +71,7 @@ int main(int argc, char *argv[])
 #else
     engine.rootContext()->setContextProperty("supportsSsl", false);
 #endif
-    engine.addImportPath(u":/imports"_s);
-    engine.load(QUrl(u"qrc:///mapviewer.qml"_s));
-    QObject::connect(&engine, &QQmlApplicationEngine::quit,
-                     qApp, QCoreApplication::quit);
+    engine.loadFromModule("MapViewer", "Main");
 
     auto *item = engine.rootObjects().value(0);
     if (item == nullptr)
