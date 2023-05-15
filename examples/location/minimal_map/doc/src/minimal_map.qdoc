@@ -5,6 +5,7 @@
 \example minimal_map
 \title Minimal Map (QML)
 \ingroup qtlocation-examples
+\examplecategory {Positioning & Location}
 \brief The minimum code to display a map using Qt Quick.
 
 \image minimal_map.png

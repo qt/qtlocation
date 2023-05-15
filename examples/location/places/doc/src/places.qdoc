@@ -5,7 +5,7 @@
     \example places
     \title Places (QML)
     \ingroup qtlocation-examples
-
+    \examplecategory {Positioning & Location}
     \brief The Places example demonstrates how to search for Places and access
            related content.
 
