@@ -5,6 +5,7 @@
     \example geojson_viewer
     \title GeoJson Viewer (C++/QML)
     \ingroup qtlocation-examples
+    \examplecategory {Positioning & Location}
 
     \brief The GeoJson viewer example demonstrates how to manipulate MapItems, handle user input
     and I/O to and from a GeoJson file.

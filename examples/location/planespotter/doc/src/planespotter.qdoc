@@ -5,7 +5,7 @@
     \example planespotter
     \title Plane Spotter (QML)
     \ingroup qtlocation-examples
-
+    \examplecategory {Positioning & Location}
     \brief The \c {Plane Spotter} example demonstrates the tight integration of
     location and positioning data types into QML.
 
