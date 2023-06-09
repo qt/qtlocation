@@ -37,12 +37,12 @@ Map {
             "blue",
             "violet"
         ]
-        property int count: rectangles.colors.length*4
-        model: count*count
+        property int gridSize: rectangles.colors.length*4
+        model: gridSize*gridSize
         MapRectangle
         {
-            property double center_longitude: -180+360*(index%rectangles.count+0.5)/(rectangles.count)
-            property double center_latitude: -90+180*(Math.floor(index/rectangles.count)+0.5)/(rectangles.count)
+            property double center_longitude: -180+360*(index%rectangles.gridSize+0.5)/(rectangles.gridSize)
+            property double center_latitude: -90+180*(Math.floor(index/rectangles.gridSize)+0.5)/(rectangles.gridSize)
             property double a: 1
 
             topLeft

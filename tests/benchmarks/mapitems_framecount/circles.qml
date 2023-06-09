@@ -37,14 +37,14 @@ Map {
             "blue",
             "violet"
         ]
-        property int count: circles.colors.length*5
-        model: count*count
+        property int gridSize: circles.colors.length*5
+        model: gridSize*gridSize
         MapCircle
         {
             center
             {
-                longitude: -180+360*(index%circles.count+0.5)/(circles.count)
-                latitude: -90+180*(Math.floor(index/circles.count)+0.5)/(circles.count)
+                longitude: -180+360*(index%circles.gridSize+0.5)/(circles.gridSize)
+                latitude: -90+180*(Math.floor(index/circles.gridSize)+0.5)/(circles.gridSize)
             }
             radius: 100
             color: circles.colors[Math.floor(index%circles.colors.length)]

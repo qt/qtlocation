@@ -37,13 +37,13 @@ Map {
             "blue",
             "violet"
         ]
-        property int count: polylines.colors.length*10
-        model: count*count
+        property int gridSize: polylines.colors.length*10
+        model: gridSize*gridSize
         MapPolygon {
             color: polylines.colors[Math.floor(index%polylines.colors.length)]
             autoFadeIn: false
-            property double center_longitude: -180+360*(index%polylines.count+0.5)/(polylines.count)
-            property double center_latitude: -90+180*(Math.floor(index/polylines.count)+0.5)/(polylines.count)
+            property double center_longitude: -180+360*(index%polylines.gridSize+0.5)/(polylines.gridSize)
+            property double center_latitude: -90+180*(Math.floor(index/polylines.gridSize)+0.5)/(polylines.gridSize)
             property double a: 1
             geoShape: QtPositioning.polygon(
                 [
