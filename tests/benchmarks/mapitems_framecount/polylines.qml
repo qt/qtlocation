@@ -37,12 +37,12 @@ Map {
             "blue",
             "violet"
         ]
-        property int count: polylines.colors.length*10
-        model: count*count
+        property int gridSize: polylines.colors.length*10
+        model: gridSize*gridSize
         MapPolyline
         {
-            property double center_longitude: -180+360*(index%polylines.count+0.5)/(polylines.count)
-            property double center_latitude: -90+180*(Math.floor(index/polylines.count)+0.5)/(polylines.count)
+            property double center_longitude: -180+360*(index%polylines.gridSize+0.5)/(polylines.gridSize)
+            property double center_latitude: -90+180*(Math.floor(index/polylines.gridSize)+0.5)/(polylines.gridSize)
             property double a: 1
             path:  [
                 QtPositioning.coordinate(Math.min(90, Math.max(-90, a*center_latitude-a*40)),
