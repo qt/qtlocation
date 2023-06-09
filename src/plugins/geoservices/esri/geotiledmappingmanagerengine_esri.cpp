@@ -230,7 +230,8 @@ QGeoMap *GeoTiledMappingManagerEngineEsri::createMap()
 // ${y} = Y
 // ${token} = Token
 
-// template = 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{{z}}/{{y}}/{{x}}.png'
+// template =
+// 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{{z}}/{{y}}/{{x}}.png'
 
 bool GeoTiledMappingManagerEngineEsri::initializeMapSources(QGeoServiceProvider::Error *error,
                                                             QString *errorString,

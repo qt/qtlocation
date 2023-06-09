@@ -9,10 +9,7 @@
             "label": "Qt.labs.location experimental QML plugin",
             "purpose": "Provides experimental QtLocation QML types",
             "section": "Location",
-            "condition": [
-                "features.gui",
-                "features.opengl"
-            ],
+            "condition": "config.opengl",
             "output": [ "privateFeature" ]
         },
         "geoservices_osm": {

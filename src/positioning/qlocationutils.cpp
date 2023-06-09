@@ -134,7 +134,7 @@ static void qlocationutils_readGsa(const char *data,
     if (parts.count() <= 2)
         return;
     bool ok;
-    for (int i = 3; i <= qMin(14, parts.size()); ++i) {
+    for (int i = 3; i < qMin(15, parts.size()); ++i) {
         const QByteArray &pnrString = parts.at(i);
         if (pnrString.isEmpty())
             continue;
@@ -390,6 +390,10 @@ QLocationUtils::GSVParseStatus QLocationUtils::getSatInfoFromNmea(const char *da
         infos.clear();
 
     const int numSatInSentence = qMin(sentence * 4, totalSats) - (sentence - 1) * 4;
+    if (parts.size() < (4 + numSatInSentence * 4)) {
+        infos.clear();
+        return GSVFullyParsed; // Malformed sentence.
+    }
 
     int field = 4;
     for (int i = 0; i < numSatInSentence; ++i) {
