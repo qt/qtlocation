@@ -19,7 +19,6 @@ find_package(Qt6 COMPONENTS Core)
 find_package(Qt6 COMPONENTS Gui)
 find_package(Qt6 COMPONENTS Qml)
 find_package(Qt6 COMPONENTS Quick)
-find_package(Qt6 COMPONENTS Network)
 find_package(Qt6 COMPONENTS Positioning)
 find_package(Qt6 COMPONENTS Location)
 
@@ -30,7 +29,6 @@ target_link_libraries(qml_location_places PUBLIC
     Qt::Core
     Qt::Gui
     Qt::Location
-    Qt::Network
     Qt::Positioning
     Qt::Qml
     Qt::Quick

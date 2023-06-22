@@ -1,7 +1,7 @@
 TARGET = places_map
 TEMPLATE = app
 
-QT += quick qml network positioning location
+QT += quick qml positioning location
 SOURCES = main.cpp
 
 RESOURCES += \
