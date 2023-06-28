@@ -31,10 +31,6 @@ QT_BEGIN_NAMESPACE
     \l QVariantList of \l QVariantMap elements ready to be used as Model in
     a \l MapItemView.
 
-    \note This private class is part of Qt labs, thus not stable API, it is
-    part of the experimental components of QtLocation. Until it is promoted to
-    public API, it may be subject to source and binary-breaking changes.
-
     \section2 Importing GeoJSON
 
     The importGeoJson() method accepts a \l QJsonDocument from which it

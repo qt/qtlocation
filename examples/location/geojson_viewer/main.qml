@@ -8,7 +8,6 @@ import QtQuick.Controls
 import QtPositioning
 import QtLocation
 import QtCore
-import Qt.GeoJson
 import "mapitems"
 
 ApplicationWindow {
@@ -31,7 +30,8 @@ ApplicationWindow {
         nameFilters: ["GeoJSON files (*.geojson *.json)"]
         onAccepted: {
             view.clearAllItems()
-            geoJsoner.load(fileDialog.selectedFile)
+            geoDatabase.sourceUrl = fileDialog.selectedFile
+            //geoDatabase.openUrl(fileDialog.selectedFile)
         }
     }
 
@@ -42,22 +42,10 @@ ApplicationWindow {
         fileMode: FileDialog.SaveFile
         currentFolder: StandardPaths.writableLocation(StandardPaths.TempLocation)
         nameFilters: ["GeoJSON files (*.geojson *.json)"]
-        //! [Write File]
         onAccepted: {
-            geoJsoner.dumpGeoJSON(geoJsoner.toVariant(miv), fileWriteDialog.selectedFile);
-        }
-        //! [Write File]
-    }
-
-    FileDialog {
-        visible: false
-        id: debugWriteDialog
-        title: "Write Qvariant debug view"
-        fileMode: FileDialog.SaveFile
-        currentFolder: StandardPaths.writableLocation(StandardPaths.TempLocation)
-        nameFilters: ["GeoJSON files (*.geojson *.json)"]
-        onAccepted: {
-            geoJsoner.writeDebug(geoJsoner.toVariant(miv), debugWriteDialog.selectedFile);
+            //! [Write File]
+            geoDatabase.saveAs(fileWriteDialog.selectedFile)
+            //! [Write File]
         }
     }
 
@@ -91,20 +79,8 @@ ApplicationWindow {
             }
         }
         Menu {
-            title: "&Debug"
-            id : debugMenu
-            MenuItem {
-                text: "Print debug data to &file"
-                onTriggered: {
-                    debugWriteDialog.open()
-                }
-            }
-            MenuItem {
-                text: "&Print debug data"
-                onTriggered: {
-                    geoJsoner.print(miv)
-                }
-            }
+            title: "&View"
+            id : viewMenu
             MenuItem {
                 text: "Auto fade in items"
                 checkable: true
@@ -122,10 +98,6 @@ ApplicationWindow {
         }
     }
 
-    GeoJsoner {
-        id: geoJsoner
-    }
-
     Shortcut {
         enabled: view.map.zoomLevel < view.map.maximumZoomLevel
         sequence: StandardKey.ZoomIn
@@ -137,12 +109,20 @@ ApplicationWindow {
         onActivated: view.map.zoomLevel = Math.round(view.map.zoomLevel - 1)
     }
 
+    //! [GeoJsonData Creation]
+    GeoJsonData {
+        id: geoDatabase
+        sourceUrl: ":/data/11-full.json"
+    }
+    //! [GeoJsonData Creation]
+
     //! [MapView Creation]
     MapView {
         id: view
         anchors.fill: parent
         map.plugin: Plugin { name: "osm" }
         map.zoomLevel: 4
+        map.center: QtPositioning.coordinate(3, 8)
     //! [MapView Creation]
 
         property variant unfinishedItem: undefined
@@ -170,7 +150,7 @@ ApplicationWindow {
         function finishGeoItem()
         {
             unfinishedItem.finishAddGeometry()
-            geoJsoner.addItem(unfinishedItem)
+            geoDatabase.addItem(unfinishedItem)
             map.removeMapItem(unfinishedItem)
             unfinishedItem = undefined
         }
@@ -179,7 +159,7 @@ ApplicationWindow {
         //! [clearAllItems]
         function clearAllItems()
         {
-            geoJsoner.clear();
+            geoDatabase.clear();
         }
         //! [clearAllItems]
 
@@ -189,13 +169,14 @@ ApplicationWindow {
             parent: view.map
             //! [MapItemView]
             //! [MapItemView Model]
-            model: geoJsoner.model
+            model: geoDatabase.model
             //! [MapItemView Model]
             //! [MapItemView Delegate]
-            delegate: GeoJsonDelegate {
-            }
+            delegate: GeoJsonDelegate {}
             //! [MapItemView Delegate]
+            //! [MapItemView1]
         }
+        //! [MapItemView1]
         Menu {
             id: mapPopupMenu
 
@@ -280,5 +261,7 @@ ApplicationWindow {
                                                            view.map.center.longitude - dy);
             }
         }
+    //! [MapView Creation1]
     }
+    //! [MapView Creation1]
 }

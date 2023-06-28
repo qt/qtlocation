@@ -30,7 +30,6 @@ qt_add_executable(qml_location_geojsonviewer WIN32 MACOSX_BUNDLE
 target_link_libraries(qml_location_geojsonviewer PUBLIC
     Qt::Core
     Qt::Gui
-    Qt::LocationPrivate
     Qt::Positioning
     Qt::Qml
     Qt::Quick
@@ -45,6 +44,7 @@ set(qml_resource_files
     "mapitems/PolygonItem.qml"
     "mapitems/PolylineItem.qml"
     "mapitems/RectangleItem.qml"
+    "data/11-full.json"
 )
 
 qt6_add_resources(qml_location_geojsonviewer "qml"

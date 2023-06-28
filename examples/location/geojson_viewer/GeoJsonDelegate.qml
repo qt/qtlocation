@@ -46,8 +46,10 @@ DelegateChooser {
                 id: hh
             }
             //! [Handler Point]
+    //! [DelegateChoice Point1]
         }
     }
+    //! [DelegateChoice Point1]
 
     DelegateChoice {
         roleValue: "LineString"
@@ -157,4 +159,6 @@ DelegateChooser {
             delegate: dc
         }
     }
+//! [DelegateChooser1]
 }
+//! [DelegateChooser1]

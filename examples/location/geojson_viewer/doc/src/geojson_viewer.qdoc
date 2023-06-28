@@ -3,7 +3,7 @@
 
 /*!
     \example geojson_viewer
-    \title GeoJson Viewer (C++/QML)
+    \title GeoJson Viewer (QML)
     \ingroup qtlocation-examples
     \examplecategory {Positioning & Location}
 
@@ -13,12 +13,10 @@
     \image geojson_viewer.png
 
     The example displays a map with various MapItems. The MapItems are either imported from a
-    GeoJson file, using the \l {QGeoJson} API of \l {QtLocation} or drawn by the user using
+    GeoJson file, using the \l {QGeoJsonData} API of \l {QtLocation} or drawn by the user using
     \l {TapHandler}{TapHandlers}.
 
     Examples for GeoJson files can be found in the directory data within the example directory.
-    They are read and written using the \l {QGeoJson::importGeoJson}{importGeoJson} and
-    \l {QGeoJson::exportGeoJson}{exportGeoJson} functions.
 
     To draw a MapItem, right click on an empty part of the map and select an item type of your
     choice in the appearing menu. The next clicks will define the chosen item. The example allows
@@ -41,6 +39,7 @@
     a property in \l {MapView} it can be most likely accessed with \l {MapView::map}{MapView.map}.
 
     \snippet geojson_viewer/main.qml MapView Creation
+    \snippet geojson_viewer/main.qml MapView Creation1
 
 
     \section1 Setting up the GeoJson Model / Display MapItems
@@ -51,46 +50,41 @@
     \l {MapView} to correctly display all items placed in it.
 
     \snippet geojson_viewer/main.qml MapItemView
+    \snippet geojson_viewer/main.qml MapItemView1
 
-    Next we need a suitable model, representing a GeoJson file. The GeoJson file is converted into
-    a tree of \l {QVariantMap}{QVariantMaps} and \l{QVariantList}{QVariantLists} within a C++ class
-    in this example.
+    Next we need a suitable model, representing a GeoJSON document. For this purpose QtLocation offers
+    the \l {GeoJsonData} element that can read and write GeoJSON files. It can be easily instantiated
 
-    \snippet geojson_viewer/main.cpp GeoJsoner
+    \snippet geojson_viewer/main.qml GeoJsonData Creation
 
-    The class contains a member \c{model} which will be set after reading a GeoJson file.
-
-    \snippet geojson_viewer/main.cpp Conversion QVariantList
-
-    The class is made available to the QML Engine to further process the model in QML.
-
-    \snippet geojson_viewer/main.cpp QMLEngine
-
-    The \l {MapItemView::model}{model} property of the \l{MapItemView} element can then be set to
-    the \l{QVariant} representation of the model:
+    and assigned to the MapItemView.
 
     \snippet geojson_viewer/main.qml MapItemView Model
 
-    Finally we need a delegate, translating the model data into a representation of items, filling
-    the \l {MapItemView}. It is set to the \l {MapItemView::delegate}{delegate} property of the
-    \l{MapItemView}:
+    The file \c 11-full.json is loaded on start-up as an example.
+
+    Finally we need a \l {MapItemView::delegate}{delegate}, translating the model data into a
+    representation of items, filling the \l {MapItemView}.
 
     \snippet geojson_viewer/main.qml MapItemView Delegate
 
-    We use a \l {DelegateChooser} element defined the file \c{GeoJsonDelegate.qml} to take into
-    account the varying representation of different geometry types of GeoJson objects.
+    The \c {GeoJsonDelegate} element is declared in the file \c {GeoJsonDelegate.qml}. It is a
+    \l {DelegateChooser} element, to take into account the varying properties of different
+    geometry types.
 
     \snippet geojson_viewer/GeoJsonDelegate.qml DelegateChooser
+    \snippet geojson_viewer/GeoJsonDelegate.qml DelegateChooser1
 
-    Various \l {DelegateChoice}{DelegateChoices} are included, each representing a different
-    geometry type to be found in a GeoJson file. The property \l {DelegateChooser::role}{role}
-    will be matched with \l {DelegateChoice::roleValue}{DelegateChoice.roleValue} to determine the
+    The \l {DelegateChooser} contains a \l {DelegateChoice}{DelegateChoice} for each geometry
+    type that can be found in a GeoJson file. The property \l {DelegateChooser::role}{role} will
+    be matched with \l {DelegateChoice::roleValue}{DelegateChoice.roleValue} to determine the
     correct delegate.
 
     As an example, a point, described with \c {"type":"Point"} in GeoJson, is represented by a
     \l {MapCircle} on the \l {MapItemView}:
 
     \snippet geojson_viewer/GeoJsonDelegate.qml DelegateChoice Point
+    \snippet geojson_viewer/GeoJsonDelegate.qml DelegateChoice Point1
 
     Properties of the \l {MapCircle}, such as \l {MapCircle::color}{color} or
     \l{MapCircle::radius}{radius} are attempted to be read from the GeoJson file that is
@@ -100,29 +94,13 @@
 
     \section1 Writing MapItems to GeoJson
 
-    To write MapItems to a GeoJson file we first will convert the Mapitems into a representation
-    of \l {QVariantMap}{QVariantMaps} and \l{QVariantList}{QVariantLists}. This is conducted in C++
-    in this example, as part of the \c {GeoJsoner} class used before:
-
-    \snippet geojson_viewer/main.cpp Conversion QVariantList From Items
-
-    \c {extractor} is a helper class that converts Mapitems into \l {QVariant} representations, for
-    example the \l{MapCircle}:
-
-    \snippet geojson_viewer/main.cpp Extractor Example Circle
-
-    In a second step the \l {QVariant} representation can be dumped into a file using
-    \l {QJsonDocument}.
-
-    \snippet geojson_viewer/main.cpp Write QVariantList to Json
-
-    The two C++ functions that are required for writing files can be called from QML, thanks to the
-    definition as \l {Q_INVOKABLE}:
+    To write MapItems to a GeoJson file we can simply call the \l{GeoJsonData::saveAs} function
+    with the designated filename. This writes all items in the current model to the designated file.
+    Any other items that should be written to the file have to be added to the model first using the
+    function \l{GeoJsonData::addItem} or \l{GeoJsonData::setModelToMapContents}.
 
     \snippet geojson_viewer/main.qml Write File
 
-    Note that we could use \c {geoJsoner.model} instead of rebuilding the \l {QVariant}
-    representation. However, the latter is done for demonstration purposes here.
 
     \section1 User Interaction with MapItems
 
@@ -166,26 +144,14 @@
 
 
     Adding the item to the \l {Map} is sufficient to display the item. However, in order to
-    further use the item (e.g. saving it to a file), it has has to be registered with the model.
+    further use the item (e.g. saving it to a file), it has to be added to the model.
     This is done after editing is finished:
 
     \snippet geojson_viewer/main.qml finish item
 
-    The class GeoJsoner converts the new item into a \l {QVariant} representation and inserts the
-    respective result into the existing \l {QVariant} representation of all items:
-
-    \snippet geojson_viewer/main.cpp add item
-
-
     \section1 Removing Items
 
-    To remove all items from the map, we simply reset the model to an empty \l {QVariantList}.
-    This is possible because we registered all new items with the model and items not added to the
-    mode will not be affected. This is implemented in C++,
-
-    \snippet geojson_viewer/main.cpp clear
-
-    and executed from QML
+    To remove all items from the map, we simply call the reset function of the GeoJsonData object
 
     \snippet geojson_viewer/main.qml clearAllItems
 */
