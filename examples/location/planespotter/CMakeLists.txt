@@ -30,7 +30,6 @@ target_link_libraries(planespotter PUBLIC
     Qt::Gui
     Qt::Location
     Qt::Positioning
-    Qt::PositioningPrivate
     Qt::Qml
     Qt::Quick
 )
