@@ -85,7 +85,7 @@ the other to update the centering of the Map object \l [QML]{GeocodeModel::locat
 The geocoding features are called from a higher level piece of code. In this
 snippet we see an \l [QML]{Address} object filled with the desired parameters.
 
-\snippet mapviewer/mapviewer.qml geocode0
+\snippet mapviewer/Main.qml geocode0
 
 The \l [QML]{Address} is later used in a query for the \l GeocodeModel to
 process and determine the geographical \l [QML]{coordinate}{coordinates}.
