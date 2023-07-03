@@ -87,7 +87,7 @@
     To send a geocode request, first we create an \l [QML]{Address} object, and fill it
     in with the desired parameters.
 
-    \snippet mapviewer/mapviewer.qml geocode0
+    \snippet mapviewer/Main.qml geocode0
 
     Then we set \c{geocodeModel.query} to the filled in \l [QML]{Address},
     and call update() on the GeocodeModel.
@@ -119,7 +119,7 @@
     In the simplest case, we can fill out a Route request using two already
     available \l [QML]{coordinate}{coordinates}:
 
-    \snippet mapviewer/mapviewer.qml routecoordinate
+    \snippet mapviewer/Main.qml routecoordinate
 
     In the next snippet, we show how to set up the request object and instruct
     the model to update. We also instruct the map to center on the start
