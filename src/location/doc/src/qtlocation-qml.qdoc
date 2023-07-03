@@ -9,45 +9,18 @@
 
     \section1 Overview
 
-    Provided that a position has been obtained, the Qt Location module
-    can add a \l{QtLocation::}{Map} with Places of Interest (POI) and
-    \l{QtLocation::Place}{Places}. The user can be made aware of nearby
-    features and related information, displayed on the map. These features
-    can be places of business, entertainment, and so on. They may include
-    paths, roads, or forms of transport, enabling navigation optimization
-    and assistance.
-
-    To perform navigation we need \l {route}s from start to destination.
-    These routes are made up of segments, where each \l {QtLocation::}
-    {routeSegment} can be considered a navigation subtask; for example,
-    "drive 100 meters", or "turn left". The beginning and end of each
-    segment is a \e waypoint, that is, one part of the journey.
-
-    A typical use case for the API is a user looking for a particular type of
-    place, such as a restaurant; the user enters a search string into the map
-    application and is presented with a list of results for restaurants
-    "near" the device. The application can then be used to navigate to the
-    chosen destination using a route that is optimized according to features
-    in the environment that may help or hinder the journey. The navigation then
-    proceeds with the user's progress monitored by means of the current
-    location.
-
     In short, the main QML types and their roles are as follows:
 
     \list
-
         \li The \l [QML] Place instances hold information about the
             destination and surrounding objects, including displayable
             representations.
-
         \li The \l [QML] Map enables the information contained in
             \l [QML] {Place} objects to be displayed, panned, zoomed,
             and so on.
-
         \li The \l [QML] route is be determined by a \e plugin, with each
             \l [QML] routeSegment holding the navigation instructions,
             guided by the continuously updated current \l [QML] Location.
-
     \endlist
 
     \section2 Plugins
