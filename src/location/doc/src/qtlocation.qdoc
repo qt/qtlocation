@@ -86,24 +86,11 @@ for example, applications using routes may use:
 
 \section3 Building with CMake
 
-Use the \c {find_package()} command to locate the needed module component in the
-\c {Qt6} package:
-
-\code
-find_package(Qt6 REQUIRED COMPONENTS Location)
-target_link_libraries(mytarget PRIVATE Qt6::Location)
-\endcode
-
-For more details, see the \l {Build with CMake} overview.
+\include {module-use.qdocinc} {building with cmake} {Location}
 
 \section3 Building with qmake
 
-To configure the module for building with qmake, add the module as a value
-of the \c QT variable in the project's \c .pro file:
-
-\code
-QT += positioning location
-\endcode
+\include {module-use.qdocinc} {building_with_qmake} {location}
 
 \section1 Submodules
 
