@@ -15,8 +15,23 @@ interaction with map overlay objects and the display itself. It also
 contains utilities for geocoding (finding a geographic coordinate from a
 street address) and navigation (including driving and walking directions).
 
-It builds upon the API concepts and types in the \l{Positioning (QML)}{QML Positioning API}.
-A more hands-on introduction of the Maps and Navigation types can be found in the
+To perform navigation we need \l {route}s from start to destination. These
+routes are made up of segments, where each \l {QtLocation::}{routeSegment} can
+be considered a navigation subtask; for example, "drive 100 meters", or "turn
+left". The beginning and end of each segment is a \e waypoint, that is, one part
+of the journey.
+
+A typical use case for the API is a user looking for a particular type of place,
+such as a restaurant; the user enters a search string into the map application
+and is presented with a list of results for restaurants "near" the device. The
+application can then be used to navigate to the chosen destination using a route
+that is optimized according to features in the environment that may help or
+hinder the journey. The navigation then proceeds with the user's progress
+monitored by means of the current location.
+
+The types build upon the API concepts and types in the
+\l{Positioning (QML)}{QML Positioning API}. A more hands-on introduction of the
+Maps and Navigation types can be found in the
 \l {QML Maps}{Maps and Navigation tutorial}.
 
 \section1 Maps

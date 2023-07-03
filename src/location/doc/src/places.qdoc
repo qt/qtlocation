@@ -7,11 +7,13 @@
 
     \section1 Overview
 
-    The Places API allows users to discover places of interest and view
-    details about them, such as address and contact information.  Some places may have
-    additional content associated with them, such as images and reviews.
-    The Places API also facilitates management of places and
-    categories, allowing users to save and remove them.
+    The Places API lets users discover places of interest and view details
+    about them, such as address and contact information. Some places may have
+    additional content associated with them, such as images and reviews. The
+    Places API also lets you manage places and categories, allowing
+    you to to save and remove them. Places may also include paths, roads, or
+    forms of transport, enabling navigation optimization and assistance. For
+    more information about navigation, see \l {route}s.
 
     \section1 Introductory Concepts
 
