@@ -226,7 +226,7 @@ qsizetype QGeoRoute::segmentsCount() const
 }
 
 /*!
-    \qmlproperty list<routeSegment> QtLocation::Route::segments
+    \qmlproperty list<routeSegment> QtLocation::route::segments
 
     Read-only property which holds the list of \l routeSegment objects of this route.
 

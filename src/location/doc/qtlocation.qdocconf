@@ -30,7 +30,18 @@ qhp.QtLocation.subprojects.examples.selectors = fake:example
 
 tagfile                 = ../../../doc/qtlocation/qtlocation.tags
 
-depends += qtcore qtdoc qtgui qtwidgets qtquick qtquickcontrols qtqml qtqmlmodels qtnetwork qtpositioning qtlinguist
+depends += qtcore \
+           qtdoc \
+           qtgui \
+           qtwidgets \
+           qtquick \
+           qtquickcontrols \
+           qtqml \
+           qtqmlmodels \
+           qtnetwork \
+           qtpositioning \
+           qtlinguist \
+           qtcmake
 
 headerdirs  +=  ..
 

@@ -116,7 +116,7 @@ void QPlaceUser::setUserId(const QString &identifier)
 }
 
 /*!
-    \qmlproperty string QtLocation::User::name
+    \qmlproperty string QtLocation::user::name
 
     This property holds the name of a user.
 */
