@@ -5,7 +5,6 @@
     \group qtlocation-examples
     \title Qt Location Examples
     \brief Examples for the Qt Location module
-    \ingroup all-examples
     \ingroup qtlocation
 
     These examples show a range of different uses for \l{Qt Location},
