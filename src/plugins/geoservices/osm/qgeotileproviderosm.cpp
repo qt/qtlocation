@@ -353,7 +353,8 @@ void TileProvider::onNetworkReplyFinished()
     }
 
     QObject errorEmitter;
-    QMetaObject::Connection errorEmitterConnection = connect(&errorEmitter, &QObject::destroyed, [this](){ this->resolutionError(this); });
+    QMetaObject::Connection errorEmitterConnection =
+        connect(&errorEmitter, &QObject::destroyed, this, [this](){ this->resolutionError(this); });
 
     if (reply->error() != QNetworkReply::NoError) {
         handleError(reply->error());

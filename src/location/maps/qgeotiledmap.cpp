@@ -25,7 +25,7 @@ QGeoTiledMap::QGeoTiledMap(QGeoTiledMappingManagerEngine *engine, QObject *paren
 
     QObject::connect(engine,&QGeoTiledMappingManagerEngine::tileVersionChanged,
                      this,&QGeoTiledMap::handleTileVersionChanged);
-    QObject::connect(this, &QGeoMap::cameraCapabilitiesChanged,
+    QObject::connect(this, &QGeoMap::cameraCapabilitiesChanged, this,
                      [d](const QGeoCameraCapabilities &oldCameraCapabilities) {
                        d->onCameraCapabilitiesChanged(oldCameraCapabilities);
                      });
@@ -40,7 +40,7 @@ QGeoTiledMap::QGeoTiledMap(QGeoTiledMapPrivate &dd, QGeoTiledMappingManagerEngin
 
     QObject::connect(engine,&QGeoTiledMappingManagerEngine::tileVersionChanged,
                      this,&QGeoTiledMap::handleTileVersionChanged);
-    QObject::connect(this, &QGeoMap::cameraCapabilitiesChanged,
+    QObject::connect(this, &QGeoMap::cameraCapabilitiesChanged, this,
                      [d](const QGeoCameraCapabilities &oldCameraCapabilities) {
                        d->onCameraCapabilitiesChanged(oldCameraCapabilities);
                      });

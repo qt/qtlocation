@@ -536,7 +536,7 @@ QDeclarativePolylineMapItem::QDeclarativePolylineMapItem(QQuickItem *parent)
     QObject::connect(&m_line, &QDeclarativeMapLineProperties::widthChanged,
                      this, &QDeclarativePolylineMapItem::updateAfterLinePropertiesChanged);
     QObject::connect(this, &QDeclarativePolylineMapItem::referenceSurfaceChanged,
-                     [=]() {m_d->onGeoGeometryChanged();});
+                     this, [this]() { m_d->onGeoGeometryChanged(); });
 }
 
 QDeclarativePolylineMapItem::~QDeclarativePolylineMapItem()

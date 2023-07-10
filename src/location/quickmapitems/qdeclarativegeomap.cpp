@@ -483,10 +483,10 @@ void QDeclarativeGeoMap::mappingManagerInitialized()
     QImage copyrightImage;
     if (!m_initialized && width() > 0 && height() > 0) {
         QMetaObject::Connection copyrightStringCatcherConnection =
-                connect(m_map.data(), &QGeoMap::copyrightsChanged,
+                connect(m_map.data(), &QGeoMap::copyrightsChanged, this,
                         [&copyrightString](const QString &copy){ copyrightString = copy; });
         QMetaObject::Connection copyrightImageCatcherConnection =
-                connect(m_map.data(), &QGeoMap::copyrightsImageChanged,
+                connect(m_map.data(), &QGeoMap::copyrightsImageChanged, this,
                         [&copyrightImage](const QImage &copy){ copyrightImage = copy; });
         m_map->setViewportSize(QSize(width(), height()));
         initialize(); // This emits the caught signals above

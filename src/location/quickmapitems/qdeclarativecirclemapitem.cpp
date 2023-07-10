@@ -121,8 +121,8 @@ QDeclarativeCircleMapItem::QDeclarativeCircleMapItem(QQuickItem *parent)
                      this, &QDeclarativeCircleMapItem::onLinePropertiesChanged);
     QObject::connect(&m_border, &QDeclarativeMapLineProperties::widthChanged,
                      this, &QDeclarativeCircleMapItem::onLinePropertiesChanged);
-    QObject::connect(this, &QDeclarativeCircleMapItem::referenceSurfaceChanged,
-                     [=]() {m_d->onGeoGeometryChanged();});
+    QObject::connect(this, &QDeclarativeCircleMapItem::referenceSurfaceChanged, this,
+                     [this]() {m_d->onGeoGeometryChanged();});
 }
 
 QDeclarativeCircleMapItem::~QDeclarativeCircleMapItem()

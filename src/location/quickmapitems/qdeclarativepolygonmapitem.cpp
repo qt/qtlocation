@@ -390,7 +390,7 @@ QDeclarativePolygonMapItem::QDeclarativePolygonMapItem(QQuickItem *parent)
     QObject::connect(&m_border, &QDeclarativeMapLineProperties::widthChanged,
                      this, &QDeclarativePolygonMapItem::onLinePropertiesChanged);
     QObject::connect(this, &QDeclarativePolygonMapItem::referenceSurfaceChanged,
-                     [=]() {m_d->onGeoGeometryChanged();});
+                     this, [this]() { m_d->onGeoGeometryChanged(); });
 }
 
 QDeclarativePolygonMapItem::~QDeclarativePolygonMapItem()
