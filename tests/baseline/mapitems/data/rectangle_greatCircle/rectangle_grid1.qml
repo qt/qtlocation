@@ -30,19 +30,19 @@ Map {
         ]
         property double rWidth: 55
         property double rHeight: 55
-        property int count: c.colors.length
-        model: count*count
+        property int gridCount: c.colors.length
+        model: gridCount*gridCount
         MapRectangle
         {
             topLeft
             {
-                longitude: Math.min(180, Math.max(-180, -180+360*(index%c.count+0.5)/(c.count) - c.rWidth/2))
-                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c.count)+0.5)/(c.count) - c.rHeight/2))
+                longitude: Math.min(180, Math.max(-180, -180+360*(index%c.gridCount+0.5)/(c.gridCount) - c.rWidth/2))
+                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c.gridCount)+0.5)/(c.gridCount) - c.rHeight/2))
             }
             bottomRight
             {
-                longitude: Math.min(180, Math.max(-180, -180+360*(index%c.count+0.5)/(c.count) + c.rWidth/2))
-                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c.count)+0.5)/(c.count) + c.rHeight/2))
+                longitude: Math.min(180, Math.max(-180, -180+360*(index%c.gridCount+0.5)/(c.gridCount) + c.rWidth/2))
+                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c.gridCount)+0.5)/(c.gridCount) + c.rHeight/2))
             }
             color: c.colors[Math.floor(index%c.colors.length)]
             border.width: 1

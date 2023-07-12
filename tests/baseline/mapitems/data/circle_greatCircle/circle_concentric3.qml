@@ -28,8 +28,7 @@ Map {
             "#300000ff",
             "#30ee82ee"
         ]
-        property int count: 20
-        model: count
+        model: 20
         MapCircle
         {
             center
