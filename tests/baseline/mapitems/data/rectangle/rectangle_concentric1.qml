@@ -28,8 +28,7 @@ Map {
             "#300000ff",
             "#30ee82ee"
         ]
-        property int count: 20
-        model: count
+        model: 20
         MapRectangle
         {
             property int rWidth: ((c.count-index-1)/(c.count-1)*(180-5)+5)

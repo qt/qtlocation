@@ -22,19 +22,19 @@ Map {
         id: c
         property double rWidth: 70
         property double rHeight: 50
-        property int count: 4
-        model: count*count
+        property int gridCount: 4
+        model: gridCount*gridCount
         MapRectangle
         {
             topLeft
             {
-                longitude: Math.min(180, Math.max(-180, -180+360*(index%c.count+0.5)/(c.count) - c.rWidth/2))
-                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c.count)+0.5)/(c.count) - c.rHeight/2))
+                longitude: Math.min(180, Math.max(-180, -180+360*(index%c.gridCount+0.5)/(c.gridCount) - c.rWidth/2))
+                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c.gridCount)+0.5)/(c.gridCount) - c.rHeight/2))
             }
             bottomRight
             {
-                longitude: Math.min(180, Math.max(-180, -180+360*(index%c.count+0.5)/(c.count) + c.rWidth/2))
-                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c.count)+0.5)/(c.count) + c.rHeight/2))
+                longitude: Math.min(180, Math.max(-180, -180+360*(index%c.gridCount+0.5)/(c.gridCount) + c.rWidth/2))
+                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c.gridCount)+0.5)/(c.gridCount) + c.rHeight/2))
             }
             color: 'green'
             border.width: 1
@@ -47,19 +47,19 @@ Map {
         id: c2
         property double rWidth: 40
         property double rHeight: 40
-        property int count: 4
-        model: count*count
+        property int gridCount: 4
+        model: gridCount*gridCount
         MapRectangle
         {
             topLeft
             {
-                longitude: Math.min(180, Math.max(-180, -180+360*(index%c2.count+0.5)/(c2.count) - c2.rWidth/2))
-                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c2.count)+0.5)/(c2.count) - c2.rHeight/2))
+                longitude: Math.min(180, Math.max(-180, -180+360*(index%c2.gridCount+0.5)/(c2.gridCount) - c2.rWidth/2))
+                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c2.gridCount)+0.5)/(c2.gridCount) - c2.rHeight/2))
             }
             bottomRight
             {
-                longitude: Math.min(180, Math.max(-180, -180+360*(index%c2.count+0.5)/(c2.count) + c2.rWidth/2))
-                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c2.count)+0.5)/(c2.count) + c2.rHeight/2))
+                longitude: Math.min(180, Math.max(-180, -180+360*(index%c2.gridCount+0.5)/(c2.gridCount) + c2.rWidth/2))
+                latitude: Math.min(90, Math.max(-90, -90+180*(Math.floor(index/c2.gridCount)+0.5)/(c2.gridCount) + c2.rHeight/2))
             }
             color: 'blue'
             border.width: 1

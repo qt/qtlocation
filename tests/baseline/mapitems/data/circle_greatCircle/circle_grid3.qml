@@ -20,14 +20,14 @@ Map {
 
     Repeater {
         id: c
-        property int count: 2
-        model: count*count
+        property int gridCount: 2
+        model: gridCount*gridCount
         MapCircle
         {
             center
             {
-                longitude: -180+360*(index%c.count+0.5)/(c.count)
-                latitude: -90+180*(Math.floor(index/c.count)+0.5)/(c.count)
+                longitude: -180+360*(index%c.gridCount+0.5)/(c.gridCount)
+                latitude: -90+180*(Math.floor(index/c.gridCount)+0.5)/(c.gridCount)
             }
             radius: 8000*1000
             color: 'green'
