@@ -5,6 +5,7 @@
 \example itemview_transitions
 \title MapItemView Transitions (QML)
 \ingroup qtlocation-examples
+\examplecategory {Positioning & Location}
 \brief How to use transitions together with MapItemView.
 \image itemview_transitions.jpg
 
