@@ -5,7 +5,7 @@
     \example places_map
     \title Places Map (QML)
     \ingroup qtlocation-examples
-
+    \examplecategory {Positioning & Location}
     \brief The Places Map example demonstrates how to search for and display a list of places
            on a map using a MapItemView.
     \image places_map.png

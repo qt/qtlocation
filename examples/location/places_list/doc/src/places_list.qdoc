@@ -5,7 +5,7 @@
     \example places_list
     \title Places List (QML)
     \ingroup qtlocation-examples
-
+    \examplecategory {Positioning & Location}
     \brief The Places List example demonstrates how to search for and display a list of places using a \l ListView.
     \image places_list.png
 
