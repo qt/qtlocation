@@ -17,6 +17,8 @@
 #include <QtLocation/private/qlocationglobal_p.h>
 #include <QtCore/QScopedPointer>
 
+#include <memory>
+
 QT_BEGIN_NAMESPACE
 
 class QGeoCameraData;
