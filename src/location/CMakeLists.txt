@@ -33,6 +33,7 @@ qt_internal_add_module(Location
         maps/qgeorouteparser_p.h maps/qgeorouteparser_p_p.h maps/qgeorouteparser.cpp
         maps/qgeorouteparserosrmv5_p.h maps/qgeorouteparserosrmv5.cpp
         maps/qgeomaneuver.h maps/qgeomaneuver_p.h maps/qgeomaneuver.cpp
+        maps/qgeomaneuverderived_p.h
         maps/qgeomappingmanager_p.h maps/qgeomappingmanager_p_p.h maps/qgeomappingmanager.cpp
         maps/qgeomappingmanagerengine_p.h maps/qgeomappingmanagerengine_p_p.h
         maps/qgeomappingmanagerengine.cpp

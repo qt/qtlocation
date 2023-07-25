@@ -94,13 +94,6 @@ private:
 
 Q_DECLARE_SHARED(QGeoManeuver)
 
-namespace QGeoManeuverForeignNamespace
-{
-    Q_NAMESPACE
-    QML_FOREIGN_NAMESPACE(QGeoManeuver)
-    QML_NAMED_ELEMENT(RouteManeuver)
-}
-
 QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QGeoManeuver)
