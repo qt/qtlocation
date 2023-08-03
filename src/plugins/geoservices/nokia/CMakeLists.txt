@@ -35,8 +35,6 @@ qt_internal_add_plugin(QGeoServiceProviderFactoryNokiaPlugin
         Qt::Network
         Qt::LocationPrivate
         Qt::PositioningPrivate
-    DEFINES
-        QT_NO_FOREACH
 )
 
 qt_add_resources(plugin_resource_files nokia.qrc)

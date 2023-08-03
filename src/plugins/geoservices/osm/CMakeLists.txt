@@ -23,6 +23,4 @@ qt_internal_add_plugin(QGeoServiceProviderFactoryOsmPlugin
         Qt::Network
         Qt::LocationPrivate
         Qt::PositioningPrivate
-    DEFINES
-        QT_NO_FOREACH
 )

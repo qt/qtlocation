@@ -95,8 +95,6 @@ qt_internal_add_module(Location
         Qt::QuickPrivate
         Qt::PositioningPrivate
         Qt::PositioningQuickPrivate
-    DEFINES
-        QT_NO_FOREACH
     GENERATE_CPP_EXPORTS
     GENERATE_PRIVATE_CPP_EXPORTS
 )
@@ -174,8 +172,6 @@ qt_internal_add_qml_module(Location
         declarativeplaces/qdeclarativesearchsuggestionmodel_p.h
         declarativeplaces/qdeclarativesupportedcategoriesmodel.cpp
         declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h
-    DEFINES
-        QT_NO_FOREACH
 )
 
 qt_internal_add_docs(Location
