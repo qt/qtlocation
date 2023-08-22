@@ -58,3 +58,6 @@ imagedirs   += images
 navigation.landingpage = "Qt Location"
 navigation.cppclassespage = "Qt Location C++ Classes"
 navigation.qmltypespage = "Qt Location QML Types"
+
+# Enforce zero documentation warnings
+warninglimit = 0

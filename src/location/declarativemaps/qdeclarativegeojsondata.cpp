@@ -276,7 +276,7 @@ bool QDeclarativeGeoJsonData::save()
 }
 
 /*!
-    \qmlmethod bool QtLocation::GeoJsonData::setModelToMapContents(MapView mapItemView)
+    \qmlmethod void QtLocation::GeoJsonData::setModelToMapContents(MapView mapItemView)
 
     All mapItems of \a mapItemView are added to the \l model of the GeoJsonData
     object.
