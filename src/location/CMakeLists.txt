@@ -176,6 +176,9 @@ qt_internal_add_qml_module(Location
         declarativeplaces/qdeclarativesupportedcategoriesmodel_p.h
     DEFINES
         QT_NO_FOREACH
+    DEPENDENCIES
+        QtQuick/auto
+        QtPositioning/auto
 )
 
 qt_internal_add_docs(Location
