@@ -13,7 +13,7 @@
     \image geojson_viewer.png
 
     The example displays a map with various MapItems. The MapItems are either imported from a
-    GeoJson file, using the \l {QGeoJsonData} API of \l {QtLocation} or drawn by the user using
+    GeoJson file, using the \l {GeoJsonData} API of \l {QtLocation} or drawn by the user using
     \l {TapHandler}{TapHandlers}.
 
     Examples for GeoJson files can be found in the directory data within the example directory.

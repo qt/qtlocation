@@ -166,7 +166,7 @@ void QDeclarativeGeoJsonData::clear()
 /*!
     \qmlmethod bool QtLocation::GeoJsonData::addItem(Item item)
 
-    Add the \l item to the \l model of the GeoJsonData.
+    Add the \a item to the \l model of the GeoJsonData.
 
     Returns \c true if the file was read successfully, \c false otherwise.
 */
@@ -281,6 +281,8 @@ bool QDeclarativeGeoJsonData::save()
     All mapItems of \a mapItemView are added to the \l model of the GeoJsonData
     object.
     Previously stored mapItems are deleted from the \l model.
+
+    Returns \c true if mapItemView is set successfully, \c false otherwise.
 
     \sa addItem
 */
