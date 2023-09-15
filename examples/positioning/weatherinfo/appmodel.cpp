@@ -298,9 +298,11 @@ void AppModel::positionError(QGeoPositionInfoSource::Error e)
     Q_UNUSED(e);
     qWarning() << "Position source error. Falling back to simulation mode.";
     // cleanup insufficient QGeoPositionInfoSource instance
-    d->src->stopUpdates();
-    d->src->deleteLater();
-    d->src = 0;
+    if (d->src) {
+        d->src->stopUpdates();
+        d->src->deleteLater();
+        d->src = 0;
+    }
 
     // activate simulation mode
     d->useGps = false;
