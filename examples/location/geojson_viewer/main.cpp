@@ -4,48 +4,13 @@
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QDebug>
-#include <QFile>
-#include <QVariantMap>
 #include <QQmlContext>
-#include <QGeoCircle>
-#include <QGeoPath>
-#include <QGeoPolygon>
-#include <QtCore/qobjectdefs.h>
-#ifdef Q_OS_ANDROID
-#    include <QtCore/private/qandroidextras_p.h>
-#endif
-
 
 using namespace Qt::StringLiterals;
-
-
-#ifdef Q_OS_ANDROID
-// Request permissions because we're using QStandardPaths::writableLocation()
-bool requestStoragePermissions()
-{
-    const QString permission = "android.permission.WRITE_EXTERNAL_STORAGE"_L1;
-    auto checkFuture = QtAndroidPrivate::checkPermission(permission);
-    if (checkFuture.result() == QtAndroidPrivate::Denied) {
-        auto requestFuture = QtAndroidPrivate::requestPermission(permission);
-        if (requestFuture.result() != QtAndroidPrivate::Authorized) {
-            qWarning() << "Couldn't get permission: " << permission;
-            return false;
-        }
-    }
-
-    return true;
-}
-#endif
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-
-#ifdef Q_OS_ANDROID
-    if (!requestStoragePermissions())
-        return -1;
-#endif
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("dataPath", QUrl(QStringLiteral("file://")
