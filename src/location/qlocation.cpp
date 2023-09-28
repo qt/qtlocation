@@ -43,6 +43,7 @@ namespace QLocation {
 
 /*!
     \enum QLocation::ReferenceSurface
+    \since 6.6
 
     Defines the reference surface on which various map items (e.g. polygons, polylines) are defined.
 
