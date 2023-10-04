@@ -5,8 +5,6 @@ project           = QtLocation
 description    = Qt Location Reference Documentation
 version          = $QT_VERSION
 
-
-
 qhp.projects            = QtLocation
 
 qhp.QtLocation.file                = qtlocation.qhp
@@ -52,12 +50,16 @@ examplesinstallpath = location
 exampledirs += ../../../examples/location \
                snippets/
 
-
 imagedirs   += images
 
 navigation.landingpage = "Qt Location"
 navigation.cppclassespage = "Qt Location C++ Classes"
 navigation.qmltypespage = "Qt Location QML Types"
+
+manifestmeta.highlighted.names = \
+    "QtLocation/GeoJson Viewer (QML)" \
+    "QtLocation/Map Viewer (QML)" \
+    "QtLocation/Places Map (QML)"
 
 # Enforce zero documentation warnings
 warninglimit = 0
