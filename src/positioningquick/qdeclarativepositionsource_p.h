@@ -185,6 +185,7 @@ private:
     QList<QDeclarativePluginParameter *> m_parameters;
     bool m_componentComplete = false;
     bool m_parametersInitialized = false;
+    bool m_startPending = false;
 };
 
 QT_END_NAMESPACE
