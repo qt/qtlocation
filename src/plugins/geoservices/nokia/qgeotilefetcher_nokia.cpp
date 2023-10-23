@@ -51,8 +51,7 @@ QGeoTileFetcherNokia::QGeoTileFetcherNokia(const QVariantMap &parameters,
     m_tileSize = qMax(tileSize.width(), tileSize.height());
     m_networkManager->setParent(this);
 
-    m_applicationId = parameters.value(QStringLiteral("here.app_id")).toString();
-    m_token = parameters.value(QStringLiteral("here.token")).toString();
+    m_apiKey = parameters.value(QStringLiteral("here.apiKey")).toString();
 }
 
 QGeoTileFetcherNokia::~QGeoTileFetcherNokia()
@@ -94,7 +93,7 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec, int ppi
     if (!m_engineNokia)
         return QString();
 
-    static const QString http("http://");
+    static const QString http("https://");
     static const QString path("/maptile/2.1/maptile/newest/");
     static const QChar slash('/');
 
@@ -119,12 +118,9 @@ QString QGeoTileFetcherNokia::getRequestString(const QGeoTileSpec &spec, int ppi
     static const QString slashpng("/png8");
     requestString += slashpng;
 
-    if (!m_token.isEmpty() && !m_applicationId.isEmpty()) { // TODO: remove the if
-        requestString += "?token=";
-        requestString += m_token;
-
-        requestString += "&app_id=";
-        requestString += m_applicationId;
+    if (!m_apiKey.isEmpty()) { // TODO: remove the if
+        requestString += "?apiKey=";
+        requestString += m_apiKey;
     }
 
     requestString += "&ppi=" + QString::number(ppi);
@@ -202,14 +198,9 @@ QString QGeoTileFetcherNokia::getLanguageString() const
     // No "lg" param means that we want English.
 }
 
-QString QGeoTileFetcherNokia::token() const
+QString QGeoTileFetcherNokia::apiKey() const
 {
-    return m_token;
-}
-
-QString QGeoTileFetcherNokia::applicationId() const
-{
-    return m_applicationId;
+    return m_apiKey;
 }
 
 void QGeoTileFetcherNokia::copyrightsFetched()
@@ -238,19 +229,14 @@ void QGeoTileFetcherNokia::versionFetched()
 
 void QGeoTileFetcherNokia::fetchCopyrightsData()
 {
-    QString copyrightUrl = QStringLiteral("http://");
+    QString copyrightUrl = QStringLiteral("https://");
 
     copyrightUrl += m_baseUriProvider->getCurrentHost();
     copyrightUrl += QStringLiteral("/maptile/2.1/copyright/newest?output=json");
 
-    if (!token().isEmpty()) {
-        copyrightUrl += QStringLiteral("&token=");
-        copyrightUrl += token();
-    }
-
-    if (!applicationId().isEmpty()) {
-        copyrightUrl += QStringLiteral("&app_id=");
-        copyrightUrl += applicationId();
+    if (!apiKey().isEmpty()) {
+        copyrightUrl += QStringLiteral("&apiKey=");
+        copyrightUrl += apiKey();
     }
 
     QNetworkRequest netRequest((QUrl(copyrightUrl)));
@@ -271,19 +257,14 @@ void QGeoTileFetcherNokia::fetchCopyrightsData()
 
 void QGeoTileFetcherNokia::fetchVersionData()
 {
-    QString versionUrl = QStringLiteral("http://");
+    QString versionUrl = QStringLiteral("https://");
 
     versionUrl += m_baseUriProvider->getCurrentHost();
     versionUrl += QStringLiteral("/maptile/2.1/version");
 
-    if (!token().isEmpty()) {
-        versionUrl += QStringLiteral("?token=");
-        versionUrl += token();
-    }
-
-    if (!applicationId().isEmpty()) {
-        versionUrl += QStringLiteral("&app_id=");
-        versionUrl += applicationId();
+    if (!apiKey().isEmpty()) {
+        versionUrl += QStringLiteral("?apiKey=");
+        versionUrl += apiKey();
     }
 
     QNetworkRequest netRequest((QUrl(versionUrl)));

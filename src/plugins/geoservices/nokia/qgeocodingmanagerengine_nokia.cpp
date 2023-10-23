@@ -33,11 +33,8 @@ QGeoCodingManagerEngineNokia::QGeoCodingManagerEngineNokia(
     Q_ASSERT(networkManager);
     m_networkManager->setParent(this);
 
-    if (parameters.contains(QStringLiteral("here.token")))
-        m_token = parameters.value(QStringLiteral("here.token")).toString();
-
-    if (parameters.contains(QStringLiteral("here.app_id")))
-        m_applicationId = parameters.value(QStringLiteral("here.app_id")).toString();
+    if (parameters.contains(QStringLiteral("here.apiKey")))
+        m_apiKey = parameters.value(QStringLiteral("here.apiKey")).toString();
 
     if (error)
         *error = QGeoServiceProvider::NoError;
@@ -52,12 +49,9 @@ QString QGeoCodingManagerEngineNokia::getAuthenticationString() const
 {
     QString authenticationString;
 
-    if (!m_token.isEmpty() && !m_applicationId.isEmpty()) {
-        authenticationString += "?app_code=";
-        authenticationString += m_token;
-
-        authenticationString += "&app_id=";
-        authenticationString += m_applicationId;
+    if (!m_apiKey.isEmpty()) {
+        authenticationString += "?apiKey=";
+        authenticationString += m_apiKey;
     }
 
     return authenticationString;

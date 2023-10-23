@@ -29,8 +29,7 @@ public:
 
     QGeoTiledMapReply *getTileImage(const QGeoTileSpec &spec) override;
 
-    QString token() const;
-    QString applicationId() const;
+    QString apiKey() const;
 
 public Q_SLOTS:
     void copyrightsFetched();
@@ -49,11 +48,10 @@ private:
     QGeoNetworkAccessManager *m_networkManager;
     int m_tileSize;
     int m_ppi;
-    QString m_token;
     QNetworkReply *m_copyrightsReply;
     QNetworkReply *m_versionReply;
 
-    QString m_applicationId;
+    QString m_apiKey;
     QGeoUriProvider *m_baseUriProvider;
     QGeoUriProvider *m_aerialUriProvider;
 };
