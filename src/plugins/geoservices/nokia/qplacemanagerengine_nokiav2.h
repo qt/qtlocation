@@ -84,8 +84,7 @@ private:
     QPointer<QPlaceCategoriesReplyHere> m_categoryReply;
     QHash<QString, QNetworkReply *> m_categoryRequests;
 
-    QString m_appId;
-    QString m_appCode;
+    QString m_apiKey;
 
     QString m_localDataPath;
     QString m_theme;
