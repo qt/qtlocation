@@ -44,8 +44,7 @@ private:
 
     QGeoNetworkAccessManager *m_networkManager;
     QGeoUriProvider *m_uriProvider;
-    QString m_appId;
-    QString m_token;
+    QString m_apiKey;
 };
 
 QT_END_NAMESPACE
