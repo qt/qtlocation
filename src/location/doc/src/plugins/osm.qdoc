@@ -135,7 +135,8 @@ versions did not require a prefix.
     \li The url string of a custom tile server. This parameter should be set to a
         valid server url offering the correct OSM API. The postfix
         "%z/%x/%y.png" will be added to the url. Since 6.5 the postfix will not
-        be added if the url ends with ".png". To use this server, the
+        be added if the url ends with ".png". If the server requires an apikey, it
+        has to be added to the url string. To use this server, the
         \l{Map::activeMapType} parameter of the \l Map should be set to the
         supported map type whose type is \l{mapType::style}{MapType.CustomMap}.
         This map type is only be available if this plugin parameter is set, in
