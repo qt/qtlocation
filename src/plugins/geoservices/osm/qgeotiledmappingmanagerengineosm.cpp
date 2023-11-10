@@ -185,7 +185,7 @@ QGeoTiledMappingManagerEngineOsm::QGeoTiledMappingManagerEngineOsm(const QVarian
         if (parameters.contains(QStringLiteral("osm.mapping.copyright")))
             m_customCopyright = parameters.value(QStringLiteral("osm.mapping.copyright")).toString();
 
-        if (!tmsServer.endsWith(".png"))
+        if (!tmsServer.contains("%x"))
              tmsServer += QStringLiteral("%z/%x/%y.png");
         m_providers.push_back(
             new QGeoTileProviderOsm( nmCached,
