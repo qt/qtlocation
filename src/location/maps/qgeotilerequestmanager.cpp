@@ -1,5 +1,5 @@
 // Copyright (C) 2015 The Qt Company Ltd.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial
 #include "qgeotilerequestmanager_p.h"
 #include "qgeotilespec_p.h"
 #include "qgeotiledmap_p.h"
