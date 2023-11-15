@@ -71,6 +71,20 @@ if(QT_FEATURE_geoservices_maplibregl)
     )
 endif()
 
+if (ANDROID)
+    # Download & link to OpenSSL libs
+    include(FetchContent)
+    FetchContent_Declare(
+      android_openssl
+      DOWNLOAD_EXTRACT_TIMESTAMP true
+      URL https://github.com/KDAB/android_openssl/archive/refs/heads/master.zip
+    )
+    FetchContent_MakeAvailable(android_openssl)
+
+    include(${android_openssl_SOURCE_DIR}/android_openssl.cmake)
+    add_android_openssl_libraries(qml_location_mapviewer)
+endif()
+
 install(TARGETS qml_location_mapviewer
     RUNTIME DESTINATION "${INSTALL_EXAMPLEDIR}"
     BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
