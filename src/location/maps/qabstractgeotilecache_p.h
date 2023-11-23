@@ -42,7 +42,7 @@ struct QGeoTileTexture
     bool textureBound = false;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QAbstractGeoTileCache : public QObject
+class Q_LOCATION_EXPORT QAbstractGeoTileCache : public QObject
 {
     Q_OBJECT
 public:

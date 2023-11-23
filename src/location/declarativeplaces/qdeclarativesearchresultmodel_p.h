@@ -25,7 +25,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceIcon;
 class QDeclarativeGeoServiceProvider;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
+class Q_LOCATION_EXPORT QDeclarativeSearchResultModel : public QDeclarativeSearchModelBase
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(PlaceSearchModel)

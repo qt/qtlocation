@@ -26,7 +26,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoLocation;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoCodeReplyPrivate
+class Q_LOCATION_EXPORT QGeoCodeReplyPrivate
 {
 public:
     QGeoCodeReplyPrivate();

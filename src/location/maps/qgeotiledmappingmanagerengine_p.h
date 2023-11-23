@@ -30,7 +30,7 @@ struct QGeoTileTexture;
 class QGeoTileSpec;
 class QSize;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
+class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
 {
     Q_OBJECT
 

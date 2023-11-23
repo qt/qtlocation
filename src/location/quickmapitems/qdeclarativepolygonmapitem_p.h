@@ -23,7 +23,7 @@
 QT_BEGIN_NAMESPACE
 
 class QDeclarativePolygonMapItemPrivate;
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
+class Q_LOCATION_EXPORT QDeclarativePolygonMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(MapPolygon)

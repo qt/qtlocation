@@ -24,7 +24,7 @@ QT_BEGIN_NAMESPACE
 class QGeoTileSpec;
 class QGeoTiledMapReplyPrivate;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapReply : public QObject
+class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
 {
     Q_OBJECT
 

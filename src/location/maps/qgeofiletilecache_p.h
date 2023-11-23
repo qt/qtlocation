@@ -46,14 +46,14 @@ public:
 
 /* Custom eviction policy for the disk cache, to avoid deleting all the files
  * when the application closes */
-class Q_LOCATION_PRIVATE_EXPORT QCache3QTileEvictionPolicy : public QCache3QDefaultEvictionPolicy<QGeoTileSpec,QGeoCachedTileDisk>
+class Q_LOCATION_EXPORT QCache3QTileEvictionPolicy : public QCache3QDefaultEvictionPolicy<QGeoTileSpec,QGeoCachedTileDisk>
 {
 protected:
     void aboutToBeRemoved(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj);
     void aboutToBeEvicted(const QGeoTileSpec &key, QSharedPointer<QGeoCachedTileDisk> obj);
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoFileTileCache : public QAbstractGeoTileCache
+class Q_LOCATION_EXPORT QGeoFileTileCache : public QAbstractGeoTileCache
 {
     Q_OBJECT
 public:

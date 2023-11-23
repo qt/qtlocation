@@ -33,7 +33,7 @@ class QGeoMap;
 class QGeoMapController;
 class QDeclarativeGeoMapItemBase;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapPrivate :  public QObjectPrivate
+class Q_LOCATION_EXPORT QGeoMapPrivate :  public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QGeoMap)
 public:

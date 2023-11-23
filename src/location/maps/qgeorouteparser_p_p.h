@@ -22,7 +22,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoRouteParserPrivate :  public QObjectPrivate
+class Q_LOCATION_EXPORT QGeoRouteParserPrivate :  public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QGeoRouteParser)
 public:

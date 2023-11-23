@@ -34,7 +34,7 @@ class QGeoServiceProvider;
 class QGeoCodingManager;
 class QDeclarativeGeoLocation;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeocodeModel : public QAbstractListModel, public QQmlParserStatus
+class Q_LOCATION_EXPORT QDeclarativeGeocodeModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(GeocodeModel)

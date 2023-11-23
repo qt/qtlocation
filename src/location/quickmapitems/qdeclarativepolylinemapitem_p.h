@@ -27,7 +27,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeMapLineProperties : public QObject
+class Q_LOCATION_EXPORT QDeclarativeMapLineProperties : public QObject
 {
     Q_OBJECT
     QML_ANONYMOUS
@@ -54,7 +54,7 @@ private:
 };
 
 class QDeclarativePolylineMapItemPrivate;
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
+class Q_LOCATION_EXPORT QDeclarativePolylineMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(MapPolyline)

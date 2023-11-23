@@ -40,7 +40,7 @@ class QDeclarativeGeoMapItemViewItemData;
 class QDeclarativeGeoMapItemView;
 class QDeclarativeGeoMapItemGroup;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemView : public QDeclarativeGeoMapItemGroup
+class Q_LOCATION_EXPORT QDeclarativeGeoMapItemView : public QDeclarativeGeoMapItemGroup
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(MapItemView)

@@ -29,7 +29,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoRoutePrivate : public QSharedData
+class Q_LOCATION_EXPORT QGeoRoutePrivate : public QSharedData
 {
 public:
     bool operator==(const QGeoRoutePrivate &other) const;

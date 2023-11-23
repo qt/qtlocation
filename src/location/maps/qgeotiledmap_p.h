@@ -33,7 +33,7 @@ class QSGNode;
 
 class QPointF;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMap : public QGeoMap
+class Q_LOCATION_EXPORT QGeoTiledMap : public QGeoMap
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoTiledMap)

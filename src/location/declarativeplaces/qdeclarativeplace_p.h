@@ -35,7 +35,7 @@ class QPlaceManager;
 class QPlaceSupplier;
 class QDeclarativeContactDetails;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlace : public QObject, public QQmlParserStatus
+class Q_LOCATION_EXPORT QDeclarativePlace : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(Place)

@@ -36,7 +36,7 @@ class QGeoRoutingManager;
 class QDeclarativeGeoRoute;
 class QDeclarativeGeoRouteQuery;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteModel : public QAbstractListModel, public QQmlParserStatus
+class Q_LOCATION_EXPORT QDeclarativeGeoRouteModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(RouteModel)
@@ -151,7 +151,7 @@ private:
     RouteError error_ = QDeclarativeGeoRouteModel::NoError;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoRouteQuery : public QObject, public QQmlParserStatus
+class Q_LOCATION_EXPORT QDeclarativeGeoRouteQuery : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(RouteQuery)

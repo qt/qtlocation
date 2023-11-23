@@ -37,7 +37,7 @@ class QDeclarativeGeoServiceProvider;
 class QGeoMapType;
 class QDeclarativeGeoMapCopyrightNotice;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMap : public QQuickItem
+class Q_LOCATION_EXPORT QDeclarativeGeoMap : public QQuickItem
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(Map)

@@ -40,7 +40,7 @@ class QDeclarativePluginParameterForeign
     QML_NAMED_ELEMENT(PluginParameter)
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoServiceProvider : public QObject, public QQmlParserStatus
+class Q_LOCATION_EXPORT QDeclarativeGeoServiceProvider : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(Plugin)
@@ -192,7 +192,7 @@ private:
     Q_DISABLE_COPY(QDeclarativeGeoServiceProvider)
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoServiceProviderRequirements : public QObject
+class Q_LOCATION_EXPORT QDeclarativeGeoServiceProviderRequirements : public QObject
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(PluginRequirements)

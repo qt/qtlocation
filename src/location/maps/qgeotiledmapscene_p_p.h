@@ -26,7 +26,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapTileContainerNode : public QSGTransformNode
+class Q_LOCATION_EXPORT QGeoTiledMapTileContainerNode : public QSGTransformNode
 {
 public:
     void addChild(const QGeoTileSpec &spec, QSGImageNode *node)
@@ -37,7 +37,7 @@ public:
     QHash<QGeoTileSpec, QSGImageNode *> tiles;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapRootNode : public QSGClipNode
+class Q_LOCATION_EXPORT QGeoTiledMapRootNode : public QSGClipNode
 {
 public:
     QGeoTiledMapRootNode()
@@ -95,7 +95,7 @@ public:
 #endif
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapScenePrivate : public QObjectPrivate
+class Q_LOCATION_EXPORT QGeoTiledMapScenePrivate : public QObjectPrivate
 {
     Q_DECLARE_PUBLIC(QGeoTiledMapScene)
 public:

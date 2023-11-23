@@ -28,7 +28,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoRouteSegmentPrivate : public QSharedData
+class Q_LOCATION_EXPORT QGeoRouteSegmentPrivate : public QSharedData
 {
 public:
     QGeoRouteSegmentPrivate();

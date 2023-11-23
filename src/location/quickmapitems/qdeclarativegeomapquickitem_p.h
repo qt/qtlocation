@@ -37,7 +37,7 @@ public:
     QMatrix4x4 m_matrix;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapQuickItem : public QDeclarativeGeoMapItemBase
+class Q_LOCATION_EXPORT QDeclarativeGeoMapQuickItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(MapQuickItem)

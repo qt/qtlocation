@@ -33,7 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QPlacePrivate : public QSharedData
+class Q_LOCATION_EXPORT QPlacePrivate : public QSharedData
 {
 public:
     QPlacePrivate();
@@ -83,7 +83,7 @@ public:
 };
 
 
-class Q_LOCATION_PRIVATE_EXPORT QPlacePrivateDefault : public QPlacePrivate
+class Q_LOCATION_EXPORT QPlacePrivateDefault : public QPlacePrivate
 {
 public:
     QPlacePrivateDefault();

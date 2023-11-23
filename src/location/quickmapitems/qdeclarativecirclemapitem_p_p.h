@@ -25,7 +25,7 @@ QT_BEGIN_NAMESPACE
 class QQuickShape;
 class QQuickShapePath;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
+class Q_LOCATION_EXPORT QGeoMapCircleGeometry : public QGeoMapPolygonGeometry
 {
 public:
     QGeoMapCircleGeometry();
@@ -33,7 +33,7 @@ public:
     void updateSourceAndScreenPointsInvert(const QList<QDoubleVector2D> &circlePath, const QGeoMap &map);
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivate
+class Q_LOCATION_EXPORT QDeclarativeCircleMapItemPrivate
 {
     Q_DISABLE_COPY_MOVE(QDeclarativeCircleMapItemPrivate)
 public:
@@ -83,7 +83,7 @@ public:
     QList<QDoubleVector2D> m_circlePath;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItemPrivateCPU: public QDeclarativeCircleMapItemPrivate
+class Q_LOCATION_EXPORT QDeclarativeCircleMapItemPrivateCPU: public QDeclarativeCircleMapItemPrivate
 {
 public:
     QDeclarativeCircleMapItemPrivateCPU(QDeclarativeCircleMapItem &circle);

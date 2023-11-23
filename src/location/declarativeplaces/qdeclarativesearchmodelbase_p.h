@@ -30,7 +30,7 @@ class QPlaceSearchRequest;
 class QPlaceSearchReply;
 class QDeclarativePlace;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSearchModelBase : public QAbstractListModel, public QQmlParserStatus
+class Q_LOCATION_EXPORT QDeclarativeSearchModelBase : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
 

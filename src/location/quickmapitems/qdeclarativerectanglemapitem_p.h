@@ -28,7 +28,7 @@
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeRectangleMapItemPrivate;
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
+class Q_LOCATION_EXPORT QDeclarativeRectangleMapItem: public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(MapRectangle)

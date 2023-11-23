@@ -34,7 +34,7 @@
 QT_BEGIN_NAMESPACE
 
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoJsonData : public QObject
+class Q_LOCATION_EXPORT QDeclarativeGeoJsonData : public QObject
 {
     Q_OBJECT
     QML_ADDED_IN_VERSION(6, 7)

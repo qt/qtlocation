@@ -18,13 +18,13 @@
 #include "qlocationglobal.h"
 #include <qqml.h>
 #include "private/qglobal_p.h"
-#include <QtLocation/private/qtlocationexports_p.h>
+#include <QtLocation/qtlocationexports.h>
 
 QT_BEGIN_NAMESPACE
 
 namespace QLocation
 {
-Q_NAMESPACE_EXPORT(Q_LOCATION_PRIVATE_EXPORT)
+Q_NAMESPACE_EXPORT(Q_LOCATION_EXPORT)
 QML_NAMED_ELEMENT(QtLocation)
 QML_ADDED_IN_VERSION(6, 6)
 Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")

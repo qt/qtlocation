@@ -25,7 +25,7 @@
 #include "qplacematchreply.h"
 #include "qplacemanagerengine.h"
 
-class Q_LOCATION_PRIVATE_EXPORT QPlaceDetailsReplyUnsupported : public QPlaceDetailsReply
+class Q_LOCATION_EXPORT QPlaceDetailsReplyUnsupported : public QPlaceDetailsReply
 {
     Q_OBJECT
 
@@ -49,7 +49,7 @@ public:
     }
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QPlaceContentReplyUnsupported : public QPlaceContentReply
+class Q_LOCATION_EXPORT QPlaceContentReplyUnsupported : public QPlaceContentReply
 {
     Q_OBJECT
 
@@ -73,7 +73,7 @@ public:
     }
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QPlaceSearchReplyUnsupported : public QPlaceSearchReply
+class Q_LOCATION_EXPORT QPlaceSearchReplyUnsupported : public QPlaceSearchReply
 {
     Q_OBJECT
 
@@ -97,7 +97,7 @@ public:
     }
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QPlaceSearchSuggestionReplyUnsupported : public QPlaceSearchSuggestionReply
+class Q_LOCATION_EXPORT QPlaceSearchSuggestionReplyUnsupported : public QPlaceSearchSuggestionReply
 {
     Q_OBJECT
 
@@ -121,7 +121,7 @@ public:
     }
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QPlaceIdReplyUnsupported : public QPlaceIdReply
+class Q_LOCATION_EXPORT QPlaceIdReplyUnsupported : public QPlaceIdReply
 {
     Q_OBJECT
 
@@ -145,7 +145,7 @@ public:
     }
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QPlaceReplyUnsupported : public QPlaceReply
+class Q_LOCATION_EXPORT QPlaceReplyUnsupported : public QPlaceReply
 {
     Q_OBJECT
 
@@ -168,7 +168,7 @@ public:
     }
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QPlaceMatchReplyUnsupported : public QPlaceMatchReply
+class Q_LOCATION_EXPORT QPlaceMatchReplyUnsupported : public QPlaceMatchReply
 {
     Q_OBJECT
 

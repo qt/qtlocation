@@ -27,7 +27,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QPlaceSearchRequestPrivate : public QSharedData
+class Q_LOCATION_EXPORT QPlaceSearchRequestPrivate : public QSharedData
 {
 public:
     bool operator==(const QPlaceSearchRequestPrivate &other) const;

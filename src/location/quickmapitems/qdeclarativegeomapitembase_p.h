@@ -30,7 +30,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct Q_LOCATION_PRIVATE_EXPORT QGeoMapViewportChangeEvent
+struct Q_LOCATION_EXPORT QGeoMapViewportChangeEvent
 {
     QGeoCameraData cameraData;
     QSizeF mapSize;
@@ -43,7 +43,7 @@ struct Q_LOCATION_PRIVATE_EXPORT QGeoMapViewportChangeEvent
     bool rollChanged = false;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
+class Q_LOCATION_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(GeoMapItemBase)

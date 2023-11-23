@@ -34,7 +34,7 @@ class QGeoMappingManagerEnginePrivate;
 class QGeoMap;
 class QGeoMapType;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMappingManagerEngine : public QObject
+class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
 {
     Q_OBJECT
 

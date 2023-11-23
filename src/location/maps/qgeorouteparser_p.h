@@ -24,7 +24,7 @@ class QByteArray;
 class QUrl;
 class QGeoRouteRequest;
 class QGeoRouteParserPrivate;
-class Q_LOCATION_PRIVATE_EXPORT QGeoRouteParser : public QObject
+class Q_LOCATION_EXPORT QGeoRouteParser : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoRouteParser)

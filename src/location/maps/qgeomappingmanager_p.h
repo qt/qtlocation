@@ -31,7 +31,7 @@ class QGeoMappingManagerEngine;
 class QGeoCameraCapabilities;
 
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMappingManager : public QObject
+class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
 {
     Q_OBJECT
 

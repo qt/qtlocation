@@ -35,7 +35,7 @@ class QQuickWindow;
 class QDeclarativeGeoMapItemBase;
 class QDeclarativeGeoMap;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMap : public QObject
+class Q_LOCATION_EXPORT QGeoMap : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoMap)

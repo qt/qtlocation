@@ -35,7 +35,7 @@ QT_BEGIN_NAMESPACE
 class QSGGeometry;
 class QGeoMap;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapItemGeometry
+class Q_LOCATION_EXPORT QGeoMapItemGeometry
 {
 public:
     static QList<QGeoCoordinate> path(const QGeoRectangle &rect)

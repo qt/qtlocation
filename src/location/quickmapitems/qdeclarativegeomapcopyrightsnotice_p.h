@@ -30,7 +30,7 @@ QT_BEGIN_NAMESPACE
 class QTextDocument;
 class QDeclarativeGeoMap;
 class QDeclarativeGeoMapCopyrightNoticePrivate;
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapCopyrightNotice : public QQuickPaintedItem
+class Q_LOCATION_EXPORT QDeclarativeGeoMapCopyrightNotice : public QQuickPaintedItem
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(MapCopyrightNotice)

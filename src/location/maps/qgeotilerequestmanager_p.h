@@ -26,7 +26,7 @@ struct QGeoTileTexture;
 
 class QGeoTileRequestManagerPrivate;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTileRequestManager
+class Q_LOCATION_EXPORT QGeoTileRequestManager
 {
 public:
     explicit QGeoTileRequestManager(QGeoTiledMap *map, QGeoTiledMappingManagerEngine *engine);

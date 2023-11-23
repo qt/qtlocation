@@ -25,7 +25,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRouteMapItem : public QDeclarativePolylineMapItem
+class Q_LOCATION_EXPORT QDeclarativeRouteMapItem : public QDeclarativePolylineMapItem
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(MapRoute)

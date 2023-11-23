@@ -35,7 +35,7 @@ class QGeoServiceProvider;
 class QPlaceManager;
 class QPlaceReply;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public QQmlParserStatus
+class Q_LOCATION_EXPORT QDeclarativeSupportedCategoriesModel : public QAbstractItemModel, public QQmlParserStatus
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(CategoryModel)

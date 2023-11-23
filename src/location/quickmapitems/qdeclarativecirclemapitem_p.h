@@ -25,7 +25,7 @@
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeCircleMapItemPrivate;
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
+class Q_LOCATION_EXPORT QDeclarativeCircleMapItem : public QDeclarativeGeoMapItemBase
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(MapCircle)

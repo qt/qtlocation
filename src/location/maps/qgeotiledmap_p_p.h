@@ -36,7 +36,7 @@ class QSGNode;
 class QQuickWindow;
 class QGeoCameraCapabilities;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapPrivate : public QGeoMapPrivate
+class Q_LOCATION_EXPORT QGeoTiledMapPrivate : public QGeoMapPrivate
 {
     Q_DECLARE_PUBLIC(QGeoTiledMap)
 public:

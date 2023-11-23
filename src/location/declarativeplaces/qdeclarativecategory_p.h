@@ -30,7 +30,7 @@ QT_BEGIN_NAMESPACE
 class QPlaceReply;
 class QPlaceManager;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeCategory : public QObject, public QQmlParserStatus
+class Q_LOCATION_EXPORT QDeclarativeCategory : public QObject, public QQmlParserStatus
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(Category)

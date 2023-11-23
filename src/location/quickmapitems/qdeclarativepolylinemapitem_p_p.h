@@ -42,7 +42,7 @@ struct QGeoMapPolylineGeometry : QGeoMapItemGeometry
     qreal maxCoord_ = 0.0;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivate
+class Q_LOCATION_EXPORT QDeclarativePolylineMapItemPrivate
 {
     Q_DISABLE_COPY_MOVE(QDeclarativePolylineMapItemPrivate)
 public:
@@ -66,7 +66,7 @@ public:
     QDeclarativePolylineMapItem &m_poly;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolylineMapItemPrivateCPU: public QDeclarativePolylineMapItemPrivate
+class Q_LOCATION_EXPORT QDeclarativePolylineMapItemPrivateCPU: public QDeclarativePolylineMapItemPrivate
 {
 public:
     QDeclarativePolylineMapItemPrivateCPU(QDeclarativePolylineMapItem &poly);

@@ -27,7 +27,7 @@ QT_BEGIN_NAMESPACE
 class QGeoShape;
 class QGeoRectangle;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoProjection
+class Q_LOCATION_EXPORT QGeoProjection
 {
 public:
     enum ProjectionGroup {
@@ -92,7 +92,7 @@ public:
     mutable bool     m_qsgTransformDirty = true;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoProjectionWebMercator : public QGeoProjection
+class Q_LOCATION_EXPORT QGeoProjectionWebMercator : public QGeoProjection
 {
 public:
     QGeoProjectionWebMercator();

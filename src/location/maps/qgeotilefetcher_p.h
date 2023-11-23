@@ -27,7 +27,7 @@ class QGeoTiledMappingManagerEngine;
 class QGeoTiledMapReply;
 class QGeoTileSpec;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTileFetcher : public QObject
+class Q_LOCATION_EXPORT QGeoTileFetcher : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoTileFetcher)

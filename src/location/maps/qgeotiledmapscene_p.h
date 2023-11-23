@@ -27,7 +27,7 @@ class QSGNode;
 class QQuickWindow;
 class QGeoTiledMapScenePrivate;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTiledMapScene : public QObject
+class Q_LOCATION_EXPORT QGeoTiledMapScene : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoTiledMapScene)

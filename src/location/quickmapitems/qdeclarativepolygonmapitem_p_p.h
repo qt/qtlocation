@@ -35,7 +35,7 @@ QT_BEGIN_NAMESPACE
 class QQuickShape;
 class QQuickShapePath;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoMapPolygonGeometry : public QGeoMapItemGeometry
+class Q_LOCATION_EXPORT QGeoMapPolygonGeometry : public QGeoMapItemGeometry
 {
 public:
     enum MapBorderBehaviour {
@@ -61,7 +61,7 @@ protected:
     bool assumeSimple_ = false;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItemPrivate
+class Q_LOCATION_EXPORT QDeclarativePolygonMapItemPrivate
 {
     Q_DISABLE_COPY_MOVE(QDeclarativePolygonMapItemPrivate)
 public:
@@ -85,7 +85,7 @@ public:
     QDeclarativePolygonMapItem &m_poly;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePolygonMapItemPrivateCPU: public QDeclarativePolygonMapItemPrivate
+class Q_LOCATION_EXPORT QDeclarativePolygonMapItemPrivateCPU: public QDeclarativePolygonMapItemPrivate
 {
 public:
     QDeclarativePolygonMapItemPrivateCPU(QDeclarativePolygonMapItem &polygon);

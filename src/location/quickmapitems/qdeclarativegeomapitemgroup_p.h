@@ -22,7 +22,7 @@
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeGeoMap;
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeGeoMapItemGroup : public QQuickItem
+class Q_LOCATION_EXPORT QDeclarativeGeoMapItemGroup : public QQuickItem
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(MapItemGroup)

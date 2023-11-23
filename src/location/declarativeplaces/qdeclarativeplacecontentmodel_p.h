@@ -31,7 +31,7 @@ class QDeclarativePlace;
 class QDeclarativeGeoServiceProvider;
 class QGeoServiceProvider;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativePlaceContentModel : public QAbstractListModel, public QQmlParserStatus
+class Q_LOCATION_EXPORT QDeclarativePlaceContentModel : public QAbstractListModel, public QQmlParserStatus
 {
     Q_OBJECT
 

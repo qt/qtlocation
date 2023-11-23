@@ -23,7 +23,7 @@ QT_BEGIN_NAMESPACE
 
 class QGeoRouteParserOsrmV5Private;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoRouteParserOsrmV5Extension
+class Q_LOCATION_EXPORT QGeoRouteParserOsrmV5Extension
 {
 public:
     QGeoRouteParserOsrmV5Extension()
@@ -38,7 +38,7 @@ public:
     virtual void updateSegment(QGeoRouteSegment &segment, const QJsonObject &step, const QJsonObject &maneuver) const = 0;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoRouteParserOsrmV5 : public QGeoRouteParser
+class Q_LOCATION_EXPORT QGeoRouteParserOsrmV5 : public QGeoRouteParser
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGeoRouteParserOsrmV5)

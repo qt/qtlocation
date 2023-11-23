@@ -28,7 +28,7 @@ class QGeoCameraTilesPrivate;
 class QSize;
 class QRectF;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoCameraTiles {
+class Q_LOCATION_EXPORT QGeoCameraTiles {
 public:
     QGeoCameraTiles();
     ~QGeoCameraTiles();

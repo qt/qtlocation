@@ -28,7 +28,7 @@
 
 QT_BEGIN_NAMESPACE
 
-struct Q_LOCATION_PRIVATE_EXPORT Frustum
+struct Q_LOCATION_EXPORT Frustum
 {
     QDoubleVector3D apex;
     QDoubleVector3D topLeftNear;
@@ -43,7 +43,7 @@ struct Q_LOCATION_PRIVATE_EXPORT Frustum
 
 typedef QList<QDoubleVector3D> PolygonVector;
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoCameraTilesPrivate
+class Q_LOCATION_EXPORT QGeoCameraTilesPrivate
 {
 public:
     struct ClippedFootprint

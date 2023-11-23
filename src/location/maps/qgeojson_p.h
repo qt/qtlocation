@@ -26,14 +26,14 @@ class QString;
 
 namespace QGeoJson {
     // This method imports a GeoJSON file to a QVariantList
-    Q_LOCATION_PRIVATE_EXPORT QVariantList importGeoJson(const QJsonDocument &doc);
+    Q_LOCATION_EXPORT QVariantList importGeoJson(const QJsonDocument &doc);
 
     // This method exports a GeoJSON file from a QVariantList
-    Q_LOCATION_PRIVATE_EXPORT QJsonDocument exportGeoJson(const QVariantList &list);
+    Q_LOCATION_EXPORT QJsonDocument exportGeoJson(const QVariantList &list);
 
     // This method exports the content of the imported QVariantList in a
     // readable format
-    Q_LOCATION_PRIVATE_EXPORT QString toString(const QVariantList &importedGeoJson);
+    Q_LOCATION_EXPORT QString toString(const QVariantList &importedGeoJson);
 }
 
 QT_END_NAMESPACE

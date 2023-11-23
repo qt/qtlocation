@@ -21,7 +21,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeContactDetails : public QQmlPropertyMap
+class Q_LOCATION_EXPORT QDeclarativeContactDetails : public QQmlPropertyMap
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(ContactDetails)

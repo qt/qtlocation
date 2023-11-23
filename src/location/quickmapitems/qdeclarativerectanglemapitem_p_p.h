@@ -26,7 +26,7 @@ QT_BEGIN_NAMESPACE
 class QQuickShape;
 class QQuickShapePath;
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItemPrivate
+class Q_LOCATION_EXPORT QDeclarativeRectangleMapItemPrivate
 {
     Q_DISABLE_COPY_MOVE(QDeclarativeRectangleMapItemPrivate)
 public:
@@ -46,7 +46,7 @@ public:
     QDeclarativeRectangleMapItem &m_rect;
 };
 
-class Q_LOCATION_PRIVATE_EXPORT QDeclarativeRectangleMapItemPrivateCPU: public QDeclarativeRectangleMapItemPrivate
+class Q_LOCATION_EXPORT QDeclarativeRectangleMapItemPrivateCPU: public QDeclarativeRectangleMapItemPrivate
 {
 public:
     QDeclarativeRectangleMapItemPrivateCPU(QDeclarativeRectangleMapItem &rect);

@@ -26,9 +26,9 @@
 QT_BEGIN_NAMESPACE
 
 class QGeoTileSpecPrivate;
-QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoTileSpecPrivate, Q_LOCATION_PRIVATE_EXPORT)
+QT_DECLARE_QSDP_SPECIALIZATION_DTOR_WITH_EXPORT(QGeoTileSpecPrivate, Q_LOCATION_EXPORT)
 
-class Q_LOCATION_PRIVATE_EXPORT QGeoTileSpec
+class Q_LOCATION_EXPORT QGeoTileSpec
 {
 public:
     QGeoTileSpec();
@@ -73,9 +73,9 @@ private:
     bool isLess(const QGeoTileSpec &rhs) const noexcept;
 };
 
-Q_LOCATION_PRIVATE_EXPORT unsigned int qHash(const QGeoTileSpec &spec);
+Q_LOCATION_EXPORT unsigned int qHash(const QGeoTileSpec &spec);
 
-Q_LOCATION_PRIVATE_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
 
 QT_END_NAMESPACE
 
