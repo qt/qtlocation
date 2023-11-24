@@ -38,7 +38,7 @@ target_link_libraries(planespotter PUBLIC
 # Resources:
 set(qml_resource_files
     "Plane.qml"
-    "airplane.png"
+    "airplane.svg"
     "planespotter.qml"
 )
 

@@ -8,10 +8,10 @@ import QtLocation
 
 Window {
     width: 700
-    height: 500
+    height: 550
     visible: true
 
-    property variant topLeftEurope: QtPositioning.coordinate(60.5, 0.0)
+    property variant topLeftEurope: QtPositioning.coordinate(61, 0.0)
     property variant bottomRightEurope: QtPositioning.coordinate(51.0, 14.0)
     property variant viewOfEurope:
             QtPositioning.rectangle(topLeftEurope, bottomRightEurope)
