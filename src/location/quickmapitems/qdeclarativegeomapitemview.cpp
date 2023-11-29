@@ -161,7 +161,7 @@ void QDeclarativeGeoMapItemView::modelUpdated(const QQmlChangeSet &changeSet, bo
         }
     }
 
-    QBoolBlocker createBlocker(m_creatingObject, true);
+    QScopedValueRollback createBlocker(m_creatingObject, true);
     for (const QQmlChangeSet::Change &c: changeSet.inserts()) {
         for (auto idx = c.start(); idx < c.end(); idx++) {
             QObject *delegateInstance = m_delegateModel->object(idx, m_incubationMode);
@@ -291,7 +291,7 @@ void QDeclarativeGeoMapItemView::instantiateAllItems()
         return;
 
     // If here, m_delegateModel may contain data, but QQmlInstanceModel::object for each row hasn't been called yet.
-    QBoolBlocker createBlocker(m_creatingObject, true);
+    QScopedValueRollback createBlocker(m_creatingObject, true);
     for (qsizetype i = 0; i < m_delegateModel->count(); i++) {
         QObject *delegateInstance = m_delegateModel->object(i, m_incubationMode);
         addDelegateToMap(qobject_cast<QQuickItem *>(delegateInstance), i);
