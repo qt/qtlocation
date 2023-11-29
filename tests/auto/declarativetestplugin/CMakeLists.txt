@@ -18,4 +18,5 @@ qt_internal_add_qml_module(declarative_location_test
         Qt::Test
         Qt::Location
         Qt::Positioning
+    NO_GENERATE_CPP_EXPORTS
 )
