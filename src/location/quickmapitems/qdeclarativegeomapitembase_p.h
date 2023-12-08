@@ -28,6 +28,8 @@
 #include <QScopedPointer>
 #include <QtQuickShapes/private/qquickshape_p.h>
 
+#include <QtCore/qpointer.h>
+
 QT_BEGIN_NAMESPACE
 
 struct Q_LOCATION_EXPORT QGeoMapViewportChangeEvent

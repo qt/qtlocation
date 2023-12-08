@@ -24,6 +24,8 @@
 #include <QtLocation/private/qdeclarativegeomapitembase_p.h>
 #include <QtPositioning/qgeoshape.h>
 
+#include <QtCore/qpointer.h>
+
 QT_BEGIN_NAMESPACE
 
 class QMapQuickItemMatrix4x4 : public QQuickTransform
