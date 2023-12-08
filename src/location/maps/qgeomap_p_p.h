@@ -20,9 +20,12 @@
 #include <QtLocation/private/qgeoprojection_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qgeocameracapabilities_p.h>
+
 #include <QtCore/private/qobject_p.h>
+#include <QtCore/qpointer.h>
 #include <QtCore/QSize>
 #include <QtCore/QList>
+
 #include "qgeomap_p.h"
 
 
