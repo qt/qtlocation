@@ -30,7 +30,6 @@ QT_BEGIN_NAMESPACE
 class Q_LOCATION_PRIVATE_EXPORT QDeclarativeMapLineProperties : public QObject
 {
     Q_OBJECT
-    QML_ELEMENT
     QML_ANONYMOUS
 
     Q_PROPERTY(qreal width READ width WRITE setWidth NOTIFY widthChanged)
