@@ -21,7 +21,7 @@
     To write the QML application that will show places on a map, we start by
     making the following import declarations.
 
-    \snippet places_map/places_map.qml Imports
+    \snippet places_map/PlacesMap.qml Imports
 
     Instantiate a \l Plugin instance.  The \l Plugin is effectively the backend
     from where places are sourced from. Depending on the chosen plugin
@@ -29,7 +29,7 @@
     \l {Qt Location Open Street Map Plugin}{OSM plugin} is selected which does not have any mandatory
     parameters.
 
-    \snippet places_map/places_map.qml Initialize Plugin
+    \snippet places_map/PlacesMap.qml Initialize Plugin
 
     Next we instantiate a \l PlaceSearchModel which we can use to specify
     search parameters and perform a places search operation.  For illustrative
@@ -38,7 +38,7 @@
     {PlaceSearchModel::update} {update()} would be invoked in response to a
     user action such as a button click.
 
-    \snippet places_map/places_map.qml PlaceSearchModel
+    \snippet places_map/PlacesMap.qml PlaceSearchModel
 
     The map is displayed by using the \l MapView type and inside we declare the \l
     MapItemView and supply the search model and a delegate.  An inline delegate
@@ -48,12 +48,12 @@
     other search result types may not have a \e place \l {PlaceSearchModel
     Roles} {role}.
 
-    \snippet places_map/places_map.qml Places MapItemView
+    \snippet places_map/PlacesMap.qml Places MapItemView
 
     Finally, a \c PositionSource is used to reset the map to the curent
     location and find "food" places in the new area. The position information
     is updated every 2 minutes and if the new position is more than 500 meters
     away from the last food search area the place search is retriggered.
 
-    \snippet places_map/places_map.qml Current Location
+    \snippet places_map/PlacesMap.qml Current Location
 */

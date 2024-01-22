@@ -38,7 +38,9 @@ target_link_libraries(places_map PUBLIC
 # Resources:
 set(places_map_resource_files
     "marker.png"
-    "places_map.qml"
+    "Main.qml"
+    "PermissionsScreen.qml"
+    "PlacesMap.qml"
 )
 
 qt6_add_resources(places_map "places_map"
