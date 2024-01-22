@@ -128,7 +128,7 @@
     \table
         \row
             \li
-                \snippet places_map/places_map.qml Places MapItemView
+                \snippet places_map/PlacesMap.qml Places MapItemView
             \li
                 \inlineimage places_map.png
     \endtable
