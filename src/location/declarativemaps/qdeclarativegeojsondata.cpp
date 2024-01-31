@@ -220,7 +220,7 @@ bool QDeclarativeGeoJsonData::open()
 bool QDeclarativeGeoJsonData::openUrl(const QUrl &url)
 {
     // Reading GeoJSON file
-    QFile loadFile(url.path());
+    QFile loadFile(url.toLocalFile());
     if (!loadFile.open(QIODevice::ReadOnly)) {
         qWarning() << "Error while opening the file: " << url;
         qWarning() << loadFile.errorString();
