@@ -30,6 +30,7 @@ qt_add_executable(qml_location_geojsonviewer WIN32 MACOSX_BUNDLE
 target_link_libraries(qml_location_geojsonviewer PUBLIC
     Qt::Core
     Qt::Gui
+    Qt::Location
     Qt::Positioning
     Qt::Qml
     Qt::Quick
