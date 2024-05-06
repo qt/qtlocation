@@ -26,6 +26,7 @@ public:
         UnsupportedOptionError,
         UnknownError
     };
+    Q_ENUM(Error)
 
     explicit QGeoRouteReply(Error error, const QString &errorString, QObject *parent = nullptr);
     virtual ~QGeoRouteReply();
