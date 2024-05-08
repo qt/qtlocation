@@ -9,5 +9,6 @@ qtHaveModule(quick) {
                itemview_transitions \
                planespotter
 
-    qtHaveModule(widgets): SUBDIRS += geojson_viewer
+    QT_FOR_CONFIG += location-private
+    qtHaveModule(widgets):qtConfig(location-labs-plugin): SUBDIRS += geojson_viewer
 }

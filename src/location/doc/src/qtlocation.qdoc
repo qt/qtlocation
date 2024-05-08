@@ -76,11 +76,11 @@ available from some of the popular location services.
 
 The Qt Location API enables you to:
 \list
-  \li access and present map data,
-  \li support touch gesture on a specific area of the map,
-  \li query for a specific geographical location and route,
-  \li add additional layers on top, such as polylines and circles,
-  \li and search for places and related images.
+  \li Access and present map data.
+  \li Support touch gesture on a specific area of the map.
+  \li Query for a specific geographical location and route.
+  \li Add additional layers on top, such as polylines and circles.
+  \li Search for places and related images.
 \endlist
 
 \section1 Getting Started
