@@ -169,8 +169,8 @@ a prefix.
         This parameter should be set only if \tt{osm.routing.host} is set, and is an OSRM v4 server.
 \row
     \li osm.routing.host
-    \li Url string set when making network requests to the routing server.  This parameter should be set to a
-        valid server url with the correct osrm API. If not specified the default \l {http://router.project-osrm.org/route/v1/driving/}{url} will be used.
+    \li Url string set when making network requests to the routing server. This parameter should be set to a
+        valid server url with the correct OSRM API. If not specified the default \l {https://project-osrm.org/docs/v5.24.0/api/#}{url} will be used.
         \note The API documentation and sources are available at \l {http://project-osrm.org/}{Project OSRM}.
 
 \row
