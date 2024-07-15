@@ -13,19 +13,25 @@ qhp.QtLocation.virtualFolder       = qtlocation
 qhp.QtLocation.indexTitle          = Qt Location
 qhp.QtLocation.indexRoot           =
 
-qhp.QtLocation.subprojects         = classes qml examples
+qhp.QtLocation.subprojects = manual examples classes qml
+
 qhp.QtLocation.subprojects.classes.title = C++ Classes
 qhp.QtLocation.subprojects.classes.indexTitle = Qt Location C++ Classes
 qhp.QtLocation.subprojects.classes.selectors = class fake:headerfile
 qhp.QtLocation.subprojects.classes.sortPages = true
+
 qhp.QtLocation.subprojects.qml.title = QML Types
 qhp.QtLocation.subprojects.qml.indexTitle = Qt Location QML Types
 qhp.QtLocation.subprojects.qml.selectors = qmlclass
 qhp.QtLocation.subprojects.qml.sortPages = true
+
 qhp.QtLocation.subprojects.examples.title = Qt Location Examples
 qhp.QtLocation.subprojects.examples.indexTitle = Qt Location Examples
 qhp.QtLocation.subprojects.examples.selectors = fake:example
 
+qhp.QtLocation.subprojects.manual.title = Qt Location
+qhp.QtLocation.subprojects.manual.indexTitle = Qt Location module topics
+qhp.QtLocation.subprojects.manual.type = manual
 tagfile                 = ../../../doc/qtlocation/qtlocation.tags
 
 depends += qtcore \
@@ -55,6 +61,9 @@ imagedirs   += images
 navigation.landingpage = "Qt Location"
 navigation.cppclassespage = "Qt Location C++ Classes"
 navigation.qmltypespage = "Qt Location QML Types"
+# Auto-generate navigation linking based on "Qt Location module topics":
+navigation.toctitles = "Qt Location module topics"
+navigation.toctitles.inclusive = false
 
 manifestmeta.highlighted.names = \
     "QtLocation/GeoJson Viewer (QML)" \
