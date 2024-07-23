@@ -42,17 +42,40 @@
 
 QGeoPositionInfoSource *QGeoPositionInfoSourceFactoryCL::positionInfoSource(QObject *parent)
 {
-    return new QGeoPositionInfoSourceCL(parent);
+    return positionInfoSourceWithParameters(parent, QVariantMap());
 }
 
 QGeoSatelliteInfoSource *QGeoPositionInfoSourceFactoryCL::satelliteInfoSource(QObject *parent)
 {
-    Q_UNUSED(parent);
-    return 0;
+    return satelliteInfoSourceWithParameters(parent, QVariantMap());
 }
 
 QGeoAreaMonitorSource *QGeoPositionInfoSourceFactoryCL::areaMonitor(QObject *parent)
 {
+    return areaMonitorWithParameters(parent, QVariantMap());
+}
+
+QGeoPositionInfoSource *
+QGeoPositionInfoSourceFactoryCL::positionInfoSourceWithParameters(QObject *parent,
+                                                                  const QVariantMap &parameters)
+{
+    return new QGeoPositionInfoSourceCL(parameters, parent);
+}
+
+QGeoSatelliteInfoSource *
+QGeoPositionInfoSourceFactoryCL::satelliteInfoSourceWithParameters(QObject *parent,
+                                                                   const QVariantMap &parameters)
+{
     Q_UNUSED(parent);
+    Q_UNUSED(parameters);
+    return 0;
+}
+
+QGeoAreaMonitorSource *
+QGeoPositionInfoSourceFactoryCL::areaMonitorWithParameters(QObject *parent,
+                                                           const QVariantMap &parameters)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(parameters);
     return 0;
 }

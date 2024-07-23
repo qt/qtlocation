@@ -1,0 +1,113 @@
+/****************************************************************************
+**
+** Copyright (C) 2023 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the documentation of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:FDL$
+** Commercial License Usage
+** Licensees holding valid commercial Qt licenses may use this file in
+** accordance with the commercial license agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and The Qt Company. For licensing terms
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU Free Documentation License Usage
+** Alternatively, this file may be used under the terms of the GNU Free
+** Documentation License version 1.3 as published by the Free Software
+** Foundation and appearing in the file included in the packaging of
+** this file. Please review the following information to ensure
+** the GNU Free Documentation License version 1.3 requirements
+** will be met: https://www.gnu.org/licenses/fdl-1.3.html.
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+\page position-plugin-corelocation.html
+\title Qt Positioning Core Location plugin
+\ingroup QtPositioning-plugins
+
+\brief Provides positioning information on Apple platforms
+
+\section1 Overview
+
+The plugin wraps iOS and macOS positioning subsystems. It is only available
+on Apple platforms that support corelocation. The plugin provides only
+positioning information.
+
+This plugin can be loaded by using the provider name \b corelocation.
+
+\section1 Parameters
+
+The following table lists parameters that \e can be passed to the corelocation
+plugin.
+
+\table
+\header
+    \li Parameter
+    \li Description
+\row
+    \li RequestAlwaysPermission
+    \li Ask permissions for using location not only while using the
+        application, but also in background. The parameter is a \c bool, so
+        it accepts either \c {true} or \c {false}. If the parameter is not
+        specified, it is considered to be \c {false}.
+\endtable
+
+On iOS, the application can ask for two levels of location permissions:
+
+\list
+    \li \b {When In Use} - makes location updates available only when someone
+    uses your app.
+    \li \b {Always} - makes location updates available at any time, and lets
+    the system launch your app quietly to handle some updates.
+\endlist
+
+By default, only the \b {When In Use} permission is requested.
+The \c RequestAlwaysPermission parameter is used to explicitly reqeust for
+\b {Always} permission.
+
+\section1 Position source usage example
+
+The following examples show how to create a \b corelocation PositionSource
+using different permission levels.
+
+\section2 QML
+
+\code
+// default - When In Use permission.
+PositionSource {
+    name: "corelocation"
+}
+// RequestAlwaysPermission = false. Same as default.
+PositionSource {
+    name: "corelocation"
+    PluginParameter { name: "RequestAlwaysPermission"; value: false }
+}
+// RequestAlwaysPermission = true. Request Always permission.
+PositionSource {
+    name: "corelocation"
+    PluginParameter { name: "RequestAlwaysPermission"; value: true }
+}
+\endcode
+
+\section2 C++
+
+\code
+// default - When In Use permission.
+QGeoPositionInfoSource *defaultSource
+                = QGeoPositionInfoSource::createSource("corelocation", this);
+// RequestAlwaysPermission = false. Same as default.
+params["RequestAlwaysPermission"] = false;
+QGeoPositionInfoSource *whenInUseSource
+                = QGeoPositionInfoSource::createSource("corelocation", params, this);
+// RequestAlwaysPermission = true. Request Always permission.
+params["RequestAlwaysPermission"] = true;
+QGeoPositionInfoSource *alwaysSource
+                = QGeoPositionInfoSource::createSource("corelocation", params, this);
+\endcode
+
+*/
