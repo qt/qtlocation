@@ -330,6 +330,7 @@ void TileProvider::handleError(QNetworkReply::NetworkError error)
         // Errors we don't expect to recover from in the near future, which
         // prevent accessing the redirection info but not the actual providers.
         m_status = Invalid;
+        break;
     default:
         //qWarning() << "QGeoTileProviderOsm network error:" << error;
         break;
@@ -344,7 +345,8 @@ void TileProvider::onNetworkReplyFinished()
     switch (m_status) {
     case Resolving:
         m_status = Idle;
-    case Idle:    // should not happen
+        break;
+    case Idle: // should not happen
     case Invalid: // should not happen
         break;
     case Valid: // should not happen
