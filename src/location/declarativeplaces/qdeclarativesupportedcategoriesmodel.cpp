@@ -16,7 +16,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype CategoryModel
-    \instantiates QDeclarativeSupportedCategoriesModel
+    \nativetype QDeclarativeSupportedCategoriesModel
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models

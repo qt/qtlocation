@@ -9,7 +9,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype ContactDetails
-    \instantiates QDeclarativeContactDetails
+    \nativetype QDeclarativeContactDetails
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data

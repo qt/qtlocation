@@ -19,7 +19,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype MapRectangle
-    \instantiates QDeclarativeRectangleMapItem
+    \nativetype QDeclarativeRectangleMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.5

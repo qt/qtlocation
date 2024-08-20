@@ -19,7 +19,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype PlaceSearchModel
-    \instantiates QDeclarativeSearchResultModel
+    \nativetype QDeclarativeSearchResultModel
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-models

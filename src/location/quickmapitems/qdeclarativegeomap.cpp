@@ -37,7 +37,7 @@ static qreal sanitizeBearing(qreal bearing)
 
 /*!
     \qmltype Map
-    \instantiates QDeclarativeGeoMap
+    \nativetype QDeclarativeGeoMap
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0

@@ -83,7 +83,7 @@ namespace extractor
 
 /*!
     \qmltype GeoJsonData
-    \instantiates QDeclarativeGeoJsonData
+    \nativetype QDeclarativeGeoJsonData
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 6.7
