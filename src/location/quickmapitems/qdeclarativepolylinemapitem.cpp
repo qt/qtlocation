@@ -181,7 +181,7 @@ static QList<QList<QDoubleVector2D> > clipLine(
 
 /*!
     \qmltype MapPolyline
-    \instantiates QDeclarativePolylineMapItem
+    \nativetype QDeclarativePolylineMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0

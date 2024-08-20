@@ -22,7 +22,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype Place
-    \instantiates QDeclarativePlace
+    \nativetype QDeclarativePlace
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data

@@ -9,7 +9,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype MapItemGroup
-    \instantiates QDeclarativeGeoMapItemGroup
+    \nativetype QDeclarativeGeoMapItemGroup
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.9

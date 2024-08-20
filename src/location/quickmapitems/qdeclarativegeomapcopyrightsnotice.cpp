@@ -23,7 +23,7 @@ public:
 
 /*!
     \qmltype MapCopyrightNotice
-    \instantiates QDeclarativeGeoMapCopyrightNotice
+    \nativetype QDeclarativeGeoMapCopyrightNotice
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.9

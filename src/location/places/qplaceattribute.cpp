@@ -74,7 +74,7 @@ bool QPlaceAttributePrivate::isEmpty() const
 
 /*!
     \qmltype ExtendedAttributes
-    \instantiates QQmlPropertyMap
+    \nativetype QQmlPropertyMap
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-places
     \ingroup qml-QtLocation5-places-data

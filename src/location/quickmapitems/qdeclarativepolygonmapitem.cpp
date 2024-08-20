@@ -20,7 +20,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype MapPolygon
-    \instantiates QDeclarativePolygonMapItem
+    \nativetype QDeclarativePolygonMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.5

@@ -17,7 +17,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype MapQuickItem
-    \instantiates QDeclarativeGeoMapQuickItem
+    \nativetype QDeclarativeGeoMapQuickItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.5

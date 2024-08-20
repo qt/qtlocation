@@ -12,7 +12,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype MapRoute
-    \instantiates QDeclarativeRouteMapItem
+    \nativetype QDeclarativeRouteMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.0

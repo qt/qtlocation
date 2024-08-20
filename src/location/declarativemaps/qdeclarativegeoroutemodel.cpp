@@ -14,7 +14,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype RouteModel
-    \instantiates QDeclarativeGeoRouteModel
+    \nativetype QDeclarativeGeoRouteModel
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
     \since QtLocation 5.5
@@ -591,7 +591,7 @@ void QDeclarativeGeoRouteModel::routingError(QGeoRouteReply *reply,
 
 /*!
     \qmltype RouteQuery
-    \instantiates QDeclarativeGeoRouteQuery
+    \nativetype QDeclarativeGeoRouteQuery
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-routing
     \since QtLocation 5.5

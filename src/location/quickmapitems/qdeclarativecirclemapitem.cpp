@@ -21,7 +21,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \qmltype MapCircle
-    \instantiates QDeclarativeCircleMapItem
+    \nativetype QDeclarativeCircleMapItem
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.5
