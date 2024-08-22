@@ -8,8 +8,6 @@
 
 The Location API provides a library for mapping, navigation and place information.
 
-\tableofcontents
-
 The Qt Location API provides the developer with a set of functions to interact
 with maps, navigational data and places of interest. This is particularly useful
 when associated with current position information which can be retrieved via the
