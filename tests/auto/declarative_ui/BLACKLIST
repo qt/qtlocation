@@ -9,8 +9,3 @@ macos arm ci
 [MapFlick::test_flick_up_with_filtering]
 macos arm ci
 
-[declarative_ui::MapItems::test_items_on_map]
-ci
-
-[declarative_ui::MapItems::test_no_items_on_map]
-ci
