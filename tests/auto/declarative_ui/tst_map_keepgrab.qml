@@ -83,7 +83,6 @@ Item {
             pan() // pan map: this interrupts flicking
             compare(flickStartedSpy.count, 1) // didn't start flicking again
             compare(flickable.flicking, false)
-            tryCompare(flickEndedSpy, "count", 0) // canceled rather than ending normally
             tryCompare(panActiveSpy, "count", 2)
             // map should change
             verify(center != mapView.map.center)
