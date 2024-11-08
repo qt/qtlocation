@@ -202,6 +202,11 @@ namespace AndroidPositioning {
             return ret;
         jintArray jProviders = static_cast<jintArray>(env.jniEnv->CallStaticObjectMethod(
                                                           positioningClass, providerListMethodId));
+        if (!jProviders) {
+            // Work-around for QTBUG-116645
+            __android_log_print(ANDROID_LOG_INFO, logTag, "Got null providers array!");
+            return ret;
+        }
         jint *providers = env.jniEnv->GetIntArrayElements(jProviders, nullptr);
         const int size = env.jniEnv->GetArrayLength(jProviders);
         for (int i = 0; i < size; i++) {
