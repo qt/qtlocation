@@ -196,6 +196,8 @@ void QGeoTileProviderOsm::onResolutionError(TileProvider *provider)
                     p->resolveProvider();
 #endif
                     emit resolutionRequired();
+                } else {
+                    emit resolutionFinished(this);
                 }
                 break;
             }
