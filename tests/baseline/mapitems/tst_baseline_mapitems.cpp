@@ -231,14 +231,6 @@ bool tst_Baseline_MapItems::renderAndGrab(const QString& qmlFile, const QStringL
     return true;
 }
 
-#define main _realmain
-QTEST_MAIN(tst_Baseline_MapItems)
-#undef main
-
-int main(int argc, char *argv[])
-{
-    QBaselineTest::handleCmdLineArgs(&argc, &argv);
-    return _realmain(argc, argv);
-}
+QBASELINETEST_MAIN(tst_Baseline_MapItems)
 
 #include "tst_baseline_mapitems.moc"
