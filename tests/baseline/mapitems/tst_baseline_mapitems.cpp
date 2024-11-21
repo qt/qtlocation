@@ -34,6 +34,7 @@ private Q_SLOTS:
     void initTestCase();
     void init();
     void cleanup();
+    void cleanupTestCase();
 
     void mapItems_data() { setupTestSuite(); }
     void mapItems() { runTest(); }
@@ -143,6 +144,11 @@ void tst_Baseline_MapItems::cleanup()
     // Allow subsystems time to settle
     if (!aborted)
         QTest::qWait(20);
+}
+
+void tst_Baseline_MapItems::cleanupTestCase()
+{
+    QBaselineTest::finalizeAndDisconnect();
 }
 
 void tst_Baseline_MapItems::setupTestSuite()
