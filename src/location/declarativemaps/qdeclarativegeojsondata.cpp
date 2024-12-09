@@ -558,7 +558,7 @@ void QDeclarativeGeoJsonData::setModel(const QVariant &model)
 
 
 /*!
-    \qmlproperty QUrl QtLocation::GeoJsonData::sourceUrl
+    \qmlproperty url QtLocation::GeoJsonData::sourceUrl
 
     The URL of a GeoJSON document. Setting this property loads the
     document and binds the object to the \l model member.
