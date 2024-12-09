@@ -235,7 +235,7 @@ void QDeclarativeGeoMapQuickItem::afterChildrenChanged()
 }
 
 /*!
-    \qmlproperty QPointF MapQuickItem::anchorPoint
+    \qmlproperty point MapQuickItem::anchorPoint
 
     This property determines which point on the sourceItem that will be lined
     up with the coordinate on the map.
