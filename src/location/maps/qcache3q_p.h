@@ -227,8 +227,11 @@ bool QCache3Q<Key,T,EvPolicy>::insert(const Key &key, QSharedPointer<T> object, 
         return false;
     }
 
-    if (lookup_.contains(key)) {
-        Node *n = lookup_[key];
+    [[maybe_unused]] const auto oldSize = lookup_.size();
+    Node* &n = lookup_[key];
+    Q_ASSERT(bool(n) == (lookup_.size() == oldSize)); // either a new nullptr, or existing non-null
+
+    if (n) {
         n->v = object;
         n->q->cost -= n->cost;
         n->cost = cost;
@@ -250,12 +253,11 @@ bool QCache3Q<Key,T,EvPolicy>::insert(const Key &key, QSharedPointer<T> object, 
         return true;
     }
 
-    Node *n = new Node;
+    n = new Node;
     n->v = object;
     n->k = key;
     n->cost = cost;
     link_front(n, q1_);
-    lookup_[key] = n;
 
     rebalance();
 
