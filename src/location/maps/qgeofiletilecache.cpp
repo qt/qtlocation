@@ -14,6 +14,8 @@
 
 QT_BEGIN_NAMESPACE
 
+using namespace Qt::StringLiterals;
+
 class QGeoCachedTileMemory
 {
 public:
@@ -538,8 +540,8 @@ QSharedPointer<QGeoTileTexture> QGeoFileTileCache::getFromDisk(const QGeoTileSpe
         const QString format = QFileInfo(td->filename).suffix();
         QFile file(td->filename);
         if (!file.open(QIODevice::ReadOnly)) {
-            handleError(spec, QLatin1String("Problem with tile image"));
-            return {};
+            handleError(spec, "Cannot open file %1: %2"_L1.arg(file.fileName(), file.errorString()));
+            return nullptr;
         }
         QByteArray bytes = file.readAll();
         file.close();
