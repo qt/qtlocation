@@ -373,14 +373,15 @@ void QCache3Q<Key,T,EvPolicy>::rebalance()
 template <class Key, class T, class EvPolicy>
 void QCache3Q<Key,T,EvPolicy>::remove(const Key &key, bool force)
 {
-    if (!lookup_.contains(key)) {
+    const auto it = std::as_const(lookup_).find(key);
+    if (it == lookup_.cend())
         return;
-    }
-    Node *n = lookup_[key];
+
+    Node *n = *it;
     unlink(n);
     if (n->q != q1_evicted_ && !force)
         EvPolicy::aboutToBeRemoved(n->k, n->v);
-    lookup_.remove(key);
+    lookup_.erase(it);
     delete n;
 }
 
