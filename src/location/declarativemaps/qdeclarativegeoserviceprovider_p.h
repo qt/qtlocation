@@ -156,7 +156,7 @@ public:
     Q_INVOKABLE bool supportsGeocoding(const GeocodingFeatures &feature = AnyGeocodingFeatures) const;
     Q_INVOKABLE bool supportsMapping(const MappingFeatures &feature = AnyMappingFeatures) const;
     Q_INVOKABLE bool supportsPlaces(const PlacesFeatures &feature = AnyPlacesFeatures) const;
-    Q_REVISION(11) Q_INVOKABLE bool supportsNavigation(const NavigationFeature &feature = AnyNavigationFeatures) const;
+    Q_REVISION(5, 11) Q_INVOKABLE bool supportsNavigation(const NavigationFeature &feature = AnyNavigationFeatures) const;
 
     QStringList locales() const;
     void setLocales(const QStringList &locales);
