@@ -108,8 +108,8 @@ public:
 
 Q_SIGNALS:
     void mapItemOpacityChanged();
-    Q_REVISION(12) void addTransitionFinished();
-    Q_REVISION(12) void removeTransitionFinished();
+    Q_REVISION(5, 12) void addTransitionFinished();
+    Q_REVISION(5, 12) void removeTransitionFinished();
     void referenceSurfaceChanged();
     void lodThresholdChanged();
 
