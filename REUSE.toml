@@ -12,14 +12,16 @@ path = ["tests/auto/declarativetestplugin/qmldir",
         "tests/auto/nokia_services/routing/*.xml",
         "tests/auto/declarative_location_core/utils.js",
         "tests/auto/qgeoroutexmlparser/route1.xml",
-        "tests/auto/qgeoroutexmlparser/route2.xml"]
+        "tests/auto/qgeoroutexmlparser/route2.xml",
+        "tests/**.json"]
 precedence = "closest"
 SPDX-FileCopyrightText = "Copyright (C) 2024 The Qt Company Ltd."
 SPDX-License-Identifier = "LicenseRef-Qt-Commercial OR GPL-3.0-only"
 
 [[annotations]]
-path = ["**.qrc", "**CMakeLists.txt", ".cmake.conf", "**.yaml", "**.json",
-        "**.pri", "src/configure.cmake", "**BLACKLIST"]
+path = ["**.qrc", "**CMakeLists.txt", ".cmake.conf", "**.yaml",
+        "**.pri", "src/configure.cmake", "**BLACKLIST",
+        "**ci_config_linux.json", "**configure.json"]
 precedence = "closest"
 comment = "build system"
 SPDX-FileCopyrightText = "Copyright (C) 2024 The Qt Company Ltd."
@@ -33,14 +35,14 @@ SPDX-FileCopyrightText = "Copyright (C) 2024 The Qt Company Ltd."
 SPDX-License-Identifier = "BSD-3-Clause"
 
 [[annotations]]
-path = ["**/doc/images/**", "examples/**", "**/doc/snippets/**"]
+path = ["examples/**", "**/doc/snippets/**"]
 comment = "this must be after the build system table because example and snippets take precedence over build system"
 precedence = "closest"
 SPDX-FileCopyrightText = "Copyright (C) 2024 The Qt Company Ltd."
 SPDX-License-Identifier = "LicenseRef-Qt-Commercial OR BSD-3-Clause"
 
 [[annotations]]
-path = ["**.qdocconf", "**.qdocinc"]
+path = ["**/doc/images/**", "**.qdocconf", "**.qdocinc"]
 comment = "documentation"
 precedence = "closest"
 SPDX-FileCopyrightText = "Copyright (C) 2024 The Qt Company Ltd."
@@ -59,10 +61,3 @@ comment = "currently not needed, but ready if such file is added. Documentation"
 precedence = "override"
 SPDX-FileCopyrightText = "Copyright (C) 2024 The Qt Company Ltd."
 SPDX-License-Identifier = "LicenseRef-Qt-Commercial OR GFDL-1.3-no-invariants-only"
-
-[[annotations]]
-path = ["**LICENSE*"]
-precedence = "override"
-comment = "License file."
-SPDX-FileCopyrightText = "None"
-SPDX-License-Identifier = "CC0-1.0"
