@@ -19,7 +19,7 @@ QT_BEGIN_NAMESPACE
     \inqmlmodule QtLocation
     \ingroup qml-QtLocation5-maps
     \since QtLocation 5.5
-    \inherits QObject
+    \inherits QtObject
 
     \brief The MapItemView is used to populate Map from a model.
 
