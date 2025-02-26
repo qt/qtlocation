@@ -195,6 +195,8 @@ QList<QGeoCoordinate> greaterCirclePath(const QList<QGeoCoordinate> &cornerPoint
                                         greaterCirclePathForm form, int N)
 {
     QList<QGeoCoordinate> path;
+    if (cornerPoints.empty())
+        return path;
     path.reserve(N);
     //If the path has to be closed we include the first coordinate again at the end of the procedure
     qsizetype lineCount = cornerPoints.size() - ((form == OpenPath) ? 1 : 0);
