@@ -70,6 +70,8 @@ public:
     const QGeoShape &geoShape() const override;
     void setGeoShape(const QGeoShape &shape) override;
 
+    bool contains(const QPointF &point) const override;
+
 Q_SIGNALS:
     void coordinateChanged();
     void sourceItemChanged();

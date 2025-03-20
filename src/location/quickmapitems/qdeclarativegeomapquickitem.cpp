@@ -7,6 +7,7 @@
 #include <QtQml/qqmlinfo.h>
 #include <QtQuick/QSGOpacityNode>
 #include <QtPositioning/private/qdoublevector2d_p.h>
+#include <QtQuick/private/qquickitem_p.h>
 #include <QtQuick/private/qquickmousearea_p.h>
 #include <QtLocation/private/qgeomap_p.h>
 #include <QtLocation/private/qgeoprojection_p.h>
@@ -307,6 +308,18 @@ void QDeclarativeGeoMapQuickItem::setGeoShape(const QGeoShape &shape)
     polishAndUpdate();
     emit coordinateChanged();
 
+}
+
+bool QDeclarativeGeoMapQuickItem::contains(const QPointF &point) const
+{
+    if (zoomLevel_ != 0) {
+        // This follows the mathematical principle of
+        // QDeclarativeGeoMap::fitViewportToMapItemsRefine but in a shorter way:
+        const QTransform t = matrix_->m_matrix.toTransform();
+        const QPointF transformedPoint = t.inverted().map(point);
+        return QQuickItem::contains(transformedPoint);
+    }
+    return QQuickItem::contains(point);
 }
 
 /*!
