@@ -504,9 +504,9 @@ bool QDeclarativePolylineMapItemPrivateCPU::contains(const QPointF &point) const
     // m_shape->contains(m_poly.mapToItem(m_shape, point)) because that can
     // only do FillContains at best, whereas the polyline relies on stroking.
 
-    const QPainterPath &path = m_geometry.srcPath_;
+    const QPainterPath &path = m_shapePath->path();
     const double &lineWidth = m_poly.m_line.width();
-    const QPointF p = m_poly.mapToItem(m_shape, point) - QPointF(lineWidth, lineWidth) * 0.5;
+    const QPointF p = m_poly.mapToItem(m_shape, point);
 
     for (int i = 1; i < path.elementCount(); i++) {
         if (path.elementAt(i).type == QPainterPath::MoveToElement)
