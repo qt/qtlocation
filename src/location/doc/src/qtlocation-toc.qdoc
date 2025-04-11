@@ -21,7 +21,7 @@
     \li \l {Qt Location GeoServices}{GeoServices}
     \li \l {Qt Location Open Street Map Plugin}{Open Street Map Plugin}
     \li \l {Qt Location Items Overlay Plugin}{Items Overlay Plugin}
-    \li \l {Changes to Qt Location}{Upgrading to Qt 5}
+    \li \l {Changes to Qt Location}{Upgrading from Qt 5}
     \endlist
 
 */
