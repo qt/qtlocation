@@ -66,7 +66,7 @@ void QDeclarativePinchGenerator::mouseMoveEvent(QMouseEvent *event)
 
     activeSwipe_->touchPoints << event->pos();
     activeSwipe_->durations << swipeTimer_.elapsed();
-    swipeTimer_.restart();
+    swipeTimer_.start();
 }
 
 void QDeclarativePinchGenerator::mouseReleaseEvent(QMouseEvent *event)
