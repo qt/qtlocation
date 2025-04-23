@@ -61,6 +61,7 @@ static QGeoAddress parseAddressObject(const QJsonObject &object)
     address.setPostalCode(ao.value(QStringLiteral("postcode")).toString());
     // setStreet
     address.setStreet(ao.value(QStringLiteral("road")).toString());
+    address.setStreetNumber(ao.value(QStringLiteral("house_number")).toString());
     return address;
 }
 
