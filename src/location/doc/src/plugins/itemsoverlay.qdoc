@@ -32,7 +32,6 @@ a transparent one, such as \b transparent, like in the example.
 
         Map {
             id: mapBase
-            gesture.enabled: true
             anchors.fill: parent
             plugin: Plugin { name: "osm" }
             center: QtPositioning.coordinate(45,10)
@@ -44,7 +43,6 @@ a transparent one, such as \b transparent, like in the example.
             id: mapOverlay
             anchors.fill: parent
             plugin: Plugin { name: "itemsoverlay" }
-            gesture.enabled: false
             center: mapBase.center
             color: 'transparent' // Necessary to make this map transparent
             minimumFieldOfView: mapBase.minimumFieldOfView

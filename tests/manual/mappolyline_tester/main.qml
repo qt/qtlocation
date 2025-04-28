@@ -45,7 +45,6 @@ Window {
         Map {
             id: map
             rotation: win.rotation
-            gesture.enabled: true
             objectName: "map1"
             anchors {
                 bottom: parent.bottom
@@ -98,7 +97,6 @@ Window {
         Map {
             id: map2
             rotation: win.rotation
-            gesture.enabled: true
             objectName: "map2"
             visible: !leftSwitch.checked
             anchors {

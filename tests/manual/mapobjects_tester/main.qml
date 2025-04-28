@@ -46,7 +46,6 @@ Window {
         Map {
             id: map
             rotation: win.rotation
-            gesture.enabled: true
             objectName: "map"
             anchors {
                 bottom: parent.bottom
