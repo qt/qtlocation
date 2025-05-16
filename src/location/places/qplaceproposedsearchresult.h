@@ -1,5 +1,5 @@
 // Copyright (C) 2013 Aaron McCarthy <mccarthy.aaron@gmail.com>
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial
 
 #ifndef QPROPOSEDSEARCHRESULT_H
 #define QPROPOSEDSEARCHRESULT_H
