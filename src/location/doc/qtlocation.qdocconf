@@ -53,6 +53,9 @@ sourcedirs  +=  ..
 
 examplesinstallpath = location
 
+# Path to the root of qtlocation (for automatic linking to source code)
+url.sources.rootdir     = ../../..
+
 exampledirs += ../../../examples/location \
                snippets/
 
