@@ -20,6 +20,7 @@ Item {
                                 && mapForView.mapReady
                                 && mapForTestingListModel.mapReady
                                 && mapForTestingRouteModel.mapReady
+                                && mapForTestingDelegateModelAccess.mapReady
 
     MapItemView {
         id: routeItemViewExtra
@@ -270,6 +271,100 @@ Item {
                 MapRoute {
                     route:  routeData
                 }
+            }
+        }
+    }
+
+    Map {
+        id: mapForTestingDelegateModelAccess
+
+        property int mapItemsLength: mapItems.length
+
+        plugin: testPlugin
+        center: mapDefaultCenter
+        anchors.fill: parent
+        zoomLevel: 2
+
+        MapItemView {
+            id: delegateModelAccessItemView
+            width: 100
+            height: 100
+
+            property Component typedDelegate: MapQuickItem {
+                implicitWidth: 10
+                implicitHeight: 10
+
+                required property QtObject model
+
+                required property real a
+
+                property real immediateX: a
+                property real modelX: model.a
+
+                function writeImmediate() {
+                    a = 1;
+                }
+
+                function writeThroughModel() {
+                    model.a = 3;
+                }
+            }
+
+            property Component untypedDelegate: MapQuickItem {
+                implicitWidth: 10
+                implicitHeight: 10
+
+                property real immediateX: a
+                property real modelX: model.a
+
+                function writeImmediate() {
+                    a = 1;
+                }
+
+                function writeThroughModel() {
+                    model.a = 3;
+                }
+            }
+
+            property Component singularModel: ListModel {
+                ListElement {
+                    a: 11
+                }
+            }
+
+            property Component listModel: ListModel {
+                ListElement {
+                    a: 11
+                    y: 12
+                }
+            }
+
+            function array() { return [ {a: 11, y: 12} ] }
+
+            property Component object: QtObject {
+                property int a: 11
+                property int y: 12
+            }
+
+            property int modelIndex: Model.None
+            property int delegateIndex: Delegate.None
+
+            model: {
+                switch (modelIndex) {
+                case Model.Singular: return singularModel.createObject()
+                case Model.List: return listModel.createObject()
+                case Model.Array: return array()
+                case Model.Object: return object.createObject()
+                }
+                return undefined;
+            }
+
+            delegate: {
+                switch (delegateIndex) {
+                case Delegate.Untyped: return untypedDelegate
+                case Delegate.Typed: return typedDelegate
+                }
+                return null
             }
         }
     }
@@ -554,6 +649,135 @@ Item {
 
             mapForTestingRouteModel.clearMapItems()
             compare(mapForTestingRouteModel.mapItems.length, 0)
+        }
+
+        function test_delegateModelAccess_data() {
+            function modelKey(value) {
+                switch (value) {
+                case Model.None:
+                    return "None"
+                case Model.Singular:
+                    return "Singular"
+                case Model.List:
+                    return "List"
+                case Model.Array:
+                    return "Array"
+                case Model.Object:
+                    return "Object"
+                default:
+                    break
+                }
+
+                return ""
+            }
+
+            function delegateKey(value) {
+                switch (value) {
+                case Delegate.None:
+                    return "None"
+                case Delegate.Untyped:
+                    return "Untyped"
+                case Delegate.Typed:
+                    return "Typed"
+                default:
+                    break
+                }
+
+                return ""
+            }
+
+            function accessKey(value) {
+                switch (value) {
+                case DelegateModel.Qt5ReadWrite:
+                    return "Qt5ReadWrite"
+                case DelegateModel.ReadOnly:
+                    return "ReadOnly"
+                case DelegateModel.ReadWrite:
+                    return "ReadWrite"
+                default:
+                    break;
+                }
+
+                return "";
+            }
+
+            let data = [];
+            for (let access of [
+                     DelegateModel.Qt5ReadWrite,
+                     DelegateModel.ReadOnly,
+                     DelegateModel.ReadWrite]) {
+                for (let model of [Model.Singular, Model.List, Model.Array, Model.Object]) {
+                    for (let delegate of [Delegate.Untyped, Delegate.Typed]) {
+                        data.push({
+                            tag: `${accessKey(access)}-${modelKey(model)}-${delegateKey(delegate)}`,
+                            access: access,
+                            modelKind: model,
+                            delegateKind: delegate
+                        });
+                    }
+                }
+            }
+            return data
+        }
+
+        function test_delegateModelAccess(data) {
+            delegateModelAccessItemView.delegateModelAccess = DelegateModel.Qt5ReadWrite
+            delegateModelAccessItemView.modelIndex = Model.None
+            delegateModelAccessItemView.delegateIndex = Delegate.None
+            tryCompare(mapForTestingDelegateModelAccess, "mapItemsLength", 0)
+
+            const access = data.access
+            const modelKind = data.modelKind
+            const delegateKind = data.delegateKind
+
+            if (delegateKind === Delegate.Untyped && modelKind === Model.Array)
+                skip("Properties of objects in arrays are not exposed as context properties")
+
+            delegateModelAccessItemView.delegateModelAccess = access
+            delegateModelAccessItemView.modelIndex = modelKind
+            delegateModelAccessItemView.delegateIndex = delegateKind
+
+            tryCompare(mapForTestingDelegateModelAccess, "mapItemsLength", 1)
+            const delegate = mapForTestingDelegateModelAccess.mapItems[0]
+            verify(delegate)
+
+            const modelWritable = (access !== DelegateModel.ReadOnly)
+            const immediateWritable = (delegateKind === Delegate.Untyped)
+                ? access !== DelegateModel.ReadOnly
+                : access === DelegateModel.ReadWrite
+
+            let expected = 11
+
+            compare(delegate.immediateX, expected)
+            compare(delegate.modelX, expected)
+
+            if (modelWritable)
+                expected = 3
+
+            try {
+                delegate.writeThroughModel()
+            } catch (e1) {
+                compare(e1.message, 'Cannot assign to read-only property "a"')
+                compare(access, DelegateModel.ReadOnly)
+            }
+
+            compare(delegate.immediateX, expected)
+            compare(delegate.modelX, expected)
+
+            if (immediateWritable)
+                expected = 1
+
+            try {
+                delegate.writeImmediate()
+            } catch (e2) {
+                compare(e2.message, 'Cannot assign to read-only property "a"')
+                compare(access, DelegateModel.ReadOnly)
+                compare(delegateKind, Delegate.Untyped)
+            }
+
+            // Writes to required properties always succeed, but might not be propagated to the model
+            compare(delegate.immediateX, delegateKind === Delegate.Untyped ? expected : 1)
+            compare(delegate.modelX, expected)
         }
     }
 }

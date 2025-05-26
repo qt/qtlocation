@@ -87,6 +87,7 @@ void QDeclarativeGeoMapItemView::componentComplete()
     if (m_delegate)
         m_delegateModel->setDelegate(m_delegate);
 
+    m_delegateModel->setDelegateModelAccess(m_delegateModelAccess);
     m_delegateModel->componentComplete();
 }
 
@@ -189,8 +190,14 @@ void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
         return;
 
     m_itemModel = model;
-    if (m_componentCompleted)
+    if (m_componentCompleted) {
+
+        // Make sure to clear all stale items from the map and the model
+        m_delegateModel->drainReusableItemsPool(0);
+        removeInstantiatedItems(false);
+
         m_delegateModel->setModel(m_itemModel);
+    }
 
     emit modelChanged();
 }
@@ -313,6 +320,46 @@ void QDeclarativeGeoMapItemView::setIncubateDelegates(bool useIncubators)
 bool QDeclarativeGeoMapItemView::incubateDelegates() const
 {
     return m_incubationMode == QQmlIncubator::Asynchronous;
+}
+
+/*!
+    \qmlproperty enumeration QtLocation::MapItemView::delegateModelAccess
+    \since 6.10
+
+    This property determines how delegates can access the model.
+
+    \value DelegateModel.ReadOnly
+        Prohibit delegates from writing the model via either context properties,
+        the \c model object, or required properties.
+
+    \value DelegateModel.ReadWrite
+        Allow delegates to write the model via either context properties,
+        the \c model object, or required properties.
+
+    \value DelegateModel.Qt5ReadWrite
+        Allow delegates to write the model via the \c model object and context
+        properties but \e not via required properties.
+
+    The default is \c DelegateModel.Qt5ReadWrite.
+
+    \sa {Models and Views in Qt Quick#Changing Model Data}
+*/
+QQmlDelegateModel::DelegateModelAccess QDeclarativeGeoMapItemView::delegateModelAccess() const
+{
+    return m_delegateModelAccess;
+}
+
+void QDeclarativeGeoMapItemView::setDelegateModelAccess(
+        QQmlDelegateModel::DelegateModelAccess delegateModelAccess)
+{
+    if (m_delegateModelAccess == delegateModelAccess)
+        return;
+
+    m_delegateModelAccess = delegateModelAccess;
+    if (m_componentCompleted)
+        m_delegateModel->setDelegateModelAccess(m_delegateModelAccess);
+
+    emit delegateModelAccessChanged();
 }
 
 QList<QQuickItem *> QDeclarativeGeoMapItemView::mapItems()

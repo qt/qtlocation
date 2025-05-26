@@ -52,6 +52,9 @@ class Q_LOCATION_EXPORT QDeclarativeGeoMapItemView : public QDeclarativeGeoMapIt
     Q_PROPERTY(QQuickTransition *remove MEMBER m_exit REVISION(5, 12))
     Q_PROPERTY(QList<QQuickItem *> mapItems READ mapItems REVISION(5, 12))
     Q_PROPERTY(bool incubateDelegates READ incubateDelegates WRITE setIncubateDelegates NOTIFY incubateDelegatesChanged REVISION(5, 12))
+    Q_PROPERTY(QQmlDelegateModel::DelegateModelAccess delegateModelAccess READ delegateModelAccess
+            WRITE setDelegateModelAccess NOTIFY delegateModelAccessChanged REVISION(6, 10) FINAL)
+
 
 public:
     explicit QDeclarativeGeoMapItemView(QQuickItem *parent = nullptr);
@@ -73,6 +76,9 @@ public:
     void setIncubateDelegates(bool useIncubators);
     bool incubateDelegates() const;
 
+    QQmlDelegateModel::DelegateModelAccess delegateModelAccess() const;
+    void setDelegateModelAccess(QQmlDelegateModel::DelegateModelAccess delegateModelAccess);
+
     QList<QQuickItem *> mapItems();
 
     // From QQmlParserStatus
@@ -84,6 +90,7 @@ Q_SIGNALS:
     void delegateChanged();
     void autoFitViewportChanged();
     void incubateDelegatesChanged();
+    Q_REVISION(6, 10) void delegateModelAccessChanged();
 
 private Q_SLOTS:
     void destroyingItem(QObject *object);
@@ -106,17 +113,21 @@ private:
     void addItemGroupToMap(QDeclarativeGeoMapItemGroup *item, int index, bool createdItem);
     void addDelegateToMap(QQuickItem *object, int index, bool createdItem = false);
 
-    bool m_componentCompleted = false;
     QQmlIncubator::IncubationMode m_incubationMode = QQmlIncubator::Asynchronous;
     QQmlComponent *m_delegate = nullptr;
     QVariant m_itemModel;
     QDeclarativeGeoMap *m_map = nullptr;
     QList<QQuickItem *> m_instantiatedItems;
-    bool m_fitViewport = false;
-    bool m_creatingObject = false;
     QQmlDelegateModel *m_delegateModel = nullptr;
     QQuickTransition *m_enter = nullptr;
     QQuickTransition *m_exit = nullptr;
+
+    QQmlDelegateModel::DelegateModelAccess m_delegateModelAccess
+            = QQmlDelegateModel::Qt5ReadWrite;
+
+    bool m_componentCompleted = false;
+    bool m_fitViewport = false;
+    bool m_creatingObject = false;
 
     friend class QDeclarativeGeoMap;
     friend class QDeclarativeGeoMapItemBase;
