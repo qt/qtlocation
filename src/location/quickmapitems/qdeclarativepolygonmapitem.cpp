@@ -31,18 +31,12 @@ QT_BEGIN_NAMESPACE
     \l {QtPositioning::coordinate}{coordinates}. For best appearance and results, polygons should be
     simple (not self-intersecting).
 
-    The \l {QtPositioning::coordinate}{coordinates} on the path cannot be directly changed after
-    being added to the Polygon.  Instead, copy the \l path into a var, modify the copy and reassign
-    the copy back to the \l path.
+    Coordinates can be added or removed at any time using the \l addCoordinate and
+    \l removeCoordinate methods. They can also be modified like any other list element in QML:
 
     \code
-    var path = mapPolygon.path;
-    path[0].latitude = 5;
-    mapPolygon.path = path;
+    mapPolygon.path[0].latitude = 5;
     \endcode
-
-    Coordinates can also be added and removed at any time using the \l addCoordinate and
-    \l removeCoordinate methods.
 
     For drawing rectangles with "straight" edges (same latitude across one
     edge, same latitude across the other), the \l MapRectangle type provides
