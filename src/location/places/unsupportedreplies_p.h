@@ -25,6 +25,8 @@
 #include "qplacematchreply.h"
 #include "qplacemanagerengine.h"
 
+QT_BEGIN_NAMESPACE
+
 class Q_LOCATION_EXPORT QPlaceDetailsReplyUnsupported : public QPlaceDetailsReply
 {
     Q_OBJECT
@@ -191,5 +193,7 @@ public:
                                   Q_ARG(QPlaceReply *, this));
     }
 };
+
+QT_END_NAMESPACE
 
 #endif
