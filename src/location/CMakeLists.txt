@@ -85,14 +85,15 @@ qt_internal_add_module(Location
         Qt::PositioningQuickPrivate
         Qt::Qml
         Qt::Quick
+        Qt::QuickShapesPrivate
     PUBLIC_LIBRARIES
         Qt::Core
         Qt::Positioning
         Qt::PositioningQuick
-        Qt::QuickShapesPrivate
     PRIVATE_MODULE_INTERFACE
         Qt::CorePrivate
         Qt::QuickPrivate
+        Qt::QuickShapesPrivate
         Qt::PositioningPrivate
         Qt::PositioningQuickPrivate
 )
