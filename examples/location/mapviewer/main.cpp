@@ -53,6 +53,7 @@ int main(int argc, char *argv[])
 
     QGuiApplication application(argc, argv);
     QCoreApplication::setApplicationName(u"QtLocation Mapviewer example"_s);
+    QGuiApplication::setDesktopFileName(QCoreApplication::applicationName());
 
     QStringList args = QCoreApplication::arguments();
     args.removeFirst();
