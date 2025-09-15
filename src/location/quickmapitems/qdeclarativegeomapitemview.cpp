@@ -82,13 +82,18 @@ void QDeclarativeGeoMapItemView::componentComplete()
     QDeclarativeGeoMapItemGroup::componentComplete();
     m_componentCompleted = true;
     if (!m_itemModel.isNull())
-        m_delegateModel->setModel(m_itemModel);
+        m_delegateModel->setModel(std::exchange(m_itemModel, QVariant()));
 
     if (m_delegate)
         m_delegateModel->setDelegate(m_delegate);
 
     m_delegateModel->setDelegateModelAccess(m_delegateModelAccess);
     m_delegateModel->componentComplete();
+
+    // Only connect it here because we don't want to see the modelChanged() for the initial setting
+    // of the model.
+    QObject::connect(m_delegateModel, &QQmlDelegateModel::modelChanged,
+                     this, &QDeclarativeGeoMapItemView::modelChanged);
 }
 
 void QDeclarativeGeoMapItemView::classBegin()
@@ -181,24 +186,29 @@ void QDeclarativeGeoMapItemView::modelUpdated(const QQmlChangeSet &changeSet, bo
 */
 QVariant QDeclarativeGeoMapItemView::model() const
 {
-    return m_itemModel;
+    return m_componentCompleted
+            ? m_delegateModel->model()
+            : m_itemModel;
 }
 
 void QDeclarativeGeoMapItemView::setModel(const QVariant &model)
 {
-    if (model == m_itemModel)
-        return;
-
-    m_itemModel = model;
     if (m_componentCompleted) {
+        if (m_delegateModel->model() == model)
+            return;
 
         // Make sure to clear all stale items from the map and the model
         m_delegateModel->drainReusableItemsPool(0);
         removeInstantiatedItems(false);
 
-        m_delegateModel->setModel(m_itemModel);
+        m_delegateModel->setModel(model);
+        return;
     }
 
+    if (model == m_itemModel)
+        return;
+
+    m_itemModel = model;
     emit modelChanged();
 }
 
@@ -294,8 +304,13 @@ void QDeclarativeGeoMapItemView::removeInstantiatedItems(bool transition)
 void QDeclarativeGeoMapItemView::instantiateAllItems()
 {
     // The assumption is that if m_instantiatedItems isn't empty, instantiated items have been already added
-    if (!m_componentCompleted || !m_map || !m_delegate || m_itemModel.isNull() || !m_instantiatedItems.isEmpty())
+    if (!m_componentCompleted
+            || !m_map
+            || !m_delegate
+            || m_delegateModel->model().isNull()
+            || !m_instantiatedItems.isEmpty()) {
         return;
+    }
 
     // If here, m_delegateModel may contain data, but QQmlInstanceModel::object for each row hasn't been called yet.
     QScopedValueRollback createBlocker(m_creatingObject, true);
