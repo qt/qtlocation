@@ -346,6 +346,19 @@ Item {
                 property int y: 12
             }
 
+            function aAt0() : real {
+                switch (modelIndex) {
+                case Model.Singular:
+                case Model.List:
+                    return model.get(0).a
+                case Model.Array:
+                    return model[0].a
+                case Model.Object:
+                    return model.a
+                }
+                return -1;
+            }
+
             property int modelIndex: Model.None
             property int delegateIndex: Delegate.None
 
@@ -720,10 +733,17 @@ Item {
             return data
         }
 
+        SignalSpy {
+            id: delegateModelAccessModelChangedSpy
+            target: delegateModelAccessItemView
+            signalName: "modelChanged"
+        }
+
         function test_delegateModelAccess(data) {
             delegateModelAccessItemView.delegateModelAccess = DelegateModel.Qt5ReadWrite
             delegateModelAccessItemView.modelIndex = Model.None
             delegateModelAccessItemView.delegateIndex = Delegate.None
+            delegateModelAccessModelChangedSpy.clear();
             tryCompare(mapForTestingDelegateModelAccess, "mapItemsLength", 0)
 
             const access = data.access
@@ -746,13 +766,36 @@ Item {
                 ? access !== DelegateModel.ReadOnly
                 : access === DelegateModel.ReadWrite
 
+            const writeShouldPropagate =
+
+                    // If we've explicitly asked for the model to be written, it is
+                    (access === DelegateModel.ReadWrite) ||
+
+                    // If it's a QAIM or an object, it's implicitly written
+                    (modelKind !== Model.Array) ||
+
+                    // When writing through the model object from a typed delegate,
+                    // the value was propagated even before.
+                    (access === DelegateModel.Qt5ReadWrite && delegateKind === Delegate.Typed);
+
+
+            // Only the array is actually updated itself. The other models are pointers
+            const writeShouldSignal = modelKind === Model.Array
+
             let expected = 11
+
+            // Initial setting of the model, signals one update
+            let expectedModelUpdates = 1;
+            compare(delegateModelAccessModelChangedSpy.count, expectedModelUpdates)
 
             compare(delegate.immediateX, expected)
             compare(delegate.modelX, expected)
 
-            if (modelWritable)
+            if (modelWritable) {
                 expected = 3
+                if (writeShouldSignal)
+                    ++expectedModelUpdates
+            }
 
             try {
                 delegate.writeThroughModel()
@@ -763,9 +806,14 @@ Item {
 
             compare(delegate.immediateX, expected)
             compare(delegate.modelX, expected)
+            compare(delegateModelAccessItemView.aAt0(), writeShouldPropagate ? expected : 11);
+            compare(delegateModelAccessModelChangedSpy.count, expectedModelUpdates)
 
-            if (immediateWritable)
+            if (immediateWritable) {
                 expected = 1
+                if (writeShouldSignal)
+                    ++expectedModelUpdates
+            }
 
             try {
                 delegate.writeImmediate()
@@ -778,6 +826,8 @@ Item {
             // Writes to required properties always succeed, but might not be propagated to the model
             compare(delegate.immediateX, delegateKind === Delegate.Untyped ? expected : 1)
             compare(delegate.modelX, expected)
+            compare(delegateModelAccessItemView.aAt0(), writeShouldPropagate ? expected : 11);
+            compare(delegateModelAccessModelChangedSpy.count, expectedModelUpdates)
         }
     }
 }
