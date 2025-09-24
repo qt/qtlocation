@@ -32,7 +32,7 @@ endif()
 # Need to search for positioning only after we make sure that it's not WASM.
 # Otherwise we'll get an "QtPositioning not found" error in WASM build.
 find_package(Qt6 ${PROJECT_VERSION} CONFIG OPTIONAL_COMPONENTS
-    Qml Quick Network Test QuickTest Positioning PositioningQuick QuickShapesPrivate
+    Qml Quick Network Test QuickTest Positioning PositioningQuick QuickShapes
 )
 
 find_package(Qt6 ${PROJECT_VERSION} QUIET CONFIG OPTIONAL_COMPONENTS
@@ -48,6 +48,6 @@ macro(assertTargets)
     endforeach()
 endmacro()
 
-assertTargets(Qml Quick Network Test QuickTest Positioning PositioningQuick QuickShapesPrivate)
+assertTargets(Qml Quick Network Test QuickTest Positioning PositioningQuick QuickShapes)
 
 qt_build_repo()
