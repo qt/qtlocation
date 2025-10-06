@@ -229,8 +229,10 @@ TestCase {
 
         compare(signalSpy.count, 2);
 
-        // set categories to the same (signal spy should not increase?)
+        // set categories to the same. Signal spy should not increase since nothing changes.
         testPlace.categories = categories;
+        compare(signalSpy.count, 2);
+
         compare(testPlace.categories.length, categories.length);
 
         for (var i = 0; i < categories.length; ++i) {
@@ -238,12 +240,13 @@ TestCase {
             compare(testPlace.categories[i].name, categories[i].name);
         }
 
-        compare(signalSpy.count, 5);    // clear + append + append
+        // All the comparing should not change anything about the list.
+        compare(signalSpy.count, 2);
 
         // reset by assignment
         testPlace.categories = new Array(0);
         compare(testPlace.categories.length, 0);
-        compare(signalSpy.count, 6);
+        compare(signalSpy.count, 3);
 
         signalSpy.destroy();
     }

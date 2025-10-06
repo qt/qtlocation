@@ -70,8 +70,10 @@ TestCase {
             { tag: "relevanceHint", property: "relevanceHint", signal: "relevanceHintChanged", value: PlaceSearchModel.DistanceHint, reset: PlaceSearchModel.UnspecifiedHint },
             { tag: "visibilityScope", property: "visibilityScope", signal: "visibilityScopeChanged", value: Place.DeviceVisibility, reset: Place.UnspecifiedVisibility },
             { tag: "favoritesPlugin", property: "favoritesPlugin", signal: "favoritesPluginChanged", value: favoritePlugin },
-            { tag: "category", property: "categories", signal: "categoriesChanged", value: testCategory1, expectedValue: [ testCategory1 ], reset: [], array: true },
-            { tag: "categories", property: "categories", signal: "categoriesChanged", value: [ testCategory1, testCategory2 ], reset: [], array: true },
+
+            // The "categories" property of PlaceSearchModel has its own signaling that triggers on every append().
+            { tag: "category", property: "categories", signal: "categoriesChanged", value: testCategory1, expectedValue: [ testCategory1 ], reset: [], array: true, emitsExtraSignals: true },
+            { tag: "categories", property: "categories", signal: "categoriesChanged", value: [ testCategory1, testCategory2 ], reset: [], array: true, emitsExtraSignals: true },
         ];
     }
 
