@@ -34,10 +34,12 @@ function testObjectProperties(testCase, testObject, data) {
     if (data.array) {
         if (data.expectedValue) {
             testCase.verify(compareArray(testObject[data.property], data.expectedValue));
-            testCase.compare(signalSpy.count, 1 + data.expectedValue.length);
+            testCase.compare(
+                        signalSpy.count,
+                        1 + (data.emitsExtraSignals ? data.expectedValue.length : 0));
         } else {
             testCase.verify(compareArray(testObject[data.property], data.value));
-            testCase.compare(signalSpy.count, 1 + data.value.length);
+            testCase.compare(signalSpy.count, 1 + (data.emitsExtraSignals ? data.value.length : 0));
         }
 
     } else {
@@ -52,10 +54,13 @@ function testObjectProperties(testCase, testObject, data) {
     if (data.array) {
         if (data.expectedValue) {
             testCase.verify(compareArray(testObject[data.property], data.expectedValue));
-            testCase.compare(signalSpy.count, 1 + data.expectedValue.length);
+            testCase.expectFailContinue(
+                        "category",
+                        "The QML engine should check equality before assigning a single object to a list.")
+            testCase.compare(signalSpy.count, 0);
         } else {
             testCase.verify(compareArray(testObject[data.property], data.value));
-            testCase.compare(signalSpy.count, 1 + data.value.length);
+            testCase.compare(signalSpy.count, 0);
         }
 
     } else {
