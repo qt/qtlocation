@@ -69,7 +69,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty geoshape PlaceSearchSuggestionModel::searchArea
+    \qmlproperty geoShape PlaceSearchSuggestionModel::searchArea
 
     This property holds the search area.  Search suggestion results returned by the model will be
     relevant to the given search area.
