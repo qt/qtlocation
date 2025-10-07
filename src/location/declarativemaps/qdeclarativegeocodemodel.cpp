@@ -334,7 +334,7 @@ void QDeclarativeGeocodeModel::setBounds(const QVariant &boundingArea)
     within the area. This is particularly useful if query is only partially filled out,
     as the service will attempt to (reverse) geocode all matches for the specified data.
 
-    Accepted types are \l {georectangle} and
+    Accepted types are \l {geoRectangle} and
     \l {geoCircle}.
 */
 QVariant QDeclarativeGeocodeModel::bounds() const

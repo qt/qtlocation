@@ -165,7 +165,7 @@ QGeoRouteRequest QGeoRoute::request() const
 }
 
 /*!
-    \qmlproperty georectangle QtLocation::route::bounds
+    \qmlproperty geoRectangle QtLocation::route::bounds
 
     Read-only property which holds a bounding box which encompasses the entire route.
 */
