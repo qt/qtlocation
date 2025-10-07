@@ -750,7 +750,7 @@ void QDeclarativeGeoRouteQuery::setWaypoints(const QList<QGeoCoordinate> &value)
 }
 
 /*!
-    \qmlproperty list<georectangle> RouteQuery::excludedAreas
+    \qmlproperty list<geoRectangle> RouteQuery::excludedAreas
 
     Areas that the route must not cross.
 
@@ -778,9 +778,9 @@ void QDeclarativeGeoRouteQuery::setExcludedAreas(const QList<QGeoRectangle> &val
 }
 
 /*!
-    \qmlmethod void QtLocation::RouteQuery::addExcludedArea(georectangle area)
+    \qmlmethod void QtLocation::RouteQuery::addExcludedArea(geoRectangle area)
 
-    Adds the specified georectangle \a area to the excluded areas
+    Adds the specified geoRectangle \a area to the excluded areas
     (areas that the route must not cross).
     The same area can only be added once.
 
@@ -809,7 +809,7 @@ void QDeclarativeGeoRouteQuery::addExcludedArea(const QGeoRectangle &area)
 }
 
 /*!
-    \qmlmethod void QtLocation::RouteQuery::removeExcludedArea(georectangle area)
+    \qmlmethod void QtLocation::RouteQuery::removeExcludedArea(geoRectangle area)
 
     Removes the given \a area from excluded areas (areas that the route must not cross).
 
