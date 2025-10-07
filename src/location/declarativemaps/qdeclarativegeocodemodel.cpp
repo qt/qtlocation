@@ -335,7 +335,7 @@ void QDeclarativeGeocodeModel::setBounds(const QVariant &boundingArea)
     as the service will attempt to (reverse) geocode all matches for the specified data.
 
     Accepted types are \l {georectangle} and
-    \l {geocircle}.
+    \l {geoCircle}.
 */
 QVariant QDeclarativeGeocodeModel::bounds() const
 {
