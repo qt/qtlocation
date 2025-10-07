@@ -575,9 +575,9 @@ void QDeclarativePolylineMapItem::setPath(const QList<QGeoCoordinate> &value)
 }
 
 /*!
-    \qmlmethod void MapPolyline::setPath(geopath path)
+    \qmlmethod void MapPolyline::setPath(geoPath path)
 
-    Sets the \a path using a geopath type.
+    Sets the \a path using a geoPath type.
 
     \since 5.10
 
