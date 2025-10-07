@@ -174,8 +174,8 @@ QT_BEGIN_NAMESPACE
     This property holds the search area.  The search result returned by the model will be within
     the search area.
 
-    If this property is set to a \l {geocircle} its
-    \l {geocircle}{radius} property may be left unset, in which case the \l Plugin
+    If this property is set to a \l {geoCircle} its
+    \l {geoCircle}{radius} property may be left unset, in which case the \l Plugin
     will choose an appropriate radius for the search.
 
     Support for specifying a search area can vary according to the \l plugin backend
