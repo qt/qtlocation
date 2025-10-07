@@ -1060,7 +1060,7 @@ QGeoCoordinate QDeclarativeGeoMap::center() const
 
 
 /*!
-    \qmlproperty geoshape QtLocation::Map::visibleRegion
+    \qmlproperty geoShape QtLocation::Map::visibleRegion
 
     This property holds the region which occupies the viewport of
     the map. The camera is positioned in the center of the shape, and

@@ -328,7 +328,7 @@ void QDeclarativeGeocodeModel::setBounds(const QVariant &boundingArea)
 }
 
 /*!
-    \qmlproperty geoshape QtLocation::GeocodeModel::bounds
+    \qmlproperty geoShape QtLocation::GeocodeModel::bounds
 
     This property holds the bounding area used to limit the results to those
     within the area. This is particularly useful if query is only partially filled out,
