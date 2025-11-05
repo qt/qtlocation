@@ -75,3 +75,8 @@ manifestmeta.highlighted.names = \
 
 # Enforce zero documentation warnings
 warninglimit = 0
+
+# Supress all warnings for members that are documented, but
+# their parents are not. This leads to 'No output generated for...'
+# warnings, for every such member documentation.
+spurious += "No output generated for .*"
