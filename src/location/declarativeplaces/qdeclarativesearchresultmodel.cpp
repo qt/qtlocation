@@ -967,7 +967,7 @@ int QDeclarativeSearchResultModel::getRow(const QString &placeId) const
 }
 
 /*!
-    \qmlsignal PlaceSearchResultModel::dataChanged()
+    \qmlsignal PlaceSearchModel::dataChanged()
 
    This signal is emitted when significant changes have been made to the underlying datastore.
 

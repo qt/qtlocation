@@ -29,6 +29,7 @@ bool QPlaceSupplierPrivate::isEmpty() const
 
 /*!
     \class QPlaceSupplier
+    \internal
     \inmodule QtLocation
     \ingroup QtLocation-places
     \ingroup QtLocation-places-data

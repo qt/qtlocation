@@ -18,6 +18,10 @@
 
 QT_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoTiledMappingManagerEngine
+    \internal
+*/
 QGeoTiledMappingManagerEngine::QGeoTiledMappingManagerEngine(QObject *parent)
     : QGeoMappingManagerEngine(parent),
       d_ptr(new QGeoTiledMappingManagerEnginePrivate)
@@ -34,6 +38,7 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
 
 /*!
     Sets the tile fetcher. Takes ownership of the QObject.
+    \internal
 */
 void QGeoTiledMappingManagerEngine::setTileFetcher(QGeoTileFetcher *fetcher)
 {
@@ -245,6 +250,7 @@ void QGeoTiledMappingManagerEngine::setCacheHint(QAbstractGeoTileCache::CacheAre
 
 /*!
     Sets the tile cache. Takes ownership of the QObject.
+    \internal
 */
 void QGeoTiledMappingManagerEngine::setTileCache(QAbstractGeoTileCache *cache)
 {
