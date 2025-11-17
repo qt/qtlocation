@@ -61,7 +61,7 @@ void tst_QPlaceSupplier::urlTest()
 {
     QPlaceSupplier testObj;
     const QUrl testUrl = QUrl::fromEncoded("http://example.com/testUrl");
-    QVERIFY2(testObj.url() == QString(), "Wrong default value");
+    QVERIFY2(testObj.url() == QUrl(), "Wrong default value");
     testObj.setUrl(testUrl);
     QVERIFY2(testObj.url() == testUrl, "Wrong value returned");
 }

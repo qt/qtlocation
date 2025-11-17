@@ -400,7 +400,7 @@ QUrl QPlace::primaryWebsite() const
     if (!websites.isEmpty())
         return QUrl(websites.at(0).value());
     else
-        return QString();
+        return {};
 }
 
 /*!
