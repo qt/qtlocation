@@ -44,6 +44,7 @@
 #include <QMetaType>
 #include <QPixmap>
 #include <QDebug>
+#include <QtCore/qtemporaryfile.h>
 
 Q_DECLARE_METATYPE(QList<QGeoTileSpec>)
 Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
@@ -123,11 +124,16 @@ QString QAbstractGeoTileCache::baseCacheDirectory()
         static bool writableChecked = false;
         if (!writableChecked) {
             writableChecked = true;
-            QDir::root().mkpath(dir);
-            QFile writeTestFile(QDir(dir).filePath(QStringLiteral("qt_cache_check")));
-            writable = writeTestFile.open(QIODevice::WriteOnly);
-            if (writable)
-                writeTestFile.remove();
+            auto mkpath = [] (const QString &dir) {
+                const auto rt = QDir::root();
+                return rt.mkpath(dir);
+            };
+            if (mkpath(dir)) {
+                QTemporaryFile tmp(QDir(dir).filePath(QStringLiteral("qt_cache_check.XXXXXX")));
+                writable = tmp.open();
+            } else {
+                writable = false;
+            }
         }
         if (!writable)
             dir = QString();

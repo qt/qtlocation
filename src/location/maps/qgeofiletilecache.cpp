@@ -45,6 +45,8 @@
 #include <QPixmap>
 #include <QDebug>
 
+#include <QtCore/qsavefile.h>
+
 Q_DECLARE_METATYPE(QList<QGeoTileSpec>)
 Q_DECLARE_METATYPE(QSet<QGeoTileSpec>)
 
@@ -494,23 +496,30 @@ QSharedPointer<QGeoCachedTileDisk> QGeoFileTileCache::addToDiskCache(const QGeoT
 
 bool QGeoFileTileCache::addToDiskCache(const QGeoTileSpec &spec, const QString &filename, const QByteArray &bytes)
 {
+    int cost = 1;
+    if (costStrategyDisk_ == ByteSize)
+        cost = bytes.size();
+
+    if (cost > diskCache_.maxCost())
+        return false; // insert() would fail anyway, so don't even try
+
+    QSaveFile file(filename);
+    if (!file.open(QIODevice::WriteOnly))
+        return false;
+    file.write(bytes);
+    if (!file.commit())
+        return false;
+
     QSharedPointer<QGeoCachedTileDisk> td(new QGeoCachedTileDisk);
     td->spec = spec;
     td->filename = filename;
     td->cache = this;
 
-    int cost = 1;
-    if (costStrategyDisk_ == ByteSize)
-        cost = bytes.size();
+    const bool inserted = diskCache_.insert(spec, td, cost);
+    Q_ASSERT(inserted);
+    Q_UNUSED(inserted);
 
-    if (diskCache_.insert(spec, td, cost)) {
-        QFile file(filename);
-        file.open(QIODevice::WriteOnly);
-        file.write(bytes);
-        file.close();
-        return true;
-    }
-    return false;
+    return true;
 }
 
 void QGeoFileTileCache::addToMemoryCache(const QGeoTileSpec &spec, const QByteArray &bytes, const QString &format)

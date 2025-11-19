@@ -370,6 +370,9 @@ bool QGeoAreaMonitorPolling::startMonitoring(const QGeoAreaMonitorInfo &monitor)
 
 int QGeoAreaMonitorPolling::idForSignal(const char *signal)
 {
+    if (qstrlen(signal) < 2)
+        return -1;
+
     const QByteArray sig = QMetaObject::normalizedSignature(signal + 1);
     const QMetaObject * const mo = metaObject();
 
@@ -389,9 +392,7 @@ bool QGeoAreaMonitorPolling::requestUpdate(const QGeoAreaMonitorInfo &monitor, c
     if (monitor.isPersistent())
         return false;
 
-    if (!signal)
-        return false;
-
+    // signal is validated in idForSignal()
     const int signalId = idForSignal(signal);
     if (signalId < 0)
         return false;
