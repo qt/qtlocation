@@ -40,7 +40,6 @@ class Q_LOCATION_EXPORT QDeclarativePlace : public QObject, public QQmlParserSta
     Q_OBJECT
     QML_NAMED_ELEMENT(Place)
     QML_ADDED_IN_VERSION(5, 0)
-    Q_ENUMS(Status Visibility)
 
     Q_PROPERTY(QPlace place READ place WRITE setPlace)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
@@ -78,12 +77,15 @@ public:
     ~QDeclarativePlace();
 
     enum Status {Ready, Saving, Fetching, Removing, Error};
+    Q_ENUM(Status)
+
     enum Visibility {
         UnspecifiedVisibility = QLocation::UnspecifiedVisibility,
         DeviceVisibility = QLocation::DeviceVisibility,
         PrivateVisibility = QLocation::PrivateVisibility,
         PublicVisibility = QLocation::PublicVisibility
     };
+    Q_ENUM(Visibility)
 
     //From QQmlParserStatus
     void classBegin() override {}

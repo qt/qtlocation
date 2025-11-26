@@ -43,20 +43,20 @@ class Q_LOCATION_EXPORT QDeclarativeSearchResultModel : public QDeclarativeSearc
 
     Q_PROPERTY(bool incremental MEMBER m_incremental NOTIFY incrementalChanged REVISION(5, 12))
 
-    Q_ENUMS(SearchResultType RelevanceHint)
-
 public:
     enum SearchResultType {
         UnknownSearchResult = QPlaceSearchResult::UnknownSearchResult,
         PlaceResult = QPlaceSearchResult::PlaceResult,
         ProposedSearchResult = QPlaceSearchResult::ProposedSearchResult
     };
+    Q_ENUM(SearchResultType)
 
     enum RelevanceHint {
         UnspecifiedHint = QPlaceSearchRequest::UnspecifiedHint,
         DistanceHint = QPlaceSearchRequest::DistanceHint,
         LexicalPlaceNameHint = QPlaceSearchRequest::LexicalPlaceNameHint
     };
+    Q_ENUM(RelevanceHint)
 
     explicit QDeclarativeSearchResultModel(QObject *parent = nullptr);
     ~QDeclarativeSearchResultModel();

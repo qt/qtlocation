@@ -45,10 +45,6 @@ class Q_LOCATION_EXPORT QDeclarativeGeoServiceProvider : public QObject, public 
     Q_OBJECT
     QML_NAMED_ELEMENT(Plugin)
     QML_ADDED_IN_VERSION(5, 0)
-    Q_ENUMS(RoutingFeature)
-    Q_ENUMS(GeocodingFeature)
-    Q_ENUMS(MappingFeature)
-    Q_ENUMS(PlacesFeature)
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QStringList availableServiceProviders READ availableServiceProviders CONSTANT)
@@ -118,19 +114,19 @@ public:
     };
 
     Q_DECLARE_FLAGS(RoutingFeatures, RoutingFeature)
-    Q_FLAGS(RoutingFeatures)
+    Q_FLAG(RoutingFeatures)
 
     Q_DECLARE_FLAGS(GeocodingFeatures, GeocodingFeature)
-    Q_FLAGS(GeocodingFeatures)
+    Q_FLAG(GeocodingFeatures)
 
     Q_DECLARE_FLAGS(MappingFeatures, MappingFeature)
-    Q_FLAGS(MappingFeatures)
+    Q_FLAG(MappingFeatures)
 
     Q_DECLARE_FLAGS(PlacesFeatures, PlacesFeature)
-    Q_FLAGS(PlacesFeatures)
+    Q_FLAG(PlacesFeatures)
 
     Q_DECLARE_FLAGS(NavigationFeatures, NavigationFeature)
-    Q_FLAGS(NavigationFeatures)
+    Q_FLAG(NavigationFeatures)
 
     // From QQmlParserStatus
     void classBegin() override {}
