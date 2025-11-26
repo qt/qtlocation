@@ -33,7 +33,6 @@ class Q_LOCATION_EXPORT QGeoMapType
     Q_GADGET
     QML_VALUE_TYPE(mapType)
     QML_STRUCTURED_VALUE
-    Q_ENUMS(MapStyle)
 
     Q_PROPERTY(MapStyle style READ style CONSTANT)
     Q_PROPERTY(QString name READ name CONSTANT)
@@ -59,6 +58,7 @@ public:
         CycleMap,
         CustomMap = 100
     };
+    Q_ENUM(MapStyle)
 
     QGeoMapType();
     QGeoMapType(const QGeoMapType &other) noexcept;
