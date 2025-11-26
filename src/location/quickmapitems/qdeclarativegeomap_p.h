@@ -42,7 +42,7 @@ class Q_LOCATION_EXPORT QDeclarativeGeoMap : public QQuickItem
     Q_OBJECT
     QML_NAMED_ELEMENT(Map)
     QML_ADDED_IN_VERSION(5, 0)
-    Q_ENUMS(QGeoServiceProvider::Error)
+
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(qreal minimumZoomLevel READ minimumZoomLevel WRITE setMinimumZoomLevel NOTIFY minimumZoomLevelChanged)
     Q_PROPERTY(qreal maximumZoomLevel READ maximumZoomLevel WRITE setMaximumZoomLevel NOTIFY maximumZoomLevelChanged)
