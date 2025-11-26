@@ -36,9 +36,6 @@ class Q_LOCATION_EXPORT QDeclarativeCategory : public QObject, public QQmlParser
     QML_NAMED_ELEMENT(Category)
     QML_ADDED_IN_VERSION(5, 0)
 
-    Q_ENUMS(Status Visibility)
-
-
     Q_PROPERTY(QPlaceCategory category READ category WRITE setCategory)
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(QString categoryId READ categoryId WRITE setCategoryId NOTIFY categoryIdChanged)
@@ -60,7 +57,10 @@ public:
         PrivateVisibility = QLocation::PrivateVisibility,
         PublicVisibility = QLocation::PublicVisibility
     };
+    Q_ENUM(Visibility)
+
     enum Status {Ready, Saving, Removing, Error};
+    Q_ENUM(Status)
 
     //From QQmlParserStatus
     void classBegin() override {}

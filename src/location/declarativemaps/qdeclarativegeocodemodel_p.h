@@ -38,8 +38,6 @@ class Q_LOCATION_EXPORT QDeclarativeGeocodeModel : public QAbstractListModel, pu
 {
     Q_OBJECT
     QML_NAMED_ELEMENT(GeocodeModel)
-    Q_ENUMS(Status)
-    Q_ENUMS(GeocodeError)
 
     Q_PROPERTY(QDeclarativeGeoServiceProvider *plugin READ plugin WRITE setPlugin NOTIFY pluginChanged)
     Q_PROPERTY(bool autoUpdate READ autoUpdate WRITE setAutoUpdate NOTIFY autoUpdateChanged)
@@ -60,6 +58,7 @@ public:
         Loading,
         Error
     };
+    Q_ENUM(Status)
 
     enum GeocodeError {
         NoError = QGeoCodeReply::NoError,
@@ -75,6 +74,7 @@ public:
         UnknownParameterError = 100,
         MissingRequiredParameterError
     };
+    Q_ENUM(GeocodeError)
 
     enum Roles {
         LocationRole = Qt::UserRole + 1

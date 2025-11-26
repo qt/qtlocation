@@ -41,8 +41,6 @@ class Q_LOCATION_EXPORT QDeclarativeSearchModelBase : public QAbstractListModel,
     Q_PROPERTY(bool nextPagesAvailable READ nextPagesAvailable NOTIFY nextPagesAvailableChanged)
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
 
-    Q_ENUMS(Status)
-
     Q_INTERFACES(QQmlParserStatus)
 
 public:
@@ -52,6 +50,7 @@ public:
         Loading,
         Error
     };
+    Q_ENUM(Status)
 
     explicit QDeclarativeSearchModelBase(QObject *parent = nullptr);
     ~QDeclarativeSearchModelBase();
