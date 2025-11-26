@@ -51,7 +51,6 @@ class Q_LOCATION_EXPORT QDeclarativeGeoMapItemBase : public QQuickItem
     QML_NAMED_ELEMENT(GeoMapItemBase)
     QML_ADDED_IN_VERSION(5, 0)
     QML_UNCREATABLE("GeoMapItemBase is not intended instantiable by developer.")
-    Q_ENUMS(ReferenceSurface)
 
     Q_PROPERTY(QGeoShape geoShape READ geoShape WRITE setGeoShape STORED false )
     Q_PROPERTY(bool autoFadeIn READ autoFadeIn WRITE setAutoFadeIn REVISION(5, 14))
