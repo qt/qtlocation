@@ -2,6 +2,7 @@ qt_internal_add_plugin(TestGeoServicePlugin
     OUTPUT_NAME qtgeoservices_qmltestplugin
     CLASS_NAME QGeoServiceProviderFactoryTest
     PLUGIN_TYPE geoservices
+    TEST_PLUGIN
     DEFAULT_IF FALSE
     SOURCES
         qgeocodingmanagerengine_test.h
