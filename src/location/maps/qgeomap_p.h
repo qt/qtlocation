@@ -62,6 +62,7 @@ public:
         SupportsVisibleArea = 0x0010,
     };
 
+    Q_ENUM(Capability)
     Q_DECLARE_FLAGS(Capabilities, Capability)
     Q_FLAG(Capabilities)
 
