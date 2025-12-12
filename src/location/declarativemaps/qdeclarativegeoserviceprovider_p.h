@@ -113,15 +113,19 @@ public:
         AnyNavigationFeatures           = QGeoServiceProvider::AnyNavigationFeatures
     };
 
+    Q_ENUM(RoutingFeature)
     Q_DECLARE_FLAGS(RoutingFeatures, RoutingFeature)
     Q_FLAG(RoutingFeatures)
 
+    Q_ENUM(GeocodingFeature)
     Q_DECLARE_FLAGS(GeocodingFeatures, GeocodingFeature)
     Q_FLAG(GeocodingFeatures)
 
+    Q_ENUM(MappingFeature)
     Q_DECLARE_FLAGS(MappingFeatures, MappingFeature)
     Q_FLAG(MappingFeatures)
 
+    Q_ENUM(PlacesFeature)
     Q_DECLARE_FLAGS(PlacesFeatures, PlacesFeature)
     Q_FLAG(PlacesFeatures)
 

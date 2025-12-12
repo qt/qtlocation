@@ -187,6 +187,7 @@ public:
         PublicTransitTravel = QGeoRouteRequest::PublicTransitTravel,
         TruckTravel = QGeoRouteRequest::TruckTravel
     };
+    Q_ENUM(TravelMode)
     Q_DECLARE_FLAGS(TravelModes, TravelMode)
     Q_FLAG(TravelModes)
 
@@ -221,6 +222,7 @@ public:
         MostEconomicRoute = QGeoRouteRequest::MostEconomicRoute,
         MostScenicRoute = QGeoRouteRequest::MostScenicRoute
     };
+    Q_ENUM(RouteOptimization)
     Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
     Q_FLAG(RouteOptimizations)
 
@@ -228,6 +230,7 @@ public:
         NoSegmentData = 0x0000,
         BasicSegmentData = 0x0001
     };
+    Q_ENUM(SegmentDetail)
     Q_DECLARE_FLAGS(SegmentDetails, SegmentDetail)
     Q_FLAG(SegmentDetails)
 
@@ -235,6 +238,7 @@ public:
         NoManeuvers = 0x0000,
         BasicManeuvers = 0x0001
     };
+    Q_ENUM(ManeuverDetail)
     Q_DECLARE_FLAGS(ManeuverDetails, ManeuverDetail)
     Q_FLAG(ManeuverDetails)
 
