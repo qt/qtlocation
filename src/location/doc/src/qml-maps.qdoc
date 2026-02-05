@@ -23,16 +23,18 @@ Map item you can center the map, zoom, pinch and make the item flickable.
 
 The places to be added to the map are
 \l {Maps and Navigation (QML)#Putting Objects on a Map (Map Overlay Objects)}{MapItems}. The item's
-position is defined by a \l {coordinate} which includes latitude,
-longitude and altitude. The item is then displayed automatically after it is added to the \l Map.
+position is defined by a \l [QtPositioning]{geoCoordinate} which includes
+latitude, longitude and altitude. The item is then displayed automatically
+after it is added to the \l Map.
 
 \section2 Position on map
 
 All position APIs are part of the \l {QtPositioning} module.
-The basic piece of position information is the \l {coordinate}.  A
-coordinate encapsulates data for the latitude, longitude and altitude of the location.  Altitude is
-in meters. It also has a method to determine distance to another
-\l {coordinate}.  The \l {coordinate} type may
+The basic piece of position information is the
+\l [QtPositioning]{geoCoordinate}. A geoCoordinate encapsulates data for the
+latitude, longitude and altitude of the location. Altitude is in meters. It
+also has a method to determine distance to another geoCoordinate. The
+\l [QtPositioning]{geoCoordinate} type may
 also be held within a \l [QtPositioning]{Location} element, this will also have information
 on a bounding box size to determine sufficient proximity to the location and a location address.
 
@@ -74,7 +76,7 @@ The following code examples are a small part of the \c map component in the
 \l {Map Viewer (QML)}{Map Viewer (QML)} example. The snippets
 demonstrate the declaration of the \l GeocodeModel component.
 
-In the snippet we see that the [QML]{GeocodeModel} contains the plugin
+In the snippet we see that the \l [QML]{GeocodeModel} contains the plugin
 and two signal handlers. One for changes in status \l [QML]{GeocodeModel::status}{\c onStatusChanged} and
 the other to update the centering of the Map object \l [QML]{GeocodeModel::locationsChanged}{\c onLocationsChanged}.
 
@@ -88,7 +90,8 @@ snippet we see an \l [QML]{Address} object filled with the desired parameters.
 \snippet mapviewer/Main.qml geocode0
 
 The \l [QML]{Address} is later used in a query for the \l GeocodeModel to
-process and determine the geographical \l [QML]{coordinate}{coordinates}.
+process and determine the geographical
+\l [QtPositioning]{geoCoordinate}{coordinates}.
 
 \snippet mapviewer/map/MapComponent.qml geocode1
 

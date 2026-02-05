@@ -76,13 +76,15 @@ standard QtQuick item.
     \row
         \li \l{QtLocation::MapRectangle}{MapRectangle}
         \li A rectangle whose top left and bottom right points are specified as
-            \l {coordinate} types, optionally with a border.
+            \l [QtPositioning]{geoCoordinate} types, optionally with a border.
     \row
         \li \l{QtLocation::MapPolygon}{MapPolygon}
-        \li A polygon made of an arbitrary list of \l {coordinate}{coordinates}.
+        \li A polygon made of an arbitrary list of
+            \l [QtPositioning]{geoCoordinate}{coordinates}.
     \row
         \li \l{QtLocation::MapPolyline}{MapPolyline}
-        \li A polyline made of an arbitrary list of \l {coordinate}{coordinates}.
+        \li A polyline made of an arbitrary list of
+            \l [QtPositioning]{geoCoordinate}{coordinates}.
     \row
         \li \l{QtLocation::MapQuickItem}{MapQuickItem}
         \li Turns any arbitrary QtQuick Item into a map overlay object.  MapQuickItem is an enabler for specifying custom map overlay objects.
@@ -125,8 +127,8 @@ A geocoding query in QML is performed using the
 query, its \c{query} property may be set to either an
 \l [QtPositioning]{Address} object or a string containing the textual
 form of the address to search for. To perform the reverse, the same property
-can be set to a \l {coordinate} instead. Results are made available in the
-contents of the model.
+can be set to a \l [QtPositioning]{geoCoordinate} instead. Results are made
+available in the contents of the model.
 
 \b{Key Types}
 \table

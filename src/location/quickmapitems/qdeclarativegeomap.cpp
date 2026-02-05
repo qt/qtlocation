@@ -65,9 +65,10 @@ static qreal sanitizeBearing(qreal bearing)
 
     The geographic region displayed in the Map item is referred to as its
     viewport, and this is defined by the properties \l center, and
-    \l zoomLevel. The \l center property contains a \l {coordinate}
-    specifying the center of the viewport, while \l zoomLevel controls the scale of the
-    map. See each of these properties for further details about their values.
+    \l zoomLevel. The \l center property contains a
+    \l [QtPositioning]{geoCoordinate} specifying the center of the viewport,
+    while \l zoomLevel controls the scale of the map. See each of these
+    properties for further details about their values.
 
     When the map is displayed, each possible geographic coordinate that is
     visible will map to some pixel X and Y coordinate on the screen. To perform

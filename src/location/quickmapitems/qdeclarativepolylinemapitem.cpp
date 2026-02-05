@@ -188,8 +188,8 @@ static QList<QList<QDoubleVector2D> > clipLine(
 
     \brief The MapPolyline type displays a polyline on a map.
 
-    The MapPolyline type displays a polyline on a map, specified in terms of an ordered list of
-    \l {coordinate}{coordinates}.
+    The MapPolyline type displays a polyline on a map, specified in terms of an
+    ordered list of \l [QtPositioning]{geoCoordinate}{coordinates}.
 
     Coordinates can be added or removed at any time using the \l addCoordinate and
     \l removeCoordinate methods. They can also be modified like any other list element in QML:

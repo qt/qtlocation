@@ -35,7 +35,7 @@ QT_BEGIN_NAMESPACE
     right side have the same longitude.
 
     To specify the rectangle, it requires a \l topLeft and \l bottomRight point,
-    both given by a \l {coordinate}.
+    both given by a \l [QtPositioning]{geoCoordinate}.
 
     By default, the rectangle is displayed with transparent fill and a 1-pixel
     thick black border. This can be changed using the \l color, \l border.color

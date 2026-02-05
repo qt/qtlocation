@@ -92,7 +92,8 @@
     \snippet planespotter/planespotter.qml CppPlane1
     \snippet planespotter/planespotter.qml CppPlane2
 
-    \l {azimuthTo}() calculates the bearing in degrees from one coordinate to another.
+    \l {geoCoordinate::azimuthTo}{azimuthTo()} calculates the bearing in degrees
+    from one coordinate to another.
     Note that the above code utilizes a QML animation to tie the rotation
     and the position change into a single animation flow:
 

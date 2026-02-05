@@ -23,7 +23,8 @@ QT_BEGIN_NAMESPACE
     other means, on the Map as a Polyline following the path of the Route.
 
     MapRoute is really a \l MapPolyline, but with the path specified using the
-    \l route property instead of directly in \l {coordinate}{coordinates}.
+    \l route property instead of directly in
+    \l [QtPositioning]{geoCoordinate}{coordinates}.
 
     By default, the route is displayed as a 1-pixel thick black line. This can
     be changed using the \l line.width and \l line.color properties.
