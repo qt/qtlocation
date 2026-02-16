@@ -295,7 +295,7 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlmethod string PlaceSearchModel::errorString() const
+    \qmlmethod string PlaceSearchModel::errorString()
 
     This read-only property holds the textual presentation of the latest place search model error.
     If no error has occurred or if the model was cleared, an empty string is returned.
