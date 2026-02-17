@@ -201,11 +201,6 @@ bool QGeoRouteXmlParser::parseLeg(int legIndex)
     return true;
 }
 
-//static bool fuzzyCompare(const QGeoCoordinate &a, const QGeoCoordinate& b)
-//{
-//    return qFuzzyCompare(a.latitude(), b.latitude()) && qFuzzyCompare(a.longitude(), b.longitude());
-//}
-
 bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 {
     QList<QList<QGeoRouteSegment>> legSegments;
