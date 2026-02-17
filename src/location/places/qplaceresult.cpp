@@ -12,7 +12,7 @@ bool QPlaceResultPrivate::compare(const QPlaceSearchResultPrivate *other) const
     const QPlaceResultPrivate *od = static_cast<const QPlaceResultPrivate *>(other);
     return QPlaceSearchResultPrivate::compare(other)
            && ((qIsNaN(distance) && qIsNaN(od->distance))
-                || qFuzzyCompare(distance, od->distance))
+                || QtPrivate::fuzzyCompare(distance, od->distance))
            && place == od->place
            && sponsored == od->sponsored;
 }
