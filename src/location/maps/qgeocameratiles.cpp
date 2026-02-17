@@ -628,7 +628,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
             x = m_sideLength - 1;
         else {
             x = static_cast<int>(p.x()) % m_sideLength;
-            if ( !qFuzzyCompare(p.x(), 1.0 * x) && qFuzzyCompare(p.x(), 1.0 * (x + 1)) )
+            if (!QtPrivate::fuzzyCompare(p.x(), 1.0 * x) && qFuzzyCompare(p.x(), 1.0 * (x + 1)))
                 x++;
         }
 
@@ -636,7 +636,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
             y = m_sideLength - 1;
         else {
             y = static_cast<int>(p.y()) % m_sideLength;
-            if ( !qFuzzyCompare(p.y(), 1.0 * y) && qFuzzyCompare(p.y(), 1.0 * (y + 1)) )
+            if (!QtPrivate::fuzzyCompare(p.y(), 1.0 * y) && qFuzzyCompare(p.y(), 1.0 * (y + 1)))
                 y++;
         }
 
@@ -653,7 +653,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
         const double x1 = polygon.at(i1).get(0);
         const double x2 = polygon.at(i2).get(0);
 
-        const bool xFixed = qFuzzyCompare(x1, x2);
+        const bool xFixed = QtPrivate::fuzzyCompare(x1, x2);
         const bool xIntegral = qFuzzyCompare(x1, std::floor(x1)) || qFuzzyCompare(x1 + 1.0, std::floor(x1 + 1.0));
 
         QList<QPair<double, int> > xIntersects
@@ -665,7 +665,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
         const double y1 = polygon.at(i1).get(1);
         const double y2 = polygon.at(i2).get(1);
 
-        const bool yFixed = qFuzzyCompare(y1, y2);
+        const bool yFixed = QtPrivate::fuzzyCompare(y1, y2);
         const bool yIntegral = qFuzzyCompare(y1, std::floor(y1)) || qFuzzyCompare(y1 + 1.0, std::floor(y1 + 1.0));
 
         QList<QPair<double, int> > yIntersects
@@ -736,7 +736,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
         const qsizetype iPrev =  (i1 + numPoints - 1) % numPoints;
         const double xPrevious = polygon.at(iPrev).get(0);
         const double yPrevious = polygon.at(iPrev).get(1);
-        const bool xPreviousFixed = qFuzzyCompare(xPrevious, x1);
+        const bool xPreviousFixed = QtPrivate::fuzzyCompare(xPrevious, x1);
         if (xIntegral && xPreviousFixed && yIntegral && yFixed) {
             if ((x2 > x1) && (yPrevious > y1)) {
                 if ((x - 1) > 0 && (y - 1) > 0)
