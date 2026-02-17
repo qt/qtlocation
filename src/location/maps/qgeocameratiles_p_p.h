@@ -94,7 +94,7 @@ public:
     QSet<QGeoTileSpec> m_tiles;
 
     int m_intZoomLevel = 0;
-    int m_sideLength = 0;
+    int m_sideLength = 1;
     bool m_dirtyGeometry = false;
     bool m_dirtyMetadata = false;
     double m_viewExpansion = 1.0;
