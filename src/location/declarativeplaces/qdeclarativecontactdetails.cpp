@@ -65,7 +65,7 @@ QT_BEGIN_NAMESPACE
     Returns an array of contact detail keys currently stored in the map.
 */
 QDeclarativeContactDetails::QDeclarativeContactDetails(QObject *parent)
-    : QQmlPropertyMap(parent)
+    : QQmlPropertyMap(this, parent)
 {
 }
 
