@@ -149,7 +149,7 @@ QT_BEGIN_NAMESPACE
 
 QDeclarativePlace::QDeclarativePlace(QObject *parent)
 :   QObject(parent),
-    m_extendedAttributes(new QQmlPropertyMap(this)),
+    m_extendedAttributes(QQmlPropertyMap::create(this)),
     m_contactDetails(new QDeclarativeContactDetails(this))
 {
     connect(m_contactDetails, &QDeclarativeContactDetails::valueChanged,
@@ -160,7 +160,7 @@ QDeclarativePlace::QDeclarativePlace(QObject *parent)
 
 QDeclarativePlace::QDeclarativePlace(const QPlace &src, QDeclarativeGeoServiceProvider *plugin, QObject *parent)
 :   QObject(parent),
-    m_extendedAttributes(new QQmlPropertyMap(this)),
+    m_extendedAttributes(QQmlPropertyMap::create(this)),
     m_contactDetails(new QDeclarativeContactDetails(this)),
     m_plugin(plugin)
 {
