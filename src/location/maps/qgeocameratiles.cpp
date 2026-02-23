@@ -654,7 +654,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
         const double x2 = polygon.at(i2).get(0);
 
         const bool xFixed = QtPrivate::fuzzyCompare(x1, x2);
-        const bool xIntegral = qFuzzyCompare(x1, std::floor(x1)) || qFuzzyCompare(x1 + 1.0, std::floor(x1 + 1.0));
+        const bool xIntegral = qFuzzyIsNull(x1) || qFuzzyCompare(x1, std::round(x1));
 
         QList<QPair<double, int> > xIntersects
                 = tileIntersections(x1,
@@ -666,7 +666,7 @@ QSet<QGeoTileSpec> QGeoCameraTilesPrivate::tilesFromPolygon(const PolygonVector 
         const double y2 = polygon.at(i2).get(1);
 
         const bool yFixed = QtPrivate::fuzzyCompare(y1, y2);
-        const bool yIntegral = qFuzzyCompare(y1, std::floor(y1)) || qFuzzyCompare(y1 + 1.0, std::floor(y1 + 1.0));
+        const bool yIntegral = qFuzzyIsNull(y1) ||  qFuzzyCompare(y1, std::round(y1));
 
         QList<QPair<double, int> > yIntersects
                 = tileIntersections(y1,
