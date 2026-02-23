@@ -32,12 +32,11 @@ void tst_QPlaceRatings::constructorTest()
     QPlaceRatings testObj;
     Q_UNUSED(testObj);
 
-    QPlaceRatings *testObjPtr = new QPlaceRatings(testObj);
-    QVERIFY2(testObjPtr != NULL, "Copy constructor - null");
+    auto testObjPtr = std::make_unique<QPlaceRatings>(testObj);
+    QVERIFY2(testObjPtr, "Copy constructor - null");
     QVERIFY2(testObjPtr->count() == 0, "Copy constructor - wrong count");
     QVERIFY2(testObjPtr->average() == 0, "Copy constructor - wrong average");
     QVERIFY2(*testObjPtr == testObj, "Copy constructor - compare");
-    delete testObjPtr;
 }
 
 void tst_QPlaceRatings::averageTest()
