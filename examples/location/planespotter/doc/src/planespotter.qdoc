@@ -63,7 +63,7 @@
     exchange of position data through the C++/QML boundary.
 
     The visual representation of each \c Plane is done using
-    the \l MapQuickItem type which permits the embedding of arbitrary QtQuick items
+    the \l MapQuickItem type which permits the embedding of arbitrary \l[QML]{QtQuick} items
     into a map:
 
     \snippet planespotter/Plane.qml PlaneMapQuick1
