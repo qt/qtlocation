@@ -29,9 +29,9 @@
 
 QT_BEGIN_NAMESPACE
 
-inline size_t qHash(const QPlaceCategory &category)
+inline size_t qHash(const QPlaceCategory &category, size_t seed = 0)
 {
-    return qHash(QUuid(category.categoryId().toLatin1()));
+    return qHash(QUuid(category.categoryId().toLatin1()), seed);
 }
 
 QT_END_NAMESPACE
