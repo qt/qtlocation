@@ -72,9 +72,11 @@ private:
 
     bool isEqual(const QGeoTileSpec &rhs) const noexcept;
     bool isLess(const QGeoTileSpec &rhs) const noexcept;
+    size_t hash(size_t seed) const noexcept;
+    friend size_t qHash(const QGeoTileSpec &key, size_t seed = 0) noexcept
+    { return key.hash(seed); }
 };
 
-Q_LOCATION_EXPORT unsigned int qHash(const QGeoTileSpec &spec);
 
 Q_LOCATION_EXPORT QDebug operator<<(QDebug, const QGeoTileSpec &);
 

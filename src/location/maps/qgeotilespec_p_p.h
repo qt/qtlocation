@@ -15,6 +15,7 @@
 // We mean it.
 //
 
+#include <QtCore/qhashfunctions.h>
 #include <QString>
 #include <QSharedData>
 
@@ -28,6 +29,18 @@ public:
         : plugin_(plugin), mapId_(mapId), zoom_(zoom),
           x_(x), y_(y), version_(version)
     {}
+
+
+    size_t hash(size_t seed) const
+    {
+        return qHashMulti(seed,
+                          mapId_,
+                          zoom_,
+                          x_,
+                          y_,
+                          version_,
+                          plugin_);
+    }
 
     inline bool operator==(const QGeoTileSpecPrivate &rhs) const
     {
