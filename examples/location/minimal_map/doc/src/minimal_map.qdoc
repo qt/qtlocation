@@ -8,7 +8,7 @@
 \examplecategory {Positioning & Location}
 \brief The minimum code to display a map using Qt Quick.
 
-\image minimal_map.png
+\image minimal_map.png {Application window showing a map of central Oslo}
 
 \e {Minimal Map} demonstrates how to use the \l{Map} item to render a map.
 It shows the minimum amount of code needed to display the map, and can be used
