@@ -223,7 +223,7 @@ static QList<QList<QDoubleVector2D> > clipLine(
     }
     \endcode
 
-    \image api-mappolyline.png
+    \image api-mappolyline.png {Green polyline on a map}
 */
 
 /*!

@@ -8,7 +8,7 @@
     \examplecategory {Positioning & Location}
     \brief The Places Map example demonstrates how to search for and display a list of places
            on a map using a MapItemView.
-    \image places_map.png
+    \image places_map.png {Map with several labeled markers for pizza places}
 
     The example displays a map of the current location or, if no position is
     available, it uses Oslo/Norway. Subsequently a search for places

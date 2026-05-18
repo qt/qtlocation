@@ -74,7 +74,7 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    \image api-mapcircle.png
+    \image api-mapcircle.png {Green circle on a map}
 */
 
 /*!

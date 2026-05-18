@@ -71,7 +71,7 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    \image api-maprectangle.png
+    \image api-maprectangle.png {Green rectangle on a map}
 */
 
 /*!

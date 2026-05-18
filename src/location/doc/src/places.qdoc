@@ -100,7 +100,7 @@
             \li
                 \snippet places_list/places_list.qml Places ListView
             \li
-                \inlineimage places_list.png
+                \inlineimage places_list.png {Numbered list of pizza places}
     \endtable
 
     \note For simplicty's sake we have assumed that every search result is of
@@ -130,7 +130,7 @@
             \li
                 \snippet places_map/PlacesMap.qml Places MapItemView
             \li
-                \inlineimage places_map.png
+                \inlineimage places_map.png {Map with labeled place markers}
     \endtable
 
     \note For simplicty's sake we have assumed that every search result is of

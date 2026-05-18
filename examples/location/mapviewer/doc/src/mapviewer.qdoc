@@ -11,7 +11,7 @@
     \brief The Map Viewer example shows how to display and interact with a map,
            search for an address, and find driving directions.
 
-    \image mapviewer.png
+    \image mapviewer.png {Map of Oslo with a marker labeled "The Qt Company"}
 
     This is a large example covering many basic uses of maps, positioning, and
     navigation services in Qt Location. This page is divided into sections

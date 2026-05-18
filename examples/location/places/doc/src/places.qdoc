@@ -9,7 +9,8 @@
     \brief The Places example demonstrates how to search for Places and access
            related content.
 
-    \image places.png
+    \image places.png {Places example with a search box and a map of Oslo
+           showing a marker labeled "The Qt Company"}
 
     The Places example demonstrates how to search for Places. In particular it shows
     how further information such as reviews, images and related content can be retrieved.
