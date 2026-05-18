@@ -102,7 +102,8 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    \image api-mapitemgroup.png
+    \image api-mapitemgroup.png {Overlapping red and green polygons
+           drawn on a map of Iceland}
 */
 
 QDeclarativeGeoMapItemGroup::QDeclarativeGeoMapItemGroup(QQuickItem *parent)

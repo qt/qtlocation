@@ -10,7 +10,8 @@
     \brief The GeoJson viewer example demonstrates how to manipulate MapItems, handle user input
     and I/O to and from a GeoJson file.
 
-    \image geojson_viewer.png
+    \image geojson_viewer.png {Map of Europe with a
+           polygon and a polyline overlay}
 
     The example displays a map with various MapItems. The MapItems are either imported from a
     GeoJson file, using the \l {GeoJsonData} API of \l {QtLocation} or drawn by the user using

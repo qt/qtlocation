@@ -73,7 +73,7 @@ QT_BEGIN_NAMESPACE
     }
     \endcode
 
-    \image api-mappolygon.png
+    \image api-mappolygon.png {Green triangle on a map}
 */
 
 /*!

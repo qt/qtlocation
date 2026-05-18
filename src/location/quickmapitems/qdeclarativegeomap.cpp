@@ -115,7 +115,7 @@ static qreal sanitizeBearing(qreal bearing)
     \skipto Plugin
     \printuntil
 
-    \image minimal_map.png
+    \image minimal_map.png {Map item centered on Oslo at zoom level 14}
 */
 
 /*!

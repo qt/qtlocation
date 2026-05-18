@@ -81,7 +81,7 @@ QT_BEGIN_NAMESPACE
     \snippet mapviewer/map/Marker.qml mqi-closeimage
     \snippet mapviewer/map/Marker.qml mqi-close
 
-    \image api-mapquickitem.png
+    \image api-mapquickitem.png {Marker rendered as a teardrop pin on a map}
 */
 
 /*!
@@ -134,7 +134,8 @@ QDeclarativeGeoMapQuickItem::~QDeclarativeGeoMapQuickItem() {}
     for the value of their anchorPoint properties. The values of anchorPoint
     for each are written on top of the item.
 
-    \image api-mapquickitem-anchor.png
+    \image api-mapquickitem-anchor.png {Three markers on a map showing
+           the effect of different anchor points}
 */
 void QDeclarativeGeoMapQuickItem::setCoordinate(const QGeoCoordinate &coordinate)
 {
