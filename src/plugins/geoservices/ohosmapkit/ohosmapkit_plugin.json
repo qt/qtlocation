@@ -1,0 +1,16 @@
+{
+    "Keys": [
+        "ohosmapkit"
+    ],
+    "Provider": "ohosmapkit",
+    "Version": 100,
+    "Experimental": false,
+    "Features": [
+        "OnlineGeocodingFeature",
+        "OnlineMappingFeature",
+        "OnlinePlacesFeature",
+        "OnlineRoutingFeature",
+        "ReverseGeocodingFeature",
+        "SearchSuggestionsFeature"
+    ]
+}

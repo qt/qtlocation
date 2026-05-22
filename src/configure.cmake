@@ -21,3 +21,9 @@ qt_feature("geoservices_nokia" PRIVATE
     PURPOSE "Provides access to Nokia geoservices"
     CONDITION FALSE
 )
+
+qt_feature("geoservices_ohosmapkit" PRIVATE
+    LABEL "OHOS Map Kit Geoservice"
+    PURPOSE "Provides access to OHOS Map Kit geoservices"
+    CONDITION OHOS
+)
