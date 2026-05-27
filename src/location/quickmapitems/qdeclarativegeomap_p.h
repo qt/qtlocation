@@ -152,7 +152,7 @@ public:
     Q_INVOKABLE void pan(int dx, int dy);
     Q_INVOKABLE void prefetchData(); // optional hint for prefetch
     Q_INVOKABLE void clearData();
-    Q_REVISION(13) Q_INVOKABLE void fitViewportToGeoShape(const QGeoShape &shape, QVariant margins);
+    Q_REVISION(5, 13) Q_INVOKABLE void fitViewportToGeoShape(const QGeoShape &shape, QVariant margins);
     void fitViewportToGeoShape(const QGeoShape &shape, const QMargins &borders = QMargins(10, 10, 10, 10));
 
     QString errorString() const;
@@ -186,7 +186,7 @@ Q_SIGNALS:
     void copyrightsChanged(const QString &copyrightsHtml);
     void mapReadyChanged(bool ready);
     void visibleAreaChanged();
-    Q_REVISION(14) void visibleRegionChanged();
+    Q_REVISION(5, 14) void visibleRegionChanged();
 
 protected:
     void componentComplete() override;
