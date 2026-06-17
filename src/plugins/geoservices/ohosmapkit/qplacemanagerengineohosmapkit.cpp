@@ -146,7 +146,7 @@ QPlaceSearchReply *QPlaceManagerEngineOhosMapKit::search(const QPlaceSearchReque
         request,
         m_networkManager.post(
             OhosMapKit::createOhosMapKitNetworkRequestWithJsonBody(
-                searchByTextApiPath, m_userAgent, m_authenticationKey),
+                searchByTextApiUrl, m_userAgent, m_authenticationKey),
             QJsonDocument(placeSearchRequestBody).toJson(QJsonDocument::Compact)),
         this);
 
@@ -168,7 +168,7 @@ QPlaceSearchSuggestionReply *QPlaceManagerEngineOhosMapKit::searchSuggestions(
     auto *reply = makeQPlaceSearchSuggestionReplyOhosMapKit(
         m_networkManager.post(
             OhosMapKit::createOhosMapKitNetworkRequestWithJsonBody(
-                autoCompleteApiPath, m_userAgent, m_authenticationKey),
+                autoCompleteApiUrl, m_userAgent, m_authenticationKey),
             QJsonDocument(createPlaceSearchRequestBody(request)).toJson(QJsonDocument::Compact)),
         this);
 
