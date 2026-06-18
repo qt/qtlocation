@@ -175,8 +175,7 @@ void QPlaceSearchReplyOhosMapKit::onReplyFinished()
     if (reply->error() != QNetworkReply::NoError) {
         setErrorEmitAndFinish(
             QPlaceReply::CommunicationError,
-            tr("Network reply error: %1")
-                .arg(QMetaEnum::fromType<QNetworkReply::NetworkError>().valueToKey(reply->error())));
+            OhosMapKit::msgReplyError(reply->errorString()));
         return;
     }
 

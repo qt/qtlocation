@@ -28,6 +28,9 @@ QNetworkRequest createOhosMapKitNetworkRequest(
 QNetworkRequest createOhosMapKitNetworkRequestWithJsonBody(
     const QUrl &requestUrl, const QString &userAgent, const QString &authenticationKey);
 
+QString msgReplyError(const QString &errorString);
+QString msgNullReply();
+
 namespace CoordinateJson {
 
 QJsonObject tryConvertFromQGeoCoordinate(const QGeoCoordinate &coordinate);

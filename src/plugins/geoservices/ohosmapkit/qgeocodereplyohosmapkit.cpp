@@ -41,7 +41,7 @@ QGeoCodeReplyOhosMapKit::QGeoCodeReplyOhosMapKit(QNetworkReply *reply, QObject *
     : QGeoCodeReply(parent)
 {
     if (reply == nullptr) {
-        setError(QGeoCodeReply::UnknownError, tr("Null reply"));
+        setError(QGeoCodeReply::UnknownError, OhosMapKit::msgNullReply());
         return;
     }
 
@@ -59,7 +59,7 @@ void QGeoCodeReplyOhosMapKit::onNetworkReplyFinished()
     if (reply->error() != QNetworkReply::NoError) {
         setError(
             QGeoCodeReply::CommunicationError,
-            tr("Network reply error: %1").arg(reply->errorString()));
+            OhosMapKit::msgReplyError(reply->errorString()));
         return;
     }
 

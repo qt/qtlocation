@@ -1,6 +1,7 @@
 // Copyright (C) 2025 The Qt Company Ltd.
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 
+#include <QtCore/qcoreapplication.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qlocale.h>
 #include <qohosmapkitcommon.h>
@@ -50,6 +51,16 @@ QNetworkRequest createOhosMapKitNetworkRequestWithJsonBody(
     auto networkRequest = createOhosMapKitNetworkRequest(requestUrl, userAgent, authenticationKey);
     networkRequest.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
     return networkRequest;
+}
+
+QString msgReplyError(const QString &errorString)
+{
+    return QCoreApplication::translate("OhosMapKit", "Network reply error: %1").arg(errorString);
+}
+
+QString msgNullReply()
+{
+    return QCoreApplication::translate("OhosMapKit", "Null reply");
 }
 
 namespace CoordinateJson {
