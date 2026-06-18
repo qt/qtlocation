@@ -3,6 +3,7 @@
 
 #include <QtCore/qmetaobject.h>
 #include <qgeomapreplyohosmapkit.h>
+#include <qohosmapkitcommon.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -26,7 +27,7 @@ QGeoMapReplyOhosMapKit::QGeoMapReplyOhosMapKit(
     : QGeoTiledMapReply(spec, parent)
 {
     if (reply == nullptr) {
-        setError(QGeoTiledMapReply::UnknownError, tr("Null reply"));
+        setError(QGeoTiledMapReply::UnknownError, OhosMapKit::msgNullReply());
         return;
     }
 
@@ -44,8 +45,7 @@ void QGeoMapReplyOhosMapKit::onNetworkReplyFinished()
     if (reply->error() != QNetworkReply::NoError) {
         setError(
             QGeoTiledMapReply::CommunicationError,
-            tr("Network reply error: %1")
-                .arg(QMetaEnum::fromType<QNetworkReply::NetworkError>().valueToKey(reply->error())));
+            OhosMapKit::msgReplyError(reply->errorString()));
         return;
     }
 

@@ -165,10 +165,7 @@ void QGeoRouteReplyOhosMapKit::networkReplyFinished()
     reply->deleteLater();
 
     if (reply->error() != QNetworkReply::NoError) {
-        setError(
-            QGeoRouteReply::UnknownError,
-            tr("Network reply error: %1")
-                .arg(QMetaEnum::fromType<QNetworkReply::NetworkError>().valueToKey(reply->error())));
+        setError(QGeoRouteReply::UnknownError, OhosMapKit::msgReplyError(reply->errorString()));
         return;
     }
 

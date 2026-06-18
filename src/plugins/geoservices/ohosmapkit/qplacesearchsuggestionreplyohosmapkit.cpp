@@ -6,6 +6,7 @@
 #include <QtCore/qjsonobject.h>
 #include <QtCore/qmetaobject.h>
 #include <qplacesearchsuggestionreplyohosmapkit.h>
+#include <qohosmapkitcommon.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -74,8 +75,7 @@ void QPlaceSearchSuggestionReplyOhosMapKit::onReplyFinished()
     if (reply->error() != QNetworkReply::NoError) {
         setErrorEmitAndFinish(
             QPlaceReply::CommunicationError,
-            tr("Network reply error: %1")
-                .arg(QMetaEnum::fromType<QNetworkReply::NetworkError>().valueToKey(reply->error())));
+            OhosMapKit::msgReplyError(reply->errorString()));
         return;
     }
 
