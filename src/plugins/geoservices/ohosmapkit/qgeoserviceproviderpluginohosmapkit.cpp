@@ -21,7 +21,7 @@ bool isAuthenticationKeySet(
 
         if (errorString != nullptr) {
             *errorString = QGeoServiceProviderFactoryOhosMapKit::tr(
-                "OHOS MapKit plugin requires a '%1' parameter. "
+                "OHOS Map Kit plugin requires a '%1' parameter. "
                 "Visit Huawei AppGallery Connect service to generate it.")
                 .arg(OhosMapKit::authenticationKeyParameterName);
         }
