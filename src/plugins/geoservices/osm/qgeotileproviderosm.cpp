@@ -154,7 +154,7 @@ void QGeoTileProviderOsm::disableRedirection()
     if (m_provider && m_provider->isValid())
         return;
     bool found = false;
-    for (TileProvider *p: m_providerList) {
+    for (TileProvider *p: std::as_const(m_providerList)) {
         if (p->isValid() && !found) {
             m_provider = p;
             m_providerId = m_providerList.indexOf(p);
