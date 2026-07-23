@@ -128,7 +128,8 @@ QPlaceSearchReply *QPlaceManagerEngineOsm::search(const QPlaceSearchRequest &req
     if (!request.searchTerm().isEmpty())
         queryParts.append(request.searchTerm());
 
-    for (const QPlaceCategory &category : request.categories()) {
+    const auto categoriesList = request.categories();
+    for (const QPlaceCategory &category : categoriesList) {
         QString id = category.categoryId();
         queryParts.append(QLatin1Char('[') + id + QLatin1Char(']'));
     }
@@ -208,7 +209,8 @@ QPlaceCategory QPlaceManagerEngineOsm::category(const QString &categoryId) const
 QList<QPlaceCategory> QPlaceManagerEngineOsm::childCategories(const QString &parentId) const
 {
     QList<QPlaceCategory> categories;
-    for (const QString &id : m_subcategories.value(parentId))
+    const QStringList subcategoriesList = m_subcategories.value(parentId);
+    for (const QString &id : subcategoriesList)
         categories.append(m_categories.value(id));
     return categories;
 }
@@ -284,14 +286,14 @@ void QPlaceManagerEngineOsm::categoryReplyFinished()
         m_categoryLocales.clear();
     }
 
-    for (QPlaceCategoriesReplyOsm *reply : m_pendingCategoriesReply)
+    for (QPlaceCategoriesReplyOsm *reply : std::as_const(m_pendingCategoriesReply))
         reply->emitFinished();
     m_pendingCategoriesReply.clear();
 }
 
 void QPlaceManagerEngineOsm::categoryReplyError()
 {
-    for (QPlaceCategoriesReplyOsm *reply : m_pendingCategoriesReply)
+    for (QPlaceCategoriesReplyOsm *reply : std::as_const(m_pendingCategoriesReply))
         reply->setError(QPlaceReply::CommunicationError, tr("Network request error"));
 }
 
