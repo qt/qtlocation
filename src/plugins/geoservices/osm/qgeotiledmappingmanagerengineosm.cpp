@@ -347,7 +347,7 @@ void QGeoTiledMappingManagerEngineOsm::onProviderResolutionError(const QGeoTileP
 void QGeoTiledMappingManagerEngineOsm::updateMapTypes()
 {
     QList<QGeoMapType> mapTypes;
-    for (QGeoTileProviderOsm * provider : m_providers) {
+    for (QGeoTileProviderOsm * provider : std::as_const(m_providers)) {
         // assume provider are ok until they have been resolved invalid
         if (!provider->isResolved() || provider->isValid())
             mapTypes << provider->mapType();
