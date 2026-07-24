@@ -275,22 +275,32 @@ void QGeoFileTileCache::clearAll()
     QDir dir(directory_);
     dir.setNameFilters(QStringList() << QLatin1String("*-*-*-*.*"));
     dir.setFilter(QDir::Files);
-    for (const QString &dirFile : dir.entryList()) {
+    const auto entries = dir.entryList();
+    for (const QString &dirFile : entries) {
         dir.remove(dirFile);
     }
 }
 
 void QGeoFileTileCache::clearMapId(const int mapId)
 {
-    for (const QGeoTileSpec &k : diskCache_.keys())
-        if (k.mapId() == mapId)
-            diskCache_.remove(k, true);
-    for (const QGeoTileSpec &k : memoryCache_.keys())
-        if (k.mapId() == mapId)
-            memoryCache_.remove(k);
-    for (const QGeoTileSpec &k : textureCache_.keys())
-        if (k.mapId() == mapId)
-            textureCache_.remove(k);
+    {
+        const auto keys = diskCache_.keys();
+        for (const QGeoTileSpec &k : keys)
+            if (k.mapId() == mapId)
+                diskCache_.remove(k, true);
+    }
+    {
+        const auto keys = memoryCache_.keys();
+        for (const QGeoTileSpec &k : keys)
+            if (k.mapId() == mapId)
+                memoryCache_.remove(k);
+    }
+    {
+        const auto keys = textureCache_.keys();
+        for (const QGeoTileSpec &k : keys)
+            if (k.mapId() == mapId)
+                textureCache_.remove(k);
+    }
 
     // TODO: It seems the cache leaves residues, like some tiles do not get picked up.
     // After the above calls, files that shouldnt be left behind are still on disk.
