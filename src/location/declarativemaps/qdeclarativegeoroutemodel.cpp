@@ -90,7 +90,7 @@ QDeclarativeGeoRouteModel::QDeclarativeGeoRouteModel(QObject *parent)
 
     This property holds how many routes the model currently has.
     Amongst other uses, you can use this value when accessing routes
-    via the QtLocation::RouteModel::get -method.
+    via the QtLocation::RouteModel::get method.
 */
 
 int QDeclarativeGeoRouteModel::count() const
