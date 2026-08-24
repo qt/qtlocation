@@ -9,7 +9,7 @@
 #include <QtLocation/qtlocationexports.h>
 
 #ifdef Q_CLANG_QDOC
-#include "QtLocation/qlocation.h"
+#include <QtLocation/qlocation.h>
 #endif
 
 #endif // QLOCATIONGLOBAL_H

@@ -11,7 +11,7 @@
 #include <QtCore/QExplicitlySharedDataPointer>
 #include <QtCore/QList>
 
-#include "QtQml/qqml.h"
+#include <QtQml/qqml.h>
 
 QT_BEGIN_NAMESPACE
 
