@@ -178,6 +178,8 @@ void QDeclarativeGeocodeModel::abortRequest()
 {
     if (reply_) {
         reply_->abort();
+    }
+    if (reply_) {
         reply_->deleteLater();
         reply_ = 0;
     }
