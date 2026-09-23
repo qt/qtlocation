@@ -9,7 +9,7 @@ QT_BEGIN_NAMESPACE
 
 namespace {
 
-const char pngSignature[] = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00};
+const char pngSignature[] = "\x89PNG\r\n\x1a\n";
 
 class QGeoMapReplyOhosMapKit : public QGeoTiledMapReply
 {
