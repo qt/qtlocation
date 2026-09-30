@@ -34,7 +34,7 @@ QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlacePrivate)
 
     \input place-definition.qdocinc
 
-    \section2 Contact Information
+    \section1 Contact Information
     The contact information of a place is based around a common set of
     \l {Contact Types}{contact types}. To retrieve all the phone numbers
     of a place, one would do:
@@ -53,7 +53,7 @@ QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlacePrivate)
         \li QPlace::primaryFax()
     \endlist
 
-    \section2 Extended Attributes
+    \section1 Extended Attributes
     Places may have additional attributes which are not covered in the formal API.
     Similar to contacts attributes are based around a common set of
     \l {Attribute Types}{attribute types}.  To retrieve an extended attribute one
@@ -63,7 +63,7 @@ QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlacePrivate)
     The attribute types are string values by design to allow providers
     to introduce new attribute types.
 
-    \section2 Content
+    \section1 Content
     The QPlace object is only meant to be a convenient container to hold
     rich content such as images, reviews and so on.  Retrieval of content
     should happen via QPlaceManager::getPlaceContent().
@@ -73,7 +73,7 @@ QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlacePrivate)
     developers to check whether a particular item has already been retrieved
     and if not, then request that content.
 
-    \section3 Attribution
+    \section2 Attribution
     Places have a field for a rich text attribution string.  Some providers
     may require that the attribution be shown when a place is displayed
     to a user.
@@ -86,7 +86,7 @@ QT_DEFINE_QSDP_SPECIALIZATION_DTOR(QPlacePrivate)
     to create a new category, assign it to the place, save the place and expect
     the category to be created).
 
-    \section2 Saving Caveats
+    \section1 Saving Caveats
     \input place-caveats.qdocinc
 */
 

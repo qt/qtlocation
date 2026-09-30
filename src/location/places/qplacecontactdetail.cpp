@@ -26,7 +26,7 @@ bool QPlaceContactDetailPrivate::operator== (const QPlaceContactDetailPrivate &o
 The detail consists of a label and value.  The label is a localized string that can be presented
 to the end user that describes that detail value which is the actual phone number, email address and so on.
 
-\section2 Contact Types
+\section1 Contact Types
 
 The QPlaceContactDetail class defines some constant strings which characterize standard \e {contact types}.
 \list

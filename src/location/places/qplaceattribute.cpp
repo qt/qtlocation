@@ -44,7 +44,7 @@ bool QPlaceAttributePrivate::isEmpty() const
     Consult the \l {Plugin References and Parameters}{plugin
     references} for details.
 
-    \section2 Attribute Types
+    \section1 Attribute Types
     The QPlaceAttribute class defines some constant strings which characterize standard \e {attribute types}.
     \list
         \li QPlaceAttribute::OpeningHours
