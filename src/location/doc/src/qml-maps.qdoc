@@ -189,13 +189,13 @@ to the Map \l {QtLocation::Map::}{zoomLevel}.
 
 \section1 QML Types
 
-\section3 Maps
+\section2 Maps
 \annotatedlist qml-QtLocation5-maps
 
-\section3 Geocoding
+\section2 Geocoding
 \annotatedlist qml-QtLocation5-geocoding
 
-\section3 Routing
+\section2 Routing
 \annotatedlist qml-QtLocation5-routing
 
 
