@@ -328,14 +328,14 @@ void QDeclarativeGeocodeModel::setBounds(const QVariant &boundingArea)
 }
 
 /*!
-    \qmlproperty geoshape QtLocation::GeocodeModel::bounds
+    \qmlproperty geoShape QtLocation::GeocodeModel::bounds
 
     This property holds the bounding area used to limit the results to those
     within the area. This is particularly useful if query is only partially filled out,
     as the service will attempt to (reverse) geocode all matches for the specified data.
 
     Accepted types are \l {georectangle} and
-    \l {geocircle}.
+    \l {geoCircle}.
 */
 QVariant QDeclarativeGeocodeModel::bounds() const
 {

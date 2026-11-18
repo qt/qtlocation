@@ -69,13 +69,13 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty geoshape PlaceSearchSuggestionModel::searchArea
+    \qmlproperty geoShape PlaceSearchSuggestionModel::searchArea
 
     This property holds the search area.  Search suggestion results returned by the model will be
     relevant to the given search area.
 
-    If this property is set to a \l {geocircle} its
-    \l {geocircle}{radius} property may be left unset, in which case the \l Plugin
+    If this property is set to a \l {geoCircle} its
+    \l {geoCircle}{radius} property may be left unset, in which case the \l Plugin
     will choose an appropriate radius for the search.
 */
 
